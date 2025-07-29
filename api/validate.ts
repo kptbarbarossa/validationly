@@ -1,11 +1,12 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-if (!process.env.API_KEY) {
+const apiKey = process.env.API_KEY;
+if (!apiKey) {
     throw new Error("API_KEY environment variable not set");
 }
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey });
 
 // This schema is copied from the original geminiService.ts
 const responseSchema = {
@@ -48,7 +49,7 @@ export default async function handler(req: Request) {
             }
         });
 
-        const jsonText = result.text.trim();
+        const jsonText = result.text?.trim() || "";
         const parsedResult = JSON.parse(jsonText);
 
         // Basic validation before sending back to client
