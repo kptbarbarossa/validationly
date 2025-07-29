@@ -70,7 +70,7 @@ export default async function handler(req: Request) {
             }
         });
 
-        const jsonText = result.text.trim();
+        const jsonText = result.text?.trim() || "";
         const parsedResult = JSON.parse(jsonText);
         
         // Add the original idea to the response for the frontend
