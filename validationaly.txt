@@ -1,0 +1,74 @@
+# Validationly 🚀
+Validate your startup idea before you build it — in seconds.
+
+Validationly is an AI-powered tool that helps makers, founders, and indie hackers validate their startup ideas by analyzing potential market demand across various online platforms.
+
+---
+
+## 🏗️ Architecture (Önemli Değişiklik!)
+
+Bu projenin güvenli ve ölçeklenebilir olması için **hibrit bir yapı** kullanılmıştır:
+
+1.  **Frontend (Kullanıcı Arayüzü):** Kullanıcının tarayıcısında çalışan **React** uygulamasıdır.
+2.  **Backend (Güvenli API Çağrısı):** Vercel üzerinde çalışan bir **Serverless Function** (`api/validate.ts`). Bu fonksiyon, `API_KEY`'inizi gizli tutarak Gemini API'sine güvenli istekler yapar.
+
+Bu değişiklik nedeniyle, projeyi artık doğrudan `index.html` dosyasını açarak **çalıştıramazsınız.** Projeyi yerel olarak test etmek için aşağıdaki adımları izlemeniz gerekmektedir.
+
+---
+
+## 🧪 Yerel Bilgisayarda Çalıştırma (Running Locally)
+
+**Gereksinimler:**
+*   Node.js (v18+)
+*   Vercel CLI (Komut Satırı Aracı)
+
+**Adım 1: Vercel CLI'ı Yükleyin**
+Eğer bilgisayarınızda Vercel CLI yüklü değilse, terminali veya komut istemcisini açıp şu komutu çalıştırın:
+```bash
+npm install -g vercel
+```
+
+**Adım 2: Projeyi Kurun**
+1. Proje dosyalarını klonlayın ve klasöre gidin.
+   ```bash
+   git clone https://github.com/your-username/validationly.git
+   cd validationly
+   ```
+2. Gerekli sunucu paketlerini kurun:
+   ```bash
+   npm install
+   ```
+
+**Adım 3: API Anahtarınızı Ekleyin (Çok Önemli)**
+1. Projenin ana klasöründe **`.env.local`** adında yeni bir dosya oluşturun.
+2. Dosyanın içine aşağıdaki satırı ekleyin ve `your_gemini_api_key_here` kısmını kendi Gemini API anahtarınızla değiştirin:
+   ```
+   API_KEY=your_gemini_api_key_here
+   ```
+   Bu dosya, gizli anahtarınızın güvende kalmasını sağlar.
+
+**Adım 4: Geliştirme Sunucusunu Başlatın**
+Proje klasöründeyken terminalde aşağıdaki komutu çalıştırın:
+```bash
+vercel dev
+```
+Vercel, projenizi `http://localhost:3000` gibi bir adreste başlatacaktır. Artık siteyi tarayıcınızda açıp test edebilirsiniz. Bu komut, hem frontend'i hem de güvenli backend fonksiyonunu aynı anda çalıştırır.
+
+---
+
+## 🚀 Vercel'e Deploy Etme (Yayına Alma)
+
+1.  **GitHub'a Yükleyin:** Projenizin tüm dosyalarını bir GitHub reposuna yükleyin.
+2.  **Vercel'e Import Edin:** Vercel panosundan projenizi import edin.
+3.  **Environment Variable'ı Ayarlayın:** Proje ayarlarında **Environment Variables** bölümüne gidin.
+    *   **Name:** `API_KEY`
+    *   **Value:** Gemini API anahtarınızı yapıştırın.
+4.  **Deploy Edin:** "Deploy" butonuna basın. Birkaç dakika içinde siteniz `.vercel.app` uzantılı bir adreste yayında olacaktır.
+5.  **Domain'i Bağlayın:** (İsteğe bağlı) Vercel panosundaki "Domains" sekmesinden kendi özel domain'inizi projenize kolayca bağlayabilirsiniz.
+
+---
+
+"Build in Public" Sürecinde Ne Yapmalı?
+Hemen Lansman Yapın: Ürünü Product Hunt, Indie Hackers, Twitter ve Reddit gibi platformlarda paylaşın.
+Geri Bildirim Toplayın: "Bu araç işinize yaradı mı?", "Hangi ek veriyi görmek isterdiniz?", "Neyi eksik buldunuz?" gibi sorular sorun.
+Verileri Analiz Edin: İnsanların en çok hangi özellikleri istediğini ve ürünle nasıl etkileşime geçtiğini gözlemleyin.

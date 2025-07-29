@@ -1,0 +1,9 @@
+
+{
+  "name": "validationly-app",
+  "version": "1.0.0",
+  "description": "AI Idea Validation Tool",
+  "dependencies": {
+    "@google/genai": "^1.11.0"
+  }
+}
