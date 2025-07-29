@@ -18,18 +18,18 @@ const platformSignalSchema = {
 };
 
 const responseSchema = {
-  type: Type.OBJECT,
-  properties: {
-    idea: { type: Type.STRING },
-    demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
-    scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score, e.g., 'Strong Niche Interest'." },
-    signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
-    tweetSuggestion: { type: Type.STRING, description: "A short, engaging tweet to test the idea." },
-    redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for a Reddit post." },
-    redditBodySuggestion: { type: Type.STRING, description: "A detailed body for a Reddit post." },
-    linkedinSuggestion: { type: Type.STRING, description: "A professional post for LinkedIn." },
-  },
-  required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
+    type: Type.OBJECT,
+    properties: {
+        idea: { type: Type.STRING },
+        demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
+        scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score, e.g., 'Strong Niche Interest'." },
+        signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
+        tweetSuggestion: { type: Type.STRING, description: "A short, engaging tweet to test the idea." },
+        redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for a Reddit post." },
+        redditBodySuggestion: { type: Type.STRING, description: "A detailed body for a Reddit post." },
+        linkedinSuggestion: { type: Type.STRING, description: "A professional post for LinkedIn." },
+    },
+    required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
 
 
@@ -44,7 +44,7 @@ export default async function handler(req: Request) {
         if (!idea || typeof idea !== 'string') {
             return new Response(JSON.stringify({ message: 'Idea is required' }), { status: 400, headers: { 'Content-Type': 'application/json' } });
         }
-        
+
         const systemInstruction = `You are 'Validationly', an expert AI market research analyst. Your task is to analyze a user's business idea and provide a detailed validation report in the specified JSON format.
 
         Your analysis must include:
@@ -61,7 +61,7 @@ export default async function handler(req: Request) {
         `;
 
         const result = await ai.models.generateContent({
-            model: "gemini-1.5-flash",
+            model: "gemini-2.5-flash",
             contents: `Analyze this business idea: "${idea}"`,
             config: {
                 systemInstruction: systemInstruction,
@@ -76,7 +76,7 @@ export default async function handler(req: Request) {
 
         const jsonText = result.text?.trim() || "";
         const parsedResult = JSON.parse(jsonText);
-        
+
         // Add the original idea to the response for the frontend
         parsedResult.idea = idea;
 
