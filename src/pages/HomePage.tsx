@@ -74,40 +74,38 @@ const HomePage: React.FC = () => {
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">Validate your idea before you build it.</h1>
             <p className="text-lg text-gray-600 mb-8">Why guess? Get an AI-driven demand forecast instantly.</p>
 
-            <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl shadow-gray-200/80">
-                <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-                    <textarea
-                        ref={textareaRef}
-                        value={idea}
-                        onChange={(e) => {
-                            setIdea(e.target.value);
-                            if(error) setError(null);
-                        }}
-                        onKeyDown={handleKeyDown}
-                        placeholder="e.g. AI reading coach that sets your daily focus"
-                        className="w-full p-4 rounded-xl bg-transparent border-0 text-gray-900 focus:ring-0 focus:outline-none min-h-[100px] resize-none text-center text-lg"
-                        rows={3}
-                        disabled={isLoading}
-                    />
-                    <button
-                        type="submit"
-                        disabled={isLoading || !idea.trim()}
-                        className="w-full flex justify-center items-center gap-3 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-lg"
-                    >
-                        {isLoading ? (
-                            <>
-                                <LoadingSpinner />
-                                Analyzing...
-                            </>
-                        ) : (
-                           <>
-                           <MagnifyingGlassIcon />
-                           Validate This Idea
-                           </>
-                        )}
-                    </button>
-                </form>
-            </div>
+            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
+                <textarea
+                    ref={textareaRef}
+                    value={idea}
+                    onChange={(e) => {
+                        setIdea(e.target.value);
+                        if(error) setError(null);
+                    }}
+                    onKeyDown={handleKeyDown}
+                    placeholder="e.g. AI reading coach that sets your daily focus"
+                    className="w-full p-4 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[100px] resize-none text-center text-lg"
+                    rows={3}
+                    disabled={isLoading}
+                />
+                <button
+                    type="submit"
+                    disabled={isLoading || !idea.trim()}
+                    className="w-full flex justify-center items-center gap-3 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-lg"
+                >
+                    {isLoading ? (
+                        <>
+                            <LoadingSpinner />
+                            Analyzing...
+                        </>
+                    ) : (
+                       <>
+                       <MagnifyingGlassIcon />
+                       Validate This Idea
+                       </>
+                    )}
+                </button>
+            </form>
 
             {error && <p className="text-red-500 mt-4">{error}</p>}
 
