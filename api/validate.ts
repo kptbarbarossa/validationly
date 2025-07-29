@@ -61,12 +61,16 @@ export default async function handler(req: Request) {
         `;
 
         const result = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
+            model: "gemini-1.5-flash",
             contents: `Analyze this business idea: "${idea}"`,
             config: {
                 systemInstruction: systemInstruction,
                 responseMimeType: "application/json",
                 responseSchema: responseSchema,
+                generationConfig: {
+                    temperature: 0.7,
+                    maxOutputTokens: 2048,
+                }
             }
         });
 
