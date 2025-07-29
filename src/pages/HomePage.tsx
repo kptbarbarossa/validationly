@@ -113,6 +113,23 @@ const HomePage: React.FC = () => {
             </form>
 
             {error && <p className="text-red-500 mt-4">{error}</p>}
+            
+            <button 
+                onClick={async () => {
+                    try {
+                        const response = await fetch('/api/test');
+                        const result = await response.json();
+                        console.log('Test API result:', result);
+                        alert('Test API: ' + JSON.stringify(result));
+                    } catch (err) {
+                        console.error('Test API error:', err);
+                        alert('Test API failed: ' + err);
+                    }
+                }}
+                className="mt-4 px-4 py-2 bg-red-500 text-white rounded"
+            >
+                Test API
+            </button>
 
             <div className="mt-12 pt-8">
                 <h3 className="text-md font-semibold text-gray-600 mb-5">Not sure where to start? Try an example:</h3>
