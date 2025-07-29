@@ -1,6 +1,6 @@
-# Run and deploy your AI Studio app
+# Validationly 🚀
 
-This contains everything you need to run your app locally.
+AI-powered startup idea validation tool. Validate your startup idea before you build it — in seconds.
 
 ## Run Locally
 
