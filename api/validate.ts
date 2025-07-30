@@ -90,7 +90,20 @@ const responseSchema = {
     required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+// Vercel runtime types
+interface VercelRequest {
+    method?: string;
+    body: any;
+    headers: { [key: string]: string | string[] | undefined };
+    connection?: { remoteAddress?: string };
+}
+
+interface VercelResponse {
+    status(code: number): VercelResponse;
+    json(data: any): void;
+    setHeader(key: string, value: string): void;
+    end(): void;
+}
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
     // CORS headers
@@ -118,6 +131,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
+        console.log('API validate called');
+        console.log('Request method:', req.method);
+        console.log('Request body:', req.body);
+        console.log('API_KEY exists:', !!process.env.API_KEY);
+        
         // Rate limiting kontrolü
         const clientIP = req.headers['x-forwarded-for'] as string ||
             req.headers['x-real-ip'] as string ||

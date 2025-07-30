@@ -13,12 +13,8 @@ body {
   line-height: 1.6;
   background-color: white;
   min-height: 100vh;
-  padding: 2rem 1rem;
 }
 
 #root {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: calc(100vh - 4rem);
+  min-height: 100vh;
 }
