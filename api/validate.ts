@@ -56,7 +56,15 @@ function validateInput(idea: string): void {
     }
 }
 
-const ai = new GoogleGenAI({ apiKey: validateApiKey() });
+// AI instance will be created when needed
+let ai: GoogleGenAI | null = null;
+
+function getAI(): GoogleGenAI {
+    if (!ai) {
+        ai = new GoogleGenAI({ apiKey: validateApiKey() });
+    }
+    return ai;
+}
 
 const platformSignalSchema = {
     type: Type.OBJECT,
@@ -160,7 +168,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         for (const modelName of models) {
             try {
-                result = await ai.models.generateContent({
+                const aiInstance = getAI();
+                result = await aiInstance.models.generateContent({
                     model: modelName,
                     contents: `Analyze this business idea: "${idea}"`,
                     config: {
@@ -225,6 +234,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             } else if (error.message.includes("Rate limit")) {
                 errorMessage = error.message;
                 statusCode = 429;
+            } else if (error.message.includes("API_KEY environment variable") || 
+                       error.message.includes("Invalid API key format")) {
+                errorMessage = "Service temporarily unavailable";
+                statusCode = 503;
             } else if (error.message.includes("API configuration")) {
                 errorMessage = "Service temporarily unavailable";
                 statusCode = 503;
