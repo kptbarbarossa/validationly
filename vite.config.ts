@@ -24,7 +24,7 @@ export default defineConfig({
       }
     },
     sourcemap: process.env.NODE_ENV === 'development',
-    minify: 'terser',
+    minify: 'esbuild',
     target: 'es2015'
   },
   optimizeDeps: {
