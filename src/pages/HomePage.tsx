@@ -119,8 +119,8 @@ const HomePage: React.FC = () => {
                         onKeyDown={handleKeyDown}
                         placeholder="e.g. AI reading coach that sets your daily focus"
                         className={`w-full p-6 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 focus:outline-none min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
-                                ? 'border-red-300 focus:border-red-400'
-                                : 'border-gray-200 hover:border-gray-300'
+                            ? 'border-red-300 focus:border-red-400'
+                            : 'border-gray-200 hover:border-gray-300'
                             }`}
                         rows={4}
                         disabled={isLoading}
