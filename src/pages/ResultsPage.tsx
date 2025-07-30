@@ -26,7 +26,7 @@ const XIcon = () => (
 
 const RedditIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-        <path d="M12.0003 2.00002C6.47744 2.00002 2.00031 6.47715 2.00031 12C2.00031 17.5229 6.47744 22 12.0003 22C17.5232 22 22.0003 17.5229 22.0003 12C22.0003 6.47715 17.5232 2.00002 12.0003 2.00002ZM12.0003 19.5C8.41044 19.5 5.50031 16.59 5.50031 13C5.50031 11.215 6.25531 9.59502 7.50031 8.5C7.50031 8.5 8.75031 9.25002 8.75031 10.5C8.75031 10.5 9.75031 11.25 11.2503 11.25C12.7503 11.25 13.7503 10.5 13.7503 10.5C13.7503 9.25002 15.0003 8.5 15.0003 8.5C16.2453 9.59502 17.0003 11.215 17.0003 13C17.0003 16.59 14.0903 19.5 12.0003 19.5ZM9.00031 14.25C8.31031 14.25 7.75031 13.69 7.75031 13C7.75031 12.31 8.31031 11.75 9.00031 11.75C9.69031 11.75 10.2503 12.31 10.2503 13C10.2503 13.69 9.69031 14.25 9.00031 14.25ZM15.0003 14.25C14.3103 14.25 13.7503 13.69 13.7503 13C13.7503 12.31 14.3103 11.75 15.0003 11.75C15.6903 11.75 16.2503 12.31 16.2503 13C16.2503 13.69 15.6903 14.25 15.0003 14.25ZM15.8253 16.62C15.8253 16.62 15.1953 17.625 12.0003 17.625C8.80531 17.625 8.17531 16.62 8.17531 16.62C8.04031 16.41 8.17531 16.125 8.41531 16.125H15.5853C15.8253 16.125 15.9603 16.41 15.8253 16.62Z"/>
+        <path d="M12.0003 2.00002C6.47744 2.00002 2.00031 6.47715 2.00031 12C2.00031 17.5229 6.47744 22 12.0003 22C17.5232 22 22.0003 17.5229 22.0003 12C22.0003 6.47715 17.5232 2.00002 12.0003 2.00002ZM12.0003 19.5C8.41044 19.5 5.50031 16.59 5.50031 13C5.50031 11.215 6.25531 9.59502 7.50031 8.5C7.50031 8.5 8.75031 9.25002 8.75031 10.5C8.75031 10.5 9.75031 11.25 11.2503 11.25C12.7503 11.25 13.7503 10.5 13.7503 10.5C13.7503 9.25002 15.0003 8.5 15.0003 8.5C16.2453 9.59502 17.0003 11.215 17.0003 13C17.0003 16.59 14.0903 19.5 12.0003 19.5ZM9.00031 14.25C8.31031 14.25 7.75031 13.69 7.75031 13C7.75031 12.31 8.31031 11.75 9.00031 11.75C9.69031 11.75 10.2503 12.31 10.2503 13C10.2503 13.69 9.69031 14.25 9.00031 14.25ZM15.0003 14.25C14.3103 14.25 13.7503 13.69 13.7503 13C13.7503 12.31 14.3103 11.75 15.0003 11.75C15.6903 11.75 16.2503 12.31 16.2503 13C16.2503 13.69 15.6903 14.25 15.0003 14.25ZM15.8253 16.62C15.8253 16.62 15.1953 17.625 12.0003 17.625C8.80531 17.625 8.17531 16.62 8.17531 16.62C8.04031 16.41 8.17531 16.125 8.41531 16.125H15.5853C15.8253 16.125 15.9603 16.41 15.8253 16.62Z" />
     </svg>
 );
 
@@ -78,7 +78,7 @@ const ResultsPage: React.FC = () => {
         const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(result.tweetSuggestion)}`;
         window.open(tweetUrl, '_blank', 'noopener,noreferrer');
     };
-    
+
     const handlePostToReddit = () => {
         const title = result.redditTitleSuggestion;
         const body = result.redditBodySuggestion;
@@ -98,14 +98,14 @@ const ResultsPage: React.FC = () => {
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
                     "{result.idea}"
                 </h1>
-                
+
                 <div className="mb-8">
                     <h2 className="text-lg font-semibold text-gray-700 mb-3 flex items-center gap-3">
                         <ChartBarIcon /> Demand Score
                     </h2>
                     <ScoreBar score={result.demandScore} text={result.scoreJustification} />
                 </div>
-                
+
                 <div>
                     <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
                         <SignalIcon /> Signal Summary
@@ -137,21 +137,21 @@ const ResultsPage: React.FC = () => {
                     title="X Post Suggestion"
                     content={result.tweetSuggestion}
                     actions={[
-                        { 
-                            id: 'tweet-post', 
-                            label: 'Post to X', 
-                            handler: handleTweet 
+                        {
+                            id: 'tweet-post',
+                            label: 'Post to X',
+                            handler: handleTweet
                         },
-                        { 
-                            id: 'tweet-copy', 
-                            label: 'Copy Text', 
-                            handler: () => handleCopyToClipboard(result.tweetSuggestion, 'tweet-copy'), 
-                            copiedLabel: 'Copied!' 
+                        {
+                            id: 'tweet-copy',
+                            label: 'Copy Text',
+                            handler: () => handleCopyToClipboard(result.tweetSuggestion, 'tweet-copy'),
+                            copiedLabel: 'Copied!'
                         }
                     ]}
                     copiedId={copiedId}
                 />
-                
+
                 <SuggestionCard
                     icon={<RedditIcon />}
                     title="Reddit Post Suggestion"
@@ -162,43 +162,43 @@ const ResultsPage: React.FC = () => {
                         </>
                     }
                     actions={[
-                        { 
-                            id: 'reddit-post', 
-                            label: 'Post to Reddit', 
-                            handler: handlePostToReddit 
+                        {
+                            id: 'reddit-post',
+                            label: 'Post to Reddit',
+                            handler: handlePostToReddit
                         },
-                        { 
-                            id: 'reddit-copy', 
-                            label: 'Copy Text', 
-                            handler: () => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit-copy'), 
-                            copiedLabel: 'Copied!' 
+                        {
+                            id: 'reddit-copy',
+                            label: 'Copy Text',
+                            handler: () => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit-copy'),
+                            copiedLabel: 'Copied!'
                         }
                     ]}
                     copiedId={copiedId}
                 />
-                
+
                 <SuggestionCard
                     icon={<LinkedInIcon />}
                     title="LinkedIn Post Suggestion"
                     content={result.linkedinSuggestion}
                     actions={[
-                        { 
-                            id: 'linkedin-post', 
-                            label: 'Post to LinkedIn', 
-                            handler: handlePostToLinkedIn, 
-                            copiedLabel: 'Copied! Now Paste' 
+                        {
+                            id: 'linkedin-post',
+                            label: 'Post to LinkedIn',
+                            handler: handlePostToLinkedIn,
+                            copiedLabel: 'Copied! Now Paste'
                         },
-                        { 
-                            id: 'linkedin-copy', 
-                            label: 'Copy Text', 
-                            handler: () => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin-copy'), 
-                            copiedLabel: 'Copied!' 
+                        {
+                            id: 'linkedin-copy',
+                            label: 'Copy Text',
+                            handler: () => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin-copy'),
+                            copiedLabel: 'Copied!'
                         }
                     ]}
                     copiedId={copiedId}
                 />
             </div>
-            
+
             <div className="text-center flex flex-col sm:flex-row items-center justify-center gap-4">
                 <button
                     onClick={() => navigate('/')}
