@@ -4,7 +4,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 dakika
-const MAX_REQUESTS_PER_WINDOW = 10; // Daha sıkı limit
+const MAX_REQUESTS_PER_WINDOW = 50; // Normal limit
 const SUSPICIOUS_THRESHOLD = 5; // Şüpheli aktivite eşiği
 
 // Rate limiting kontrolü

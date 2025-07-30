@@ -52,14 +52,19 @@ const HomePage: React.FC = () => {
     };
 
     const triggerValidation = async () => {
+        console.log('triggerValidation called', { isValid: userInput.isValid, idea: userInput.idea });
+        
         if (!userInput.isValid) {
+            console.log('Validation failed - input not valid');
             return;
         }
 
         setIsLoading(true);
+        console.log('Starting API call...');
 
         try {
             const result: ValidationResult = await validateIdea(userInput.idea);
+            console.log('API call successful', result);
             navigate('/results', { state: { result } });
         } catch (err) {
             if (err instanceof Error) {
