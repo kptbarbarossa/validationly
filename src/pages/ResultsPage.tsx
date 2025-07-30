@@ -216,6 +216,15 @@ const ResultsPage: React.FC = () => {
                 >
                     Buy me a coffee
                 </a>
+                <a
+                    href="https://x.com/kptbarbarossa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full sm:w-auto flex items-center justify-center font-semibold py-3 px-6 rounded-full text-white bg-black hover:bg-gray-800 transition-all duration-200"
+                    aria-label="Feedback on X"
+                >
+                    Feedback on X
+                </a>
             </div>
         </div>
     );
