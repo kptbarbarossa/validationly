@@ -33,19 +33,19 @@ const HomePage: React.FC = () => {
 
     const validateInput = (idea: string): UserInput => {
         const trimmedIdea = idea.trim();
-        
+
         if (!trimmedIdea) {
             return { idea, isValid: false, errorMessage: 'Please enter an idea to validate.' };
         }
-        
+
         if (trimmedIdea.length < 10) {
             return { idea, isValid: false, errorMessage: 'Idea must be at least 10 characters long.' };
         }
-        
+
         if (trimmedIdea.length > 1000) {
             return { idea, isValid: false, errorMessage: 'Idea must be less than 1000 characters.' };
         }
-        
+
         return { idea, isValid: true };
     };
 
@@ -61,7 +61,7 @@ const HomePage: React.FC = () => {
         }
 
         setIsLoading(true);
-        
+
         try {
             const result: ValidationResult = await validateIdea(userInput.idea);
             navigate('/results', { state: { result } });
@@ -103,7 +103,7 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
+            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
                 Validate your idea before you build it.
             </h1>
             <p className="text-lg text-gray-600 mb-12">
@@ -118,11 +118,10 @@ const HomePage: React.FC = () => {
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         placeholder="e.g. AI reading coach that sets your daily focus"
-                        className={`w-full p-6 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${
-                            userInput.errorMessage 
-                                ? 'border-red-300 focus:border-red-400' 
+                        className={`w-full p-6 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
+                                ? 'border-red-300 focus:border-red-400'
                                 : 'border-gray-200 hover:border-gray-300'
-                        }`}
+                            }`}
                         rows={4}
                         disabled={isLoading}
                         aria-describedby={userInput.errorMessage ? "error-message" : undefined}
@@ -133,7 +132,7 @@ const HomePage: React.FC = () => {
                         </div>
                     )}
                 </div>
-                
+
                 <button
                     type="submit"
                     disabled={isLoading || !userInput.isValid}
