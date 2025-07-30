@@ -80,7 +80,9 @@ const responseSchema = {
     required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
 
-export default async function handler(req: Request) {
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
     // CORS headers
     const headers = {
         'Content-Type': 'application/json',
@@ -91,34 +93,34 @@ export default async function handler(req: Request) {
         'Access-Control-Allow-Headers': 'Content-Type',
     };
 
+    // Set CORS headers
+    Object.entries(headers).forEach(([key, value]) => {
+        res.setHeader(key, value);
+    });
+
     // Handle preflight requests
     if (req.method === 'OPTIONS') {
-        return new Response(null, { status: 200, headers });
+        return res.status(200).end();
     }
 
     if (req.method !== 'POST') {
-        return new Response(
-            JSON.stringify({ message: 'Method not allowed' }),
-            { status: 405, headers }
-        );
+        return res.status(405).json({ message: 'Method not allowed' });
     }
 
     try {
         // Rate limiting kontrolü
-        const clientIP = req.headers.get('x-forwarded-for') ||
-            req.headers.get('x-real-ip') ||
+        const clientIP = req.headers['x-forwarded-for'] as string ||
+            req.headers['x-real-ip'] as string ||
+            req.connection?.remoteAddress ||
             'unknown';
 
         if (!checkRateLimit(clientIP)) {
-            return new Response(
-                JSON.stringify({
-                    message: 'Rate limit exceeded. Please try again later.'
-                }),
-                { status: 429, headers }
-            );
+            return res.status(429).json({
+                message: 'Rate limit exceeded. Please try again later.'
+            });
         }
 
-        const { idea } = await req.json();
+        const { idea } = req.body;
 
         // Input validation
         validateInput(idea);
@@ -194,10 +196,7 @@ export default async function handler(req: Request) {
         // Add the original idea to the response
         parsedResult.idea = idea;
 
-        return new Response(JSON.stringify(parsedResult), {
-            status: 200,
-            headers
-        });
+        return res.status(200).json(parsedResult);
 
     } catch (error) {
         console.error("Error in validation API:", error);
@@ -219,9 +218,6 @@ export default async function handler(req: Request) {
             }
         }
 
-        return new Response(
-            JSON.stringify({ message: errorMessage }),
-            { status: statusCode, headers }
-        );
+        return res.status(statusCode).json({ message: errorMessage });
     }
 }
