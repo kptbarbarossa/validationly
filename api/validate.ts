@@ -136,7 +136,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.log('Request body:', req.body);
         console.log('API_KEY exists:', !!process.env.API_KEY);
         console.log('Node version:', process.version);
-        
+
         // Rate limiting kontrolü
         const clientIP = req.headers['x-forwarded-for'] as string ||
             req.headers['x-real-ip'] as string ||
