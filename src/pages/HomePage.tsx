@@ -117,7 +117,7 @@ const HomePage: React.FC = () => {
                         value={userInput.idea}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
-                        placeholder="e.g. AI reading coach that sets your daily focus"
+                        placeholder="Validate your idea"
                         className={`w-full p-6 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 focus:outline-none min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
                             ? 'border-red-300 focus:border-red-400'
                             : 'border-gray-200 hover:border-gray-300'
@@ -131,26 +131,15 @@ const HomePage: React.FC = () => {
                             {userInput.errorMessage}
                         </div>
                     )}
+                    {isLoading && (
+                        <div className="flex items-center justify-center gap-2 mt-3 text-indigo-600">
+                            <LoadingSpinner />
+                            <span className="text-sm">Analyzing your idea...</span>
+                        </div>
+                    )}
                 </div>
 
-                <button
-                    type="submit"
-                    disabled={isLoading || !userInput.isValid}
-                    className="w-full flex justify-center items-center gap-2 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)]"
-                    aria-label={isLoading ? "Analyzing idea..." : "Validate this idea"}
-                >
-                    {isLoading ? (
-                        <>
-                            <LoadingSpinner />
-                            Analyzing...
-                        </>
-                    ) : (
-                        <>
-                            <MagnifyingGlassIcon />
-                            Validate This Idea
-                        </>
-                    )}
-                </button>
+
             </form>
 
             <div className="mt-12">
