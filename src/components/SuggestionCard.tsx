@@ -2,51 +2,58 @@
 import React from 'react';
 
 interface Action {
-    id: string;
-    label: string;
-    handler: () => void;
-    copiedLabel?: string;
+  id: string;
+  label: string;
+  handler: () => void;
+  copiedLabel?: string;
 }
 
 interface SuggestionCardProps {
-    icon: React.ReactNode;
-    title: string;
-    content: React.ReactNode;
-    actions: Action[];
-    copiedId: string | null;
+  icon: React.ReactNode;
+  title: string;
+  content: React.ReactNode;
+  actions: Action[];
+  copiedId: string | null;
+  className?: string;
 }
 
-const SuggestionCard: React.FC<SuggestionCardProps> = ({ icon, title, content, actions, copiedId }) => {
-    return (
-        <div className="bg-white p-6 rounded-3xl shadow-xl shadow-gray-200/70 flex flex-col h-full">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3 flex items-center gap-3">
-                <div className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600">{icon}</div>
-                {title}
-            </h3>
-            <div className="text-gray-600 flex-grow mb-5 prose prose-sm max-w-none">
-                {typeof content === 'string' ? <p>{content}</p> : content}
-            </div>
-            <div className="flex flex-wrap gap-3 mt-auto justify-center">
-                {actions.map((action) => {
-                    const isCopied = copiedId === action.id;
-                    return (
-                        <button
-                            key={action.id}
-                            onClick={action.handler}
-                            disabled={isCopied}
-                            className={`flex-1 min-w-[120px] text-center font-medium py-2 px-4 rounded-full transition-all duration-200 text-sm ${
-                                isCopied && action.copiedLabel
-                                ? 'bg-green-500 text-white cursor-default border-green-500' 
-                                : 'border border-gray-300 bg-transparent text-gray-700 hover:bg-gray-100 hover:border-gray-400'
-                            }`}
-                        >
-                            {isCopied && action.copiedLabel ? action.copiedLabel : action.label}
-                        </button>
-                    );
-                })}
-            </div>
+const SuggestionCard: React.FC<SuggestionCardProps> = ({
+  icon,
+  title,
+  content,
+  actions,
+  copiedId,
+  className = ''
+}) => {
+  return (
+    <div className={`bg-white rounded-2xl shadow-lg shadow-gray-200/50 p-6 ${className}`}>
+      <div className="flex items-center gap-3 mb-4">
+        <div className="text-indigo-500">
+          {icon}
         </div>
-    );
+        <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+      </div>
+      
+      <div className="mb-6">
+        {content}
+      </div>
+      
+      <div className="flex flex-col sm:flex-row gap-2">
+        {actions.map((action) => (
+          <button
+            key={action.id}
+            onClick={action.handler}
+            className="flex-1 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            aria-label={action.label}
+          >
+            {copiedId === action.id && action.copiedLabel 
+              ? action.copiedLabel 
+              : action.label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default SuggestionCard;

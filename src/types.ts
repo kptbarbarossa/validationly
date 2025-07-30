@@ -3,13 +3,41 @@ export interface ValidationResult {
   idea: string;
   demandScore: number;
   scoreJustification: string;
-  signalSummary: {
-    platform: 'Twitter' | 'Reddit' | 'LinkedIn' | 'General';
-    postCount: number;
-    summary: string;
-  }[];
+  signalSummary: PlatformSignal[];
   tweetSuggestion: string;
   redditTitleSuggestion: string;
   redditBodySuggestion: string;
   linkedinSuggestion: string;
+}
+
+export interface PlatformSignal {
+  platform: 'Twitter' | 'Reddit' | 'LinkedIn' | 'General';
+  postCount: number;
+  summary: string;
+}
+
+export interface ApiError {
+  message: string;
+  code?: string;
+  status?: number;
+}
+
+export interface ValidationRequest {
+  idea: string;
+}
+
+export interface ApiResponse<T> {
+  data?: T;
+  error?: ApiError;
+}
+
+export interface LoadingState {
+  isLoading: boolean;
+  error: string | null;
+}
+
+export interface UserInput {
+  idea: string;
+  isValid: boolean;
+  errorMessage?: string;
 }

@@ -23,6 +23,9 @@ Validationly is an AI-powered tool that helps makers, founders, and indie hacker
 - 📊 **Multi-Platform Analysis**: Insights from Twitter, Reddit, and LinkedIn
 - 💡 **Actionable Suggestions**: Ready-to-use social media posts for testing
 - 🤖 **AI-Powered**: Built with Google's Gemini 2.0 for accurate analysis
+- 🔒 **Secure**: Rate limiting, input validation, and CORS protection
+- ♿ **Accessible**: WCAG compliant with proper ARIA labels
+- 🛡️ **Error Handling**: Comprehensive error boundaries and validation
 
 ## 🛠️ Perfect For
 
@@ -33,10 +36,12 @@ Validationly is an AI-powered tool that helps makers, founders, and indie hacker
 
 ## 🏗️ Tech Stack
 
-- **Frontend**: React 19 + TypeScript + Tailwind CSS
+- **Frontend**: React 18 + TypeScript + Tailwind CSS
 - **Backend**: Vercel Serverless Functions
 - **AI**: Google Gemini 2.0 Flash Experimental
 - **Deployment**: Vercel
+- **Code Quality**: ESLint, Prettier, TypeScript strict mode
+- **Testing**: Vitest for unit testing
 
 ## 🧪 Running Locally
 
@@ -54,10 +59,17 @@ Validationly is an AI-powered tool that helps makers, founders, and indie hacker
    ```
 
 3. **Set up environment variables**
-   Create a `.env.local` file:
+   Copy `env.example` to `.env.local`:
+   ```bash
+   cp env.example .env.local
+   ```
+   
+   Edit `.env.local` and add your API key:
    ```
    API_KEY=your_gemini_api_key_here
+   NODE_ENV=development
    ```
+   
    Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
 
 4. **Run the development server**
@@ -68,6 +80,26 @@ Validationly is an AI-powered tool that helps makers, founders, and indie hacker
 5. **Open your browser**
    Navigate to `http://localhost:5173`
 
+## 🚀 Development Commands
+
+```bash
+# Development
+npm run dev              # Start development server
+npm run build           # Build for production
+npm run preview         # Preview production build
+
+# Code Quality
+npm run type-check      # TypeScript type checking
+npm run lint            # ESLint checking
+npm run lint:fix        # ESLint auto-fix
+npm run format          # Prettier formatting
+npm run security-check  # Security audit
+
+# Testing
+npm run test            # Run tests
+npm run test:ui         # Run tests with UI
+```
+
 ## 🚀 Deployment
 
 This app is designed to be deployed on Vercel:
@@ -75,6 +107,22 @@ This app is designed to be deployed on Vercel:
 1. **Connect to Vercel**: Import your GitHub repository
 2. **Set Environment Variables**: Add `API_KEY` in Vercel dashboard
 3. **Deploy**: Vercel will automatically build and deploy
+
+## 🔒 Security Features
+
+- **Rate Limiting**: 50 requests per 15 minutes per IP
+- **Input Validation**: XSS protection and length limits
+- **CORS Protection**: Proper cross-origin request handling
+- **Error Sanitization**: Safe error messages without exposing internals
+- **API Key Validation**: Secure API key management
+
+## ♿ Accessibility Features
+
+- **ARIA Labels**: Proper screen reader support
+- **Keyboard Navigation**: Full keyboard accessibility
+- **Color Contrast**: WCAG compliant color schemes
+- **Focus Management**: Proper focus indicators
+- **Error Announcements**: Screen reader error notifications
 
 ## 📝 Example Ideas to Test
 
@@ -85,10 +133,20 @@ This app is designed to be deployed on Vercel:
 
 ## 🤝 Contributing
 
-Contributions are welcome! Feel free to:
-- Report bugs
-- Suggest new features
-- Submit pull requests
+Contributions are welcome! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Run tests and linting:
+   ```bash
+   npm run type-check
+   npm run lint
+   npm run test
+   ```
+5. Commit your changes (`git commit -m 'Add amazing feature'`)
+6. Push to the branch (`git push origin feature/amazing-feature`)
+7. Open a Pull Request
 
 ## 📄 License
 

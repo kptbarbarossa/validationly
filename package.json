@@ -6,8 +6,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "type-check": "npx tsc --noEmit",
+    "lint": "npx eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "npx eslint src --ext ts,tsx --fix",
+    "format": "npx prettier --write src/**/*.{ts,tsx}",
+    "security-check": "npm audit",
+    "test": "npx vitest",
+    "test:ui": "npx vitest --ui"
   },
   "dependencies": {
     "@google/genai": "^1.11.0",
@@ -24,6 +31,18 @@
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.2",
-    "vite": "^5.3.1"
+    "vite": "^5.3.1",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-plugin-react": "^7.33.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "prettier": "^3.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/ui": "^1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
   }
 }

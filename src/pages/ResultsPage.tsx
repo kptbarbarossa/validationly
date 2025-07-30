@@ -48,7 +48,6 @@ const PlatformIcons: { [key: string]: React.FC } = {
     LinkedIn: LinkedInIcon,
 };
 
-
 const ResultsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
@@ -58,6 +57,7 @@ const ResultsPage: React.FC = () => {
     useEffect(() => {
         if (!result) {
             navigate('/');
+            return;
         }
         window.scrollTo(0, 0);
     }, [result, navigate]);
@@ -66,44 +66,49 @@ const ResultsPage: React.FC = () => {
         return null;
     }
 
-    const handleCopyToClipboard = (text: string, id: string, onCopy?: () => void) => {
-        navigator.clipboard.writeText(text).then(() => {
+    const handleCopyToClipboard = async (text: string, id: string, onCopy?: () => void) => {
+        try {
+            await navigator.clipboard.writeText(text);
             setCopiedId(id);
             if (onCopy) onCopy();
             setTimeout(() => setCopiedId(null), 2500);
-        }).catch(err => {
-            console.error('Failed to copy: ', err);
-        });
+        } catch (err) {
+            console.error('Failed to copy to clipboard:', err);
+        }
     };
 
     const handleTweet = () => {
         const tweetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(result.tweetSuggestion)}`;
-        window.open(tweetUrl, '_blank');
+        window.open(tweetUrl, '_blank', 'noopener,noreferrer');
     };
     
     const handlePostToReddit = () => {
         const title = result.redditTitleSuggestion;
         const body = result.redditBodySuggestion;
         const redditUrl = `https://www.reddit.com/submit?title=${encodeURIComponent(title)}&selftext=${encodeURIComponent(body)}`;
-        window.open(redditUrl, '_blank');
+        window.open(redditUrl, '_blank', 'noopener,noreferrer');
     };
 
     const handlePostToLinkedIn = () => {
         handleCopyToClipboard(result.linkedinSuggestion, 'linkedin-post', () => {
-            window.open('https://www.linkedin.com/feed/', '_blank');
+            window.open('https://www.linkedin.com/feed/', '_blank', 'noopener,noreferrer');
         });
     };
 
     return (
         <div className="max-w-4xl mx-auto animate-fade-in">
             <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl shadow-gray-200/80 mb-10">
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">“{result.idea}”</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
+                    "{result.idea}"
+                </h1>
+                
                 <div className="mb-8">
                     <h2 className="text-lg font-semibold text-gray-700 mb-3 flex items-center gap-3">
                         <ChartBarIcon /> Demand Score
                     </h2>
                     <ScoreBar score={result.demandScore} text={result.scoreJustification} />
                 </div>
+                
                 <div>
                     <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
                         <SignalIcon /> Signal Summary
@@ -114,12 +119,14 @@ const ResultsPage: React.FC = () => {
                             return (
                                 <div key={signal.platform} className="flex items-start gap-4">
                                     <div className="flex-shrink-0 text-indigo-500 mt-1">
-                                      {Icon && <Icon />}
+                                        {Icon && <Icon />}
                                     </div>
                                     <div>
                                         <p className="font-semibold text-gray-800">
                                             {signal.platform}
-                                            <span className="ml-2 text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">{signal.postCount} relevant posts found</span>
+                                            <span className="ml-2 text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">
+                                                {signal.postCount} relevant posts found
+                                            </span>
                                         </p>
                                         <p className="text-gray-600">{signal.summary}</p>
                                     </div>
@@ -136,11 +143,21 @@ const ResultsPage: React.FC = () => {
                     title="Tweet Suggestion"
                     content={result.tweetSuggestion}
                     actions={[
-                        { id: 'tweet-post', label: 'Tweet this', handler: handleTweet },
-                        { id: 'tweet-copy', label: 'Copy Text', handler: () => handleCopyToClipboard(result.tweetSuggestion, 'tweet-copy'), copiedLabel: 'Copied!' }
+                        { 
+                            id: 'tweet-post', 
+                            label: 'Tweet this', 
+                            handler: handleTweet 
+                        },
+                        { 
+                            id: 'tweet-copy', 
+                            label: 'Copy Text', 
+                            handler: () => handleCopyToClipboard(result.tweetSuggestion, 'tweet-copy'), 
+                            copiedLabel: 'Copied!' 
+                        }
                     ]}
                     copiedId={copiedId}
                 />
+                
                 <SuggestionCard
                     icon={<RedditIcon />}
                     title="Reddit Post Suggestion"
@@ -151,27 +168,48 @@ const ResultsPage: React.FC = () => {
                         </>
                     }
                     actions={[
-                        { id: 'reddit-post', label: 'Post to Reddit', handler: handlePostToReddit },
-                        { id: 'reddit-copy', label: 'Copy Text', handler: () => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit-copy'), copiedLabel: 'Copied!' }
+                        { 
+                            id: 'reddit-post', 
+                            label: 'Post to Reddit', 
+                            handler: handlePostToReddit 
+                        },
+                        { 
+                            id: 'reddit-copy', 
+                            label: 'Copy Text', 
+                            handler: () => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit-copy'), 
+                            copiedLabel: 'Copied!' 
+                        }
                     ]}
-                     copiedId={copiedId}
+                    copiedId={copiedId}
                 />
-                 <SuggestionCard
+                
+                <SuggestionCard
                     icon={<LinkedInIcon />}
                     title="LinkedIn Post Suggestion"
                     content={result.linkedinSuggestion}
                     actions={[
-                        { id: 'linkedin-post', label: 'Post to LinkedIn', handler: handlePostToLinkedIn, copiedLabel: 'Copied! Now Paste' },
-                        { id: 'linkedin-copy', label: 'Copy Text', handler: () => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin-copy'), copiedLabel: 'Copied!' }
+                        { 
+                            id: 'linkedin-post', 
+                            label: 'Post to LinkedIn', 
+                            handler: handlePostToLinkedIn, 
+                            copiedLabel: 'Copied! Now Paste' 
+                        },
+                        { 
+                            id: 'linkedin-copy', 
+                            label: 'Copy Text', 
+                            handler: () => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin-copy'), 
+                            copiedLabel: 'Copied!' 
+                        }
                     ]}
-                     copiedId={copiedId}
+                    copiedId={copiedId}
                 />
             </div>
             
             <div className="text-center flex flex-col sm:flex-row items-center justify-center gap-4">
-                 <button
+                <button
                     onClick={() => navigate('/')}
                     className="w-full sm:w-auto font-semibold py-3 px-8 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 transition-all duration-200"
+                    aria-label="Try another idea"
                 >
                     Try another idea
                 </button>
@@ -180,6 +218,7 @@ const ResultsPage: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full sm:w-auto flex items-center justify-center gap-2 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-yellow-400 via-orange-500 to-orange-600 hover:opacity-90 transition-all duration-200"
+                    aria-label="Buy me a coffee"
                 >
                     <CoffeeIcon />
                     Buy me a coffee
