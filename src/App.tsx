@@ -53,7 +53,7 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <div className="bg-white text-gray-800 min-h-screen font-sans antialiased">
         <BrowserRouter>
-          <header className="py-6 px-4 sm:px-6 lg:px-8 border-b border-gray-200/80">
+          <header className="py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-200/80">
             <div className="container mx-auto flex justify-center">
               <Link 
                 to="/" 
@@ -65,7 +65,7 @@ const App: React.FC = () => {
             </div>
           </header>
           
-          <main className="container mx-auto px-4 py-12 sm:py-20">
+          <main className="container mx-auto px-4 py-8 sm:py-12">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/results" element={<ResultsPage />} />

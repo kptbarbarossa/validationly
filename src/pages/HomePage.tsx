@@ -103,22 +103,22 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 tracking-tight">
                 Validate your idea before you build it.
             </h1>
-            <p className="text-lg text-gray-600 mb-12">
+            <p className="text-lg text-gray-600 mb-8">
                 Why guess? Get an AI-driven demand forecast instantly.
             </p>
 
             <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-                <div className="relative mb-6">
+                <div className="relative mb-4">
                     <textarea
                         ref={textareaRef}
                         value={userInput.idea}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         placeholder="e.g. AI reading coach that sets your daily focus"
-                        className={`w-full p-6 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
+                        className={`w-full p-6 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 focus:outline-none min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
                                 ? 'border-red-300 focus:border-red-400'
                                 : 'border-gray-200 hover:border-gray-300'
                             }`}
@@ -136,7 +136,7 @@ const HomePage: React.FC = () => {
                 <button
                     type="submit"
                     disabled={isLoading || !userInput.isValid}
-                    className="w-full flex justify-center items-center gap-3 font-semibold py-4 px-8 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)]"
+                    className="w-full flex justify-center items-center gap-2 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-base shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)]"
                     aria-label={isLoading ? "Analyzing idea..." : "Validate this idea"}
                 >
                     {isLoading ? (
@@ -153,7 +153,7 @@ const HomePage: React.FC = () => {
                 </button>
             </form>
 
-            <div className="mt-16">
+            <div className="mt-12">
                 <h3 className="text-base font-medium text-gray-600 mb-6">
                     Not sure where to start? Try an example:
                 </h3>
