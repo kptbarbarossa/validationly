@@ -86,7 +86,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const headers = {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
-            ? 'https://validationly.vercel.app'
+            ? 'https://validationly.com'
             : '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
