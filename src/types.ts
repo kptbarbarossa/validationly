@@ -11,7 +11,7 @@ export interface ValidationResult {
 }
 
 export interface PlatformSignal {
-  platform: 'Twitter' | 'Reddit' | 'LinkedIn' | 'General';
+  platform: 'X' | 'Twitter' | 'Reddit' | 'LinkedIn' | 'General';
   postCount: number;
   summary: string;
 }

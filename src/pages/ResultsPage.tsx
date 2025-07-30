@@ -18,7 +18,7 @@ const SignalIcon = () => (
     </svg>
 );
 
-const TwitterIcon = () => (
+const XIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
     </svg>
@@ -37,13 +37,15 @@ const LinkedInIcon = () => (
 );
 
 const CoffeeIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M2 21h18v-2H2v2zM20 8h-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v8c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.1 0 2-.9 2-2s-.9-2-2-2zM16 13c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5h12v8z"/>
+        <path d="M11 6H9v5h2V6zM14 6h-2v3h2V6z"/>
     </svg>
 );
 
 const PlatformIcons: { [key: string]: React.FC } = {
-    Twitter: TwitterIcon,
+    X: XIcon,
+    Twitter: XIcon, // Backward compatibility
     Reddit: RedditIcon,
     LinkedIn: LinkedInIcon,
 };
@@ -139,13 +141,13 @@ const ResultsPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
                 <SuggestionCard
-                    icon={<TwitterIcon />}
-                    title="Tweet Suggestion"
+                    icon={<XIcon />}
+                    title="X Post Suggestion"
                     content={result.tweetSuggestion}
                     actions={[
                         { 
                             id: 'tweet-post', 
-                            label: 'Tweet this', 
+                            label: 'Post to X', 
                             handler: handleTweet 
                         },
                         { 
@@ -214,7 +216,7 @@ const ResultsPage: React.FC = () => {
                     Try another idea
                 </button>
                 <a
-                    href="https://www.buymeacoffee.com/yourusername"
+                    href="https://buymeacoffee.com/kptbarbarossa"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full sm:w-auto flex items-center justify-center gap-2 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-yellow-400 via-orange-500 to-orange-600 hover:opacity-90 transition-all duration-200"

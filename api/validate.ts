@@ -58,7 +58,7 @@ const ai = new GoogleGenAI({ apiKey: validateApiKey() });
 const platformSignalSchema = {
     type: Type.OBJECT,
     properties: {
-        platform: { type: Type.STRING, enum: ['Twitter', 'Reddit', 'LinkedIn', 'General'] },
+        platform: { type: Type.STRING, enum: ['X', 'Reddit', 'LinkedIn', 'General'] },
         postCount: { type: Type.INTEGER, description: "Estimated number of relevant posts found." },
         summary: { type: Type.STRING, description: "A one-sentence summary of the signals from this platform." }
     },
@@ -72,7 +72,7 @@ const responseSchema = {
         demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
         scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score, e.g., 'Strong Niche Interest'." },
         signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
-        tweetSuggestion: { type: Type.STRING, description: "A short, engaging tweet to test the idea." },
+        tweetSuggestion: { type: Type.STRING, description: "A short, engaging X (Twitter) post to test the idea." },
         redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for a Reddit post." },
         redditBodySuggestion: { type: Type.STRING, description: "A detailed body for a Reddit post." },
         linkedinSuggestion: { type: Type.STRING, description: "A professional post for LinkedIn." },
@@ -125,20 +125,36 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Input validation
         validateInput(idea);
 
-        const systemInstruction = `You are 'Validationly', an expert AI market research analyst. Your task is to analyze a user's business idea and provide a detailed validation report in the specified JSON format.
+        const systemInstruction = `You are 'Validationly', an expert AI market research analyst with deep knowledge of social media trends, consumer behavior, and startup ecosystems. Your task is to analyze a user's business idea and provide a comprehensive validation report.
 
-        Your analysis must include:
-        1.  A realistic 'demandScore' from 0 to 100.
-        2.  A brief 'scoreJustification' for that score.
-        3.  A 'signalSummary' array containing separate objects for Twitter, Reddit, and LinkedIn. For each, simulate a search to find a realistic 'postCount' and write a 'summary' of the findings.
-        4.  Actionable, platform-specific post suggestions for Twitter, Reddit, and LinkedIn.
+        ANALYSIS METHODOLOGY:
+        1. Demand Score (0-100): Base this on realistic market factors:
+           - 0-30: Very niche/limited demand
+           - 31-50: Moderate interest, competitive market
+           - 51-70: Good demand with growth potential
+           - 71-85: Strong market demand, proven interest
+           - 86-100: Exceptional demand, trending topic
+
+        2. Signal Summary: Provide realistic post counts based on platform characteristics:
+           - X (Twitter): 50-800 posts (trending topics can reach 1000+)
+           - Reddit: 20-300 posts (niche communities are smaller but engaged)
+           - LinkedIn: 10-150 posts (professional content, lower volume)
+
+        3. Platform-Specific Insights: Write detailed, realistic summaries that reflect:
+           - X: Real-time conversations, hashtag trends, viral potential
+           - Reddit: Community discussions, problem-solving threads, niche expertise
+           - LinkedIn: Professional perspectives, B2B opportunities, industry insights
+
+        4. Content Suggestions: Create authentic, platform-native content that would actually perform well.
 
         CRITICAL RULES:
-        - Your entire response MUST strictly adhere to the provided JSON schema.
-        - The 'redditBodySuggestion' field must ALWAYS contain a detailed, multi-sentence paragraph.
-        - The 'linkedinSuggestion' must be a professional post. Neither can be empty.
-        - The user-provided idea must be reflected in the 'idea' field of the response.
-        `;
+        - Use "X" instead of "Twitter" throughout your response
+        - Provide realistic, conservative post counts (avoid inflated numbers)
+        - Write detailed, insightful summaries that sound like real market research
+        - Include specific pain points, user behaviors, and market dynamics
+        - Make suggestions actionable and platform-appropriate
+        - The 'redditBodySuggestion' must be a detailed, multi-sentence paragraph
+        - All content must feel authentic and valuable to entrepreneurs`;
 
         // Model fallback mechanism for better reliability
         const models = ["gemini-2.5-flash", "gemini-1.5-flash"];

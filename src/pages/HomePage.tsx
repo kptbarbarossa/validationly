@@ -118,10 +118,10 @@ const HomePage: React.FC = () => {
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         placeholder="e.g. AI reading coach that sets your daily focus"
-                        className={`w-full p-4 rounded-xl bg-gray-50 border text-gray-900 focus:ring-2 focus:border-transparent min-h-[100px] resize-none text-center text-lg transition-colors duration-200 ${
+                        className={`w-full p-6 rounded-3xl bg-white border-2 text-gray-900 focus:ring-2 focus:border-transparent min-h-[120px] resize-none text-center text-lg transition-all duration-200 shadow-lg shadow-gray-200/50 ${
                             userInput.errorMessage 
                                 ? 'border-red-300 focus:ring-red-500' 
-                                : 'border-gray-200 focus:ring-indigo-500'
+                                : 'border-gray-200 focus:ring-indigo-500 hover:shadow-xl hover:shadow-gray-200/60'
                         }`}
                         rows={3}
                         disabled={isLoading}
