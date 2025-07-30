@@ -118,7 +118,7 @@ const HomePage: React.FC = () => {
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         placeholder="e.g. AI reading coach that sets your daily focus"
-                        className={`w-full p-6 rounded-2xl bg-gray-50 border-2 text-gray-900 focus:ring-0 focus:border-indigo-400 min-h-[120px] resize-none text-left text-base transition-all duration-200 ${
+                        className={`w-full p-6 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${
                             userInput.errorMessage 
                                 ? 'border-red-300 focus:border-red-400' 
                                 : 'border-gray-200 hover:border-gray-300'
@@ -137,7 +137,7 @@ const HomePage: React.FC = () => {
                 <button
                     type="submit"
                     disabled={isLoading || !userInput.isValid}
-                    className="w-full flex justify-center items-center gap-3 font-semibold py-4 px-8 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-lg shadow-lg hover:shadow-xl"
+                    className="w-full flex justify-center items-center gap-3 font-semibold py-4 px-8 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-lg shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)]"
                     aria-label={isLoading ? "Analyzing idea..." : "Validate this idea"}
                 >
                     {isLoading ? (
