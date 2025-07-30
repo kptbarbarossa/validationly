@@ -131,10 +131,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     try {
-        console.log('API validate called');
+        console.log('=== API validate called ===');
         console.log('Request method:', req.method);
         console.log('Request body:', req.body);
         console.log('API_KEY exists:', !!process.env.API_KEY);
+        console.log('Node version:', process.version);
         
         // Rate limiting kontrolü
         const clientIP = req.headers['x-forwarded-for'] as string ||
@@ -179,14 +180,25 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         - The 'redditBodySuggestion' must be a detailed, multi-sentence paragraph
         - All content must feel authentic and valuable to entrepreneurs`;
 
+        console.log('Creating AI instance...');
+        let aiInstance: GoogleGenAI;
+        try {
+            aiInstance = getAI();
+            console.log('AI instance created successfully');
+        } catch (error) {
+            console.error('Failed to create AI instance:', error);
+            throw new Error('AI service initialization failed');
+        }
+
         // Model fallback mechanism for better reliability
-        const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+        const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
         let result: any;
         let lastError: any;
 
+        console.log('Starting model attempts...');
         for (const modelName of models) {
             try {
-                const aiInstance = getAI();
+                console.log(`Trying model: ${modelName}`);
                 result = await aiInstance.models.generateContent({
                     model: modelName,
                     contents: `Analyze this business idea: "${idea}"`,
@@ -198,9 +210,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         maxOutputTokens: 2048,
                     }
                 });
+                console.log(`Model ${modelName} succeeded`);
                 break; // Success, exit loop
             } catch (error) {
-                console.warn(`Model ${modelName} failed:`, error);
+                console.error(`Model ${modelName} failed:`, error);
                 lastError = error;
                 // Continue to next model
             }
@@ -208,6 +221,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // If all models failed, throw the last error
         if (!result) {
+            console.error('All models failed, last error:', lastError);
             throw lastError || new Error("All AI models failed to respond");
         }
 
