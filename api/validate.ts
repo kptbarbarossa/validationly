@@ -234,8 +234,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             } else if (error.message.includes("Rate limit")) {
                 errorMessage = error.message;
                 statusCode = 429;
-            } else if (error.message.includes("API_KEY environment variable") || 
-                       error.message.includes("Invalid API key format")) {
+            } else if (error.message.includes("API_KEY environment variable") ||
+                error.message.includes("Invalid API key format")) {
                 errorMessage = "Service temporarily unavailable";
                 statusCode = 503;
             } else if (error.message.includes("API configuration")) {
