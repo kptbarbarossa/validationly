@@ -59,10 +59,9 @@ const platformSignalSchema = {
     type: Type.OBJECT,
     properties: {
         platform: { type: Type.STRING, enum: ['X', 'Reddit', 'LinkedIn', 'General'] },
-        postCount: { type: Type.INTEGER, description: "Estimated number of relevant posts found." },
-        summary: { type: Type.STRING, description: "A one-sentence summary of the signals from this platform." }
+        summary: { type: Type.STRING, description: "A detailed, multi-sentence analysis of market signals from this platform including specific trends, user behaviors, pain points, and opportunities." }
     },
-    required: ["platform", "postCount", "summary"]
+    required: ["platform", "summary"]
 };
 
 const responseSchema = {
@@ -135,21 +134,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
            - 71-85: Strong market demand, proven interest
            - 86-100: Exceptional demand, trending topic
 
-        2. Signal Summary: Provide realistic post counts based on platform characteristics:
-           - X (Twitter): 50-800 posts (trending topics can reach 1000+)
-           - Reddit: 20-300 posts (niche communities are smaller but engaged)
-           - LinkedIn: 10-150 posts (professional content, lower volume)
-
-        3. Platform-Specific Insights: Write detailed, realistic summaries that reflect:
-           - X: Real-time conversations, hashtag trends, viral potential
-           - Reddit: Community discussions, problem-solving threads, niche expertise
-           - LinkedIn: Professional perspectives, B2B opportunities, industry insights
+        2. Platform-Specific Deep Analysis: Write comprehensive, multi-sentence summaries for each platform:
+           - X: Analyze real-time conversations, trending hashtags, influencer discussions, viral content patterns, user sentiment, and engagement behaviors. Include specific pain points users express and solution-seeking patterns.
+           - Reddit: Examine community discussions across relevant subreddits, problem-solving threads, user experiences, common complaints, solution requests, and niche expertise sharing. Identify specific communities and discussion themes.
+           - LinkedIn: Investigate professional perspectives, industry trends, B2B opportunities, thought leadership content, professional pain points, and business solution discussions. Focus on enterprise needs and professional use cases.
 
         4. Content Suggestions: Create authentic, platform-native content that would actually perform well.
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
-        - Provide realistic, conservative post counts (avoid inflated numbers)
+        - Do NOT include post counts or numerical metrics in summaries
         - Write detailed, insightful summaries that sound like real market research
         - Include specific pain points, user behaviors, and market dynamics
         - Make suggestions actionable and platform-appropriate

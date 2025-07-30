@@ -102,28 +102,28 @@ const HomePage: React.FC = () => {
     };
 
     return (
-        <div className="text-center max-w-2xl mx-auto">
+        <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
                 Validate your idea before you build it.
             </h1>
-            <p className="text-lg text-gray-600 mb-8">
+            <p className="text-lg text-gray-600 mb-12">
                 Why guess? Get an AI-driven demand forecast instantly.
             </p>
 
-            <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-                <div className="relative">
+            <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+                <div className="relative mb-6">
                     <textarea
                         ref={textareaRef}
                         value={userInput.idea}
                         onChange={handleInputChange}
                         onKeyDown={handleKeyDown}
                         placeholder="e.g. AI reading coach that sets your daily focus"
-                        className={`w-full p-6 rounded-3xl bg-white border-2 text-gray-900 focus:ring-2 focus:border-transparent min-h-[120px] resize-none text-center text-lg transition-all duration-200 shadow-lg shadow-gray-200/50 ${
+                        className={`w-full p-6 rounded-2xl bg-gray-50 border-2 text-gray-900 focus:ring-0 focus:border-indigo-400 min-h-[120px] resize-none text-left text-base transition-all duration-200 ${
                             userInput.errorMessage 
-                                ? 'border-red-300 focus:ring-red-500' 
-                                : 'border-gray-200 focus:ring-indigo-500 hover:shadow-xl hover:shadow-gray-200/60'
+                                ? 'border-red-300 focus:border-red-400' 
+                                : 'border-gray-200 hover:border-gray-300'
                         }`}
-                        rows={3}
+                        rows={4}
                         disabled={isLoading}
                         aria-describedby={userInput.errorMessage ? "error-message" : undefined}
                     />
@@ -137,7 +137,7 @@ const HomePage: React.FC = () => {
                 <button
                     type="submit"
                     disabled={isLoading || !userInput.isValid}
-                    className="w-full flex justify-center items-center gap-3 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-lg"
+                    className="w-full flex justify-center items-center gap-3 font-semibold py-4 px-8 rounded-full text-white bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 text-lg shadow-lg hover:shadow-xl"
                     aria-label={isLoading ? "Analyzing idea..." : "Validate this idea"}
                 >
                     {isLoading ? (
@@ -154,17 +154,17 @@ const HomePage: React.FC = () => {
                 </button>
             </form>
 
-            <div className="mt-12 pt-8">
-                <h3 className="text-md font-semibold text-gray-600 mb-5">
+            <div className="mt-16">
+                <h3 className="text-base font-medium text-gray-600 mb-6">
                     Not sure where to start? Try an example:
                 </h3>
-                <div className="flex flex-wrap justify-center gap-3">
+                <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
                     {sampleIdeas.map((sample, index) => (
                         <button
                             key={index}
                             onClick={() => handleSampleIdeaClick(sample)}
                             disabled={isLoading}
-                            className="border border-gray-300 bg-transparent text-gray-600 px-5 py-2 rounded-full text-sm font-medium hover:bg-gray-100 hover:border-gray-400 transition-colors duration-200 disabled:opacity-50"
+                            className="border border-gray-300 bg-white text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow-md"
                             aria-label={`Try example: ${sample}`}
                         >
                             {sample}

@@ -36,12 +36,7 @@ const LinkedInIcon = () => (
     </svg>
 );
 
-const CoffeeIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-        <path d="M2 21h18v-2H2v2zM20 8h-2V5c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v8c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.1 0 2-.9 2-2s-.9-2-2-2zM16 13c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5h12v8z"/>
-        <path d="M11 6H9v5h2V6zM14 6h-2v3h2V6z"/>
-    </svg>
-);
+
 
 const PlatformIcons: { [key: string]: React.FC } = {
     X: XIcon,
@@ -124,13 +119,10 @@ const ResultsPage: React.FC = () => {
                                         {Icon && <Icon />}
                                     </div>
                                     <div>
-                                        <p className="font-semibold text-gray-800">
+                                        <p className="font-semibold text-gray-800 mb-2">
                                             {signal.platform}
-                                            <span className="ml-2 text-sm font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md">
-                                                {signal.postCount} relevant posts found
-                                            </span>
                                         </p>
-                                        <p className="text-gray-600">{signal.summary}</p>
+                                        <p className="text-gray-600 leading-relaxed">{signal.summary}</p>
                                     </div>
                                 </div>
                             );
@@ -219,10 +211,9 @@ const ResultsPage: React.FC = () => {
                     href="https://buymeacoffee.com/kptbarbarossa"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full sm:w-auto flex items-center justify-center gap-2 font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-yellow-400 via-orange-500 to-orange-600 hover:opacity-90 transition-all duration-200"
+                    className="w-full sm:w-auto flex items-center justify-center font-semibold py-3 px-6 rounded-full text-white bg-gradient-to-r from-yellow-400 via-orange-500 to-orange-600 hover:opacity-90 transition-all duration-200"
                     aria-label="Buy me a coffee"
                 >
-                    <CoffeeIcon />
                     Buy me a coffee
                 </a>
             </div>
