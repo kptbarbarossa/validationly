@@ -18,14 +18,14 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          ui: ['@google/genai']
+          router: ['react-router-dom']
         }
       }
     },
-    sourcemap: process.env.NODE_ENV === 'development',
+    sourcemap: false,
     minify: 'esbuild',
-    target: 'es2015'
+    target: 'es2015',
+    cssCodeSplit: false
   },
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom']

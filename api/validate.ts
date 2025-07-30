@@ -27,8 +27,11 @@ function checkRateLimit(ip: string): boolean {
 // API key güvenlik kontrolü
 function validateApiKey(): string {
     const apiKey = process.env.API_KEY;
-    if (!apiKey || apiKey.length < 10) {
-        throw new Error("Invalid API configuration");
+    if (!apiKey) {
+        throw new Error("API_KEY environment variable is not set");
+    }
+    if (apiKey.length < 10) {
+        throw new Error("Invalid API key format");
     }
     return apiKey;
 }
