@@ -190,6 +190,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const systemInstruction = `You are 'Validationly', an expert AI market research analyst with deep knowledge of social media trends, consumer behavior, and startup ecosystems. Your task is to analyze a user's business idea and provide a comprehensive validation report.
 
+        IMPORTANT: Always respond in the same language as the user's input. If the user writes in Turkish, respond in Turkish. If they write in English, respond in English. If they write in Spanish, respond in Spanish, etc. Maintain the same language throughout your entire response including all fields.
+
         ANALYSIS METHODOLOGY:
         1. Demand Score (0-100): Base this on realistic market factors:
            - 0-30: Very niche/limited demand
