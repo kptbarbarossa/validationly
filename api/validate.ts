@@ -4,7 +4,8 @@ import { GoogleGenAI, Type } from "@google/genai";
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 dakika
-const MAX_REQUESTS_PER_WINDOW = 50;
+const MAX_REQUESTS_PER_WINDOW = 10; // Daha sıkı limit
+const SUSPICIOUS_THRESHOLD = 5; // Şüpheli aktivite eşiği
 
 // Rate limiting kontrolü
 function checkRateLimit(ip: string): boolean {
@@ -50,9 +51,37 @@ function validateInput(idea: string): void {
         throw new Error("Idea must be less than 1000 characters");
     }
 
-    // Basit XSS koruması
-    if (/<script|javascript:|on\w+\s*=/i.test(idea)) {
-        throw new Error("Invalid input detected");
+    // Gelişmiş XSS ve injection koruması
+    const dangerousPatterns = [
+        /<script[^>]*>.*?<\/script>/gi,
+        /javascript:/gi,
+        /on\w+\s*=/gi,
+        /data:text\/html/gi,
+        /vbscript:/gi,
+        /<iframe[^>]*>.*?<\/iframe>/gi,
+        /<object[^>]*>.*?<\/object>/gi,
+        /<embed[^>]*>/gi,
+        /eval\s*\(/gi,
+        /expression\s*\(/gi
+    ];
+
+    for (const pattern of dangerousPatterns) {
+        if (pattern.test(idea)) {
+            throw new Error("Invalid input detected");
+        }
+    }
+
+    // SQL injection koruması
+    const sqlPatterns = [
+        /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION)\b)/gi,
+        /(--|\/\*|\*\/|;)/g,
+        /(\b(OR|AND)\s+\d+\s*=\s*\d+)/gi
+    ];
+
+    for (const pattern of sqlPatterns) {
+        if (pattern.test(idea)) {
+            throw new Error("Invalid input detected");
+        }
     }
 }
 
@@ -106,7 +135,7 @@ interface VercelResponse {
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-    // CORS headers
+    // CORS ve güvenlik headers
     const headers = {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
@@ -114,6 +143,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             : '*',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'X-XSS-Protection': '1; mode=block',
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Content-Security-Policy': "default-src 'none'; script-src 'none';"
     };
 
     // Set CORS headers
