@@ -346,7 +346,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // If Gemini failed, try Groq as fallback (fast & free)
-        if (!result) {
+        if (!result && validateGroqApiKey()) {
             try {
                 console.log('Trying Groq as fallback...');
                 result = await callGroqAPI(idea, systemInstruction);
@@ -358,7 +358,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // If Groq failed, try DeepSeek as final fallback (cheap & good)
-        if (!result) {
+        if (!result && validateDeepSeekApiKey()) {
             try {
                 console.log('Trying DeepSeek as final fallback...');
                 result = await callDeepSeekAPI(idea, systemInstruction);
@@ -404,6 +404,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     } catch (error) {
         console.error("Error in validation API:", error);
+        console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
 
         // Güvenli hata mesajları
         let errorMessage = "An error occurred during validation";
