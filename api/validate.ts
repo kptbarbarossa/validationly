@@ -320,7 +320,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         let lastError: any;
 
         console.log('Starting AI model attempts...');
-        
+
         // Try Gemini models first (primary)
         for (const modelName of geminiModels) {
             try {
