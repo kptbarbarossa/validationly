@@ -5,6 +5,7 @@ import { validateIdea } from '../services/geminiService';
 import type { ValidationResult, UserInput } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
+import Logo from '../components/Logo';
 
 const sampleCategories = [
     {
@@ -166,7 +167,10 @@ const HomePage: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
                 
                 <div className="relative z-10 py-16">
-
+                    {/* Logo */}
+                    <div className="flex justify-center mb-8">
+                        <Logo size="lg" showText={true} />
+                    </div>
                     
                     <h1 className="text-4xl sm:text-6xl font-bold mb-6">
                         <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
