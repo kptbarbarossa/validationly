@@ -17,7 +17,7 @@ const Header: React.FC = () => {
                         className="flex items-center gap-3 hover:opacity-80 transition-opacity"
                         aria-label="Go to homepage"
                     >
-                        <Logo size="lg" showText={true} />
+                        <Logo size="lg" showText={false} />
                     </button>
 
                     {/* Navigation */}
