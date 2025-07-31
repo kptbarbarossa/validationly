@@ -30,7 +30,7 @@ const Header: React.FC = () => {
                                 New Analysis
                             </button>
                         )}
-                        
+
                         <a
                             href="https://x.com/kptbarbarossa"
                             target="_blank"
@@ -39,7 +39,7 @@ const Header: React.FC = () => {
                         >
                             Feedback
                         </a>
-                        
+
                         <a
                             href="https://buymeacoffee.com/kptbarbarossa"
                             target="_blank"
