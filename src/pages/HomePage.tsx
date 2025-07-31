@@ -214,14 +214,14 @@ const HomePage: React.FC = () => {
                                 type="button"
                                 onClick={triggerValidation}
                                 disabled={!userInput.isValid || isLoading}
-                                className={`absolute bottom-3 right-3 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
-                                    ? 'bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:scale-105 cursor-pointer'
-                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
+                                    ? 'hover:scale-105 cursor-pointer opacity-100'
+                                    : 'cursor-not-allowed opacity-50'
                                     }`}
                                 aria-label="Submit idea for validation"
                             >
-                                <img 
-                                    src="/logo.png" 
+                                <img
+                                    src="/logo.png"
                                     alt="Submit"
                                     className="w-5 h-5 object-contain"
                                 />
