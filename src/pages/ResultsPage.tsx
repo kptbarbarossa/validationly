@@ -18,6 +18,12 @@ const SignalIcon = () => (
     </svg>
 );
 
+const StrategyIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
 
 
 const XIcon = () => (
@@ -129,6 +135,37 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             );
                         })}
+                    </div>
+                </div>
+                
+                <div className="mt-8">
+                    <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
+                        <StrategyIcon /> Validation Strategies
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {result.validationStrategies?.map((strategy, index) => (
+                            <div key={index} className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                                <h3 className="font-semibold text-gray-800 mb-3 text-lg">
+                                    {strategy.title}
+                                </h3>
+                                <p className="text-gray-600 mb-4 leading-relaxed">
+                                    {strategy.description}
+                                </p>
+                                <div>
+                                    <h4 className="font-medium text-gray-700 mb-2">Action Steps:</h4>
+                                    <ul className="space-y-2">
+                                        {strategy.steps.map((step, stepIndex) => (
+                                            <li key={stepIndex} className="flex items-start gap-2">
+                                                <span className="flex-shrink-0 w-5 h-5 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-medium mt-0.5">
+                                                    {stepIndex + 1}
+                                                </span>
+                                                <span className="text-gray-600 text-sm">{step}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>

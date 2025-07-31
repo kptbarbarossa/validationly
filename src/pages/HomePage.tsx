@@ -132,9 +132,9 @@ const HomePage: React.FC = () => {
                             type="button"
                             onClick={triggerValidation}
                             disabled={!userInput.isValid || isLoading}
-                            className={`absolute bottom-2 right-2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${userInput.isValid && !isLoading
-                                ? 'bg-gradient-to-br from-gray-100 to-gray-300 hover:from-gray-200 hover:to-gray-400 text-gray-700 cursor-pointer hover:shadow-xl transform hover:scale-105'
-                                : 'bg-gradient-to-br from-gray-200 to-gray-300 text-gray-400 cursor-not-allowed opacity-60'
+                            className={`absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
+                                ? 'bg-black hover:bg-gray-800 text-white cursor-pointer'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                 }`}
                             aria-label="Submit idea for validation"
                         >
@@ -142,11 +142,11 @@ const HomePage: React.FC = () => {
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
-                                strokeWidth={2.5}
+                                strokeWidth={2}
                                 stroke="currentColor"
-                                className="w-6 h-6 ml-0.5"
+                                className="w-4 h-4"
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
                             </svg>
                         </button>
                     </div>
