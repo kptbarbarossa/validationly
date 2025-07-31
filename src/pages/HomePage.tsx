@@ -165,13 +165,13 @@ const HomePage: React.FC = () => {
             {/* Enhanced Hero Section */}
             <div className="relative mb-12">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
-                
+
                 <div className="relative z-10 py-16">
                     {/* Logo */}
                     <div className="flex justify-center mb-8">
                         <Logo size="lg" showText={true} />
                     </div>
-                    
+
                     <h1 className="text-4xl sm:text-6xl font-bold mb-6">
                         <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                             Validate your idea
@@ -179,7 +179,7 @@ const HomePage: React.FC = () => {
                         <br />
                         <span className="text-indigo-600">before you build it</span>
                     </h1>
-                    
+
                     <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
                         Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
                     </p>
@@ -190,7 +190,7 @@ const HomePage: React.FC = () => {
                 <div className="mb-4">
                     <div className="relative group">
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
-                        
+
                         <div className="relative bg-white rounded-2xl border-2 border-gray-100 hover:border-indigo-200 transition-colors">
                             <textarea
                                 ref={textareaRef}
@@ -203,12 +203,12 @@ const HomePage: React.FC = () => {
                                 disabled={isLoading}
                                 aria-describedby={userInput.errorMessage ? "error-message" : undefined}
                             />
-                            
+
                             {/* Character counter */}
                             <div className="absolute bottom-3 left-6 text-sm text-gray-400">
                                 {userInput.idea.length}/1000
                             </div>
-                            
+
                             {/* Enhanced submit button */}
                             <button
                                 type="button"
@@ -248,11 +248,11 @@ const HomePage: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-800 mb-8">
                     Not sure where to start? Try these examples:
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {sampleCategories.map((category, index) => (
-                        <div 
-                            key={category.name} 
+                        <div
+                            key={category.name}
                             className="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-colors cursor-pointer group"
                             onClick={() => handleSampleIdeaClick(category.example)}
                         >

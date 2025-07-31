@@ -21,35 +21,12 @@ const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true, className = '
 
     return (
         <div className={`flex items-center gap-3 ${className}`}>
-            {/* Logo SVG */}
-            <div className={`${sizeClasses[size]} flex-shrink-0`}>
-                <svg viewBox="0 0 100 100" className="w-full h-full">
-                    <defs>
-                        <linearGradient id="logoGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stopColor="#06b6d4" />
-                            <stop offset="50%" stopColor="#3b82f6" />
-                            <stop offset="100%" stopColor="#8b5cf6" />
-                        </linearGradient>
-                        <linearGradient id="logoGradient2" x1="0%" y1="100%" x2="100%" y2="0%">
-                            <stop offset="0%" stopColor="#f59e0b" />
-                            <stop offset="50%" stopColor="#ef4444" />
-                            <stop offset="100%" stopColor="#ec4899" />
-                        </linearGradient>
-                    </defs>
-                    
-                    {/* Left wing */}
-                    <path
-                        d="M15 85 L15 25 C15 15 25 5 35 5 L50 20 L35 35 C25 45 15 55 15 85 Z"
-                        fill="url(#logoGradient1)"
-                    />
-                    
-                    {/* Right wing */}
-                    <path
-                        d="M85 85 L85 25 C85 15 75 5 65 5 L50 20 L65 35 C75 45 85 55 85 85 Z"
-                        fill="url(#logoGradient2)"
-                    />
-                </svg>
-            </div>
+            {/* Custom Logo */}
+            <img 
+                src="/logo.png" 
+                alt="Validationly Logo"
+                className={`${sizeClasses[size]} flex-shrink-0 object-contain`}
+            />
             
             {/* Logo Text */}
             {showText && (
