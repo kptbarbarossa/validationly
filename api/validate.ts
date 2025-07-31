@@ -302,10 +302,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             parsedResult.demandScore < 0 ||
             parsedResult.demandScore > 100 ||
             !Array.isArray(parsedResult.signalSummary) ||
-            parsedResult.signalSummary.length < 3 ||
-            !Array.isArray(parsedResult.validationStrategies) ||
-            parsedResult.validationStrategies.length < 2) {
+            parsedResult.signalSummary.length < 3) {
             throw new Error("AI analysis returned invalid data format");
+        }
+
+        // Validation strategies are optional for now
+        if (!parsedResult.validationStrategies) {
+            parsedResult.validationStrategies = [];
         }
 
         // Add the original idea to the response
