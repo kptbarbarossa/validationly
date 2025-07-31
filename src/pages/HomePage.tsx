@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { validateIdea } from '../services/geminiService';
 import type { ValidationResult, UserInput } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
-import Logo from '../components/Logo';
 
 const sampleIdeas = [
     "SaaS platform for automated invoice processing using AI",
@@ -105,7 +104,6 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="text-center max-w-3xl mx-auto">
-            <Logo />
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 tracking-tight">
                 Validate your idea before you build it.
             </h1>
