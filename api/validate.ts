@@ -37,16 +37,14 @@ function validateApiKey(): string {
     return apiKey;
 }
 
-
-
 // Input validation
 function validateInput(idea: string): void {
     if (!idea || typeof idea !== 'string') {
         throw new Error("Idea is required and must be a string");
     }
 
-    if (idea.length < 3) {
-        throw new Error("Idea must be at least 3 characters long");
+    if (idea.length < 10) {
+        throw new Error("Idea must be at least 10 characters long");
     }
 
     if (idea.length > 1000) {
@@ -97,8 +95,6 @@ function getAI(): GoogleGenAI {
     return ai;
 }
 
-
-
 const platformSignalSchema = {
     type: Type.OBJECT,
     properties: {
@@ -108,16 +104,6 @@ const platformSignalSchema = {
     required: ["platform", "summary"]
 };
 
-const validationStrategySchema = {
-    type: Type.OBJECT,
-    properties: {
-        title: { type: Type.STRING, description: "Strategy title, e.g., 'MVP Testing'" },
-        description: { type: Type.STRING, description: "Detailed explanation of the strategy" },
-        steps: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Step-by-step action items" }
-    },
-    required: ["title", "description", "steps"]
-};
-
 const responseSchema = {
     type: Type.OBJECT,
     properties: {
@@ -125,13 +111,12 @@ const responseSchema = {
         demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
         scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score, e.g., 'Strong Niche Interest'." },
         signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
-        validationStrategies: { type: Type.ARRAY, items: validationStrategySchema, description: "3-4 specific validation strategies for this idea" },
         tweetSuggestion: { type: Type.STRING, description: "A short, engaging X (Twitter) post to test the idea." },
         redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for a Reddit post." },
         redditBodySuggestion: { type: Type.STRING, description: "A detailed body for a Reddit post." },
         linkedinSuggestion: { type: Type.STRING, description: "A professional post for LinkedIn." },
     },
-    required: ["idea", "demandScore", "scoreJustification", "signalSummary", "validationStrategies", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
+    required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
 
 // Vercel runtime types
@@ -220,12 +205,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
            - Reddit: Examine community discussions across relevant subreddits, problem-solving threads, user experiences, common complaints, solution requests, and niche expertise sharing. Identify specific communities and discussion themes.
            - LinkedIn: Investigate professional perspectives, industry trends, B2B opportunities, thought leadership content, professional pain points, and business solution discussions. Focus on enterprise needs and professional use cases.
 
-        3. Validation Strategies: Provide 3-4 specific, actionable validation strategies tailored to this exact business idea:
-           - Each strategy should have a clear title, detailed description, and 3-5 step-by-step action items
-           - Focus on practical, low-cost validation methods like MVP testing, customer interviews, landing page tests, social media validation, competitor analysis, etc.
-           - Make strategies specific to the industry and target market of the idea
-           - Include both online and offline validation approaches where relevant
-
         4. Content Suggestions: Create authentic, platform-native content that would actually perform well.
 
         CRITICAL RULES:
@@ -247,17 +226,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             throw new Error('AI service initialization failed');
         }
 
-        // Multi-AI fallback mechanism: Gemini 2.5 Flash (best) → Groq → DeepSeek
-        const geminiModels = ["gemini-2.5-flash", "gemini-1.5-flash"];
+        // Model fallback mechanism for better reliability
+        const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
         let result: any;
         let lastError: any;
 
-        console.log('Starting AI model attempts...');
-
-        // Try Gemini models first (primary)
-        for (const modelName of geminiModels) {
+        console.log('Starting model attempts...');
+        for (const modelName of models) {
             try {
-                console.log(`Trying Gemini model: ${modelName}`);
+                console.log(`Trying model: ${modelName}`);
                 result = await aiInstance.models.generateContent({
                     model: modelName,
                     contents: `Analyze this business idea: "${idea}"`,
@@ -269,19 +246,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         maxOutputTokens: 2048,
                     }
                 });
-                console.log(`Gemini model ${modelName} succeeded`);
+                console.log(`Model ${modelName} succeeded`);
                 break; // Success, exit loop
             } catch (error) {
-                console.error(`Gemini model ${modelName} failed:`, error);
+                console.error(`Model ${modelName} failed:`, error);
                 lastError = error;
                 // Continue to next model
             }
         }
 
-        // If all Gemini models failed, throw the last error
+        // If all models failed, throw the last error
         if (!result) {
-            console.error('All Gemini models failed, last error:', lastError);
-            throw lastError || new Error("All Gemini models failed to respond");
+            console.error('All models failed, last error:', lastError);
+            throw lastError || new Error("All AI models failed to respond");
         }
 
         const jsonText = result.text?.trim() || "";
@@ -306,11 +283,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             throw new Error("AI analysis returned invalid data format");
         }
 
-        // Validation strategies are optional for now
-        if (!parsedResult.validationStrategies) {
-            parsedResult.validationStrategies = [];
-        }
-
         // Add the original idea to the response
         parsedResult.idea = idea;
 
@@ -318,7 +290,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     } catch (error) {
         console.error("Error in validation API:", error);
-        console.error("Error stack:", error instanceof Error ? error.stack : 'No stack trace');
 
         // Güvenli hata mesajları
         let errorMessage = "An error occurred during validation";

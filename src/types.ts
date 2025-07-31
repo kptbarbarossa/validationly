@@ -1,16 +1,9 @@
 
-export interface ValidationStrategy {
-  title: string;
-  description: string;
-  steps: string[];
-}
-
 export interface ValidationResult {
   idea: string;
   demandScore: number;
   scoreJustification: string;
   signalSummary: PlatformSignal[];
-  validationStrategies: ValidationStrategy[];
   tweetSuggestion: string;
   redditTitleSuggestion: string;
   redditBodySuggestion: string;
