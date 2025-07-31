@@ -188,7 +188,7 @@ MIT License - feel free to use this project for your own ideas!
 
 ## 🔗 Links
 
-- **Live Demo**: [validationly.vercel.app](https://validationly.vercel.app)
+- **Live Demo**: [validationly.com](https://validationly.com)
 - **GitHub**: [github.com/kptbarbarossa/validationly](https://github.com/kptbarbarossa/validationly)
 
 ---
