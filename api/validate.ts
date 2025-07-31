@@ -37,23 +37,7 @@ function validateApiKey(): string {
     return apiKey;
 }
 
-// Groq API key kontrolü
-function validateGroqApiKey(): string | null {
-    const apiKey = process.env.GROQ_API_KEY;
-    if (!apiKey || apiKey.length < 10) {
-        return null;
-    }
-    return apiKey;
-}
 
-// DeepSeek API key kontrolü
-function validateDeepSeekApiKey(): string | null {
-    const apiKey = process.env.DEEPSEEK_API_KEY;
-    if (!apiKey || apiKey.length < 10) {
-        return null;
-    }
-    return apiKey;
-}
 
 // Input validation
 function validateInput(idea: string): void {
@@ -113,75 +97,7 @@ function getAI(): GoogleGenAI {
     return ai;
 }
 
-// Groq API call function
-async function callGroqAPI(prompt: string, systemInstruction: string): Promise<any> {
-    const groqApiKey = validateGroqApiKey();
-    if (!groqApiKey) {
-        throw new Error("Groq API key not available");
-    }
 
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${groqApiKey}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            model: "llama-3.1-70b-versatile",
-            messages: [
-                { role: "system", content: systemInstruction },
-                { role: "user", content: `Analyze this business idea: "${prompt}"` }
-            ],
-            temperature: 0.7,
-            max_tokens: 2048,
-            response_format: { type: "json_object" }
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error(`Groq API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return {
-        text: () => data.choices[0].message.content
-    };
-}
-
-// DeepSeek API call function
-async function callDeepSeekAPI(prompt: string, systemInstruction: string): Promise<any> {
-    const deepseekApiKey = validateDeepSeekApiKey();
-    if (!deepseekApiKey) {
-        throw new Error("DeepSeek API key not available");
-    }
-
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${deepseekApiKey}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            model: "deepseek-chat",
-            messages: [
-                { role: "system", content: systemInstruction },
-                { role: "user", content: `Analyze this business idea: "${prompt}"` }
-            ],
-            temperature: 0.7,
-            max_tokens: 2048,
-            response_format: { type: "json_object" }
-        })
-    });
-
-    if (!response.ok) {
-        throw new Error(`DeepSeek API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return {
-        text: () => data.choices[0].message.content
-    };
-}
 
 const platformSignalSchema = {
     type: Type.OBJECT,
@@ -192,6 +108,16 @@ const platformSignalSchema = {
     required: ["platform", "summary"]
 };
 
+const validationStrategySchema = {
+    type: Type.OBJECT,
+    properties: {
+        title: { type: Type.STRING, description: "Strategy title, e.g., 'MVP Testing'" },
+        description: { type: Type.STRING, description: "Detailed explanation of the strategy" },
+        steps: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Step-by-step action items" }
+    },
+    required: ["title", "description", "steps"]
+};
+
 const responseSchema = {
     type: Type.OBJECT,
     properties: {
@@ -199,12 +125,13 @@ const responseSchema = {
         demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
         scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score, e.g., 'Strong Niche Interest'." },
         signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
+        validationStrategies: { type: Type.ARRAY, items: validationStrategySchema, description: "3-4 specific validation strategies for this idea" },
         tweetSuggestion: { type: Type.STRING, description: "A short, engaging X (Twitter) post to test the idea." },
         redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for a Reddit post." },
         redditBodySuggestion: { type: Type.STRING, description: "A detailed body for a Reddit post." },
         linkedinSuggestion: { type: Type.STRING, description: "A professional post for LinkedIn." },
     },
-    required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
+    required: ["idea", "demandScore", "scoreJustification", "signalSummary", "validationStrategies", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
 
 // Vercel runtime types
@@ -293,6 +220,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
            - Reddit: Examine community discussions across relevant subreddits, problem-solving threads, user experiences, common complaints, solution requests, and niche expertise sharing. Identify specific communities and discussion themes.
            - LinkedIn: Investigate professional perspectives, industry trends, B2B opportunities, thought leadership content, professional pain points, and business solution discussions. Focus on enterprise needs and professional use cases.
 
+        3. Validation Strategies: Provide 3-4 specific, actionable validation strategies tailored to this exact business idea:
+           - Each strategy should have a clear title, detailed description, and 3-5 step-by-step action items
+           - Focus on practical, low-cost validation methods like MVP testing, customer interviews, landing page tests, social media validation, competitor analysis, etc.
+           - Make strategies specific to the industry and target market of the idea
+           - Include both online and offline validation approaches where relevant
+
         4. Content Suggestions: Create authentic, platform-native content that would actually perform well.
 
         CRITICAL RULES:
@@ -345,34 +278,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             }
         }
 
-        // If Gemini failed, try Groq as fallback (fast & free)
-        if (!result && validateGroqApiKey()) {
-            try {
-                console.log('Trying Groq as fallback...');
-                result = await callGroqAPI(idea, systemInstruction);
-                console.log('Groq succeeded');
-            } catch (error) {
-                console.error('Groq failed:', error);
-                lastError = error;
-            }
-        }
-
-        // If Groq failed, try DeepSeek as final fallback (cheap & good)
-        if (!result && validateDeepSeekApiKey()) {
-            try {
-                console.log('Trying DeepSeek as final fallback...');
-                result = await callDeepSeekAPI(idea, systemInstruction);
-                console.log('DeepSeek succeeded');
-            } catch (error) {
-                console.error('DeepSeek failed:', error);
-                lastError = error;
-            }
-        }
-
-        // If all AI services failed, throw the last error
+        // If all Gemini models failed, throw the last error
         if (!result) {
-            console.error('All AI services failed, last error:', lastError);
-            throw lastError || new Error("All AI services failed to respond");
+            console.error('All Gemini models failed, last error:', lastError);
+            throw lastError || new Error("All Gemini models failed to respond");
         }
 
         const jsonText = result.text?.trim() || "";
