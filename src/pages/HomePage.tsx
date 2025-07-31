@@ -163,7 +163,7 @@ const HomePage: React.FC = () => {
     return (
         <div className="text-center max-w-4xl mx-auto">
             {/* Enhanced Hero Section - Reduced spacing */}
-            <div className="relative mb-8">
+            <div className="relative mb-4">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
 
                 <div className="relative z-10 py-8">
@@ -172,7 +172,7 @@ const HomePage: React.FC = () => {
                         <Logo size="lg" showText={false} />
                     </div>
 
-                    <h1 className="text-4xl sm:text-6xl font-bold mb-4">
+                    <h1 className="text-4xl sm:text-5xl font-bold mb-4">
                         <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                             Validate your idea
                         </span>
@@ -220,16 +220,11 @@ const HomePage: React.FC = () => {
                                     }`}
                                 aria-label="Submit idea for validation"
                             >
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    strokeWidth={2}
-                                    stroke="currentColor"
-                                    className="w-5 h-5"
-                                >
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                                </svg>
+                                <img 
+                                    src="/logo.png" 
+                                    alt="Submit"
+                                    className="w-5 h-5 object-contain"
+                                />
                             </button>
                         </div>
                     </div>
