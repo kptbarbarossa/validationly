@@ -1,8 +1,9 @@
 
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
+import Header from './components/Header';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
