@@ -66,7 +66,7 @@ const App: React.FC = () => {
             </div>
           </header>
           
-          <main className="container mx-auto px-4 py-8 sm:py-12">
+          <main className="container mx-auto px-0 py-0 sm:py-0">
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/results" element={<ResultsPage />} />

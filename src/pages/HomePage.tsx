@@ -163,7 +163,7 @@ const HomePage: React.FC = () => {
     return (
         <div className="text-center max-w-4xl mx-auto">
             {/* Enhanced Hero Section - Reduced spacing */}
-            <div className="relative mb-4">
+            <div className="relative mb-0">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
 
                 <div className="relative z-10 py-8">
