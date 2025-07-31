@@ -132,7 +132,7 @@ const HomePage: React.FC = () => {
                             type="button"
                             onClick={triggerValidation}
                             disabled={!userInput.isValid || isLoading}
-                            className={`absolute bottom-2 right-2 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${userInput.isValid && !isLoading
+                            className={`absolute bottom-2 right-2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 shadow-lg ${userInput.isValid && !isLoading
                                 ? 'bg-gradient-to-br from-gray-100 to-gray-300 hover:from-gray-200 hover:to-gray-400 text-gray-700 cursor-pointer hover:shadow-xl transform hover:scale-105'
                                 : 'bg-gradient-to-br from-gray-200 to-gray-300 text-gray-400 cursor-not-allowed opacity-60'
                                 }`}
