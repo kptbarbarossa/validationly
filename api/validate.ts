@@ -37,6 +37,24 @@ function validateApiKey(): string {
     return apiKey;
 }
 
+// Groq API key kontrolü
+function validateGroqApiKey(): string | null {
+    const apiKey = process.env.GROQ_API_KEY;
+    if (!apiKey || apiKey.length < 10) {
+        return null;
+    }
+    return apiKey;
+}
+
+// DeepSeek API key kontrolü
+function validateDeepSeekApiKey(): string | null {
+    const apiKey = process.env.DEEPSEEK_API_KEY;
+    if (!apiKey || apiKey.length < 10) {
+        return null;
+    }
+    return apiKey;
+}
+
 // Input validation
 function validateInput(idea: string): void {
     if (!idea || typeof idea !== 'string') {
@@ -93,6 +111,76 @@ function getAI(): GoogleGenAI {
         ai = new GoogleGenAI({ apiKey: validateApiKey() });
     }
     return ai;
+}
+
+// Groq API call function
+async function callGroqAPI(prompt: string, systemInstruction: string): Promise<any> {
+    const groqApiKey = validateGroqApiKey();
+    if (!groqApiKey) {
+        throw new Error("Groq API key not available");
+    }
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${groqApiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: "llama-3.1-70b-versatile",
+            messages: [
+                { role: "system", content: systemInstruction },
+                { role: "user", content: `Analyze this business idea: "${prompt}"` }
+            ],
+            temperature: 0.7,
+            max_tokens: 2048,
+            response_format: { type: "json_object" }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`Groq API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return {
+        text: () => data.choices[0].message.content
+    };
+}
+
+// DeepSeek API call function
+async function callDeepSeekAPI(prompt: string, systemInstruction: string): Promise<any> {
+    const deepseekApiKey = validateDeepSeekApiKey();
+    if (!deepseekApiKey) {
+        throw new Error("DeepSeek API key not available");
+    }
+
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${deepseekApiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            model: "deepseek-chat",
+            messages: [
+                { role: "system", content: systemInstruction },
+                { role: "user", content: `Analyze this business idea: "${prompt}"` }
+            ],
+            temperature: 0.7,
+            max_tokens: 2048,
+            response_format: { type: "json_object" }
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error(`DeepSeek API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return {
+        text: () => data.choices[0].message.content
+    };
 }
 
 const platformSignalSchema = {
@@ -226,15 +314,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             throw new Error('AI service initialization failed');
         }
 
-        // Model fallback mechanism for better reliability
-        const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
+        // Multi-AI fallback mechanism: Gemini 2.5 Flash (best) → Groq → DeepSeek
+        const geminiModels = ["gemini-2.5-flash", "gemini-1.5-flash"];
         let result: any;
         let lastError: any;
 
-        console.log('Starting model attempts...');
-        for (const modelName of models) {
+        console.log('Starting AI model attempts...');
+        
+        // Try Gemini models first (primary)
+        for (const modelName of geminiModels) {
             try {
-                console.log(`Trying model: ${modelName}`);
+                console.log(`Trying Gemini model: ${modelName}`);
                 result = await aiInstance.models.generateContent({
                     model: modelName,
                     contents: `Analyze this business idea: "${idea}"`,
@@ -246,19 +336,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                         maxOutputTokens: 2048,
                     }
                 });
-                console.log(`Model ${modelName} succeeded`);
+                console.log(`Gemini model ${modelName} succeeded`);
                 break; // Success, exit loop
             } catch (error) {
-                console.error(`Model ${modelName} failed:`, error);
+                console.error(`Gemini model ${modelName} failed:`, error);
                 lastError = error;
                 // Continue to next model
             }
         }
 
-        // If all models failed, throw the last error
+        // If Gemini failed, try Groq as fallback (fast & free)
         if (!result) {
-            console.error('All models failed, last error:', lastError);
-            throw lastError || new Error("All AI models failed to respond");
+            try {
+                console.log('Trying Groq as fallback...');
+                result = await callGroqAPI(idea, systemInstruction);
+                console.log('Groq succeeded');
+            } catch (error) {
+                console.error('Groq failed:', error);
+                lastError = error;
+            }
+        }
+
+        // If Groq failed, try DeepSeek as final fallback (cheap & good)
+        if (!result) {
+            try {
+                console.log('Trying DeepSeek as final fallback...');
+                result = await callDeepSeekAPI(idea, systemInstruction);
+                console.log('DeepSeek succeeded');
+            } catch (error) {
+                console.error('DeepSeek failed:', error);
+                lastError = error;
+            }
+        }
+
+        // If all AI services failed, throw the last error
+        if (!result) {
+            console.error('All AI services failed, last error:', lastError);
+            throw lastError || new Error("All AI services failed to respond");
         }
 
         const jsonText = result.text?.trim() || "";
