@@ -17,8 +17,8 @@ export const validateIdea = async (idea: string): Promise<ValidationResult> => {
       throw new Error('Idea is required and must be a string');
     }
 
-    if (idea.trim().length < 10) {
-      throw new Error('Idea must be at least 10 characters long');
+    if (idea.trim().length < 3) {
+      throw new Error('Idea must be at least 3 characters long');
     }
 
     if (idea.length > 1000) {
