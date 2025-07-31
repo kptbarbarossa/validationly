@@ -32,10 +32,12 @@ const EnhancedLoadingSpinner: React.FC = () => {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
                 <div className="text-center mb-6">
-                    <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg className="w-8 h-8 text-white animate-pulse" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
+                    <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4 p-3">
+                        <img 
+                            src="/logo.png" 
+                            alt="Validationly Logo"
+                            className="w-full h-full object-contain animate-pulse"
+                        />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
                         {currentStep.title}
