@@ -215,7 +215,7 @@ const HomePage: React.FC = () => {
                                 onClick={triggerValidation}
                                 disabled={!userInput.isValid || isLoading}
                                 className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
-                                    ? 'hover:scale-105 cursor-pointer opacity-100'
+                                    ? 'hover:scale-125 cursor-pointer opacity-100'
                                     : 'cursor-not-allowed opacity-50'
                                     }`}
                                 aria-label="Submit idea for validation"
@@ -223,7 +223,7 @@ const HomePage: React.FC = () => {
                                 <img
                                     src="/logo.png"
                                     alt="Submit"
-                                    className="w-5 h-5 object-contain"
+                                    className="w-6 h-6 object-contain"
                                 />
                             </button>
                         </div>
