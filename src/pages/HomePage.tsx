@@ -11,7 +11,7 @@ const sampleCategories = [
     {
         name: "SaaS & B2B",
         icon: (
-            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
             </svg>
         ),
@@ -21,7 +21,7 @@ const sampleCategories = [
     {
         name: "Mobile Apps",
         icon: (
-            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z" />
             </svg>
         ),
@@ -31,7 +31,7 @@ const sampleCategories = [
     {
         name: "E-commerce",
         icon: (
-            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
             </svg>
         ),
@@ -41,7 +41,7 @@ const sampleCategories = [
     {
         name: "Fintech",
         icon: (
-            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
             </svg>
         ),
@@ -51,7 +51,7 @@ const sampleCategories = [
     {
         name: "Health & Wellness",
         icon: (
-            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
         ),
@@ -61,7 +61,7 @@ const sampleCategories = [
     {
         name: "Productivity",
         icon: (
-            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
             </svg>
         ),
@@ -162,17 +162,17 @@ const HomePage: React.FC = () => {
 
     return (
         <div className="text-center max-w-4xl mx-auto">
-            {/* Enhanced Hero Section */}
-            <div className="relative mb-12">
+            {/* Enhanced Hero Section - Reduced spacing */}
+            <div className="relative mb-8">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
 
-                <div className="relative z-10 py-16">
+                <div className="relative z-10 py-8">
                     {/* Logo */}
-                    <div className="flex justify-center mb-8">
+                    <div className="flex justify-center mb-6">
                         <Logo size="lg" showText={true} />
                     </div>
 
-                    <h1 className="text-4xl sm:text-6xl font-bold mb-6">
+                    <h1 className="text-4xl sm:text-6xl font-bold mb-4">
                         <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
                             Validate your idea
                         </span>
@@ -180,7 +180,7 @@ const HomePage: React.FC = () => {
                         <span className="text-indigo-600">before you build it</span>
                     </h1>
 
-                    <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                    <p className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
                         Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
                     </p>
                 </div>
@@ -244,27 +244,36 @@ const HomePage: React.FC = () => {
 
             </form>
 
-            <div className="mt-16">
-                <h3 className="text-lg font-semibold text-gray-800 mb-8">
+            <div className="mt-12">
+                <h3 className="text-lg font-semibold text-gray-800 mb-6">
                     Not sure where to start? Try these examples:
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {sampleCategories.map((category, index) => (
                         <div
                             key={category.name}
-                            className="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-colors cursor-pointer group"
+                            className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                             onClick={() => handleSampleIdeaClick(category.example)}
+                            style={{ animationDelay: `${index * 100}ms` }}
                         >
-                            <div className="flex items-center gap-3 mb-3">
-                                <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                            <div className="flex items-center gap-3 mb-4">
+                                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center text-white group-hover:scale-105 transition-transform duration-300">
                                     {category.icon}
                                 </div>
-                                <h4 className="font-medium text-gray-800">{category.name}</h4>
+                                <div>
+                                    <h4 className="font-semibold text-gray-900">{category.name}</h4>
+                                    <div className="text-sm text-gray-500">{category.description}</div>
+                                </div>
                             </div>
-                            <p className="text-sm text-gray-600 mb-3">{category.description}</p>
-                            <div className="text-indigo-600 text-sm font-medium group-hover:text-indigo-700 transition-colors">
-                                Try this example →
+                            <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                                {category.example}
+                            </p>
+                            <div className="flex items-center text-indigo-600 text-sm font-medium group-hover:text-indigo-700 transition-colors">
+                                <span>Try this example</span>
+                                <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                </svg>
                             </div>
                         </div>
                     ))}
