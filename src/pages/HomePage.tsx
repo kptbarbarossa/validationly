@@ -34,8 +34,8 @@ const HomePage: React.FC = () => {
             return { idea, isValid: false, errorMessage: 'Please enter an idea to validate.' };
         }
 
-        if (trimmedIdea.length < 10) {
-            return { idea, isValid: false, errorMessage: 'Idea must be at least 10 characters long.' };
+        if (trimmedIdea.length < 3) {
+            return { idea, isValid: false, errorMessage: 'Idea must be at least 3 characters long.' };
         }
 
         if (trimmedIdea.length > 1000) {

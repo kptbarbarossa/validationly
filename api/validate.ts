@@ -61,8 +61,8 @@ function validateInput(idea: string): void {
         throw new Error("Idea is required and must be a string");
     }
 
-    if (idea.length < 10) {
-        throw new Error("Idea must be at least 10 characters long");
+    if (idea.length < 3) {
+        throw new Error("Idea must be at least 3 characters long");
     }
 
     if (idea.length > 1000) {
