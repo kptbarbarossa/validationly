@@ -4,12 +4,69 @@ import { useNavigate } from 'react-router-dom';
 import { validateIdea } from '../services/geminiService';
 import type { ValidationResult, UserInput } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
+import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 
-const sampleIdeas = [
-    "SaaS platform for automated invoice processing using AI",
-    "Mobile app for real-time expense splitting with friends",
-    "Web dashboard for social media content scheduling",
-    "Mobile fitness app with AI-powered workout recommendations"
+const sampleCategories = [
+    {
+        name: "SaaS & B2B",
+        icon: (
+            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-4m-5 0H3m2 0h3M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+            </svg>
+        ),
+        description: "Business software solutions",
+        example: "SaaS platform for automated invoice processing using AI"
+    },
+    {
+        name: "Mobile Apps",
+        icon: (
+            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z" />
+            </svg>
+        ),
+        description: "Consumer mobile applications",
+        example: "Mobile fitness app with AI-powered workout recommendations"
+    },
+    {
+        name: "E-commerce",
+        icon: (
+            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+        ),
+        description: "Online retail & marketplaces",
+        example: "Sustainable fashion marketplace for eco-conscious consumers"
+    },
+    {
+        name: "Fintech",
+        icon: (
+            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+            </svg>
+        ),
+        description: "Financial technology solutions",
+        example: "Mobile app for real-time expense splitting with friends"
+    },
+    {
+        name: "Health & Wellness",
+        icon: (
+            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+        ),
+        description: "Healthcare & fitness solutions",
+        example: "Mental health app with AI-powered mood tracking"
+    },
+    {
+        name: "Productivity",
+        icon: (
+            <svg className="w-5 h-5 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+        ),
+        description: "Tools for better productivity",
+        example: "Web dashboard for social media content scheduling"
+    }
 ];
 
 
@@ -103,84 +160,112 @@ const HomePage: React.FC = () => {
     };
 
     return (
-        <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 tracking-tight">
-                Validate your idea before you build it.
-            </h1>
-            <p className="text-lg text-gray-600 mb-8">
-                Why guess? Get an AI-driven demand forecast instantly.
-            </p>
+        <div className="text-center max-w-4xl mx-auto">
+            {/* Enhanced Hero Section */}
+            <div className="relative mb-12">
+                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
+                
+                <div className="relative z-10 py-16">
+                    <div className="inline-flex items-center gap-2 bg-indigo-50 px-4 py-2 rounded-full text-sm text-indigo-600 mb-6">
+                        <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        AI-Powered Validation
+                    </div>
+                    
+                    <h1 className="text-4xl sm:text-6xl font-bold mb-6">
+                        <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                            Validate your idea
+                        </span>
+                        <br />
+                        <span className="text-indigo-600">before you build it</span>
+                    </h1>
+                    
+                    <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+                        Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
+                    </p>
+                </div>
+            </div>
 
             <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
                 <div className="mb-4">
-                    <div className="relative">
-                        <textarea
-                            ref={textareaRef}
-                            value={userInput.idea}
-                            onChange={handleInputChange}
-                            onKeyDown={handleKeyDown}
-                            placeholder="Validate your idea"
-                            className={`w-full p-6 pr-16 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 focus:outline-none min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
-                                ? 'border-red-300 focus:border-red-400'
-                                : 'border-gray-200 hover:border-gray-300'
-                                }`}
-                            rows={4}
-                            disabled={isLoading}
-                            aria-describedby={userInput.errorMessage ? "error-message" : undefined}
-                        />
-                        <button
-                            type="button"
-                            onClick={triggerValidation}
-                            disabled={!userInput.isValid || isLoading}
-                            className={`absolute bottom-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
-                                ? 'bg-black hover:bg-gray-800 text-white cursor-pointer'
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                }`}
-                            aria-label="Submit idea for validation"
-                        >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={2}
-                                stroke="currentColor"
-                                className="w-4 h-4"
+                    <div className="relative group">
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                        
+                        <div className="relative bg-white rounded-2xl border-2 border-gray-100 hover:border-indigo-200 transition-colors">
+                            <textarea
+                                ref={textareaRef}
+                                value={userInput.idea}
+                                onChange={handleInputChange}
+                                onKeyDown={handleKeyDown}
+                                placeholder="Describe your startup idea... (e.g., AI-powered fitness app for busy professionals)"
+                                className="w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px]"
+                                rows={4}
+                                disabled={isLoading}
+                                aria-describedby={userInput.errorMessage ? "error-message" : undefined}
+                            />
+                            
+                            {/* Character counter */}
+                            <div className="absolute bottom-3 left-6 text-sm text-gray-400">
+                                {userInput.idea.length}/1000
+                            </div>
+                            
+                            {/* Enhanced submit button */}
+                            <button
+                                type="button"
+                                onClick={triggerValidation}
+                                disabled={!userInput.isValid || isLoading}
+                                className={`absolute bottom-3 right-3 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
+                                    ? 'bg-gradient-to-r from-indigo-500 to-cyan-500 text-white hover:scale-105 cursor-pointer'
+                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    }`}
+                                aria-label="Submit idea for validation"
                             >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                            </svg>
-                        </button>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth={2}
+                                    stroke="currentColor"
+                                    className="w-5 h-5"
+                                >
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                     {userInput.errorMessage && (
                         <div id="error-message" className="text-red-500 text-sm mt-2 text-left">
                             {userInput.errorMessage}
                         </div>
                     )}
-                    {isLoading && (
-                        <div className="flex items-center justify-center gap-2 mt-3 text-indigo-600">
-                            <LoadingSpinner />
-                            <span className="text-sm">Analyzing your idea...</span>
-                        </div>
-                    )}
+                    {isLoading && <EnhancedLoadingSpinner />}
                 </div>
 
 
             </form>
 
-            <div className="mt-12">
-                <h3 className="text-base font-medium text-gray-600 mb-6">
-                    Not sure where to start? Try an example:
+            <div className="mt-16">
+                <h3 className="text-lg font-semibold text-gray-800 mb-8">
+                    Not sure where to start? Try these examples:
                 </h3>
-                <div className="flex flex-wrap justify-center gap-3 max-w-4xl mx-auto">
-                    {sampleIdeas.map((sample, index) => (
-                        <button
-                            key={index}
-                            onClick={() => handleSampleIdeaClick(sample)}
-                            disabled={isLoading}
-                            className="border border-gray-300 bg-white text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-50 hover:border-gray-400 transition-all duration-200 disabled:opacity-50 shadow-sm hover:shadow-md"
-                            aria-label={`Try example: ${sample}`}
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {sampleCategories.map((category, index) => (
+                        <div 
+                            key={category.name} 
+                            className="bg-gray-50 rounded-xl p-6 hover:bg-gray-100 transition-colors cursor-pointer group"
+                            onClick={() => handleSampleIdeaClick(category.example)}
                         >
-                            {sample}
-                        </button>
+                            <div className="flex items-center gap-3 mb-3">
+                                <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                                    {category.icon}
+                                </div>
+                                <h4 className="font-medium text-gray-800">{category.name}</h4>
+                            </div>
+                            <p className="text-sm text-gray-600 mb-3">{category.description}</p>
+                            <div className="text-indigo-600 text-sm font-medium group-hover:text-indigo-700 transition-colors">
+                                Try this example →
+                            </div>
+                        </div>
                     ))}
                 </div>
             </div>

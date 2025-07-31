@@ -58,6 +58,7 @@ const ResultsPage: React.FC = () => {
     const navigate = useNavigate();
     const result = location.state?.result as ValidationResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
+    const [expandedPlatforms, setExpandedPlatforms] = useState<{ [key: string]: boolean }>({});
 
     useEffect(() => {
         if (!result) {
@@ -100,6 +101,27 @@ const ResultsPage: React.FC = () => {
         });
     };
 
+    const togglePlatformExpand = (platform: string) => {
+        setExpandedPlatforms(prev => ({
+            ...prev,
+            [platform]: !prev[platform]
+        }));
+    };
+
+    const getPlatformColor = (platform: string) => {
+        switch (platform) {
+            case 'X':
+            case 'Twitter':
+                return 'bg-black text-white';
+            case 'Reddit':
+                return 'bg-orange-500 text-white';
+            case 'LinkedIn':
+                return 'bg-blue-600 text-white';
+            default:
+                return 'bg-indigo-500 text-white';
+        }
+    };
+
     return (
         <div className="max-w-4xl mx-auto animate-fade-in">
             <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl shadow-gray-200/80 mb-10">
@@ -118,19 +140,42 @@ const ResultsPage: React.FC = () => {
                     <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
                         <SignalIcon /> Signal Summary
                     </h2>
-                    <div className="space-y-4">
-                        {result.signalSummary.map((signal) => {
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        {result.signalSummary.map((signal, index) => {
                             const Icon = PlatformIcons[signal.platform];
+                            const isExpanded = expandedPlatforms[signal.platform];
+                            const shouldTruncate = signal.summary.length > 200;
+                            
                             return (
-                                <div key={signal.platform} className="flex items-start gap-4">
-                                    <div className="flex-shrink-0 text-indigo-500 mt-1">
-                                        {Icon && <Icon />}
+                                <div 
+                                    key={signal.platform} 
+                                    className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300"
+                                    style={{ animationDelay: `${index * 100}ms` }}
+                                >
+                                    {/* Platform header */}
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${getPlatformColor(signal.platform)}`}>
+                                            {Icon && <Icon />}
+                                        </div>
+                                        <div>
+                                            <h3 className="font-semibold text-gray-900">{signal.platform}</h3>
+                                            <div className="text-sm text-gray-500">Market Signals</div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="font-semibold text-gray-800 mb-2">
-                                            {signal.platform}
+                                    
+                                    {/* Summary with expand/collapse */}
+                                    <div className="text-gray-600 text-sm leading-relaxed">
+                                        <p className={shouldTruncate && !isExpanded ? 'line-clamp-3' : ''}>
+                                            {signal.summary}
                                         </p>
-                                        <p className="text-gray-600 leading-relaxed">{signal.summary}</p>
+                                        {shouldTruncate && (
+                                            <button 
+                                                onClick={() => togglePlatformExpand(signal.platform)}
+                                                className="text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-2 transition-colors"
+                                            >
+                                                {isExpanded ? 'Show less' : 'Read more'}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             );
