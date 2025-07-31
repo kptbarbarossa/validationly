@@ -169,7 +169,7 @@ const HomePage: React.FC = () => {
                 <div className="relative z-10 py-8">
                     {/* Logo */}
                     <div className="flex justify-center mb-6">
-                        <Logo size="lg" showText={true} />
+                        <Logo size="lg" showText={false} />
                     </div>
 
                     <h1 className="text-4xl sm:text-6xl font-bold mb-4">
@@ -257,14 +257,9 @@ const HomePage: React.FC = () => {
                             onClick={() => handleSampleIdeaClick(category.example)}
                             style={{ animationDelay: `${index * 100}ms` }}
                         >
-                            <div className="flex items-center gap-3 mb-4">
-                                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-xl flex items-center justify-center text-white group-hover:scale-105 transition-transform duration-300">
-                                    {category.icon}
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold text-gray-900">{category.name}</h4>
-                                    <div className="text-sm text-gray-500">{category.description}</div>
-                                </div>
+                            <div className="mb-4">
+                                <h4 className="font-semibold text-gray-900 mb-1">{category.name}</h4>
+                                <div className="text-sm text-gray-500">{category.description}</div>
                             </div>
                             <p className="text-gray-600 text-sm leading-relaxed mb-4">
                                 {category.example}
