@@ -112,46 +112,44 @@ const HomePage: React.FC = () => {
             </p>
 
             <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-                <div className="relative mb-4">
-                    <textarea
-                        ref={textareaRef}
-                        value={userInput.idea}
-                        onChange={handleInputChange}
-                        onKeyDown={handleKeyDown}
-                        placeholder="Validate your idea"
-                        className={`w-full p-6 pr-16 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 focus:outline-none min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
-                            ? 'border-red-300 focus:border-red-400'
-                            : 'border-gray-200 hover:border-gray-300'
-                            }`}
-                        rows={4}
-                        disabled={isLoading}
-                        aria-describedby={userInput.errorMessage ? "error-message" : undefined}
-                    />
-                    <button
-                        type="button"
-                        onClick={triggerValidation}
-                        disabled={!userInput.isValid || isLoading}
-                        className={`absolute w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
-                                ? 'bg-black hover:bg-gray-800 text-white cursor-pointer'
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            }`}
-                        style={{ 
-                            bottom: '24px', 
-                            right: '24px'
-                        }}
-                        aria-label="Submit idea for validation"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            strokeWidth={2}
-                            stroke="currentColor"
-                            className="w-5 h-5"
+                <div className="mb-4">
+                    <div className="relative">
+                        <textarea
+                            ref={textareaRef}
+                            value={userInput.idea}
+                            onChange={handleInputChange}
+                            onKeyDown={handleKeyDown}
+                            placeholder="Validate your idea"
+                            className={`w-full p-6 pr-16 rounded-2xl bg-gray-50 border text-gray-900 focus:ring-0 focus:border-indigo-400 focus:outline-none min-h-[120px] resize-none text-left text-base transition-all duration-200 shadow-[0_8px_30px_rgb(0,0,0,0.12)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.16)] focus:shadow-[0_8px_30px_rgb(0,0,0,0.16)] ${userInput.errorMessage
+                                ? 'border-red-300 focus:border-red-400'
+                                : 'border-gray-200 hover:border-gray-300'
+                                }`}
+                            rows={4}
+                            disabled={isLoading}
+                            aria-describedby={userInput.errorMessage ? "error-message" : undefined}
+                        />
+                        <button
+                            type="button"
+                            onClick={triggerValidation}
+                            disabled={!userInput.isValid || isLoading}
+                            className={`absolute bottom-3 right-3 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
+                                    ? 'bg-black hover:bg-gray-800 text-white cursor-pointer'
+                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                }`}
+                            aria-label="Submit idea for validation"
                         >
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                        </svg>
-                    </button>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={2}
+                                stroke="currentColor"
+                                className="w-5 h-5"
+                            >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                            </svg>
+                        </button>
+                    </div>
                     {userInput.errorMessage && (
                         <div id="error-message" className="text-red-500 text-sm mt-2 text-left">
                             {userInput.errorMessage}
