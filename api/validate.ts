@@ -302,7 +302,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             parsedResult.demandScore < 0 ||
             parsedResult.demandScore > 100 ||
             !Array.isArray(parsedResult.signalSummary) ||
-            parsedResult.signalSummary.length < 3) {
+            parsedResult.signalSummary.length < 3 ||
+            !Array.isArray(parsedResult.validationStrategies) ||
+            parsedResult.validationStrategies.length < 2) {
             throw new Error("AI analysis returned invalid data format");
         }
 
