@@ -177,7 +177,7 @@ const HomePage: React.FC = () => {
                             Validate your idea
                         </span>
                         <br />
-                        <span className="text-indigo-600">before you build it</span>
+                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
                     </h1>
 
                     <p className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
