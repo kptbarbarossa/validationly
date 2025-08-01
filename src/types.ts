@@ -5,19 +5,7 @@ export interface ContentQuality {
   viralityScore: number;
   grammarScore: number;
   clarityScore: number;
-  emotionalImpact: number;
-  psychologicalTriggers: string[];
-  readabilityIndex: number;
-  memorabilityScore: number;
   improvements: string[];
-}
-
-export interface MarketIntelligence {
-  competitorGaps: string[];
-  riskFactors: string[];
-  opportunityScore: number;
-  disruptionPotential: number;
-  scalabilityIndex: number;
 }
 
 export interface ScoreBreakdown {
@@ -31,7 +19,6 @@ export interface MarketTiming {
   readiness: number;
   trendDirection: 'Rising' | 'Stable' | 'Declining';
   optimalWindow: string;
-  seasonalFactors: string[];
 }
 
 export type ContentType = 'startup_idea' | 'social_content' | 'product_idea' | 'general_content';
@@ -45,7 +32,6 @@ export interface ValidationResult {
   scoreBreakdown: ScoreBreakdown;
   marketTiming: MarketTiming;
   contentQuality: ContentQuality;
-  marketIntelligence: MarketIntelligence;
   signalSummary: PlatformSignal[];
   tweetSuggestion: string;
   redditTitleSuggestion: string;

@@ -223,36 +223,7 @@ const platformSignalSchema = {
     required: ["platform", "summary"]
 };
 
-// Advanced Content Quality Analysis Schema
-const contentQualitySchema = {
-    type: Type.OBJECT,
-    properties: {
-        writingQuality: { type: Type.INTEGER, description: "Writing quality score (0-100)" },
-        engagementPotential: { type: Type.INTEGER, description: "Potential for engagement (0-100)" },
-        viralityScore: { type: Type.INTEGER, description: "Viral potential score (0-100)" },
-        grammarScore: { type: Type.INTEGER, description: "Grammar and language quality (0-100)" },
-        clarityScore: { type: Type.INTEGER, description: "Message clarity and understanding (0-100)" },
-        emotionalImpact: { type: Type.INTEGER, description: "Emotional resonance score (0-100)" },
-        psychologicalTriggers: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Detected psychological triggers" },
-        readabilityIndex: { type: Type.INTEGER, description: "Content readability score (0-100)" },
-        memorabilityScore: { type: Type.INTEGER, description: "How memorable this content is (0-100)" },
-        improvements: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Specific improvement suggestions" }
-    },
-    required: ["writingQuality", "engagementPotential", "viralityScore", "grammarScore", "clarityScore", "emotionalImpact", "psychologicalTriggers", "readabilityIndex", "memorabilityScore", "improvements"]
-};
 
-// Advanced Market Intelligence Schema
-const marketIntelligenceSchema = {
-    type: Type.OBJECT,
-    properties: {
-        competitorGaps: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Identified market gaps" },
-        riskFactors: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Potential risk factors" },
-        opportunityScore: { type: Type.INTEGER, description: "Market opportunity score (0-100)" },
-        disruptionPotential: { type: Type.INTEGER, description: "Potential to disrupt existing market (0-100)" },
-        scalabilityIndex: { type: Type.INTEGER, description: "How scalable this idea/content is (0-100)" }
-    },
-    required: ["competitorGaps", "riskFactors", "opportunityScore", "disruptionPotential", "scalabilityIndex"]
-};
 
 const responseSchema = {
     type: Type.OBJECT,
@@ -277,13 +248,22 @@ const responseSchema = {
             properties: {
                 readiness: { type: Type.INTEGER, description: "Market/audience readiness score (0-100)" },
                 trendDirection: { type: Type.STRING, enum: ["Rising", "Stable", "Declining"] },
-                optimalWindow: { type: Type.STRING, description: "Best time to launch/share this content" },
-                seasonalFactors: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Seasonal considerations" }
+                optimalWindow: { type: Type.STRING, description: "Best time to launch/share this content" }
             },
-            required: ["readiness", "trendDirection", "optimalWindow", "seasonalFactors"]
+            required: ["readiness", "trendDirection", "optimalWindow"]
         },
-        contentQuality: contentQualitySchema,
-        marketIntelligence: marketIntelligenceSchema,
+        contentQuality: {
+            type: Type.OBJECT,
+            properties: {
+                writingQuality: { type: Type.INTEGER, description: "Writing quality score (0-100)" },
+                engagementPotential: { type: Type.INTEGER, description: "Potential for engagement (0-100)" },
+                viralityScore: { type: Type.INTEGER, description: "Viral potential score (0-100)" },
+                grammarScore: { type: Type.INTEGER, description: "Grammar and language quality (0-100)" },
+                clarityScore: { type: Type.INTEGER, description: "Message clarity and understanding (0-100)" },
+                improvements: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Specific improvement suggestions" }
+            },
+            required: ["writingQuality", "engagementPotential", "viralityScore", "grammarScore", "clarityScore", "improvements"]
+        },
         signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
         tweetSuggestion: { type: Type.STRING, description: "An optimized X (Twitter) post version." },
         redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for Reddit." },
@@ -292,7 +272,7 @@ const responseSchema = {
         instagramSuggestion: { type: Type.STRING, description: "An Instagram-optimized version with hashtags." },
         tiktokSuggestion: { type: Type.STRING, description: "A TikTok-style short and catchy version." }
     },
-    required: ["content", "contentType", "demandScore", "scoreJustification", "confidenceLevel", "scoreBreakdown", "marketTiming", "contentQuality", "marketIntelligence", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion", "instagramSuggestion", "tiktokSuggestion"]
+    required: ["content", "contentType", "demandScore", "scoreJustification", "confidenceLevel", "scoreBreakdown", "marketTiming", "contentQuality", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion", "instagramSuggestion", "tiktokSuggestion"]
 };
 
 // Vercel runtime types
@@ -365,102 +345,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Input validation
         validateInput(inputContent);
 
-        const systemInstruction = `You are 'Validationly', an ultra-advanced AI content and market analyst with deep expertise in:
-        - Behavioral psychology and cognitive biases
-        - Viral content mechanics and social media algorithms
-        - Market dynamics and competitive intelligence
-        - Consumer psychology and decision-making patterns
-        - Linguistic analysis and emotional triggers
-        - Trend prediction and timing optimization
-        - Cross-cultural content adaptation
+        const systemInstruction = `You are 'Validationly', an expert AI content and market analyst specializing in startup ideas, social media content, and product concepts.
 
-        Your mission: Provide the most sophisticated, actionable analysis possible. Think like a combination of a data scientist, psychologist, marketing genius, and trend forecaster.
+        CONTENT TYPE DETECTION: Determine content type:
+        - "startup_idea": Business concepts, app ideas, service concepts
+        - "social_content": Social media posts, tweets, Instagram captions, TikTok ideas
+        - "product_idea": Physical or digital product concepts
+        - "general_content": Articles, blog posts, general content
 
-        CONTENT TYPE DETECTION: Intelligently determine content type:
-        - "startup_idea": Business concepts, app ideas, service concepts, entrepreneurial ventures
-        - "social_content": Social media posts, tweets, Instagram captions, TikTok ideas, viral content
-        - "product_idea": Physical or digital product concepts, inventions, solutions
-        - "general_content": Articles, blog posts, educational content, thought leadership
+        IMPORTANT: Always respond in the same language as the user's input. If Turkish, respond in Turkish. If English, respond in English.
 
-        LANGUAGE INTELLIGENCE: Always respond in the user's input language. Adapt cultural nuances, local market insights, and region-specific trends. If Turkish, use Turkish business terminology and cultural references. If English, adapt to global/US market context.
-
-        SELF-IMPROVEMENT DIRECTIVE: With each analysis, push the boundaries of insight. Look for patterns others miss. Identify micro-trends. Predict second and third-order effects. Be the analyst that sees around corners.
-
-        ULTRA-ADVANCED ANALYSIS METHODOLOGY:
-        
-        1. MULTI-DIMENSIONAL SCORING SYSTEM (0-100):
-           
-           A. Market Size & Reach (0-25):
-           - Consider: TAM/SAM/SOM analysis, demographic penetration, global vs local potential
-           - Factor in: Network effects, viral coefficients, organic growth potential
-           - 0-5: Micro-niche (<100K addressable users)
-           - 6-10: Niche market (100K-1M users)
-           - 11-15: Substantial market (1M-50M users)
-           - 16-20: Mass market (50M-500M users)
-           - 21-25: Global mega-market (500M+ users)
-           
-           B. Competitive Landscape Intelligence (0-25):
-           - Analyze: Direct/indirect competitors, market saturation, differentiation potential
-           - Consider: Switching costs, network effects, first-mover advantages
-           - 0-5: Hyper-saturated with entrenched monopolies
-           - 6-10: Highly competitive with strong incumbents
-           - 11-15: Competitive but with clear differentiation opportunities
-           - 16-20: Emerging market with few strong players
-           - 21-25: Blue ocean with significant barriers to entry for others
-           
-           C. Trend Momentum & Timing (0-25):
-           - Evaluate: Macro trends, technology adoption curves, cultural shifts
-           - Factor in: Seasonal patterns, economic cycles, generational preferences
-           - 0-5: Counter-trend or declining interest
-           - 6-10: Stable but mature market
-           - 11-15: Steady growth with predictable patterns
-           - 16-20: Accelerating adoption and interest
-           - 21-25: Exponential growth phase or viral breakthrough potential
-           
-           D. Execution Feasibility & Resource Requirements (0-25):
-           - Assess: Technical complexity, capital requirements, regulatory barriers
-           - Consider: Team capabilities, market access, distribution challenges
-           - 0-5: Extremely high barriers (requires massive resources/expertise)
-           - 6-10: Significant challenges (substantial investment needed)
-           - 11-15: Moderate complexity (typical startup challenges)
-           - 16-20: Achievable with proper planning and moderate resources
-           - 21-25: Highly executable (lean startup approach viable)
+        ANALYSIS METHODOLOGY:
+        1. Demand Score (0-100): Break down into 4 components (25 points each):
+           - Market Size (0-25): Potential user base size
+           - Competition (0-25): Level of market competition
+           - Trend Momentum (0-25): Current trend direction
+           - Feasibility (0-25): Execution difficulty
 
         2. Market Timing Analysis:
-           - Market Readiness (0-100): How ready is the market for this solution?
-           - Trend Direction: Is this market/technology rising, stable, or declining?
-           - Optimal Launch Window: When would be the best time to launch this idea?
-           
-        3. Platform-Specific Deep Analysis: Write comprehensive, multi-sentence summaries for each platform:
-           - X: Analyze real-time conversations, trending hashtags, influencer discussions, viral content patterns, user sentiment, and engagement behaviors. Include specific pain points users express and solution-seeking patterns.
-           - Reddit: Examine community discussions across relevant subreddits, problem-solving threads, user experiences, common complaints, solution requests, and niche expertise sharing. Identify specific communities and discussion themes.
-           - LinkedIn: Investigate professional perspectives, industry trends, B2B opportunities, thought leadership content, professional pain points, and business solution discussions. Focus on enterprise needs and professional use cases.
+           - Market Readiness (0-100): How ready is the market
+           - Trend Direction: Rising, Stable, or Declining
+           - Optimal Window: Best time to launch/share
 
-        4. ADVANCED CONTENT QUALITY ANALYSIS:
-           
-           A. Writing Quality (0-100): Analyze sentence structure, vocabulary richness, flow, coherence
-           B. Engagement Potential (0-100): Predict likes, shares, comments based on psychological triggers
-           C. Virality Score (0-100): Assess viral mechanics, shareability factors, network amplification potential
-           D. Grammar Score (0-100): Technical correctness, punctuation, spelling, syntax
-           E. Clarity Score (0-100): Message comprehension, ambiguity reduction, cognitive load
-           F. Emotional Impact (0-100): Emotional resonance, sentiment strength, psychological appeal
-           G. Psychological Triggers: Identify specific cognitive biases and behavioral triggers
-           H. Readability Index (0-100): Flesch-Kincaid level, accessibility, comprehension ease
-           I. Memorability Score (0-100): Stickiness factor, recall potential, mental availability
-           
-        5. MARKET INTELLIGENCE ANALYSIS:
-           - Competitor Gaps: Identify specific market opportunities and unmet needs
-           - Risk Factors: Assess potential threats, market risks, execution challenges
-           - Opportunity Score (0-100): Overall market opportunity assessment
-           - Disruption Potential (0-100): Ability to disrupt existing solutions
-           - Scalability Index (0-100): Growth potential and scaling feasibility
-           
-        6. MULTI-PLATFORM OPTIMIZATION: Create platform-native content that leverages each platform's unique algorithm and user behavior patterns:
-           - X (Twitter): Optimized for engagement, trending potential, conversation starters
-           - Reddit: Community-focused, value-driven, discussion-worthy content
-           - LinkedIn: Professional, thought leadership, industry insights
-           - Instagram: Visual storytelling, lifestyle integration, hashtag optimization
-           - TikTok: Short-form, trend-aware, algorithm-friendly content
+        3. Content Quality Analysis:
+           - Writing Quality (0-100): Grammar, style, flow
+           - Engagement Potential (0-100): Likelihood of engagement
+           - Virality Score (0-100): Potential to go viral
+           - Grammar Score (0-100): Technical correctness
+           - Clarity Score (0-100): Message clarity
+           - Improvements: Specific suggestions
+
+        4. Platform Analysis: Analyze for X, Reddit, LinkedIn platforms
+
+        5. Multi-Platform Suggestions: Create optimized content for X, Reddit, LinkedIn, Instagram, TikTok
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
