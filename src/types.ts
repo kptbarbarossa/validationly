@@ -24,21 +24,23 @@ export interface MarketTiming {
 export type ContentType = 'startup_idea' | 'social_content' | 'product_idea' | 'general_content';
 
 export interface ValidationResult {
-  content: string;
-  contentType: ContentType;
+  idea: string;
   demandScore: number;
   scoreJustification: string;
-  confidenceLevel: number;
-  scoreBreakdown: ScoreBreakdown;
-  marketTiming: MarketTiming;
-  contentQuality: ContentQuality;
   signalSummary: PlatformSignal[];
   tweetSuggestion: string;
   redditTitleSuggestion: string;
   redditBodySuggestion: string;
   linkedinSuggestion: string;
-  instagramSuggestion: string;
-  tiktokSuggestion: string;
+  // Optional advanced fields
+  content?: string;
+  contentType?: ContentType;
+  confidenceLevel?: number;
+  scoreBreakdown?: ScoreBreakdown;
+  marketTiming?: MarketTiming;
+  contentQuality?: ContentQuality;
+  instagramSuggestion?: string;
+  tiktokSuggestion?: string;
 }
 
 export interface PlatformSignal {

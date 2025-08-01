@@ -122,7 +122,7 @@ const ResultsPage: React.FC = () => {
         <div className="max-w-4xl mx-auto animate-fade-in">
             <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl shadow-gray-200/80 mb-10">
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
-                    "{result.content}"
+                    "{result.content || result.idea}"
                 </h1>
 
                 <div className="mb-8">

@@ -228,51 +228,16 @@ const platformSignalSchema = {
 const responseSchema = {
     type: Type.OBJECT,
     properties: {
-        content: { type: Type.STRING, description: "The original content/idea analyzed" },
-        contentType: { type: Type.STRING, enum: ["startup_idea", "social_content", "product_idea", "general_content"], description: "Type of content being analyzed" },
-        demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand or content appeal." },
-        scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score, e.g., 'Strong Niche Interest' or 'High Engagement Potential'." },
-        confidenceLevel: { type: Type.INTEGER, description: "AI confidence in this analysis (0-100)" },
-        scoreBreakdown: {
-            type: Type.OBJECT,
-            properties: {
-                marketSize: { type: Type.INTEGER, description: "Market size potential or audience reach (0-25)" },
-                competition: { type: Type.INTEGER, description: "Competition level or content saturation (0-25)" },
-                trendMomentum: { type: Type.INTEGER, description: "Current trend momentum or topic relevance (0-25)" },
-                feasibility: { type: Type.INTEGER, description: "Execution feasibility or content quality (0-25)" }
-            },
-            required: ["marketSize", "competition", "trendMomentum", "feasibility"]
-        },
-        marketTiming: {
-            type: Type.OBJECT,
-            properties: {
-                readiness: { type: Type.INTEGER, description: "Market/audience readiness score (0-100)" },
-                trendDirection: { type: Type.STRING, enum: ["Rising", "Stable", "Declining"] },
-                optimalWindow: { type: Type.STRING, description: "Best time to launch/share this content" }
-            },
-            required: ["readiness", "trendDirection", "optimalWindow"]
-        },
-        contentQuality: {
-            type: Type.OBJECT,
-            properties: {
-                writingQuality: { type: Type.INTEGER, description: "Writing quality score (0-100)" },
-                engagementPotential: { type: Type.INTEGER, description: "Potential for engagement (0-100)" },
-                viralityScore: { type: Type.INTEGER, description: "Viral potential score (0-100)" },
-                grammarScore: { type: Type.INTEGER, description: "Grammar and language quality (0-100)" },
-                clarityScore: { type: Type.INTEGER, description: "Message clarity and understanding (0-100)" },
-                improvements: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Specific improvement suggestions" }
-            },
-            required: ["writingQuality", "engagementPotential", "viralityScore", "grammarScore", "clarityScore", "improvements"]
-        },
+        idea: { type: Type.STRING, description: "The original idea analyzed" },
+        demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
+        scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score." },
         signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
         tweetSuggestion: { type: Type.STRING, description: "An optimized X (Twitter) post version." },
         redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for Reddit." },
         redditBodySuggestion: { type: Type.STRING, description: "A detailed body for Reddit post." },
-        linkedinSuggestion: { type: Type.STRING, description: "A professional LinkedIn post version." },
-        instagramSuggestion: { type: Type.STRING, description: "An Instagram-optimized version with hashtags." },
-        tiktokSuggestion: { type: Type.STRING, description: "A TikTok-style short and catchy version." }
+        linkedinSuggestion: { type: Type.STRING, description: "A professional LinkedIn post version." }
     },
-    required: ["content", "contentType", "demandScore", "scoreJustification", "confidenceLevel", "scoreBreakdown", "marketTiming", "contentQuality", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion", "instagramSuggestion", "tiktokSuggestion"]
+    required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
 
 // Vercel runtime types
@@ -345,39 +310,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // Input validation
         validateInput(inputContent);
 
-        const systemInstruction = `You are 'Validationly', an expert AI content and market analyst specializing in startup ideas, social media content, and product concepts.
+        const systemInstruction = `You are 'Validationly', an expert AI market research analyst with deep knowledge of social media trends, consumer behavior, and startup ecosystems. Your task is to analyze a user's business idea and provide a comprehensive validation report.
 
-        CONTENT TYPE DETECTION: Determine content type:
-        - "startup_idea": Business concepts, app ideas, service concepts
-        - "social_content": Social media posts, tweets, Instagram captions, TikTok ideas
-        - "product_idea": Physical or digital product concepts
-        - "general_content": Articles, blog posts, general content
-
-        IMPORTANT: Always respond in the same language as the user's input. If Turkish, respond in Turkish. If English, respond in English.
+        IMPORTANT: Always respond in the same language as the user's input. If the user writes in Turkish, respond in Turkish. If they write in English, respond in English. If they write in Spanish, respond in Spanish, etc. Maintain the same language throughout your entire response including all fields.
 
         ANALYSIS METHODOLOGY:
-        1. Demand Score (0-100): Break down into 4 components (25 points each):
-           - Market Size (0-25): Potential user base size
-           - Competition (0-25): Level of market competition
-           - Trend Momentum (0-25): Current trend direction
-           - Feasibility (0-25): Execution difficulty
+        1. Demand Score (0-100): Base this on realistic market factors:
+           - 0-30: Very niche/limited demand
+           - 31-50: Moderate interest, competitive market
+           - 51-70: Good demand with growth potential
+           - 71-85: Strong market demand, proven interest
+           - 86-100: Exceptional demand, trending topic
 
-        2. Market Timing Analysis:
-           - Market Readiness (0-100): How ready is the market
-           - Trend Direction: Rising, Stable, or Declining
-           - Optimal Window: Best time to launch/share
+        2. Platform-Specific Deep Analysis: Write comprehensive, multi-sentence summaries for each platform:
+           - X: Analyze real-time conversations, trending hashtags, influencer discussions, viral content patterns, user sentiment, and engagement behaviors. Include specific pain points users express and solution-seeking patterns.
+           - Reddit: Examine community discussions across relevant subreddits, problem-solving threads, user experiences, common complaints, solution requests, and niche expertise sharing. Identify specific communities and discussion themes.
+           - LinkedIn: Investigate professional perspectives, industry trends, B2B opportunities, thought leadership content, professional pain points, and business solution discussions. Focus on enterprise needs and professional use cases.
 
-        3. Content Quality Analysis:
-           - Writing Quality (0-100): Grammar, style, flow
-           - Engagement Potential (0-100): Likelihood of engagement
-           - Virality Score (0-100): Potential to go viral
-           - Grammar Score (0-100): Technical correctness
-           - Clarity Score (0-100): Message clarity
-           - Improvements: Specific suggestions
-
-        4. Platform Analysis: Analyze for X, Reddit, LinkedIn platforms
-
-        5. Multi-Platform Suggestions: Create optimized content for X, Reddit, LinkedIn, Instagram, TikTok
+        3. Content Suggestions: Create authentic, platform-native content that would actually perform well.
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
@@ -399,7 +349,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Model fallback mechanism for better reliability
-        const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
+        const models = ["gemini-2.0-flash-exp", "gemini-1.5-flash"];
         let result: any;
         let lastError: any;
 
@@ -441,22 +391,41 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         let parsedResult: any;
         try {
+            console.log('Raw AI response:', jsonText.substring(0, 500) + '...');
             parsedResult = JSON.parse(jsonText);
+            console.log('Parsed result keys:', Object.keys(parsedResult));
         } catch (parseError) {
+            console.error('JSON parse error:', parseError);
+            console.error('Raw response that failed to parse:', jsonText);
             throw new Error("Failed to parse AI response");
         }
 
-        // Response validation
+        // Response validation - more lenient
         if (typeof parsedResult.demandScore !== 'number' ||
             parsedResult.demandScore < 0 ||
-            parsedResult.demandScore > 100 ||
-            !Array.isArray(parsedResult.signalSummary) ||
-            parsedResult.signalSummary.length < 3) {
+            parsedResult.demandScore > 100) {
             throw new Error("AI analysis returned invalid data format");
         }
 
-        // Add the original content to the response
-        parsedResult.content = inputContent;
+        // Ensure required fields exist
+        if (!parsedResult.signalSummary) {
+            parsedResult.signalSummary = [];
+        }
+        if (!parsedResult.tweetSuggestion) {
+            parsedResult.tweetSuggestion = "Share your idea on X to get feedback!";
+        }
+        if (!parsedResult.redditTitleSuggestion) {
+            parsedResult.redditTitleSuggestion = "Looking for feedback on my idea";
+        }
+        if (!parsedResult.redditBodySuggestion) {
+            parsedResult.redditBodySuggestion = "I'd love to get your thoughts on this concept.";
+        }
+        if (!parsedResult.linkedinSuggestion) {
+            parsedResult.linkedinSuggestion = "Excited to share this new concept with my network.";
+        }
+
+        // Add the original idea to the response
+        parsedResult.idea = inputContent;
 
         // SELF-LEARNING: Update analytics memory with insights
         try {
