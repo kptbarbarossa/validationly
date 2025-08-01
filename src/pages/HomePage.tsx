@@ -259,12 +259,7 @@ const HomePage: React.FC = () => {
                             <p className="text-gray-600 text-sm leading-relaxed mb-4">
                                 {category.example}
                             </p>
-                            <div className="flex items-center text-indigo-600 text-sm font-medium group-hover:text-indigo-700 transition-colors">
-                                <span>Try this example</span>
-                                <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                                </svg>
-                            </div>
+
                         </div>
                     ))}
                 </div>

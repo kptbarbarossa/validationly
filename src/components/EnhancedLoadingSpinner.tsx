@@ -8,9 +8,9 @@ interface LoadingStep {
 
 const analysisSteps: LoadingStep[] = [
     { title: "Analyzing your idea", description: "Processing your business concept...", duration: 2000 },
-    { title: "Scanning social media", description: "Checking X, Reddit, and LinkedIn...", duration: 3000 },
-    { title: "Generating strategies", description: "Creating validation roadmap...", duration: 2000 },
-    { title: "Finalizing report", description: "Preparing your results...", duration: 1000 }
+    { title: "Scanning platforms", description: "Checking X, Reddit, LinkedIn, Instagram, TikTok...", duration: 3000 },
+    { title: "Content quality analysis", description: "Evaluating writing, engagement, and virality...", duration: 2000 },
+    { title: "Finalizing report", description: "Preparing your comprehensive results...", duration: 1000 }
 ];
 
 const EnhancedLoadingSpinner: React.FC = () => {
