@@ -229,13 +229,48 @@ const responseSchema = {
     type: Type.OBJECT,
     properties: {
         idea: { type: Type.STRING, description: "The original idea analyzed" },
+        contentType: { type: Type.STRING, enum: ["startup_idea", "social_content", "product_idea", "general_content"], description: "Type of content being analyzed" },
         demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
         scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score." },
+        confidenceLevel: { type: Type.INTEGER, description: "AI confidence in this analysis (0-100)" },
+        scoreBreakdown: {
+            type: Type.OBJECT,
+            properties: {
+                marketSize: { type: Type.INTEGER, description: "Market size potential (0-25)" },
+                competition: { type: Type.INTEGER, description: "Competition level (0-25)" },
+                trendMomentum: { type: Type.INTEGER, description: "Current trend momentum (0-25)" },
+                feasibility: { type: Type.INTEGER, description: "Execution feasibility (0-25)" }
+            },
+            required: ["marketSize", "competition", "trendMomentum", "feasibility"]
+        },
+        marketTiming: {
+            type: Type.OBJECT,
+            properties: {
+                readiness: { type: Type.INTEGER, description: "Market readiness score (0-100)" },
+                trendDirection: { type: Type.STRING, enum: ["Rising", "Stable", "Declining"] },
+                optimalWindow: { type: Type.STRING, description: "Best time to launch/share this content" }
+            },
+            required: ["readiness", "trendDirection", "optimalWindow"]
+        },
+        contentQuality: {
+            type: Type.OBJECT,
+            properties: {
+                writingQuality: { type: Type.INTEGER, description: "Writing quality score (0-100)" },
+                engagementPotential: { type: Type.INTEGER, description: "Potential for engagement (0-100)" },
+                viralityScore: { type: Type.INTEGER, description: "Viral potential score (0-100)" },
+                grammarScore: { type: Type.INTEGER, description: "Grammar and language quality (0-100)" },
+                clarityScore: { type: Type.INTEGER, description: "Message clarity and understanding (0-100)" },
+                improvements: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Specific improvement suggestions" }
+            },
+            required: ["writingQuality", "engagementPotential", "viralityScore", "grammarScore", "clarityScore", "improvements"]
+        },
         signalSummary: { type: Type.ARRAY, items: platformSignalSchema },
         tweetSuggestion: { type: Type.STRING, description: "An optimized X (Twitter) post version." },
         redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for Reddit." },
         redditBodySuggestion: { type: Type.STRING, description: "A detailed body for Reddit post." },
-        linkedinSuggestion: { type: Type.STRING, description: "A professional LinkedIn post version." }
+        linkedinSuggestion: { type: Type.STRING, description: "A professional LinkedIn post version." },
+        instagramSuggestion: { type: Type.STRING, description: "An Instagram-optimized version with hashtags." },
+        tiktokSuggestion: { type: Type.STRING, description: "A TikTok-style short and catchy version." }
     },
     required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
@@ -314,20 +349,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         IMPORTANT: Always respond in the same language as the user's input. If the user writes in Turkish, respond in Turkish. If they write in English, respond in English. If they write in Spanish, respond in Spanish, etc. Maintain the same language throughout your entire response including all fields.
 
-        ANALYSIS METHODOLOGY:
-        1. Demand Score (0-100): Base this on realistic market factors:
-           - 0-30: Very niche/limited demand
-           - 31-50: Moderate interest, competitive market
-           - 51-70: Good demand with growth potential
-           - 71-85: Strong market demand, proven interest
-           - 86-100: Exceptional demand, trending topic
+        CONTENT TYPE DETECTION: First determine what type of content this is:
+        - "startup_idea": Business concepts, app ideas, service concepts
+        - "social_content": Social media posts, tweets, Instagram captions, TikTok ideas
+        - "product_idea": Physical or digital product concepts
+        - "general_content": Articles, blog posts, general content
 
-        2. Platform-Specific Deep Analysis: Write comprehensive, multi-sentence summaries for each platform:
+        ANALYSIS METHODOLOGY:
+        1. Demand Score (0-100): Break down into 4 components (25 points each):
+           - Market Size (0-25): Potential user base size
+           - Competition (0-25): Level of market competition  
+           - Trend Momentum (0-25): Current trend direction
+           - Feasibility (0-25): Execution difficulty
+
+        2. Market Timing Analysis:
+           - Market Readiness (0-100): How ready is the market for this solution?
+           - Trend Direction: Is this market/technology rising, stable, or declining?
+           - Optimal Launch Window: When would be the best time to launch this idea?
+
+        3. Content Quality Analysis:
+           - Writing Quality (0-100): Grammar, style, flow, readability
+           - Engagement Potential (0-100): How likely to get likes, shares, comments
+           - Virality Score (0-100): Potential to go viral or spread widely
+           - Grammar Score (0-100): Technical writing correctness
+           - Clarity Score (0-100): How clear and understandable the message is
+           - Improvements: Specific suggestions to enhance the content
+
+        4. Platform-Specific Deep Analysis: Write comprehensive, multi-sentence summaries for each platform:
            - X: Analyze real-time conversations, trending hashtags, influencer discussions, viral content patterns, user sentiment, and engagement behaviors. Include specific pain points users express and solution-seeking patterns.
            - Reddit: Examine community discussions across relevant subreddits, problem-solving threads, user experiences, common complaints, solution requests, and niche expertise sharing. Identify specific communities and discussion themes.
            - LinkedIn: Investigate professional perspectives, industry trends, B2B opportunities, thought leadership content, professional pain points, and business solution discussions. Focus on enterprise needs and professional use cases.
 
-        3. Content Suggestions: Create authentic, platform-native content that would actually perform well.
+        5. Multi-Platform Content Suggestions: Create optimized versions for each platform:
+           - X (Twitter): Optimized for engagement, trending potential, conversation starters
+           - Reddit: Community-focused, value-driven, discussion-worthy content
+           - LinkedIn: Professional, thought leadership, industry insights
+           - Instagram: Visual storytelling, lifestyle integration, hashtag optimization
+           - TikTok: Short-form, trend-aware, algorithm-friendly content
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
@@ -407,7 +465,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             throw new Error("AI analysis returned invalid data format");
         }
 
-        // Ensure required fields exist
+        // Ensure required fields exist with fallbacks
         if (!parsedResult.signalSummary) {
             parsedResult.signalSummary = [];
         }
@@ -422,6 +480,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
         if (!parsedResult.linkedinSuggestion) {
             parsedResult.linkedinSuggestion = "Excited to share this new concept with my network.";
+        }
+
+        // Optional advanced fields - graceful fallbacks
+        if (!parsedResult.contentType) {
+            parsedResult.contentType = "startup_idea";
+        }
+        if (!parsedResult.confidenceLevel) {
+            parsedResult.confidenceLevel = 75;
+        }
+        if (!parsedResult.scoreBreakdown) {
+            const quarter = Math.floor(parsedResult.demandScore / 4);
+            parsedResult.scoreBreakdown = {
+                marketSize: quarter,
+                competition: quarter,
+                trendMomentum: quarter,
+                feasibility: quarter
+            };
+        }
+        if (!parsedResult.marketTiming) {
+            parsedResult.marketTiming = {
+                readiness: parsedResult.demandScore,
+                trendDirection: "Stable",
+                optimalWindow: "Now"
+            };
+        }
+        if (!parsedResult.contentQuality) {
+            parsedResult.contentQuality = {
+                writingQuality: 75,
+                engagementPotential: parsedResult.demandScore,
+                viralityScore: Math.max(50, parsedResult.demandScore - 20),
+                grammarScore: 85,
+                clarityScore: 80,
+                improvements: ["Consider adding more specific details", "Enhance value proposition"]
+            };
         }
 
         // Add the original idea to the response
