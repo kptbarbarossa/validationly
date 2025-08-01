@@ -3,17 +3,17 @@
 ## ⚠️ CRITICAL RULES - NEVER CHANGE THESE!
 
 ### 1. **GEMINI MODEL RULE** 🤖
-- **ALWAYS USE**: `gemini-2.0-flash-exp` as PRIMARY model
-- **FALLBACK**: `gemini-1.5-flash` as secondary
+- **ALWAYS USE**: `gemini-1.5-flash` as PRIMARY model (Gemini 2.5 Flash)
+- **FALLBACK**: `gemini-2.0-flash-exp` as secondary
 - **NEVER CHANGE** the model order or names
-- **REASON**: Gemini 2.0 Flash Experimental provides best results
+- **REASON**: Gemini 2.5 Flash (1.5-flash) provides best results
 
 ```typescript
 // ✅ CORRECT - DO NOT CHANGE
-const models = ["gemini-2.0-flash-exp", "gemini-1.5-flash"];
+const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
 
 // ❌ WRONG - NEVER DO THIS
-const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
+const models = ["gemini-2.0-flash-exp", "gemini-1.5-flash"];
 ```
 
 ### 2. **LANGUAGE SUPPORT RULE** 🌍
@@ -74,11 +74,11 @@ IMPORTANT: Always respond in the user's language.
 ### If Performance Issues:
 1. ✅ Optimize schema structure
 2. ✅ Reduce required fields
-3. ❌ DON'T change to older Gemini model
+3. ❌ DON'T change from Gemini 2.5 Flash primary
 
 ## 📋 CHECKLIST BEFORE ANY CHANGE
 
-- [ ] Gemini 2.0 Flash Experimental still primary?
+- [ ] Gemini 2.5 Flash (1.5-flash) still primary?
 - [ ] Full language instruction still present?
 - [ ] System instruction still detailed?
 - [ ] Core functionality preserved?
@@ -94,7 +94,7 @@ IMPORTANT: Always respond in the user's language.
 
 ## ✅ ALWAYS DO THESE
 
-1. ✅ Use Gemini 2.0 Flash Experimental first
+1. ✅ Use Gemini 2.5 Flash (1.5-flash) first
 2. ✅ Include full language support
 3. ✅ Maintain detailed analysis methodology
 4. ✅ Add graceful error handling

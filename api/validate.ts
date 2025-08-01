@@ -349,7 +349,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         // Model fallback mechanism for better reliability
-        const models = ["gemini-2.0-flash-exp", "gemini-1.5-flash"];
+        const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
         let result: any;
         let lastError: any;
 
