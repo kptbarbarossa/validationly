@@ -119,7 +119,7 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto animate-fade-in">
+        <div className="text-center max-w-4xl mx-auto animate-fade-in">
             <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl shadow-gray-200/80 mb-10">
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
                     "{result.content || result.idea}"
@@ -147,23 +147,57 @@ const ResultsPage: React.FC = () => {
                 {/* Score Breakdown */}
                 {result.scoreBreakdown && (
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Score Breakdown</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div className="bg-blue-50 p-4 rounded-xl text-center">
-                                <div className="text-2xl font-bold text-blue-600">{result.scoreBreakdown.marketSize}</div>
-                                <div className="text-sm text-blue-700 font-medium">Market Size</div>
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
+                            <ChartBarIcon /> Score Breakdown
+                        </h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-white">
+                                        <ChartBarIcon />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Market Size</h3>
+                                    </div>
+                                </div>
+                                <div className="text-3xl font-bold text-blue-600 mb-2">{result.scoreBreakdown.marketSize}</div>
+                                <div className="text-sm text-gray-500">out of 25</div>
                             </div>
-                            <div className="bg-orange-50 p-4 rounded-xl text-center">
-                                <div className="text-2xl font-bold text-orange-600">{result.scoreBreakdown.competition}</div>
-                                <div className="text-sm text-orange-700 font-medium">Competition</div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-orange-500 flex items-center justify-center text-white">
+                                        <ChartBarIcon />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Competition</h3>
+                                    </div>
+                                </div>
+                                <div className="text-3xl font-bold text-orange-600 mb-2">{result.scoreBreakdown.competition}</div>
+                                <div className="text-sm text-gray-500">out of 25</div>
                             </div>
-                            <div className="bg-green-50 p-4 rounded-xl text-center">
-                                <div className="text-2xl font-bold text-green-600">{result.scoreBreakdown.trendMomentum}</div>
-                                <div className="text-sm text-green-700 font-medium">Trend Momentum</div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-green-500 flex items-center justify-center text-white">
+                                        <ChartBarIcon />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Trend Momentum</h3>
+                                    </div>
+                                </div>
+                                <div className="text-3xl font-bold text-green-600 mb-2">{result.scoreBreakdown.trendMomentum}</div>
+                                <div className="text-sm text-gray-500">out of 25</div>
                             </div>
-                            <div className="bg-purple-50 p-4 rounded-xl text-center">
-                                <div className="text-2xl font-bold text-purple-600">{result.scoreBreakdown.feasibility}</div>
-                                <div className="text-sm text-purple-700 font-medium">Feasibility</div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-purple-500 flex items-center justify-center text-white">
+                                        <ChartBarIcon />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Feasibility</h3>
+                                    </div>
+                                </div>
+                                <div className="text-3xl font-bold text-purple-600 mb-2">{result.scoreBreakdown.feasibility}</div>
+                                <div className="text-sm text-gray-500">out of 25</div>
                             </div>
                         </div>
                     </div>
@@ -172,26 +206,53 @@ const ResultsPage: React.FC = () => {
                 {/* Market Timing */}
                 {result.marketTiming && (
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Market Timing</h2>
-                        <div className="bg-gray-50 p-6 rounded-xl">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div className="text-center">
-                                    <div className="text-2xl font-bold text-gray-800">{result.marketTiming.readiness}%</div>
-                                    <div className="text-sm text-gray-600">Market Readiness</div>
-                                </div>
-                                <div className="text-center">
-                                    <div className={`text-2xl font-bold ${
-                                        result.marketTiming.trendDirection === 'Rising' ? 'text-green-600' :
-                                        result.marketTiming.trendDirection === 'Declining' ? 'text-red-600' : 'text-yellow-600'
-                                    }`}>
-                                        {result.marketTiming.trendDirection}
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
+                            <SignalIcon /> Market Timing
+                        </h2>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-indigo-500 flex items-center justify-center text-white">
+                                        <SignalIcon />
                                     </div>
-                                    <div className="text-sm text-gray-600">Trend Direction</div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Market Readiness</h3>
+                                    </div>
                                 </div>
-                                <div className="text-center">
-                                    <div className="text-lg font-semibold text-gray-800">{result.marketTiming.optimalWindow}</div>
-                                    <div className="text-sm text-gray-600">Optimal Window</div>
+                                <div className="text-3xl font-bold text-indigo-600 mb-2">{result.marketTiming.readiness}%</div>
+                                <div className="text-sm text-gray-500">readiness score</div>
+                            </div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-white ${
+                                        result.marketTiming.trendDirection === 'Rising' ? 'bg-green-500' :
+                                        result.marketTiming.trendDirection === 'Declining' ? 'bg-red-500' : 'bg-yellow-500'
+                                    }`}>
+                                        <SignalIcon />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Trend Direction</h3>
+                                    </div>
                                 </div>
+                                <div className={`text-3xl font-bold mb-2 ${
+                                    result.marketTiming.trendDirection === 'Rising' ? 'text-green-600' :
+                                    result.marketTiming.trendDirection === 'Declining' ? 'text-red-600' : 'text-yellow-600'
+                                }`}>
+                                    {result.marketTiming.trendDirection}
+                                </div>
+                                <div className="text-sm text-gray-500">market trend</div>
+                            </div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-cyan-500 flex items-center justify-center text-white">
+                                        <SignalIcon />
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Optimal Window</h3>
+                                    </div>
+                                </div>
+                                <div className="text-lg font-bold text-cyan-600 mb-2">{result.marketTiming.optimalWindow}</div>
+                                <div className="text-sm text-gray-500">best timing</div>
                             </div>
                         </div>
                     </div>
@@ -200,37 +261,61 @@ const ResultsPage: React.FC = () => {
                 {/* Content Quality */}
                 {result.contentQuality && (
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Content Quality Analysis</h2>
-                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-                            <div className="bg-indigo-50 p-3 rounded-lg text-center">
-                                <div className="text-xl font-bold text-indigo-600">{result.contentQuality.writingQuality}</div>
-                                <div className="text-xs text-indigo-700">Writing</div>
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
+                            <ChartBarIcon /> Content Quality Analysis
+                        </h2>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 text-center">
+                                <div className="w-10 h-10 rounded-xl bg-indigo-500 flex items-center justify-center text-white mx-auto mb-3">
+                                    <ChartBarIcon />
+                                </div>
+                                <div className="text-2xl font-bold text-indigo-600 mb-1">{result.contentQuality.writingQuality}</div>
+                                <div className="text-xs text-gray-500">Writing</div>
                             </div>
-                            <div className="bg-pink-50 p-3 rounded-lg text-center">
-                                <div className="text-xl font-bold text-pink-600">{result.contentQuality.engagementPotential}</div>
-                                <div className="text-xs text-pink-700">Engagement</div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 text-center">
+                                <div className="w-10 h-10 rounded-xl bg-pink-500 flex items-center justify-center text-white mx-auto mb-3">
+                                    <ChartBarIcon />
+                                </div>
+                                <div className="text-2xl font-bold text-pink-600 mb-1">{result.contentQuality.engagementPotential}</div>
+                                <div className="text-xs text-gray-500">Engagement</div>
                             </div>
-                            <div className="bg-red-50 p-3 rounded-lg text-center">
-                                <div className="text-xl font-bold text-red-600">{result.contentQuality.viralityScore}</div>
-                                <div className="text-xs text-red-700">Virality</div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 text-center">
+                                <div className="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white mx-auto mb-3">
+                                    <ChartBarIcon />
+                                </div>
+                                <div className="text-2xl font-bold text-red-600 mb-1">{result.contentQuality.viralityScore}</div>
+                                <div className="text-xs text-gray-500">Virality</div>
                             </div>
-                            <div className="bg-teal-50 p-3 rounded-lg text-center">
-                                <div className="text-xl font-bold text-teal-600">{result.contentQuality.grammarScore}</div>
-                                <div className="text-xs text-teal-700">Grammar</div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 text-center">
+                                <div className="w-10 h-10 rounded-xl bg-teal-500 flex items-center justify-center text-white mx-auto mb-3">
+                                    <ChartBarIcon />
+                                </div>
+                                <div className="text-2xl font-bold text-teal-600 mb-1">{result.contentQuality.grammarScore}</div>
+                                <div className="text-xs text-gray-500">Grammar</div>
                             </div>
-                            <div className="bg-cyan-50 p-3 rounded-lg text-center">
-                                <div className="text-xl font-bold text-cyan-600">{result.contentQuality.clarityScore}</div>
-                                <div className="text-xs text-cyan-700">Clarity</div>
+                            <div className="group bg-white rounded-2xl border border-gray-200 p-4 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 text-center">
+                                <div className="w-10 h-10 rounded-xl bg-cyan-500 flex items-center justify-center text-white mx-auto mb-3">
+                                    <ChartBarIcon />
+                                </div>
+                                <div className="text-2xl font-bold text-cyan-600 mb-1">{result.contentQuality.clarityScore}</div>
+                                <div className="text-xs text-gray-500">Clarity</div>
                             </div>
                         </div>
                         
                         {/* Improvements */}
                         {result.contentQuality.improvements && result.contentQuality.improvements.length > 0 && (
-                            <div className="bg-yellow-50 p-4 rounded-xl">
-                                <h3 className="font-semibold text-yellow-800 mb-2">💡 Improvement Suggestions</h3>
-                                <ul className="space-y-1">
+                            <div className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-12 h-12 rounded-xl bg-yellow-500 flex items-center justify-center text-white">
+                                        💡
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900">Improvement Suggestions</h3>
+                                    </div>
+                                </div>
+                                <ul className="space-y-2">
                                     {result.contentQuality.improvements.map((improvement, index) => (
-                                        <li key={index} className="text-yellow-700 text-sm flex items-start gap-2">
+                                        <li key={index} className="text-gray-600 flex items-start gap-2">
                                             <span className="text-yellow-500 mt-1">•</span>
                                             {improvement}
                                         </li>
