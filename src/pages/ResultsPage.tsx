@@ -18,11 +18,7 @@ const SignalIcon = () => (
     </svg>
 );
 
-const StrategyIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-);
+
 
 
 
@@ -126,7 +122,7 @@ const ResultsPage: React.FC = () => {
         <div className="max-w-4xl mx-auto animate-fade-in">
             <div className="bg-white p-8 sm:p-10 rounded-3xl shadow-2xl shadow-gray-200/80 mb-10">
                 <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-6 text-center">
-                    "{result.idea}"
+                    "{result.content}"
                 </h1>
 
                 <div className="mb-8">
@@ -134,7 +130,116 @@ const ResultsPage: React.FC = () => {
                         <ChartBarIcon /> Demand Score
                     </h2>
                     <ScoreBar score={result.demandScore} text={result.scoreJustification} />
+                    
+                    {/* Content Type & Confidence */}
+                    <div className="mt-4 flex flex-wrap gap-3">
+                        <div className="bg-indigo-50 text-indigo-700 px-3 py-1 rounded-full text-sm font-medium">
+                            {result.contentType?.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        </div>
+                        {result.confidenceLevel && (
+                            <div className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                                {result.confidenceLevel}% Confidence
+                            </div>
+                        )}
+                    </div>
                 </div>
+
+                {/* Score Breakdown */}
+                {result.scoreBreakdown && (
+                    <div className="mb-8">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Score Breakdown</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div className="bg-blue-50 p-4 rounded-xl text-center">
+                                <div className="text-2xl font-bold text-blue-600">{result.scoreBreakdown.marketSize}</div>
+                                <div className="text-sm text-blue-700 font-medium">Market Size</div>
+                            </div>
+                            <div className="bg-orange-50 p-4 rounded-xl text-center">
+                                <div className="text-2xl font-bold text-orange-600">{result.scoreBreakdown.competition}</div>
+                                <div className="text-sm text-orange-700 font-medium">Competition</div>
+                            </div>
+                            <div className="bg-green-50 p-4 rounded-xl text-center">
+                                <div className="text-2xl font-bold text-green-600">{result.scoreBreakdown.trendMomentum}</div>
+                                <div className="text-sm text-green-700 font-medium">Trend Momentum</div>
+                            </div>
+                            <div className="bg-purple-50 p-4 rounded-xl text-center">
+                                <div className="text-2xl font-bold text-purple-600">{result.scoreBreakdown.feasibility}</div>
+                                <div className="text-sm text-purple-700 font-medium">Feasibility</div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Market Timing */}
+                {result.marketTiming && (
+                    <div className="mb-8">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Market Timing</h2>
+                        <div className="bg-gray-50 p-6 rounded-xl">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="text-center">
+                                    <div className="text-2xl font-bold text-gray-800">{result.marketTiming.readiness}%</div>
+                                    <div className="text-sm text-gray-600">Market Readiness</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className={`text-2xl font-bold ${
+                                        result.marketTiming.trendDirection === 'Rising' ? 'text-green-600' :
+                                        result.marketTiming.trendDirection === 'Declining' ? 'text-red-600' : 'text-yellow-600'
+                                    }`}>
+                                        {result.marketTiming.trendDirection}
+                                    </div>
+                                    <div className="text-sm text-gray-600">Trend Direction</div>
+                                </div>
+                                <div className="text-center">
+                                    <div className="text-lg font-semibold text-gray-800">{result.marketTiming.optimalWindow}</div>
+                                    <div className="text-sm text-gray-600">Optimal Window</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Content Quality */}
+                {result.contentQuality && (
+                    <div className="mb-8">
+                        <h2 className="text-lg font-semibold text-gray-700 mb-4">Content Quality Analysis</h2>
+                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                            <div className="bg-indigo-50 p-3 rounded-lg text-center">
+                                <div className="text-xl font-bold text-indigo-600">{result.contentQuality.writingQuality}</div>
+                                <div className="text-xs text-indigo-700">Writing</div>
+                            </div>
+                            <div className="bg-pink-50 p-3 rounded-lg text-center">
+                                <div className="text-xl font-bold text-pink-600">{result.contentQuality.engagementPotential}</div>
+                                <div className="text-xs text-pink-700">Engagement</div>
+                            </div>
+                            <div className="bg-red-50 p-3 rounded-lg text-center">
+                                <div className="text-xl font-bold text-red-600">{result.contentQuality.viralityScore}</div>
+                                <div className="text-xs text-red-700">Virality</div>
+                            </div>
+                            <div className="bg-teal-50 p-3 rounded-lg text-center">
+                                <div className="text-xl font-bold text-teal-600">{result.contentQuality.grammarScore}</div>
+                                <div className="text-xs text-teal-700">Grammar</div>
+                            </div>
+                            <div className="bg-cyan-50 p-3 rounded-lg text-center">
+                                <div className="text-xl font-bold text-cyan-600">{result.contentQuality.clarityScore}</div>
+                                <div className="text-xs text-cyan-700">Clarity</div>
+                            </div>
+                        </div>
+                        
+                        {/* Improvements */}
+                        {result.contentQuality.improvements && result.contentQuality.improvements.length > 0 && (
+                            <div className="bg-yellow-50 p-4 rounded-xl">
+                                <h3 className="font-semibold text-yellow-800 mb-2">💡 Improvement Suggestions</h3>
+                                <ul className="space-y-1">
+                                    {result.contentQuality.improvements.map((improvement, index) => (
+                                        <li key={index} className="text-yellow-700 text-sm flex items-start gap-2">
+                                            <span className="text-yellow-500 mt-1">•</span>
+                                            {improvement}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 <div>
                     <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
@@ -182,40 +287,53 @@ const ResultsPage: React.FC = () => {
                         })}
                     </div>
                 </div>
-                
-                <div className="mt-8">
-                    <h2 className="text-lg font-semibold text-gray-700 mb-4 flex items-center gap-3">
-                        <StrategyIcon /> Validation Strategies
-                    </h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {result.validationStrategies?.map((strategy, index) => (
-                            <div key={index} className="bg-gray-50 p-6 rounded-xl border border-gray-200">
-                                <h3 className="font-semibold text-gray-800 mb-3 text-lg">
-                                    {strategy.title}
-                                </h3>
-                                <p className="text-gray-600 mb-4 leading-relaxed">
-                                    {strategy.description}
-                                </p>
-                                <div>
-                                    <h4 className="font-medium text-gray-700 mb-2">Action Steps:</h4>
-                                    <ul className="space-y-2">
-                                        {strategy.steps.map((step, stepIndex) => (
-                                            <li key={stepIndex} className="flex items-start gap-2">
-                                                <span className="flex-shrink-0 w-5 h-5 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-xs font-medium mt-0.5">
-                                                    {stepIndex + 1}
-                                                </span>
-                                                <span className="text-gray-600 text-sm">{step}</span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+                {/* Instagram Icon */}
+                {result.instagramSuggestion && (
+                    <SuggestionCard
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                            </svg>
+                        }
+                        title="Instagram Post Suggestion"
+                        content={result.instagramSuggestion}
+                        actions={[
+                            {
+                                id: 'instagram-copy',
+                                label: 'Copy Text',
+                                handler: () => handleCopyToClipboard(result.instagramSuggestion, 'instagram-copy'),
+                                copiedLabel: 'Copied!'
+                            }
+                        ]}
+                        copiedId={copiedId}
+                    />
+                )}
+
+                {/* TikTok Icon */}
+                {result.tiktokSuggestion && (
+                    <SuggestionCard
+                        icon={
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                            </svg>
+                        }
+                        title="TikTok Content Suggestion"
+                        content={result.tiktokSuggestion}
+                        actions={[
+                            {
+                                id: 'tiktok-copy',
+                                label: 'Copy Text',
+                                handler: () => handleCopyToClipboard(result.tiktokSuggestion, 'tiktok-copy'),
+                                copiedLabel: 'Copied!'
+                            }
+                        ]}
+                        copiedId={copiedId}
+                    />
+                )}
                 <SuggestionCard
                     icon={<XIcon />}
                     title="X Post Suggestion"
