@@ -85,6 +85,7 @@ const ResultsPage: React.FC = () => {
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [isSaved, setIsSaved] = useState(false);
     const [analysisId] = useState(() => Math.floor(Math.random() * 10000));
+    const [expandedPlatforms, setExpandedPlatforms] = useState<{ [key: string]: boolean }>({});
 
     useEffect(() => {
         if (!result) {
@@ -120,6 +121,13 @@ const ResultsPage: React.FC = () => {
         if (score >= 60) return 'from-blue-500 to-indigo-600';
         if (score >= 40) return 'from-yellow-500 to-orange-600';
         return 'from-red-500 to-pink-600';
+    };
+
+    const togglePlatformExpand = (platform: string) => {
+        setExpandedPlatforms(prev => ({
+            ...prev,
+            [platform]: !prev[platform]
+        }));
     };
 
     return (
@@ -508,11 +516,19 @@ const ResultsPage: React.FC = () => {
                                                         <div className="text-xs text-gray-500">Market Signals</div>
                                                     </div>
                                                 </div>
-                                                <p className="text-sm text-gray-600 leading-relaxed">
-                                                    {signal.summary.length > 120 
-                                                        ? signal.summary.substring(0, 120) + '...' 
-                                                        : signal.summary}
-                                                </p>
+                                                <div className="text-sm text-gray-600 leading-relaxed">
+                                                    <p className={expandedPlatforms[signal.platform] ? '' : 'line-clamp-3'}>
+                                                        {signal.summary}
+                                                    </p>
+                                                    {signal.summary.length > 200 && (
+                                                        <button 
+                                                            onClick={() => togglePlatformExpand(signal.platform)}
+                                                            className="text-indigo-600 hover:text-indigo-700 text-sm font-medium mt-2 transition-colors"
+                                                        >
+                                                            {expandedPlatforms[signal.platform] ? 'Show less' : 'Read more'}
+                                                        </button>
+                                                    )}
+                                                </div>
                                             </div>
                                         );
                                     })}
@@ -538,6 +554,24 @@ const ResultsPage: React.FC = () => {
                                         <DownloadIcon />
                                         <span className="font-medium">Export PDF</span>
                                     </button>
+                                    <a
+                                        href="https://buymeacoffee.com/kptbarbarossa"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-xl hover:from-yellow-600 hover:to-orange-700 transition-all duration-200"
+                                    >
+                                        <span className="text-lg">☕</span>
+                                        <span className="font-medium">Buy me a coffee</span>
+                                    </a>
+                                    <a
+                                        href="https://x.com/kptbarbarossa"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-gray-800 to-black text-white rounded-xl hover:from-gray-900 hover:to-gray-800 transition-all duration-200"
+                                    >
+                                        <XIcon />
+                                        <span className="font-medium">Feedback on X</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
