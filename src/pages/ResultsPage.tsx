@@ -313,7 +313,7 @@ const ResultsPage: React.FC = () => {
                                         <div className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl">
                                             <span className="text-gray-600 font-medium">Trend Direction</span>
                                             <span className={`font-bold text-lg ${result.marketTiming.trendDirection === 'Rising' ? 'text-emerald-600' :
-                                                    result.marketTiming.trendDirection === 'Declining' ? 'text-red-500' : 'text-amber-500'
+                                                result.marketTiming.trendDirection === 'Declining' ? 'text-red-500' : 'text-amber-500'
                                                 }`}>
                                                 {result.marketTiming.trendDirection}
                                             </span>
