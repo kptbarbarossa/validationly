@@ -72,8 +72,6 @@ const ResultsPage: React.FC = () => {
     const navigate = useNavigate();
     const result = location.state?.result as ValidationResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
-    const [expandedPlatforms, setExpandedPlatforms] = useState<{ [key: string]: boolean }>({});
-
     useEffect(() => {
         if (!result) {
             navigate('/');
@@ -94,13 +92,6 @@ const ResultsPage: React.FC = () => {
         } catch (err) {
             console.error('Failed to copy to clipboard:', err);
         }
-    };
-
-    const togglePlatformExpand = (platform: string) => {
-        setExpandedPlatforms(prev => ({
-            ...prev,
-            [platform]: !prev[platform]
-        }));
     };
 
     return (
@@ -255,7 +246,9 @@ const ResultsPage: React.FC = () => {
                                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                                     <div
                                                         className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-500"
-                                                        style={{ width: `${(score / (result.validationlyScore?.weighting[platform as keyof typeof result.validationlyScore.weighting] || 40)) * 100}%` }}
+                                                        style={{ 
+                                                            width: `${Math.min(100, (score / (result.validationlyScore?.weighting[platform as keyof typeof result.validationlyScore.weighting] || 40)) * 100)}%` 
+                                                        }}
                                                     ></div>
                                                 </div>
                                             </div>
