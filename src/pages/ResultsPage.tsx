@@ -166,14 +166,13 @@ const ResultsPage: React.FC = () => {
                             <div className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
                                 "{result.content || result.idea}"
                             </div>
-                            <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold ${
-                                result.demandScore >= 80 ? 'bg-green-100 text-green-700' :
-                                result.demandScore >= 60 ? 'bg-yellow-100 text-yellow-700' :
-                                'bg-red-100 text-red-700'
-                            }`}>
+                            <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold ${result.demandScore >= 80 ? 'bg-green-100 text-green-700' :
+                                    result.demandScore >= 60 ? 'bg-yellow-100 text-yellow-700' :
+                                        'bg-red-100 text-red-700'
+                                }`}>
                                 {result.demandScore >= 80 ? '🚀 High Potential' :
-                                 result.demandScore >= 60 ? '⚡ Moderate Potential' :
-                                 '⚠️ Low Potential'}
+                                    result.demandScore >= 60 ? '⚡ Moderate Potential' :
+                                        '⚠️ Low Potential'}
                             </div>
                         </div>
                     </div>
@@ -354,12 +353,12 @@ const ResultsPage: React.FC = () => {
                                         <span>🔄</span>
                                         <span>Analyze Another Idea</span>
                                     </button>
-                                    
+
                                     <button className="w-full flex items-center gap-4 p-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors text-lg font-semibold">
                                         <span>💡</span>
                                         <span>Generate Similar Ideas</span>
                                     </button>
-                                    
+
                                     <button className="w-full flex items-center gap-4 p-4 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition-colors text-lg font-semibold">
                                         <span>📊</span>
                                         <span>Save to Dashboard</span>
