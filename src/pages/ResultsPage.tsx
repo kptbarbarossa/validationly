@@ -148,12 +148,23 @@ const ResultsPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Premium Main Content */}
-                <div className="flex-1 p-10">
-                    {/* Simple Header */}
-                    <div className="mb-12">
-                        <h1 className="text-4xl font-bold text-gray-900 mb-2">Analysis Results</h1>
-                        <p className="text-gray-500 text-lg">Your idea validation summary</p>
+                {/* Modern Main Content */}
+                <div className="flex-1 p-8">
+                    {/* Beautiful Header */}
+                    <div className="flex items-center justify-between mb-8">
+                        <div>
+                            <h1 className="text-3xl font-bold text-gray-800 mb-2">🚀 Validation Results</h1>
+                            <p className="text-gray-500">Your startup idea analysis is complete</p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
+                                <span className="text-white font-bold text-sm">AI</span>
+                            </div>
+                            <div>
+                                <div className="text-sm font-semibold text-gray-800">AI Analysis</div>
+                                <div className="text-xs text-gray-500">Just completed</div>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Validationly Score Card */}
@@ -171,72 +182,78 @@ const ResultsPage: React.FC = () => {
 
 
 
-                    {/* Premium Content Grid */}
-                    <div className="grid grid-cols-2 gap-10">
-                        {/* Left Column */}
-                        <div className="space-y-8">
-                            {/* Content Quality Metrics - Premium */}
-                            {result.contentQuality && (
-                                <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-8">Content Quality Metrics</h3>
-                                    <div className="grid grid-cols-2 gap-4 mb-6">
-                                        <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-2xl">
-                                            <div className="text-2xl font-bold text-emerald-600 mb-1">{result.contentQuality.writingQuality}</div>
-                                            <div className="text-sm text-gray-600">Writing Quality</div>
-                                        </div>
-                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50/50 rounded-2xl">
-                                            <div className="text-2xl font-bold text-indigo-600 mb-1">{result.contentQuality.engagementPotential}</div>
-                                            <div className="text-sm text-gray-600">Engagement</div>
-                                        </div>
-                                        <div className="p-4 bg-gradient-to-r from-purple-50 to-violet-50/50 rounded-2xl">
-                                            <div className="text-2xl font-bold text-purple-600 mb-1">{result.contentQuality.viralityScore}</div>
-                                            <div className="text-sm text-gray-600">Virality</div>
-                                        </div>
-                                        <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50/50 rounded-2xl">
-                                            <div className="text-2xl font-bold text-orange-600 mb-1">{result.contentQuality.clarityScore}</div>
-                                            <div className="text-sm text-gray-600">Clarity</div>
-                                        </div>
+                    {/* Modern Dashboard Grid */}
+                    <div className="grid grid-cols-12 gap-6">
+                        {/* Left Column - Stats */}
+                        <div className="col-span-8 space-y-6">
+                            {/* Beautiful Stats Cards */}
+                            <div className="grid grid-cols-3 gap-4">
+                                {/* Market Size Card */}
+                                <div className="bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500 rounded-2xl p-6 text-white relative overflow-hidden">
+                                    <div className="relative z-10">
+                                        <div className="text-3xl font-bold mb-1">{result.scoreBreakdown?.marketSize || 20}</div>
+                                        <div className="text-pink-100 text-sm font-medium">Market Size</div>
+                                        <div className="text-pink-200 text-xs mt-1">out of 25</div>
                                     </div>
-                                    {result.contentQuality.improvements && result.contentQuality.improvements.length > 0 && (
-                                        <div className="p-4 bg-gray-50/50 rounded-2xl">
-                                            <h4 className="font-semibold text-gray-900 mb-3">Improvement Suggestions</h4>
-                                            <ul className="space-y-2">
-                                                {result.contentQuality.improvements.map((improvement, index) => (
-                                                    <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
-                                                        <span className="text-indigo-500 mt-1">•</span>
-                                                        {improvement}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    )}
+                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full"></div>
+                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-20">📊</div>
                                 </div>
-                            )}
 
-                            {/* Market Timing - Premium */}
-                            {result.marketTiming && (
-                                <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
-                                    <h3 className="text-xl font-bold text-gray-900 mb-8">Market Timing</h3>
-                                    <div className="space-y-6">
-                                        <div className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl">
-                                            <span className="text-gray-600 font-medium">Market Readiness</span>
-                                            <span className="font-bold text-lg text-gray-900">{result.marketTiming.readiness}%</span>
-                                        </div>
-                                        <div className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl">
-                                            <span className="text-gray-600 font-medium">Trend Direction</span>
-                                            <span className={`font-bold text-lg ${result.marketTiming.trendDirection === 'Rising' ? 'text-emerald-600' :
-                                                result.marketTiming.trendDirection === 'Declining' ? 'text-red-500' : 'text-amber-500'
-                                                }`}>
-                                                {result.marketTiming.trendDirection}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl">
-                                            <span className="text-gray-600 font-medium">Optimal Window</span>
-                                            <span className="font-bold text-lg text-gray-900">{result.marketTiming.optimalWindow}</span>
-                                        </div>
+                                {/* Competition Card */}
+                                <div className="bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 rounded-2xl p-6 text-white relative overflow-hidden">
+                                    <div className="relative z-10">
+                                        <div className="text-3xl font-bold mb-1">{result.scoreBreakdown?.competition || 15}</div>
+                                        <div className="text-orange-100 text-sm font-medium">Competition</div>
+                                        <div className="text-orange-200 text-xs mt-1">out of 25</div>
                                     </div>
+                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full"></div>
+                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-20">⚔️</div>
                                 </div>
-                            )}
+
+                                {/* Feasibility Card */}
+                                <div className="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-2xl p-6 text-white relative overflow-hidden">
+                                    <div className="relative z-10">
+                                        <div className="text-3xl font-bold mb-1">{result.scoreBreakdown?.feasibility || 17}</div>
+                                        <div className="text-purple-100 text-sm font-medium">Feasibility</div>
+                                        <div className="text-purple-200 text-xs mt-1">out of 25</div>
+                                    </div>
+                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full"></div>
+                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-20">🚀</div>
+                                </div>
+                            </div>
+
+                            {/* Platform Performance Chart */}
+                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                                <div className="flex items-center justify-between mb-6">
+                                    <h3 className="text-lg font-bold text-gray-800">Platform Performance</h3>
+                                    <div className="text-sm text-gray-500">Validation Signals</div>
+                                </div>
+                                <div className="space-y-4">
+                                    {result.validationlyScore && Object.entries(result.validationlyScore.breakdown).map(([platform, score]) => (
+                                        <div key={platform} className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
+                                                <span className="text-lg">
+                                                    {platform === 'twitter' ? '𝕏' : 
+                                                     platform === 'reddit' ? '🔴' :
+                                                     platform === 'linkedin' ? '💼' : '📈'}
+                                                </span>
+                                            </div>
+                                            <div className="flex-1">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <span className="font-medium text-gray-800 capitalize">{platform.replace('googleTrends', 'Google Trends')}</span>
+                                                    <span className="text-sm font-bold text-gray-900">{score}</span>
+                                                </div>
+                                                <div className="w-full bg-gray-200 rounded-full h-2">
+                                                    <div 
+                                                        className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-500"
+                                                        style={{ width: `${(score / (result.validationlyScore?.weighting[platform as keyof typeof result.validationlyScore.weighting] || 40)) * 100}%` }}
+                                                    ></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
 
                             {/* Simple Content Suggestions */}
                             <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg">
@@ -386,62 +403,124 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Right Column - Actions */}
-                        <div className="space-y-8">
-                            {/* Simple Summary */}
-                            <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg">
-                                <h3 className="text-2xl font-bold text-gray-900 mb-6">Summary</h3>
-                                <div className="text-gray-700 leading-relaxed">
-                                    {result.scoreJustification}
+                        {/* Right Column - Profile & Actions */}
+                        <div className="col-span-4 space-y-6">
+                            {/* Beautiful Profile Card */}
+                            <div className="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-2xl p-6 text-white relative overflow-hidden">
+                                <div className="relative z-10">
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                            <span className="text-2xl">🚀</span>
+                                        </div>
+                                        <div>
+                                            <div className="font-bold text-lg">Your Idea</div>
+                                            <div className="text-purple-200 text-sm">Validation Complete</div>
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                            <span className="text-purple-200">Score:</span>
+                                            <span className="font-bold">{result.demandScore}/100</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-purple-200">Status:</span>
+                                            <span className="font-bold">
+                                                {result.demandScore >= 70 ? 'High Potential' : 
+                                                 result.demandScore >= 50 ? 'Moderate' : 'Needs Work'}
+                                            </span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-purple-200">Platforms:</span>
+                                            <span className="font-bold">6 Analyzed</span>
+                                        </div>
+                                    </div>
                                 </div>
+                                <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
+                                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-white/5 rounded-full"></div>
                             </div>
 
-                            {/* Next Steps */}
-                            <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg">
-                                <h3 className="text-2xl font-bold text-gray-900 mb-6">Next Steps</h3>
-                                <div className="space-y-4">
-                                    <button
+                            {/* Modern Action Cards */}
+                            <div className="space-y-4">
+                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
+                                            <span className="text-white font-bold">💡</span>
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-gray-800">Generate Ideas</div>
+                                            <div className="text-xs text-gray-500">AI-powered suggestions</div>
+                                        </div>
+                                    </div>
+                                    <button className="w-full bg-gradient-to-r from-green-400 to-emerald-500 text-white py-2 rounded-lg text-sm font-medium hover:from-green-500 hover:to-emerald-600 transition-all">
+                                        Generate Similar Ideas
+                                    </button>
+                                </div>
+
+                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
+                                            <span className="text-white font-bold">🔄</span>
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-gray-800">New Analysis</div>
+                                            <div className="text-xs text-gray-500">Validate another idea</div>
+                                        </div>
+                                    </div>
+                                    <button 
                                         onClick={() => navigate('/')}
-                                        className="w-full flex items-center gap-4 p-4 bg-indigo-500 text-white rounded-xl hover:bg-indigo-600 transition-colors text-lg font-semibold"
+                                        className="w-full bg-gradient-to-r from-blue-400 to-indigo-500 text-white py-2 rounded-lg text-sm font-medium hover:from-blue-500 hover:to-indigo-600 transition-all"
                                     >
-                                        <span>🔄</span>
-                                        <span>Analyze Another Idea</span>
+                                        Analyze Another Idea
                                     </button>
+                                </div>
 
-                                    <button className="w-full flex items-center gap-4 p-4 bg-green-500 text-white rounded-xl hover:bg-green-600 transition-colors text-lg font-semibold">
-                                        <span>💡</span>
-                                        <span>Generate Similar Ideas</span>
-                                    </button>
-
-                                    <button className="w-full flex items-center gap-4 p-4 bg-purple-500 text-white rounded-xl hover:bg-purple-600 transition-colors text-lg font-semibold">
-                                        <span>📊</span>
-                                        <span>Save to Dashboard</span>
+                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
+                                            <span className="text-white font-bold">📊</span>
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold text-gray-800">Save Results</div>
+                                            <div className="text-xs text-gray-500">Keep for later</div>
+                                        </div>
+                                    </div>
+                                    <button className="w-full bg-gradient-to-r from-purple-400 to-pink-500 text-white py-2 rounded-lg text-sm font-medium hover:from-purple-500 hover:to-pink-600 transition-all">
+                                        Save to Dashboard
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Support */}
-                            <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg">
-                                <h3 className="text-2xl font-bold text-gray-900 mb-6">Support</h3>
+                            {/* Latest Scores - Tennis Style */}
+                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="font-bold text-gray-800">Latest Scores</h3>
+                                    <button className="text-sm text-indigo-600 font-medium">View All</button>
+                                </div>
                                 <div className="space-y-3">
-                                    <a
-                                        href="https://buymeacoffee.com/kptbarbarossa"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full flex items-center gap-4 p-3 bg-amber-100 text-amber-700 rounded-xl hover:bg-amber-200 transition-colors font-medium"
-                                    >
-                                        <span>☕</span>
-                                        <span>Buy me a coffee</span>
-                                    </a>
-                                    <a
-                                        href="https://x.com/kptbarbarossa"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="w-full flex items-center gap-4 p-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors font-medium"
-                                    >
-                                        <XIcon />
-                                        <span>Feedback on X</span>
-                                    </a>
+                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                                                <span className="text-white text-xs font-bold">AI</span>
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-semibold text-gray-800">Current Idea</div>
+                                                <div className="text-xs text-gray-500">Just now</div>
+                                            </div>
+                                        </div>
+                                        <div className="text-lg font-bold text-gray-900">{result.demandScore}</div>
+                                    </div>
+                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg opacity-60">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                                                <span className="text-white text-xs font-bold">--</span>
+                                            </div>
+                                            <div>
+                                                <div className="text-sm font-semibold text-gray-600">Previous Idea</div>
+                                                <div className="text-xs text-gray-400">No data</div>
+                                            </div>
+                                        </div>
+                                        <div className="text-lg font-bold text-gray-400">--</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
