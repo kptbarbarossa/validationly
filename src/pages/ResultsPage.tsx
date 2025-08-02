@@ -98,21 +98,21 @@ const ResultsPage: React.FC = () => {
     };
 
     const getOverallStatus = (score: number) => {
-        if (score >= 70) return { 
-            color: 'green', 
-            text: 'YEŞİL: Hemen Başlayın! 🟢', 
+        if (score >= 70) return {
+            color: 'green',
+            text: 'YEŞİL: Hemen Başlayın! 🟢',
             desc: 'Mükemmel bir fikir! Hemen harekete geçme zamanı.',
             action: 'MVP geliştirmeye başlayın'
         };
-        if (score >= 50) return { 
-            color: 'yellow', 
-            text: 'SARI: Dikkatli İlerleyin 🟡', 
+        if (score >= 50) return {
+            color: 'yellow',
+            text: 'SARI: Dikkatli İlerleyin 🟡',
             desc: 'İyi bir fikir ama bazı alanları güçlendirin.',
             action: 'Zayıf noktaları iyileştirin'
         };
-        return { 
-            color: 'red', 
-            text: 'KIRMIZI: Yeniden Düşünün 🔴', 
+        return {
+            color: 'red',
+            text: 'KIRMIZI: Yeniden Düşünün 🔴',
             desc: 'Fikri geliştirmeniz veya pivot yapmanız gerekebilir.',
             action: 'Fikri yeniden değerlendirin'
         };
@@ -128,7 +128,7 @@ const ResultsPage: React.FC = () => {
         if (competition <= 15) insights.push("✅ Erken giriş avantajını kullanın - az rakip var");
         if (feasibility >= 18) insights.push("✅ Hızlı prototip yapın - teknik olarak kolay");
         if (result.demandScore >= 70) insights.push("✅ Yatırımcı sunumu hazırlayın - güçlü fikir");
-        
+
         // Platform önerileri
         if (result.validationlyScore?.breakdown.twitter >= 25) insights.push("📱 X'te viral kampanya başlatın");
         if (result.validationlyScore?.breakdown.linkedin >= 20) insights.push("💼 LinkedIn'de B2B odaklı pazarlama yapın");
@@ -165,14 +165,14 @@ const ResultsPage: React.FC = () => {
             probability: "Yüksek başarı şansı (%80+)"
         };
         if (score >= 60) return {
-            revenue: "$50K-500K/yıl", 
+            revenue: "$50K-500K/yıl",
             users: "10K-100K kullanıcı",
             timeline: "12-18 ay içinde karlılık",
             probability: "İyi başarı şansı (%60-80)"
         };
         return {
             revenue: "$10K-100K/yıl",
-            users: "1K-10K kullanıcı", 
+            users: "1K-10K kullanıcı",
             timeline: "18+ ay içinde karlılık",
             probability: "Orta başarı şansı (%40-60)"
         };
@@ -289,14 +289,13 @@ const ResultsPage: React.FC = () => {
                                     {result.demandScore}
                                     <span className="text-2xl text-gray-500 ml-2">/100</span>
                                 </div>
-                                <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold mb-4 ${
-                                    result.demandScore >= 80 ? 'bg-green-100/80 text-green-700' :
-                                    result.demandScore >= 60 ? 'bg-yellow-100/80 text-yellow-700' :
-                                    'bg-red-100/80 text-red-700'
-                                }`}>
+                                <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold mb-4 ${result.demandScore >= 80 ? 'bg-green-100/80 text-green-700' :
+                                        result.demandScore >= 60 ? 'bg-yellow-100/80 text-yellow-700' :
+                                            'bg-red-100/80 text-red-700'
+                                    }`}>
                                     {result.demandScore >= 80 ? '🚀 High Potential' :
-                                     result.demandScore >= 60 ? '⚡ Moderate Potential' :
-                                     '⚠️ Low Potential'}
+                                        result.demandScore >= 60 ? '⚡ Moderate Potential' :
+                                            '⚠️ Low Potential'}
                                 </div>
                                 <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
                                     "{result.content || result.idea}"
@@ -650,11 +649,11 @@ const ResultsPage: React.FC = () => {
                                         <div className="font-bold text-lg text-gray-800">Fikrinizin Hikayesi</div>
                                     </div>
                                     <div className="text-sm text-gray-700 leading-relaxed mb-4">
-                                        {result.demandScore >= 70 ? 
+                                        {result.demandScore >= 70 ?
                                             "🌟 Pazarda büyük bir boşluk var ve siz tam doğru zamanda geliyorsunuz! Rakipleriniz henüz bu alanı keşfetmemiş. Şimdi harekete geçme zamanı!" :
                                             result.demandScore >= 50 ?
-                                            "💡 İyi bir fikriniz var! Bazı alanları güçlendirirseniz başarılı olabilirsiniz. Sabırlı ve stratejik yaklaşım gerekli." :
-                                            "🔍 Fikriniz potansiyel taşıyor ama daha fazla araştırma ve geliştirme gerekiyor. Vazgeçmeyin, sadece daha iyi hale getirin!"
+                                                "💡 İyi bir fikriniz var! Bazı alanları güçlendirirseniz başarılı olabilirsiniz. Sabırlı ve stratejik yaklaşım gerekli." :
+                                                "🔍 Fikriniz potansiyel taşıyor ama daha fazla araştırma ve geliştirme gerekiyor. Vazgeçmeyin, sadece daha iyi hale getirin!"
                                         }
                                     </div>
                                     <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
@@ -679,9 +678,9 @@ const ResultsPage: React.FC = () => {
                                     <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
                                         <div className="text-xs text-gray-600">Seviye</div>
                                         <div className="font-bold text-gray-800">
-                                            {result.demandScore >= 80 ? 'GOLD 🏆' : 
-                                             result.demandScore >= 60 ? 'SILVER 🥈' : 
-                                             result.demandScore >= 40 ? 'BRONZE 🥉' : 'STARTER 📈'}
+                                            {result.demandScore >= 80 ? 'GOLD 🏆' :
+                                                result.demandScore >= 60 ? 'SILVER 🥈' :
+                                                    result.demandScore >= 40 ? 'BRONZE 🥉' : 'STARTER 📈'}
                                         </div>
                                     </div>
                                     <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
@@ -691,9 +690,9 @@ const ResultsPage: React.FC = () => {
                                     <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
                                         <div className="text-xs text-gray-600">Sonraki Seviye İçin</div>
                                         <div className="font-bold text-gray-800">
-                                            {result.demandScore >= 80 ? 'Yatırımcı bul!' : 
-                                             result.demandScore >= 60 ? 'Prototip yap!' : 
-                                             'Fikri geliştir!'}
+                                            {result.demandScore >= 80 ? 'Yatırımcı bul!' :
+                                                result.demandScore >= 60 ? 'Prototip yap!' :
+                                                    'Fikri geliştir!'}
                                         </div>
                                     </div>
                                 </div>
