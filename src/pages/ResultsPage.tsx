@@ -526,6 +526,38 @@ const ResultsPage: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Glassmorphism Support Section */}
+                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-lg shadow-gray-500/5">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="font-bold text-gray-800">Support</h3>
+                                    <span className="text-xs text-gray-600">Help us grow</span>
+                                </div>
+                                <div className="space-y-3">
+                                    <a
+                                        href="https://buymeacoffee.com/kptbarbarossa"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full flex items-center gap-3 p-3 bg-white/40 backdrop-blur-sm text-amber-700 rounded-xl hover:bg-white/50 transition-all duration-200 font-medium border border-white/30"
+                                    >
+                                        <div className="w-8 h-8 bg-gradient-to-r from-amber-400/80 to-orange-500/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
+                                            <span className="text-white text-sm">☕</span>
+                                        </div>
+                                        <span className="text-gray-800">Buy me a coffee</span>
+                                    </a>
+                                    <a
+                                        href="https://x.com/kptbarbarossa"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="w-full flex items-center gap-3 p-3 bg-white/40 backdrop-blur-sm text-gray-700 rounded-xl hover:bg-white/50 transition-all duration-200 font-medium border border-white/30"
+                                    >
+                                        <div className="w-8 h-8 bg-white/60 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/40">
+                                            <XIcon />
+                                        </div>
+                                        <span className="text-gray-800">Feedback on X</span>
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
