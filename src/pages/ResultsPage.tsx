@@ -209,17 +209,19 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
-            {/* Glassmorphism Background Elements */}
+        <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 via-pink-100 to-cyan-100 relative overflow-hidden">
+            {/* Enhanced Pastel Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/30 to-pink-400/30 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/30 to-indigo-400/30 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+                <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-300/40 to-pink-300/40 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-indigo-300/40 to-cyan-300/40 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-gradient-to-br from-cyan-300/30 to-purple-300/30 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-gradient-to-br from-pink-300/30 to-indigo-300/30 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[32rem] bg-gradient-to-br from-purple-200/20 via-pink-200/20 to-cyan-200/20 rounded-full blur-3xl"></div>
             </div>
             {/* Premium Layout */}
             <div className="flex">
-                {/* Glassmorphism Sidebar */}
-                <div className="w-60 bg-white/20 backdrop-blur-xl border-r border-white/30 min-h-screen relative z-10">
+                {/* Enhanced Glassmorphism Sidebar */}
+                <div className="w-60 bg-white/15 backdrop-blur-2xl border-r border-white/25 min-h-screen relative z-10 shadow-xl shadow-purple-500/5">
                     <div className="p-7">
                         {/* Premium Logo */}
                         <div className="flex items-center gap-3 mb-16">
@@ -278,15 +280,27 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Validationly Score Card */}
-                    <div className="mb-16">
-                        <ValidationlyScoreCard
-                            score={result.demandScore}
-                            validationlyScore={result.validationlyScore}
-                        />
-                        <div className="text-center mt-8">
-                            <div className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                                "{result.content || result.idea}"
+                    {/* Compact Validationly Score Card */}
+                    <div className="mb-12">
+                        <div className="bg-white/20 backdrop-blur-2xl rounded-3xl p-8 border border-white/30 shadow-2xl shadow-purple-500/10 max-w-4xl mx-auto">
+                            <div className="text-center">
+                                <div className="text-sm font-medium text-gray-600 mb-3">Validationly Score</div>
+                                <div className="text-6xl font-extralight text-gray-800 mb-4 tracking-tight">
+                                    {result.demandScore}
+                                    <span className="text-2xl text-gray-500 ml-2">/100</span>
+                                </div>
+                                <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold mb-4 ${
+                                    result.demandScore >= 80 ? 'bg-green-100/80 text-green-700' :
+                                    result.demandScore >= 60 ? 'bg-yellow-100/80 text-yellow-700' :
+                                    'bg-red-100/80 text-red-700'
+                                }`}>
+                                    {result.demandScore >= 80 ? '🚀 High Potential' :
+                                     result.demandScore >= 60 ? '⚡ Moderate Potential' :
+                                     '⚠️ Low Potential'}
+                                </div>
+                                <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                                    "{result.content || result.idea}"
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -300,7 +314,7 @@ const ResultsPage: React.FC = () => {
                             {/* Enhanced Stats Cards with Interpretations */}
                             <div className="grid grid-cols-3 gap-4">
                                 {/* Market Size Card */}
-                                <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-pink-500/10 relative overflow-hidden">
+                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-pink-500/10 relative overflow-hidden">
                                     <div className="relative z-10">
                                         <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.marketSize || 20}</div>
                                         <div className="text-gray-600 text-sm font-medium mb-2">
@@ -316,7 +330,7 @@ const ResultsPage: React.FC = () => {
                                 </div>
 
                                 {/* Competition Card */}
-                                <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-orange-500/10 relative overflow-hidden">
+                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-orange-500/10 relative overflow-hidden">
                                     <div className="relative z-10">
                                         <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.competition || 15}</div>
                                         <div className="text-gray-600 text-sm font-medium mb-2">
@@ -332,7 +346,7 @@ const ResultsPage: React.FC = () => {
                                 </div>
 
                                 {/* Feasibility Card */}
-                                <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-purple-500/10 relative overflow-hidden">
+                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-purple-500/10 relative overflow-hidden">
                                     <div className="relative z-10">
                                         <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.feasibility || 17}</div>
                                         <div className="text-gray-600 text-sm font-medium mb-2">
@@ -348,8 +362,8 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Glassmorphism Platform Performance Chart */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-blue-500/5">
+                            {/* Enhanced Platform Performance Chart */}
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-blue-500/10">
                                 <div className="flex items-center justify-between mb-6">
                                     <h3 className="text-lg font-bold text-gray-800">Platform Performance</h3>
                                     <div className="text-sm text-gray-600">Validation Signals</div>
@@ -384,7 +398,7 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Traffic Light System */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-gray-500/5">
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-indigo-500/10">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="text-lg font-bold text-gray-800">Karar Durumu</h3>
                                     <div className="text-2xl">{getOverallStatus(result.demandScore).color === 'green' ? '🟢' : getOverallStatus(result.demandScore).color === 'yellow' ? '🟡' : '🔴'}</div>
@@ -400,7 +414,7 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Actionable Insights */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-blue-500/5">
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-cyan-500/10">
                                 <h3 className="text-lg font-bold text-gray-800 mb-4">🎯 Şimdi Ne Yapmalısınız?</h3>
                                 <div className="space-y-3">
                                     {getActionableInsights(result).map((insight, index) => (
@@ -412,7 +426,7 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Risk-Opportunity Matrix */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-green-500/5">
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-pink-500/10">
                                 <h3 className="text-lg font-bold text-gray-800 mb-4">📊 Risk & Fırsat Analizi</h3>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-green-50/60 backdrop-blur-sm rounded-lg p-4 border border-green-200/30">
@@ -435,7 +449,7 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Success Scenario */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-purple-500/5">
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-purple-500/10">
                                 <h3 className="text-lg font-bold text-gray-800 mb-4">🏆 Başarı Senaryosu</h3>
                                 <div className="space-y-3">
                                     <div className="text-sm text-gray-600 mb-4">Eğer bu fikri hayata geçirirseniz:</div>
@@ -461,7 +475,7 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Future Predictions */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-indigo-500/5">
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-indigo-500/10">
                                 <h3 className="text-lg font-bold text-gray-800 mb-4">🔮 Gelecek Tahminleri</h3>
                                 <div className="space-y-3">
                                     <div className="text-sm text-gray-600 mb-4">6 ay sonra beklentiler:</div>
@@ -476,8 +490,8 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Simple Content Suggestions */}
-                            <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg">
+                            {/* Enhanced Content Suggestions */}
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-8 border border-white/25 shadow-2xl shadow-cyan-500/10">
                                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Content Suggestions</h3>
                                 <div className="space-y-6">
                                     {/* X (Twitter) */}
@@ -627,7 +641,7 @@ const ResultsPage: React.FC = () => {
                         {/* Right Column - Profile & Actions */}
                         <div className="col-span-4 space-y-6">
                             {/* Story Card - Hikaye Anlatımı */}
-                            <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-purple-500/10 relative overflow-hidden">
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-purple-500/10 relative overflow-hidden">
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/40">
@@ -654,7 +668,7 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Gamification Level */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-yellow-500/10">
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-yellow-500/10">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="font-bold text-gray-800">Fikir Seviyeniz</h3>
                                     <div className="text-2xl">
@@ -685,9 +699,9 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Glassmorphism Action Cards */}
+                            {/* Enhanced Action Cards */}
                             <div className="space-y-4">
-                                <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-4 border border-white/30 shadow-lg shadow-green-500/5">
+                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 border border-white/25 shadow-2xl shadow-green-500/10">
                                     <div className="flex items-center gap-3 mb-3">
                                         <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
                                             <span className="text-gray-700 font-bold">💡</span>
@@ -702,7 +716,7 @@ const ResultsPage: React.FC = () => {
                                     </button>
                                 </div>
 
-                                <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-4 border border-white/30 shadow-lg shadow-blue-500/5">
+                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 border border-white/25 shadow-2xl shadow-blue-500/10">
                                     <div className="flex items-center gap-3 mb-3">
                                         <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
                                             <span className="text-gray-700 font-bold">🔄</span>
@@ -720,7 +734,7 @@ const ResultsPage: React.FC = () => {
                                     </button>
                                 </div>
 
-                                <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-4 border border-white/30 shadow-lg shadow-purple-500/5">
+                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 border border-white/25 shadow-2xl shadow-purple-500/10">
                                     <div className="flex items-center gap-3 mb-3">
                                         <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
                                             <span className="text-gray-700 font-bold">📊</span>
@@ -736,8 +750,8 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Glassmorphism Latest Scores */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-lg shadow-gray-500/5">
+                            {/* Enhanced Latest Scores */}
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-indigo-500/10">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="font-bold text-gray-800">Latest Scores</h3>
                                     <button className="text-sm text-indigo-600 font-medium">View All</button>
@@ -770,8 +784,8 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Glassmorphism Support Section */}
-                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-lg shadow-gray-500/5">
+                            {/* Enhanced Support Section */}
+                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-pink-500/10">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="font-bold text-gray-800">Support</h3>
                                     <span className="text-xs text-gray-600">Help us grow</span>
