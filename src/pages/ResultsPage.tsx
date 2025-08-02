@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { ValidationResult } from '../types';
-import ValidationlyScoreCard from '../components/ValidationlyScoreCard';
 
 // Clean Minimal Icons
 const HomeIcon = () => (
@@ -74,7 +73,7 @@ const ResultsPage: React.FC = () => {
     const [copiedId, setCopiedId] = useState<string | null>(null);
 
     // Helper Functions for Better UX
-    const getScoreInterpretation = (score: number, type: 'market' | 'competition' | 'feasibility') => {
+    const getScoreInterpretation = (score: number = 0, type: 'market' | 'competition' | 'feasibility') => {
         const interpretations = {
             market: {
                 high: { text: "Büyük Pazar Potansiyeli 🎯", desc: "Bu fikriniz geniş bir kitleye hitap ediyor. Milyonlarca potansiyel müşteri var!" },
@@ -129,10 +128,24 @@ const ResultsPage: React.FC = () => {
         if (feasibility >= 18) insights.push("✅ Hızlı prototip yapın - teknik olarak kolay");
         if (result.demandScore >= 70) insights.push("✅ Yatırımcı sunumu hazırlayın - güçlü fikir");
 
-        // Platform önerileri
-        if (result.validationlyScore?.breakdown.twitter >= 25) insights.push("📱 X'te viral kampanya başlatın");
-        if (result.validationlyScore?.breakdown.linkedin >= 20) insights.push("💼 LinkedIn'de B2B odaklı pazarlama yapın");
-        if (result.validationlyScore?.breakdown.reddit >= 20) insights.push("🔴 Reddit topluluklarında organik büyüme sağlayın");
+        // Platform önerileri - safe access
+        const validationlyScore = result.validationlyScore;
+        if (validationlyScore?.breakdown?.twitter && validationlyScore.breakdown.twitter >= 25) {
+            insights.push("📱 X'te viral kampanya başlatın");
+        }
+        if (validationlyScore?.breakdown?.linkedin && validationlyScore.breakdown.linkedin >= 20) {
+            insights.push("💼 LinkedIn'de B2B odaklı pazarlama yapın");
+        }
+        if (validationlyScore?.breakdown?.reddit && validationlyScore.breakdown.reddit >= 20) {
+            insights.push("🔴 Reddit topluluklarında organik büyüme sağlayın");
+        }
+
+        // Fallback insights if none match
+        if (insights.length === 0) {
+            insights.push("💡 Fikrinizi geliştirmeye devam edin");
+            insights.push("📊 Pazar araştırması yapın");
+            insights.push("🎯 Hedef kitlenizi belirleyin");
+        }
 
         return insights.slice(0, 5); // En fazla 5 insight
     };
@@ -209,51 +222,48 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-indigo-100 to-cyan-200 relative overflow-hidden">
-            {/* Indigo-Cyan Background Elements */}
+        <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+            {/* Subtle Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-indigo-400/60 to-cyan-400/60 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-cyan-400/60 to-indigo-400/60 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-gradient-to-br from-indigo-300/50 to-cyan-300/50 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-gradient-to-br from-cyan-300/50 to-indigo-300/50 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[32rem] bg-gradient-to-br from-indigo-200/40 via-cyan-200/40 to-indigo-200/40 rounded-full blur-3xl"></div>
+                <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-100/30 to-blue-100/30 rounded-full blur-3xl"></div>
             </div>
             {/* Premium Layout */}
             <div className="flex">
-                {/* Enhanced Glassmorphism Sidebar */}
-                <div className="w-60 bg-white/15 backdrop-blur-2xl border-r border-white/25 min-h-screen relative z-10 shadow-xl shadow-purple-500/5">
-                    <div className="p-7">
-                        {/* Premium Logo */}
-                        <div className="flex items-center gap-3 mb-16">
-                            <div className="w-9 h-9 bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
+                {/* Clean Dashboard Sidebar */}
+                <div className="w-60 bg-white border-r border-gray-200 min-h-screen relative z-10 shadow-sm">
+                    <div className="p-6">
+                        {/* Clean Logo */}
+                        <div className="flex items-center gap-3 mb-12">
+                            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                                 <span className="text-white font-bold text-sm">V</span>
                             </div>
                             <span className="font-semibold text-gray-900 text-lg">Validationly</span>
                         </div>
 
-                        {/* Glassmorphism Navigation */}
-                        <nav className="space-y-2">
-                            <div className="flex items-center gap-4 px-4 py-3 bg-white/30 backdrop-blur-sm text-indigo-700 rounded-xl border border-white/40 shadow-lg shadow-indigo-500/10">
+                        {/* Clean Navigation */}
+                        <nav className="space-y-1">
+                            <div className="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg border-l-4 border-blue-600">
                                 <HomeIcon />
-                                <span className="text-sm font-semibold">Overview</span>
+                                <span className="text-sm font-medium">Overview</span>
                             </div>
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
+                            <div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
                                 <ChartIcon />
                                 <span className="text-sm font-medium">Analytics</span>
                             </div>
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
+                            <div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
                                 <BookmarkIcon />
                                 <span className="text-sm font-medium">Saved</span>
                             </div>
                         </nav>
 
-                        {/* Glassmorphism Bottom Navigation */}
-                        <div className="absolute bottom-8 left-7 right-7 space-y-2">
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
+                        {/* Clean Bottom Navigation */}
+                        <div className="absolute bottom-6 left-6 right-6 space-y-1">
+                            <div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
                                 <SettingsIcon />
                                 <span className="text-sm font-medium">Settings</span>
                             </div>
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
+                            <div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
                                 <HelpIcon />
                                 <span className="text-sm font-medium">Help</span>
                             </div>
@@ -261,20 +271,20 @@ const ResultsPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Glassmorphism Main Content */}
+                {/* Clean Main Content */}
                 <div className="flex-1 p-8 relative z-10">
-                    {/* Beautiful Header */}
+                    {/* Clean Header */}
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h1 className="text-3xl font-bold text-gray-800 mb-2">🚀 Validation Results</h1>
-                            <p className="text-gray-500">Your startup idea analysis is complete</p>
+                            <h1 className="text-2xl font-bold text-gray-900 mb-1">Validation Results</h1>
+                            <p className="text-gray-600">Your startup idea analysis is complete</p>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full flex items-center justify-center">
-                                <span className="text-white font-bold text-sm">AI</span>
+                        <div className="flex items-center gap-3 bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200">
+                            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                                <span className="text-white font-bold text-xs">AI</span>
                             </div>
                             <div>
-                                <div className="text-sm font-semibold text-gray-800">AI Analysis</div>
+                                <div className="text-sm font-medium text-gray-900">AI Analysis</div>
                                 <div className="text-xs text-gray-500">Just completed</div>
                             </div>
                         </div>
@@ -290,8 +300,8 @@ const ResultsPage: React.FC = () => {
                                     <span className="text-2xl text-gray-500 ml-2">/100</span>
                                 </div>
                                 <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold mb-4 ${result.demandScore >= 80 ? 'bg-green-100/80 text-green-700' :
-                                        result.demandScore >= 60 ? 'bg-yellow-100/80 text-yellow-700' :
-                                            'bg-red-100/80 text-red-700'
+                                    result.demandScore >= 60 ? 'bg-yellow-100/80 text-yellow-700' :
+                                        'bg-red-100/80 text-red-700'
                                     }`}>
                                     {result.demandScore >= 80 ? '🚀 High Potential' :
                                         result.demandScore >= 60 ? '⚡ Moderate Potential' :
@@ -310,67 +320,67 @@ const ResultsPage: React.FC = () => {
                     <div className="grid grid-cols-12 gap-6">
                         {/* Left Column - Stats */}
                         <div className="col-span-8 space-y-6">
-                            {/* Enhanced Stats Cards with Interpretations */}
-                            <div className="grid grid-cols-3 gap-4">
+                            {/* Clean Stats Cards */}
+                            <div className="grid grid-cols-3 gap-6">
                                 {/* Market Size Card */}
-                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-pink-500/10 relative overflow-hidden">
-                                    <div className="relative z-10">
-                                        <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.marketSize || 20}</div>
-                                        <div className="text-gray-600 text-sm font-medium mb-2">
-                                            {getScoreInterpretation(result.scoreBreakdown?.marketSize || 20, 'market').text}
+                                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                                            <span className="text-pink-600 text-lg">📊</span>
                                         </div>
-                                        <div className="text-gray-500 text-xs leading-relaxed">
-                                            {getScoreInterpretation(result.scoreBreakdown?.marketSize || 20, 'market').desc}
-                                        </div>
+                                        <div className="text-2xl font-bold text-gray-900">{result.scoreBreakdown?.marketSize ?? 20}</div>
                                     </div>
-                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-pink-400/20 to-rose-400/20 rounded-full blur-xl"></div>
-                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-10">📊</div>
-                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-400/10 to-rose-400/10 rounded-2xl"></div>
+                                    <div className="text-gray-900 font-medium mb-2">
+                                        {getScoreInterpretation(result.scoreBreakdown?.marketSize ?? 20, 'market').text}
+                                    </div>
+                                    <div className="text-gray-600 text-sm leading-relaxed">
+                                        {getScoreInterpretation(result.scoreBreakdown?.marketSize ?? 20, 'market').desc}
+                                    </div>
                                 </div>
 
                                 {/* Competition Card */}
-                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-orange-500/10 relative overflow-hidden">
-                                    <div className="relative z-10">
-                                        <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.competition || 15}</div>
-                                        <div className="text-gray-600 text-sm font-medium mb-2">
-                                            {getScoreInterpretation(result.scoreBreakdown?.competition || 15, 'competition').text}
+                                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                                            <span className="text-orange-600 text-lg">⚔️</span>
                                         </div>
-                                        <div className="text-gray-500 text-xs leading-relaxed">
-                                            {getScoreInterpretation(result.scoreBreakdown?.competition || 15, 'competition').desc}
-                                        </div>
+                                        <div className="text-2xl font-bold text-gray-900">{result.scoreBreakdown?.competition ?? 15}</div>
                                     </div>
-                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-full blur-xl"></div>
-                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-10">⚔️</div>
-                                    <div className="absolute inset-0 bg-gradient-to-br from-orange-400/10 to-amber-400/10 rounded-2xl"></div>
+                                    <div className="text-gray-900 font-medium mb-2">
+                                        {getScoreInterpretation(result.scoreBreakdown?.competition ?? 15, 'competition').text}
+                                    </div>
+                                    <div className="text-gray-600 text-sm leading-relaxed">
+                                        {getScoreInterpretation(result.scoreBreakdown?.competition ?? 15, 'competition').desc}
+                                    </div>
                                 </div>
 
                                 {/* Feasibility Card */}
-                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-purple-500/10 relative overflow-hidden">
-                                    <div className="relative z-10">
-                                        <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.feasibility || 17}</div>
-                                        <div className="text-gray-600 text-sm font-medium mb-2">
-                                            {getScoreInterpretation(result.scoreBreakdown?.feasibility || 17, 'feasibility').text}
+                                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <span className="text-purple-600 text-lg">🚀</span>
                                         </div>
-                                        <div className="text-gray-500 text-xs leading-relaxed">
-                                            {getScoreInterpretation(result.scoreBreakdown?.feasibility || 17, 'feasibility').desc}
-                                        </div>
+                                        <div className="text-2xl font-bold text-gray-900">{result.scoreBreakdown?.feasibility ?? 17}</div>
                                     </div>
-                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-xl"></div>
-                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-10">🚀</div>
-                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-indigo-400/10 rounded-2xl"></div>
+                                    <div className="text-gray-900 font-medium mb-2">
+                                        {getScoreInterpretation(result.scoreBreakdown?.feasibility ?? 17, 'feasibility').text}
+                                    </div>
+                                    <div className="text-gray-600 text-sm leading-relaxed">
+                                        {getScoreInterpretation(result.scoreBreakdown?.feasibility ?? 17, 'feasibility').desc}
+                                    </div>
                                 </div>
                             </div>
 
-                            {/* Enhanced Platform Performance Chart */}
-                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-blue-500/10">
+                            {/* Clean Platform Performance Chart */}
+                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-lg font-bold text-gray-800">Platform Performance</h3>
-                                    <div className="text-sm text-gray-600">Validation Signals</div>
+                                    <h3 className="text-lg font-semibold text-gray-900">Platform Performance</h3>
+                                    <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Validation Signals</div>
                                 </div>
                                 <div className="space-y-4">
-                                    {result.validationlyScore && Object.entries(result.validationlyScore.breakdown).map(([platform, score]) => (
+                                    {result.validationlyScore?.breakdown ? Object.entries(result.validationlyScore.breakdown).map(([platform, score]) => (
                                         <div key={platform} className="flex items-center gap-4">
-                                            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
+                                            <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
                                                 <span className="text-lg">
                                                     {platform === 'twitter' ? '𝕏' :
                                                         platform === 'reddit' ? '🔴' :
@@ -378,46 +388,50 @@ const ResultsPage: React.FC = () => {
                                                 </span>
                                             </div>
                                             <div className="flex-1">
-                                                <div className="flex items-center justify-between mb-1">
-                                                    <span className="font-medium text-gray-800 capitalize">{platform.replace('googleTrends', 'Google Trends')}</span>
-                                                    <span className="text-sm font-bold text-gray-900">{score}</span>
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <span className="font-medium text-gray-900 capitalize">{platform.replace('googleTrends', 'Google Trends')}</span>
+                                                    <span className="text-sm font-semibold text-gray-900 bg-blue-50 px-2 py-1 rounded">{score}</span>
                                                 </div>
                                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                                     <div
-                                                        className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-500"
+                                                        className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500"
                                                         style={{
-                                                            width: `${Math.min(100, (score / (result.validationlyScore?.weighting[platform as keyof typeof result.validationlyScore.weighting] || 40)) * 100)}%`
+                                                            width: `${Math.min(100, (score / (result.validationlyScore?.weighting?.[platform as keyof typeof result.validationlyScore.weighting] || 40)) * 100)}%`
                                                         }}
                                                     ></div>
                                                 </div>
                                             </div>
                                         </div>
-                                    ))}
+                                    )) : (
+                                        <div className="text-center text-gray-500 py-8 bg-gray-50 rounded-lg">
+                                            Platform verisi mevcut değil
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
-                            {/* Traffic Light System */}
-                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-indigo-500/10">
+                            {/* Clean Decision Status */}
+                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-bold text-gray-800">Karar Durumu</h3>
+                                    <h3 className="text-lg font-semibold text-gray-900">Karar Durumu</h3>
                                     <div className="text-2xl">{getOverallStatus(result.demandScore).color === 'green' ? '🟢' : getOverallStatus(result.demandScore).color === 'yellow' ? '🟡' : '🔴'}</div>
                                 </div>
-                                <div className="space-y-3">
-                                    <div className="font-semibold text-gray-800">{getOverallStatus(result.demandScore).text}</div>
-                                    <div className="text-gray-600 text-sm leading-relaxed">{getOverallStatus(result.demandScore).desc}</div>
-                                    <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
-                                        <div className="text-sm font-medium text-gray-800">🎯 Önerilen Aksiyon:</div>
-                                        <div className="text-sm text-gray-700 mt-1">{getOverallStatus(result.demandScore).action}</div>
+                                <div className="space-y-4">
+                                    <div className="font-semibold text-gray-900">{getOverallStatus(result.demandScore).text}</div>
+                                    <div className="text-gray-600 leading-relaxed">{getOverallStatus(result.demandScore).desc}</div>
+                                    <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
+                                        <div className="text-sm font-medium text-blue-900">🎯 Önerilen Aksiyon:</div>
+                                        <div className="text-sm text-blue-800 mt-1">{getOverallStatus(result.demandScore).action}</div>
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Actionable Insights */}
-                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-cyan-500/10">
-                                <h3 className="text-lg font-bold text-gray-800 mb-4">🎯 Şimdi Ne Yapmalısınız?</h3>
+                            {/* Clean Actionable Insights */}
+                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 Şimdi Ne Yapmalısınız?</h3>
                                 <div className="space-y-3">
                                     {getActionableInsights(result).map((insight, index) => (
-                                        <div key={index} className="flex items-start gap-3 p-3 bg-white/40 backdrop-blur-sm rounded-lg border border-white/30">
+                                        <div key={index} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
                                             <div className="text-sm text-gray-700 leading-relaxed">{insight}</div>
                                         </div>
                                     ))}
@@ -574,7 +588,7 @@ const ResultsPage: React.FC = () => {
                                             <p className="text-gray-700 mb-4 leading-relaxed text-sm">{result.instagramSuggestion}</p>
                                             <div className="flex gap-3">
                                                 <button
-                                                    onClick={() => handleCopyToClipboard(result.instagramSuggestion, 'instagram-copy')}
+                                                    onClick={() => handleCopyToClipboard(result.instagramSuggestion || '', 'instagram-copy')}
                                                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
                                                 >
                                                     {copiedId === 'instagram-copy' ? '✓ Copied' : 'Copy'}
@@ -598,7 +612,7 @@ const ResultsPage: React.FC = () => {
                                             <p className="text-gray-700 mb-4 leading-relaxed text-sm">{result.tiktokSuggestion}</p>
                                             <div className="flex gap-3">
                                                 <button
-                                                    onClick={() => handleCopyToClipboard(result.tiktokSuggestion, 'tiktok-copy')}
+                                                    onClick={() => handleCopyToClipboard(result.tiktokSuggestion || '', 'tiktok-copy')}
                                                     className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
                                                 >
                                                     {copiedId === 'tiktok-copy' ? '✓ Copied' : 'Copy'}
@@ -623,7 +637,10 @@ const ResultsPage: React.FC = () => {
                                         </p>
                                         <div className="flex gap-3">
                                             <button
-                                                onClick={() => handleCopyToClipboard(result.facebookSuggestion || `Excited to share this new concept: ${result.content || result.idea}`, 'facebook-copy')}
+                                                onClick={() => handleCopyToClipboard(
+                                                    result.facebookSuggestion || `Excited to share this new concept: ${result.content || result.idea}. Looking forward to connecting with others who have insights in this space!`,
+                                                    'facebook-copy'
+                                                )}
                                                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
                                             >
                                                 {copiedId === 'facebook-copy' ? '✓ Copied' : 'Copy'}
@@ -637,59 +654,54 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Right Column - Profile & Actions */}
+                        {/* Right Column - Clean Sidebar */}
                         <div className="col-span-4 space-y-6">
-                            {/* Story Card - Hikaye Anlatımı */}
-                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-purple-500/10 relative overflow-hidden">
-                                <div className="relative z-10">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/40">
-                                            <span className="text-xl">📖</span>
-                                        </div>
-                                        <div className="font-bold text-lg text-gray-800">Fikrinizin Hikayesi</div>
+                            {/* Clean Story Card */}
+                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <span className="text-purple-600 text-lg">📖</span>
                                     </div>
-                                    <div className="text-sm text-gray-700 leading-relaxed mb-4">
-                                        {result.demandScore >= 70 ?
-                                            "🌟 Pazarda büyük bir boşluk var ve siz tam doğru zamanda geliyorsunuz! Rakipleriniz henüz bu alanı keşfetmemiş. Şimdi harekete geçme zamanı!" :
-                                            result.demandScore >= 50 ?
-                                                "💡 İyi bir fikriniz var! Bazı alanları güçlendirirseniz başarılı olabilirsiniz. Sabırlı ve stratejik yaklaşım gerekli." :
-                                                "🔍 Fikriniz potansiyel taşıyor ama daha fazla araştırma ve geliştirme gerekiyor. Vazgeçmeyin, sadece daha iyi hale getirin!"
-                                        }
-                                    </div>
-                                    <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
-                                        <div className="text-xs text-gray-600 mb-1">Genel Durum</div>
-                                        <div className="font-bold text-gray-800">{getOverallStatus(result.demandScore).text}</div>
-                                    </div>
+                                    <div className="font-semibold text-lg text-gray-900">Fikrinizin Hikayesi</div>
                                 </div>
-                                <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-xl"></div>
-                                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl"></div>
-                                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/5 to-indigo-400/5 rounded-2xl"></div>
+                                <div className="text-sm text-gray-700 leading-relaxed mb-4">
+                                    {result.demandScore >= 70 ?
+                                        "🌟 Pazarda büyük bir boşluk var ve siz tam doğru zamanda geliyorsunuz! Rakipleriniz henüz bu alanı keşfetmemiş. Şimdi harekete geçme zamanı!" :
+                                        result.demandScore >= 50 ?
+                                            "💡 İyi bir fikriniz var! Bazı alanları güçlendirirseniz başarılı olabilirsiniz. Sabırlı ve stratejik yaklaşım gerekli." :
+                                            "� Fikriniiz potansiyel taşıyor ama daha fazla araştırma ve geliştirme gerekiyor. Vazgeçmeyin, sadece daha iyi hale getirin!"
+                                    }
+                                </div>
+                                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
+                                    <div className="text-xs text-gray-600 mb-1">Genel Durum</div>
+                                    <div className="font-semibold text-gray-900">{getOverallStatus(result.demandScore).text}</div>
+                                </div>
                             </div>
 
-                            {/* Gamification Level */}
-                            <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-yellow-500/10">
+                            {/* Clean Level Card */}
+                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="font-bold text-gray-800">Fikir Seviyeniz</h3>
+                                    <h3 className="font-semibold text-gray-900">Fikir Seviyeniz</h3>
                                     <div className="text-2xl">
                                         {result.demandScore >= 80 ? '🏆' : result.demandScore >= 60 ? '🥈' : result.demandScore >= 40 ? '🥉' : '📈'}
                                     </div>
                                 </div>
                                 <div className="space-y-3">
-                                    <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
+                                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                         <div className="text-xs text-gray-600">Seviye</div>
-                                        <div className="font-bold text-gray-800">
+                                        <div className="font-semibold text-gray-900">
                                             {result.demandScore >= 80 ? 'GOLD 🏆' :
                                                 result.demandScore >= 60 ? 'SILVER 🥈' :
                                                     result.demandScore >= 40 ? 'BRONZE 🥉' : 'STARTER 📈'}
                                         </div>
                                     </div>
-                                    <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
+                                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                         <div className="text-xs text-gray-600">Başarı İhtimaliniz</div>
-                                        <div className="font-bold text-gray-800">{result.demandScore}%</div>
+                                        <div className="font-semibold text-gray-900">{result.demandScore}%</div>
                                     </div>
-                                    <div className="bg-white/40 backdrop-blur-sm rounded-lg p-3 border border-white/30">
+                                    <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                                         <div className="text-xs text-gray-600">Sonraki Seviye İçin</div>
-                                        <div className="font-bold text-gray-800">
+                                        <div className="font-semibold text-gray-900">
                                             {result.demandScore >= 80 ? 'Yatırımcı bul!' :
                                                 result.demandScore >= 60 ? 'Prototip yap!' :
                                                     'Fikri geliştir!'}
@@ -698,52 +710,52 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Enhanced Action Cards */}
-                            <div className="space-y-4">
-                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 border border-white/25 shadow-2xl shadow-green-500/10">
+                            {/* Clean Action Cards */}
+                            <div className="space-y-3">
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
-                                            <span className="text-gray-700 font-bold">💡</span>
+                                        <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <span className="text-green-600 text-sm">💡</span>
                                         </div>
                                         <div>
-                                            <div className="font-semibold text-gray-800">Generate Ideas</div>
-                                            <div className="text-xs text-gray-600">AI-powered suggestions</div>
+                                            <div className="font-medium text-gray-900">Generate Ideas</div>
+                                            <div className="text-xs text-gray-500">AI-powered suggestions</div>
                                         </div>
                                     </div>
-                                    <button className="w-full bg-gradient-to-r from-green-400/80 to-emerald-500/80 backdrop-blur-sm text-white py-2 rounded-lg text-sm font-medium hover:from-green-500/90 hover:to-emerald-600/90 transition-all border border-white/20">
+                                    <button className="w-full bg-green-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors">
                                         Generate Similar Ideas
                                     </button>
                                 </div>
 
-                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 border border-white/25 shadow-2xl shadow-blue-500/10">
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
-                                            <span className="text-gray-700 font-bold">🔄</span>
+                                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <span className="text-blue-600 text-sm">�</span>
                                         </div>
                                         <div>
-                                            <div className="font-semibold text-gray-800">New Analysis</div>
-                                            <div className="text-xs text-gray-600">Validate another idea</div>
+                                            <div className="font-medium text-gray-900">New Analysis</div>
+                                            <div className="text-xs text-gray-500">Validate another idea</div>
                                         </div>
                                     </div>
                                     <button
                                         onClick={() => navigate('/')}
-                                        className="w-full bg-gradient-to-r from-blue-400/80 to-indigo-500/80 backdrop-blur-sm text-white py-2 rounded-lg text-sm font-medium hover:from-blue-500/90 hover:to-indigo-600/90 transition-all border border-white/20"
+                                        className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
                                     >
                                         Analyze Another Idea
                                     </button>
                                 </div>
 
-                                <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-4 border border-white/25 shadow-2xl shadow-purple-500/10">
+                                <div className="bg-white rounded-xl p-4 shadow-sm border border-gray-200">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
-                                            <span className="text-gray-700 font-bold">📊</span>
+                                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <span className="text-purple-600 text-sm">📊</span>
                                         </div>
                                         <div>
-                                            <div className="font-semibold text-gray-800">Save Results</div>
-                                            <div className="text-xs text-gray-600">Keep for later</div>
+                                            <div className="font-medium text-gray-900">Save Results</div>
+                                            <div className="text-xs text-gray-500">Keep for later</div>
                                         </div>
                                     </div>
-                                    <button className="w-full bg-gradient-to-r from-purple-400/80 to-pink-500/80 backdrop-blur-sm text-white py-2 rounded-lg text-sm font-medium hover:from-purple-500/90 hover:to-pink-600/90 transition-all border border-white/20">
+                                    <button className="w-full bg-purple-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
                                         Save to Dashboard
                                     </button>
                                 </div>
