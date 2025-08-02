@@ -169,41 +169,7 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Simple Key Insights */}
-                    <div className="grid grid-cols-3 gap-8 mb-16">
-                        {/* Market Opportunity */}
-                        <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg text-center">
-                            <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                                <span className="text-2xl">📊</span>
-                            </div>
-                            <div className="text-3xl font-bold text-gray-900 mb-2">
-                                {result.scoreBreakdown?.marketSize || 20}/25
-                            </div>
-                            <div className="text-gray-600 font-medium">Market Size</div>
-                        </div>
 
-                        {/* Competition */}
-                        <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg text-center">
-                            <div className="w-16 h-16 bg-gradient-to-br from-orange-400 to-red-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                                <span className="text-2xl">⚔️</span>
-                            </div>
-                            <div className="text-3xl font-bold text-gray-900 mb-2">
-                                {result.scoreBreakdown?.competition || 15}/25
-                            </div>
-                            <div className="text-gray-600 font-medium">Competition</div>
-                        </div>
-
-                        {/* Feasibility */}
-                        <div className="bg-white/90 backdrop-blur-xl rounded-2xl p-8 border border-white/50 shadow-lg text-center">
-                            <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-500 rounded-2xl mx-auto mb-4 flex items-center justify-center">
-                                <span className="text-2xl">🚀</span>
-                            </div>
-                            <div className="text-3xl font-bold text-gray-900 mb-2">
-                                {result.scoreBreakdown?.feasibility || 17}/25
-                            </div>
-                            <div className="text-gray-600 font-medium">Feasibility</div>
-                        </div>
-                    </div>
 
                     {/* Premium Content Grid */}
                     <div className="grid grid-cols-2 gap-10">
@@ -317,6 +283,102 @@ const ResultsPage: React.FC = () => {
                                             </button>
                                             <button className="px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium hover:bg-orange-600 transition-colors">
                                                 Post to Reddit
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* LinkedIn */}
+                                    {result.linkedinSuggestion && (
+                                        <div className="p-6 bg-blue-50/70 rounded-xl">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                                                    <span className="text-white font-bold text-sm">in</span>
+                                                </div>
+                                                <span className="font-bold text-gray-900 text-lg">LinkedIn</span>
+                                            </div>
+                                            <p className="text-gray-700 mb-4 leading-relaxed text-sm">{result.linkedinSuggestion}</p>
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={() => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin-copy')}
+                                                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                                                >
+                                                    {copiedId === 'linkedin-copy' ? '✓ Copied' : 'Copy'}
+                                                </button>
+                                                <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                                                    Post to LinkedIn
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Instagram */}
+                                    {result.instagramSuggestion && (
+                                        <div className="p-6 bg-pink-50/70 rounded-xl">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl flex items-center justify-center">
+                                                    <span className="text-white font-bold text-sm">📷</span>
+                                                </div>
+                                                <span className="font-bold text-gray-900 text-lg">Instagram</span>
+                                            </div>
+                                            <p className="text-gray-700 mb-4 leading-relaxed text-sm">{result.instagramSuggestion}</p>
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={() => handleCopyToClipboard(result.instagramSuggestion, 'instagram-copy')}
+                                                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                                                >
+                                                    {copiedId === 'instagram-copy' ? '✓ Copied' : 'Copy'}
+                                                </button>
+                                                <button className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg text-sm font-medium hover:from-pink-600 hover:to-purple-600 transition-colors">
+                                                    Post to Instagram
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* TikTok */}
+                                    {result.tiktokSuggestion && (
+                                        <div className="p-6 bg-gray-900/10 rounded-xl">
+                                            <div className="flex items-center gap-3 mb-4">
+                                                <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
+                                                    <span className="text-white font-bold text-sm">🎵</span>
+                                                </div>
+                                                <span className="font-bold text-gray-900 text-lg">TikTok</span>
+                                            </div>
+                                            <p className="text-gray-700 mb-4 leading-relaxed text-sm">{result.tiktokSuggestion}</p>
+                                            <div className="flex gap-3">
+                                                <button
+                                                    onClick={() => handleCopyToClipboard(result.tiktokSuggestion, 'tiktok-copy')}
+                                                    className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                                                >
+                                                    {copiedId === 'tiktok-copy' ? '✓ Copied' : 'Copy'}
+                                                </button>
+                                                <button className="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+                                                    Post to TikTok
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {/* Facebook */}
+                                    <div className="p-6 bg-blue-50/70 rounded-xl">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+                                                <span className="text-white font-bold text-sm">f</span>
+                                            </div>
+                                            <span className="font-bold text-gray-900 text-lg">Facebook</span>
+                                        </div>
+                                        <p className="text-gray-700 mb-4 leading-relaxed text-sm">
+                                            {result.facebookSuggestion || `Excited to share this new concept: ${result.content || result.idea}. Looking forward to connecting with others who have insights in this space!`}
+                                        </p>
+                                        <div className="flex gap-3">
+                                            <button
+                                                onClick={() => handleCopyToClipboard(result.facebookSuggestion || `Excited to share this new concept: ${result.content || result.idea}`, 'facebook-copy')}
+                                                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-300 transition-colors"
+                                            >
+                                                {copiedId === 'facebook-copy' ? '✓ Copied' : 'Copy'}
+                                            </button>
+                                            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
+                                                Post to Facebook
                                             </button>
                                         </div>
                                     </div>

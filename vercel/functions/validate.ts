@@ -544,6 +544,9 @@ RESPONSE FORMAT RULES:
         if (!parsedResult.linkedinSuggestion) {
             parsedResult.linkedinSuggestion = "Excited to share this new concept with my network.";
         }
+        if (!parsedResult.facebookSuggestion) {
+            parsedResult.facebookSuggestion = `Excited to share this new concept: ${inputContent.substring(0, 200)}${inputContent.length > 200 ? '...' : ''} Looking forward to connecting with others who have insights in this space!`;
+        }
 
         // Optional advanced fields - graceful fallbacks
         if (!parsedResult.contentType) {

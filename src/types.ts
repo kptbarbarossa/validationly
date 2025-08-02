@@ -62,6 +62,7 @@ export interface ValidationResult {
   contentQuality?: ContentQuality;
   instagramSuggestion?: string;
   tiktokSuggestion?: string;
+  facebookSuggestion?: string;
   validationlyScore?: ValidationlyScore;
 }
 
