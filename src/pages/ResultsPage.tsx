@@ -158,8 +158,8 @@ const ResultsPage: React.FC = () => {
 
                     {/* Validationly Score Card */}
                     <div className="mb-16">
-                        <ValidationlyScoreCard 
-                            score={result.demandScore} 
+                        <ValidationlyScoreCard
+                            score={result.demandScore}
                             validationlyScore={result.validationlyScore}
                         />
                         <div className="text-center mt-8">
