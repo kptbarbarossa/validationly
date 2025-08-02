@@ -180,7 +180,7 @@ const ResultsPage: React.FC = () => {
                                 <div className="text-sm font-medium text-gray-500 mb-3">Total Demand Score</div>
                                 <div className="text-8xl font-extralight text-gray-900 mb-6 tracking-tight">
                                     {result.demandScore}
-                                    <span className="text-3xl text-gray-400 ml-2">M</span>
+                                    <span className="text-3xl text-gray-400 ml-2">/100</span>
                                 </div>
                                 <div className="text-gray-600 max-w-3xl leading-relaxed text-lg">
                                     "{result.content || result.idea}"
@@ -191,25 +191,25 @@ const ResultsPage: React.FC = () => {
 
                     {/* Premium Stats Grid */}
                     <div className="grid grid-cols-4 gap-8 mb-12">
-                        {/* Premium Gradient Card */}
+                        {/* Market Size - Premium Gradient Card */}
                         <div className="bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl shadow-blue-500/25">
                             <div className="relative z-10">
                                 <div className="text-4xl font-extralight mb-2 tracking-tight">
-                                    {((result.scoreBreakdown?.marketSize || 20) / 25 * 100).toFixed(1)}
-                                    <span className="text-xl opacity-80">%</span>
+                                    {result.scoreBreakdown?.marketSize || 25}
+                                    <span className="text-xl opacity-80">/25</span>
                                 </div>
                                 <div className="text-cyan-100 text-sm font-medium">Market Size</div>
-                                <div className="text-cyan-200 text-xs mt-1">+11%</div>
+                                <div className="text-cyan-200 text-xs mt-1">Strong potential</div>
                             </div>
                             <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
                             <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-white/5 rounded-full"></div>
                         </div>
 
-                        {/* Clean Premium Card */}
+                        {/* Competition - Clean Premium Card */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
                             <div className="flex items-center justify-between mb-6">
-                                <div className="w-10 h-10 bg-blue-100 rounded-2xl flex items-center justify-center">
-                                    <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
+                                <div className="w-10 h-10 bg-orange-100 rounded-2xl flex items-center justify-center">
+                                    <div className="w-4 h-4 bg-orange-500 rounded-full"></div>
                                 </div>
                                 <div className="text-red-500 text-sm font-semibold flex items-center gap-1">
                                     <TrendDownIcon />
@@ -217,12 +217,13 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
                             <div className="text-4xl font-extralight text-gray-900 mb-2 tracking-tight">
-                                {(result.scoreBreakdown?.competition || 15).toFixed(0)}K
+                                {result.scoreBreakdown?.competition || 15}
+                                <span className="text-xl text-gray-400">/25</span>
                             </div>
                             <div className="text-gray-500 text-sm font-medium">Competition Level</div>
                         </div>
 
-                        {/* Success Card */}
+                        {/* Trend Momentum - Success Card */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="w-10 h-10 bg-emerald-100 rounded-2xl flex items-center justify-center">
@@ -234,12 +235,13 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
                             <div className="text-4xl font-extralight text-gray-900 mb-2 tracking-tight">
-                                {(result.scoreBreakdown?.trendMomentum || 18) * 1000}
+                                {result.scoreBreakdown?.trendMomentum || 18}
+                                <span className="text-xl text-gray-400">/25</span>
                             </div>
                             <div className="text-gray-500 text-sm font-medium">Trend Momentum</div>
                         </div>
 
-                        {/* Time Card */}
+                        {/* Feasibility - Time Card */}
                         <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
                             <div className="flex items-center justify-between mb-6">
                                 <div className="w-10 h-10 bg-violet-100 rounded-2xl flex items-center justify-center">
@@ -250,9 +252,10 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
                             <div className="text-4xl font-extralight text-gray-900 mb-2 tracking-tight">
-                                00:0{Math.floor((result.confidenceLevel || 85) / 30)}:{String((result.confidenceLevel || 85) % 60).padStart(2, '0')}
+                                {result.scoreBreakdown?.feasibility || 17}
+                                <span className="text-xl text-gray-400">/25</span>
                             </div>
-                            <div className="text-gray-500 text-sm font-medium">Avg Analysis Duration</div>
+                            <div className="text-gray-500 text-sm font-medium">Feasibility Score</div>
                         </div>
                     </div>
 
@@ -260,6 +263,44 @@ const ResultsPage: React.FC = () => {
                     <div className="grid grid-cols-2 gap-10">
                         {/* Left Column */}
                         <div className="space-y-8">
+                            {/* Content Quality Metrics - Premium */}
+                            {result.contentQuality && (
+                                <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
+                                    <h3 className="text-xl font-bold text-gray-900 mb-8">Content Quality Metrics</h3>
+                                    <div className="grid grid-cols-2 gap-4 mb-6">
+                                        <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50/50 rounded-2xl">
+                                            <div className="text-2xl font-bold text-emerald-600 mb-1">{result.contentQuality.writingQuality}</div>
+                                            <div className="text-sm text-gray-600">Writing Quality</div>
+                                        </div>
+                                        <div className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50/50 rounded-2xl">
+                                            <div className="text-2xl font-bold text-indigo-600 mb-1">{result.contentQuality.engagementPotential}</div>
+                                            <div className="text-sm text-gray-600">Engagement</div>
+                                        </div>
+                                        <div className="p-4 bg-gradient-to-r from-purple-50 to-violet-50/50 rounded-2xl">
+                                            <div className="text-2xl font-bold text-purple-600 mb-1">{result.contentQuality.viralityScore}</div>
+                                            <div className="text-sm text-gray-600">Virality</div>
+                                        </div>
+                                        <div className="p-4 bg-gradient-to-r from-orange-50 to-amber-50/50 rounded-2xl">
+                                            <div className="text-2xl font-bold text-orange-600 mb-1">{result.contentQuality.clarityScore}</div>
+                                            <div className="text-sm text-gray-600">Clarity</div>
+                                        </div>
+                                    </div>
+                                    {result.contentQuality.improvements && result.contentQuality.improvements.length > 0 && (
+                                        <div className="p-4 bg-gray-50/50 rounded-2xl">
+                                            <h4 className="font-semibold text-gray-900 mb-3">Improvement Suggestions</h4>
+                                            <ul className="space-y-2">
+                                                {result.contentQuality.improvements.map((improvement, index) => (
+                                                    <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
+                                                        <span className="text-indigo-500 mt-1">•</span>
+                                                        {improvement}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
                             {/* Market Timing - Premium */}
                             {result.marketTiming && (
                                 <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
@@ -289,6 +330,7 @@ const ResultsPage: React.FC = () => {
                             <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl shadow-gray-900/5">
                                 <h3 className="text-xl font-bold text-gray-900 mb-8">Platform Suggestions</h3>
                                 <div className="space-y-6">
+                                    {/* X (Twitter) */}
                                     <div className="p-6 bg-gradient-to-r from-gray-50 to-gray-100/50 rounded-2xl border border-gray-200/50">
                                         <div className="flex items-center gap-4 mb-4">
                                             <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center shadow-lg">
@@ -299,12 +341,13 @@ const ResultsPage: React.FC = () => {
                                         <p className="text-gray-700 mb-4 leading-relaxed">{result.tweetSuggestion}</p>
                                         <button
                                             onClick={() => handleCopyToClipboard(result.tweetSuggestion, 'tweet-copy')}
-                                            className="px-4 py-2 bg-indigo-500 text-white rounded-xl text-sm font-semibold hover:bg-indigo-600 transition-colors shadow-lg shadow-indigo-500/25"
+                                            className="px-4 py-2 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-500/25"
                                         >
                                             {copiedId === 'tweet-copy' ? 'Copied!' : 'Copy Content'}
                                         </button>
                                     </div>
 
+                                    {/* Reddit */}
                                     <div className="p-6 bg-gradient-to-r from-orange-50 to-red-50/50 rounded-2xl border border-orange-200/50">
                                         <div className="flex items-center gap-4 mb-4">
                                             <div className="w-8 h-8 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -321,6 +364,63 @@ const ResultsPage: React.FC = () => {
                                             {copiedId === 'reddit-copy' ? 'Copied!' : 'Copy Content'}
                                         </button>
                                     </div>
+
+                                    {/* LinkedIn */}
+                                    {result.linkedinSuggestion && (
+                                        <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50/50 rounded-2xl border border-blue-200/50">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <span className="text-white font-bold text-sm">in</span>
+                                                </div>
+                                                <span className="font-bold text-gray-900 text-lg">LinkedIn</span>
+                                            </div>
+                                            <p className="text-gray-700 mb-4 leading-relaxed">{result.linkedinSuggestion}</p>
+                                            <button
+                                                onClick={() => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin-copy')}
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/25"
+                                            >
+                                                {copiedId === 'linkedin-copy' ? 'Copied!' : 'Copy Content'}
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* Instagram */}
+                                    {result.instagramSuggestion && (
+                                        <div className="p-6 bg-gradient-to-r from-pink-50 to-purple-50/50 rounded-2xl border border-pink-200/50">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-8 h-8 bg-gradient-to-r from-pink-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+                                                    <span className="text-white font-bold text-sm">📷</span>
+                                                </div>
+                                                <span className="font-bold text-gray-900 text-lg">Instagram</span>
+                                            </div>
+                                            <p className="text-gray-700 mb-4 leading-relaxed">{result.instagramSuggestion}</p>
+                                            <button
+                                                onClick={() => handleCopyToClipboard(result.instagramSuggestion, 'instagram-copy')}
+                                                className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-xl text-sm font-semibold hover:from-pink-600 hover:to-purple-600 transition-colors shadow-lg shadow-pink-500/25"
+                                            >
+                                                {copiedId === 'instagram-copy' ? 'Copied!' : 'Copy Content'}
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {/* TikTok */}
+                                    {result.tiktokSuggestion && (
+                                        <div className="p-6 bg-gradient-to-r from-gray-900 to-red-900/50 rounded-2xl border border-gray-700/50">
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="w-8 h-8 bg-black rounded-xl flex items-center justify-center shadow-lg">
+                                                    <span className="text-white font-bold text-sm">🎵</span>
+                                                </div>
+                                                <span className="font-bold text-gray-900 text-lg">TikTok</span>
+                                            </div>
+                                            <p className="text-gray-700 mb-4 leading-relaxed">{result.tiktokSuggestion}</p>
+                                            <button
+                                                onClick={() => handleCopyToClipboard(result.tiktokSuggestion, 'tiktok-copy')}
+                                                className="px-4 py-2 bg-black text-white rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors shadow-lg shadow-gray-500/25"
+                                            >
+                                                {copiedId === 'tiktok-copy' ? 'Copied!' : 'Copy Content'}
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
