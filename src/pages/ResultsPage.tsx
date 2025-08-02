@@ -645,7 +645,7 @@ const ResultsPage: React.FC = () => {
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-3 mb-4">
                                         <div className="w-10 h-10 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/40">
-                                            <span className="text-xl">�<</span>
+                                            <span className="text-xl">📖</span>
                                         </div>
                                         <div className="font-bold text-lg text-gray-800">Fikrinizin Hikayesi</div>
                                     </div>
