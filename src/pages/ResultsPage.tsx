@@ -209,14 +209,14 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 via-pink-100 to-cyan-100 relative overflow-hidden">
-            {/* Enhanced Pastel Background Elements */}
+        <div className="min-h-screen bg-gradient-to-br from-indigo-200 via-indigo-100 to-cyan-200 relative overflow-hidden">
+            {/* Indigo-Cyan Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
-                <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-purple-300/40 to-pink-300/40 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-indigo-300/40 to-cyan-300/40 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-gradient-to-br from-cyan-300/30 to-purple-300/30 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-gradient-to-br from-pink-300/30 to-indigo-300/30 rounded-full blur-3xl"></div>
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[32rem] bg-gradient-to-br from-purple-200/20 via-pink-200/20 to-cyan-200/20 rounded-full blur-3xl"></div>
+                <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-indigo-400/60 to-cyan-400/60 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-cyan-400/60 to-indigo-400/60 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/3 left-1/4 w-80 h-80 bg-gradient-to-br from-indigo-300/50 to-cyan-300/50 rounded-full blur-3xl"></div>
+                <div className="absolute bottom-1/3 right-1/4 w-80 h-80 bg-gradient-to-br from-cyan-300/50 to-indigo-300/50 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[32rem] h-[32rem] bg-gradient-to-br from-indigo-200/40 via-cyan-200/40 to-indigo-200/40 rounded-full blur-3xl"></div>
             </div>
             {/* Premium Layout */}
             <div className="flex">
