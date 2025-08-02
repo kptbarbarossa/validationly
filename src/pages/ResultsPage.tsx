@@ -104,11 +104,17 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100/50">
+        <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 relative overflow-hidden">
+            {/* Glassmorphism Background Elements */}
+            <div className="absolute inset-0 overflow-hidden">
+                <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-purple-400/30 to-pink-400/30 rounded-full blur-3xl"></div>
+                <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-blue-400/30 to-indigo-400/30 rounded-full blur-3xl"></div>
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-cyan-400/20 to-purple-400/20 rounded-full blur-3xl"></div>
+            </div>
             {/* Premium Layout */}
             <div className="flex">
-                {/* Ultra Clean Sidebar */}
-                <div className="w-60 bg-white/70 backdrop-blur-xl border-r border-gray-200/30 min-h-screen relative">
+                {/* Glassmorphism Sidebar */}
+                <div className="w-60 bg-white/20 backdrop-blur-xl border-r border-white/30 min-h-screen relative z-10">
                     <div className="p-7">
                         {/* Premium Logo */}
                         <div className="flex items-center gap-3 mb-16">
@@ -118,29 +124,29 @@ const ResultsPage: React.FC = () => {
                             <span className="font-semibold text-gray-900 text-lg">Validationly</span>
                         </div>
 
-                        {/* Ultra Clean Navigation */}
+                        {/* Glassmorphism Navigation */}
                         <nav className="space-y-2">
-                            <div className="flex items-center gap-4 px-4 py-3 bg-gradient-to-r from-indigo-50 to-purple-50/50 text-indigo-600 rounded-xl border border-indigo-100/50">
+                            <div className="flex items-center gap-4 px-4 py-3 bg-white/30 backdrop-blur-sm text-indigo-700 rounded-xl border border-white/40 shadow-lg shadow-indigo-500/10">
                                 <HomeIcon />
                                 <span className="text-sm font-semibold">Overview</span>
                             </div>
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-500 hover:text-gray-700 hover:bg-gray-50/70 rounded-xl cursor-pointer transition-all duration-200">
+                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
                                 <ChartIcon />
                                 <span className="text-sm font-medium">Analytics</span>
                             </div>
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-500 hover:text-gray-700 hover:bg-gray-50/70 rounded-xl cursor-pointer transition-all duration-200">
+                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
                                 <BookmarkIcon />
                                 <span className="text-sm font-medium">Saved</span>
                             </div>
                         </nav>
 
-                        {/* Bottom Navigation */}
+                        {/* Glassmorphism Bottom Navigation */}
                         <div className="absolute bottom-8 left-7 right-7 space-y-2">
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-500 hover:text-gray-700 hover:bg-gray-50/70 rounded-xl cursor-pointer transition-all duration-200">
+                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
                                 <SettingsIcon />
                                 <span className="text-sm font-medium">Settings</span>
                             </div>
-                            <div className="flex items-center gap-4 px-4 py-3 text-gray-500 hover:text-gray-700 hover:bg-gray-50/70 rounded-xl cursor-pointer transition-all duration-200">
+                            <div className="flex items-center gap-4 px-4 py-3 text-gray-600 hover:text-gray-800 hover:bg-white/20 hover:backdrop-blur-sm rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:border-white/30">
                                 <HelpIcon />
                                 <span className="text-sm font-medium">Help</span>
                             </div>
@@ -148,8 +154,8 @@ const ResultsPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Modern Main Content */}
-                <div className="flex-1 p-8">
+                {/* Glassmorphism Main Content */}
+                <div className="flex-1 p-8 relative z-10">
                     {/* Beautiful Header */}
                     <div className="flex items-center justify-between mb-8">
                         <div>
@@ -186,47 +192,50 @@ const ResultsPage: React.FC = () => {
                     <div className="grid grid-cols-12 gap-6">
                         {/* Left Column - Stats */}
                         <div className="col-span-8 space-y-6">
-                            {/* Beautiful Stats Cards */}
+                            {/* Glassmorphism Stats Cards */}
                             <div className="grid grid-cols-3 gap-4">
                                 {/* Market Size Card */}
-                                <div className="bg-gradient-to-br from-pink-400 via-pink-500 to-rose-500 rounded-2xl p-6 text-white relative overflow-hidden">
+                                <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-pink-500/10 relative overflow-hidden">
                                     <div className="relative z-10">
-                                        <div className="text-3xl font-bold mb-1">{result.scoreBreakdown?.marketSize || 20}</div>
-                                        <div className="text-pink-100 text-sm font-medium">Market Size</div>
-                                        <div className="text-pink-200 text-xs mt-1">out of 25</div>
+                                        <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.marketSize || 20}</div>
+                                        <div className="text-gray-600 text-sm font-medium">Market Size</div>
+                                        <div className="text-gray-500 text-xs mt-1">out of 25</div>
                                     </div>
-                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full"></div>
-                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-20">📊</div>
+                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-pink-400/20 to-rose-400/20 rounded-full blur-xl"></div>
+                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-10">📊</div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-pink-400/10 to-rose-400/10 rounded-2xl"></div>
                                 </div>
 
                                 {/* Competition Card */}
-                                <div className="bg-gradient-to-br from-orange-400 via-orange-500 to-amber-500 rounded-2xl p-6 text-white relative overflow-hidden">
+                                <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-orange-500/10 relative overflow-hidden">
                                     <div className="relative z-10">
-                                        <div className="text-3xl font-bold mb-1">{result.scoreBreakdown?.competition || 15}</div>
-                                        <div className="text-orange-100 text-sm font-medium">Competition</div>
-                                        <div className="text-orange-200 text-xs mt-1">out of 25</div>
+                                        <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.competition || 15}</div>
+                                        <div className="text-gray-600 text-sm font-medium">Competition</div>
+                                        <div className="text-gray-500 text-xs mt-1">out of 25</div>
                                     </div>
-                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full"></div>
-                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-20">⚔️</div>
+                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-orange-400/20 to-amber-400/20 rounded-full blur-xl"></div>
+                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-10">⚔️</div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-orange-400/10 to-amber-400/10 rounded-2xl"></div>
                                 </div>
 
                                 {/* Feasibility Card */}
-                                <div className="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-2xl p-6 text-white relative overflow-hidden">
+                                <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-purple-500/10 relative overflow-hidden">
                                     <div className="relative z-10">
-                                        <div className="text-3xl font-bold mb-1">{result.scoreBreakdown?.feasibility || 17}</div>
-                                        <div className="text-purple-100 text-sm font-medium">Feasibility</div>
-                                        <div className="text-purple-200 text-xs mt-1">out of 25</div>
+                                        <div className="text-3xl font-bold mb-1 text-gray-800">{result.scoreBreakdown?.feasibility || 17}</div>
+                                        <div className="text-gray-600 text-sm font-medium">Feasibility</div>
+                                        <div className="text-gray-500 text-xs mt-1">out of 25</div>
                                     </div>
-                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-white/10 rounded-full"></div>
-                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-20">🚀</div>
+                                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-xl"></div>
+                                    <div className="absolute -bottom-2 -right-2 text-6xl opacity-10">🚀</div>
+                                    <div className="absolute inset-0 bg-gradient-to-br from-purple-400/10 to-indigo-400/10 rounded-2xl"></div>
                                 </div>
                             </div>
 
-                            {/* Platform Performance Chart */}
-                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            {/* Glassmorphism Platform Performance Chart */}
+                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-blue-500/5">
                                 <div className="flex items-center justify-between mb-6">
                                     <h3 className="text-lg font-bold text-gray-800">Platform Performance</h3>
-                                    <div className="text-sm text-gray-500">Validation Signals</div>
+                                    <div className="text-sm text-gray-600">Validation Signals</div>
                                 </div>
                                 <div className="space-y-4">
                                     {result.validationlyScore && Object.entries(result.validationlyScore.breakdown).map(([platform, score]) => (
@@ -405,121 +414,122 @@ const ResultsPage: React.FC = () => {
 
                         {/* Right Column - Profile & Actions */}
                         <div className="col-span-4 space-y-6">
-                            {/* Beautiful Profile Card */}
-                            <div className="bg-gradient-to-br from-purple-500 via-purple-600 to-indigo-600 rounded-2xl p-6 text-white relative overflow-hidden">
+                            {/* Glassmorphism Profile Card */}
+                            <div className="bg-white/25 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-xl shadow-purple-500/10 relative overflow-hidden">
                                 <div className="relative z-10">
                                     <div className="flex items-center gap-4 mb-4">
-                                        <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                                        <div className="w-12 h-12 bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/40">
                                             <span className="text-2xl">🚀</span>
                                         </div>
                                         <div>
-                                            <div className="font-bold text-lg">Your Idea</div>
-                                            <div className="text-purple-200 text-sm">Validation Complete</div>
+                                            <div className="font-bold text-lg text-gray-800">Your Idea</div>
+                                            <div className="text-gray-600 text-sm">Validation Complete</div>
                                         </div>
                                     </div>
                                     <div className="space-y-2 text-sm">
                                         <div className="flex justify-between">
-                                            <span className="text-purple-200">Score:</span>
-                                            <span className="font-bold">{result.demandScore}/100</span>
+                                            <span className="text-gray-600">Score:</span>
+                                            <span className="font-bold text-gray-800">{result.demandScore}/100</span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-purple-200">Status:</span>
-                                            <span className="font-bold">
+                                            <span className="text-gray-600">Status:</span>
+                                            <span className="font-bold text-gray-800">
                                                 {result.demandScore >= 70 ? 'High Potential' : 
                                                  result.demandScore >= 50 ? 'Moderate' : 'Needs Work'}
                                             </span>
                                         </div>
                                         <div className="flex justify-between">
-                                            <span className="text-purple-200">Platforms:</span>
-                                            <span className="font-bold">6 Analyzed</span>
+                                            <span className="text-gray-600">Platforms:</span>
+                                            <span className="font-bold text-gray-800">6 Analyzed</span>
                                         </div>
                                     </div>
                                 </div>
-                                <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
-                                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-white/5 rounded-full"></div>
+                                <div className="absolute -top-4 -right-4 w-24 h-24 bg-gradient-to-br from-purple-400/20 to-indigo-400/20 rounded-full blur-xl"></div>
+                                <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-br from-blue-400/20 to-purple-400/20 rounded-full blur-xl"></div>
+                                <div className="absolute inset-0 bg-gradient-to-br from-purple-400/5 to-indigo-400/5 rounded-2xl"></div>
                             </div>
 
-                            {/* Modern Action Cards */}
+                            {/* Glassmorphism Action Cards */}
                             <div className="space-y-4">
-                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                                <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-4 border border-white/30 shadow-lg shadow-green-500/5">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-gradient-to-r from-green-400 to-emerald-500 rounded-xl flex items-center justify-center">
-                                            <span className="text-white font-bold">💡</span>
+                                        <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
+                                            <span className="text-gray-700 font-bold">💡</span>
                                         </div>
                                         <div>
                                             <div className="font-semibold text-gray-800">Generate Ideas</div>
-                                            <div className="text-xs text-gray-500">AI-powered suggestions</div>
+                                            <div className="text-xs text-gray-600">AI-powered suggestions</div>
                                         </div>
                                     </div>
-                                    <button className="w-full bg-gradient-to-r from-green-400 to-emerald-500 text-white py-2 rounded-lg text-sm font-medium hover:from-green-500 hover:to-emerald-600 transition-all">
+                                    <button className="w-full bg-gradient-to-r from-green-400/80 to-emerald-500/80 backdrop-blur-sm text-white py-2 rounded-lg text-sm font-medium hover:from-green-500/90 hover:to-emerald-600/90 transition-all border border-white/20">
                                         Generate Similar Ideas
                                     </button>
                                 </div>
 
-                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                                <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-4 border border-white/30 shadow-lg shadow-blue-500/5">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-xl flex items-center justify-center">
-                                            <span className="text-white font-bold">🔄</span>
+                                        <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
+                                            <span className="text-gray-700 font-bold">🔄</span>
                                         </div>
                                         <div>
                                             <div className="font-semibold text-gray-800">New Analysis</div>
-                                            <div className="text-xs text-gray-500">Validate another idea</div>
+                                            <div className="text-xs text-gray-600">Validate another idea</div>
                                         </div>
                                     </div>
                                     <button 
                                         onClick={() => navigate('/')}
-                                        className="w-full bg-gradient-to-r from-blue-400 to-indigo-500 text-white py-2 rounded-lg text-sm font-medium hover:from-blue-500 hover:to-indigo-600 transition-all"
+                                        className="w-full bg-gradient-to-r from-blue-400/80 to-indigo-500/80 backdrop-blur-sm text-white py-2 rounded-lg text-sm font-medium hover:from-blue-500/90 hover:to-indigo-600/90 transition-all border border-white/20"
                                     >
                                         Analyze Another Idea
                                     </button>
                                 </div>
 
-                                <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
+                                <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-4 border border-white/30 shadow-lg shadow-purple-500/5">
                                     <div className="flex items-center gap-3 mb-3">
-                                        <div className="w-10 h-10 bg-gradient-to-r from-purple-400 to-pink-500 rounded-xl flex items-center justify-center">
-                                            <span className="text-white font-bold">📊</span>
+                                        <div className="w-10 h-10 bg-white/40 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/50">
+                                            <span className="text-gray-700 font-bold">📊</span>
                                         </div>
                                         <div>
                                             <div className="font-semibold text-gray-800">Save Results</div>
-                                            <div className="text-xs text-gray-500">Keep for later</div>
+                                            <div className="text-xs text-gray-600">Keep for later</div>
                                         </div>
                                     </div>
-                                    <button className="w-full bg-gradient-to-r from-purple-400 to-pink-500 text-white py-2 rounded-lg text-sm font-medium hover:from-purple-500 hover:to-pink-600 transition-all">
+                                    <button className="w-full bg-gradient-to-r from-purple-400/80 to-pink-500/80 backdrop-blur-sm text-white py-2 rounded-lg text-sm font-medium hover:from-purple-500/90 hover:to-pink-600/90 transition-all border border-white/20">
                                         Save to Dashboard
                                     </button>
                                 </div>
                             </div>
 
-                            {/* Latest Scores - Tennis Style */}
-                            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                            {/* Glassmorphism Latest Scores */}
+                            <div className="bg-white/30 backdrop-blur-xl rounded-2xl p-6 border border-white/30 shadow-lg shadow-gray-500/5">
                                 <div className="flex items-center justify-between mb-4">
                                     <h3 className="font-bold text-gray-800">Latest Scores</h3>
                                     <button className="text-sm text-indigo-600 font-medium">View All</button>
                                 </div>
                                 <div className="space-y-3">
-                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div className="flex items-center justify-between p-3 bg-white/40 backdrop-blur-sm rounded-lg border border-white/30">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full flex items-center justify-center">
+                                            <div className="w-8 h-8 bg-gradient-to-r from-green-400/80 to-emerald-500/80 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/30">
                                                 <span className="text-white text-xs font-bold">AI</span>
                                             </div>
                                             <div>
                                                 <div className="text-sm font-semibold text-gray-800">Current Idea</div>
-                                                <div className="text-xs text-gray-500">Just now</div>
+                                                <div className="text-xs text-gray-600">Just now</div>
                                             </div>
                                         </div>
                                         <div className="text-lg font-bold text-gray-900">{result.demandScore}</div>
                                     </div>
-                                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg opacity-60">
+                                    <div className="flex items-center justify-between p-3 bg-white/20 backdrop-blur-sm rounded-lg border border-white/20 opacity-60">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-gray-400 rounded-full flex items-center justify-center">
+                                            <div className="w-8 h-8 bg-gray-400/60 backdrop-blur-sm rounded-full flex items-center justify-center border border-white/20">
                                                 <span className="text-white text-xs font-bold">--</span>
                                             </div>
                                             <div>
                                                 <div className="text-sm font-semibold text-gray-600">Previous Idea</div>
-                                                <div className="text-xs text-gray-400">No data</div>
+                                                <div className="text-xs text-gray-500">No data</div>
                                             </div>
                                         </div>
-                                        <div className="text-lg font-bold text-gray-400">--</div>
+                                        <div className="text-lg font-bold text-gray-500">--</div>
                                     </div>
                                 </div>
                             </div>
