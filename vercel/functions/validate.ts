@@ -347,7 +347,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         const systemInstruction = `You are 'Validationly', an expert AI market research analyst with deep knowledge of social media trends, consumer behavior, and startup ecosystems. Your task is to analyze a user's business idea and provide a comprehensive validation report.
 
-        IMPORTANT: Always respond in the same language as the user's input. If the user writes in Turkish, respond in Turkish. If they write in English, respond in English. If they write in Spanish, respond in Spanish, etc. Maintain the same language throughout your entire response including all fields.
+        🌍 CRITICAL LANGUAGE REQUIREMENT: 
+        - DETECT the language of the user's input content
+        - RESPOND in the EXACT SAME LANGUAGE throughout your ENTIRE response
+        - If input is in Turkish → ALL fields must be in Turkish
+        - If input is in English → ALL fields must be in English  
+        - If input is in Spanish → ALL fields must be in Spanish
+        - This applies to ALL text fields: scoreJustification, signalSummary, tweetSuggestion, redditTitleSuggestion, redditBodySuggestion, linkedinSuggestion, etc.
+        - NO MIXING of languages - maintain consistency across all fields
 
         CONTENT TYPE DETECTION: First determine what type of content this is:
         - "startup_idea": Business concepts, app ideas, service concepts
@@ -418,6 +425,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 result = await aiInstance.models.generateContent({
                     model: modelName,
                     contents: `ANALYZE THIS CONTENT: "${inputContent}"
+
+🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.
 
 CRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
                     config: {
