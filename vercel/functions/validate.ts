@@ -582,6 +582,32 @@ RESPONSE FORMAT RULES:
         // Add the original idea to the response
         parsedResult.idea = inputContent;
 
+        // Add ValidationlyScore breakdown
+        if (!parsedResult.validationlyScore) {
+            const baseScore = parsedResult.demandScore;
+            parsedResult.validationlyScore = {
+                totalScore: baseScore,
+                breakdown: {
+                    twitter: Math.round(baseScore * 0.4),
+                    reddit: Math.round(baseScore * 0.3),
+                    linkedin: Math.round(baseScore * 0.2),
+                    googleTrends: Math.round(baseScore * 0.1)
+                },
+                weighting: {
+                    twitter: 40,
+                    reddit: 30,
+                    linkedin: 20,
+                    googleTrends: 10
+                },
+                improvements: [
+                    baseScore < 70 ? "Increase social media engagement to boost Twitter score" : "Strong Twitter presence detected",
+                    baseScore < 60 ? "Create more Reddit discussions to improve community validation" : "Good Reddit community interest",
+                    baseScore < 50 ? "Build professional network presence on LinkedIn" : "Professional validation looks promising",
+                    baseScore < 40 ? "Focus on trending keywords to improve Google Trends score" : "Search interest is growing"
+                ].filter(tip => !tip.includes("detected") && !tip.includes("promising") && !tip.includes("growing"))
+            };
+        }
+
         // SELF-LEARNING: Update analytics memory with insights
         try {
             const contentType = parsedResult.contentType || 'general_content';

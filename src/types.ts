@@ -15,6 +15,27 @@ export interface ScoreBreakdown {
   feasibility: number;
 }
 
+export interface ValidationlyScoreBreakdown {
+  twitter: number;
+  reddit: number;
+  linkedin: number;
+  googleTrends: number;
+}
+
+export interface ValidationlyScoreWeighting {
+  twitter: number;
+  reddit: number;
+  linkedin: number;
+  googleTrends: number;
+}
+
+export interface ValidationlyScore {
+  totalScore: number;
+  breakdown: ValidationlyScoreBreakdown;
+  weighting: ValidationlyScoreWeighting;
+  improvements: string[];
+}
+
 export interface MarketTiming {
   readiness: number;
   trendDirection: 'Rising' | 'Stable' | 'Declining';
@@ -41,6 +62,7 @@ export interface ValidationResult {
   contentQuality?: ContentQuality;
   instagramSuggestion?: string;
   tiktokSuggestion?: string;
+  validationlyScore?: ValidationlyScore;
 }
 
 export interface PlatformSignal {

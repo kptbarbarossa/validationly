@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { ValidationResult } from '../types';
+import ValidationlyScoreCard from '../components/ValidationlyScoreCard';
 
 // Clean Minimal Icons
 const HomeIcon = () => (
@@ -155,24 +156,15 @@ const ResultsPage: React.FC = () => {
                         <p className="text-gray-500 text-lg">Your idea validation summary</p>
                     </div>
 
-                    {/* Simple Hero Score */}
+                    {/* Validationly Score Card */}
                     <div className="mb-16">
-                        <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-16 border border-white/50 shadow-2xl text-center">
-                            <div className="text-sm font-medium text-gray-500 mb-4">Demand Score</div>
-                            <div className="text-9xl font-extralight text-gray-900 mb-8 tracking-tight">
-                                {result.demandScore}
-                                <span className="text-4xl text-gray-400 ml-3">/100</span>
-                            </div>
-                            <div className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-8">
+                        <ValidationlyScoreCard 
+                            score={result.demandScore} 
+                            validationlyScore={result.validationlyScore}
+                        />
+                        <div className="text-center mt-8">
+                            <div className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
                                 "{result.content || result.idea}"
-                            </div>
-                            <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold ${result.demandScore >= 80 ? 'bg-green-100 text-green-700' :
-                                    result.demandScore >= 60 ? 'bg-yellow-100 text-yellow-700' :
-                                        'bg-red-100 text-red-700'
-                                }`}>
-                                {result.demandScore >= 80 ? '🚀 High Potential' :
-                                    result.demandScore >= 60 ? '⚡ Moderate Potential' :
-                                        '⚠️ Low Potential'}
                             </div>
                         </div>
                     </div>
