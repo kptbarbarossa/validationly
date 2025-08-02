@@ -242,9 +242,9 @@ const ResultsPage: React.FC = () => {
                                         <div key={platform} className="flex items-center gap-4">
                                             <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-100 to-purple-100 flex items-center justify-center">
                                                 <span className="text-lg">
-                                                    {platform === 'twitter' ? '𝕏' : 
-                                                     platform === 'reddit' ? '🔴' :
-                                                     platform === 'linkedin' ? '💼' : '📈'}
+                                                    {platform === 'twitter' ? '𝕏' :
+                                                        platform === 'reddit' ? '🔴' :
+                                                            platform === 'linkedin' ? '💼' : '📈'}
                                                 </span>
                                             </div>
                                             <div className="flex-1">
@@ -253,7 +253,7 @@ const ResultsPage: React.FC = () => {
                                                     <span className="text-sm font-bold text-gray-900">{score}</span>
                                                 </div>
                                                 <div className="w-full bg-gray-200 rounded-full h-2">
-                                                    <div 
+                                                    <div
                                                         className="bg-gradient-to-r from-blue-400 to-purple-500 h-2 rounded-full transition-all duration-500"
                                                         style={{ width: `${(score / (result.validationlyScore?.weighting[platform as keyof typeof result.validationlyScore.weighting] || 40)) * 100}%` }}
                                                     ></div>
@@ -434,8 +434,8 @@ const ResultsPage: React.FC = () => {
                                         <div className="flex justify-between">
                                             <span className="text-gray-600">Status:</span>
                                             <span className="font-bold text-gray-800">
-                                                {result.demandScore >= 70 ? 'High Potential' : 
-                                                 result.demandScore >= 50 ? 'Moderate' : 'Needs Work'}
+                                                {result.demandScore >= 70 ? 'High Potential' :
+                                                    result.demandScore >= 50 ? 'Moderate' : 'Needs Work'}
                                             </span>
                                         </div>
                                         <div className="flex justify-between">
@@ -476,7 +476,7 @@ const ResultsPage: React.FC = () => {
                                             <div className="text-xs text-gray-600">Validate another idea</div>
                                         </div>
                                     </div>
-                                    <button 
+                                    <button
                                         onClick={() => navigate('/')}
                                         className="w-full bg-gradient-to-r from-blue-400/80 to-indigo-500/80 backdrop-blur-sm text-white py-2 rounded-lg text-sm font-medium hover:from-blue-500/90 hover:to-indigo-600/90 transition-all border border-white/20"
                                     >
