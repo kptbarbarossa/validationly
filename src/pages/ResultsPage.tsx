@@ -291,8 +291,8 @@ const ResultsPage: React.FC = () => {
                                     )}
                                 </div>
                                 <div className="text-xs text-gray-500">
-                                    {result.enhancementMetadata?.aiConfidence ? 
-                                        `${result.enhancementMetadata.aiConfidence}% confidence` : 
+                                    {result.enhancementMetadata?.aiConfidence ?
+                                        `${result.enhancementMetadata.aiConfidence}% confidence` :
                                         'Just completed'
                                     }
                                 </div>
@@ -457,7 +457,7 @@ const ResultsPage: React.FC = () => {
                                             Live • {new Date(result.realTimeInsights.dataFreshness).toLocaleTimeString()}
                                         </div>
                                     </div>
-                                    
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         {/* Google Trends Data */}
                                         {result.realTimeInsights.trends && (
@@ -469,14 +469,13 @@ const ResultsPage: React.FC = () => {
                                                 <div className="space-y-2">
                                                     <div className="flex items-center justify-between">
                                                         <span className="text-sm text-blue-800">Trend Direction:</span>
-                                                        <span className={`text-sm font-semibold ${
-                                                            result.realTimeInsights.trends.overallTrend === 'rising' ? 'text-green-600' :
+                                                        <span className={`text-sm font-semibold ${result.realTimeInsights.trends.overallTrend === 'rising' ? 'text-green-600' :
                                                             result.realTimeInsights.trends.overallTrend === 'declining' ? 'text-red-600' :
-                                                            'text-yellow-600'
-                                                        }`}>
+                                                                'text-yellow-600'
+                                                            }`}>
                                                             {result.realTimeInsights.trends.overallTrend === 'rising' ? '📈 Rising' :
-                                                             result.realTimeInsights.trends.overallTrend === 'declining' ? '📉 Declining' :
-                                                             '📊 Stable'}
+                                                                result.realTimeInsights.trends.overallTrend === 'declining' ? '📉 Declining' :
+                                                                    '📊 Stable'}
                                                         </span>
                                                     </div>
                                                     <div className="flex items-center justify-between">
@@ -496,7 +495,7 @@ const ResultsPage: React.FC = () => {
                                                 </div>
                                             </div>
                                         )}
-                                        
+
                                         {/* Reddit Community Data */}
                                         {result.realTimeInsights.reddit && (
                                             <div className="bg-orange-50 rounded-lg p-4">
@@ -513,14 +512,13 @@ const ResultsPage: React.FC = () => {
                                                     </div>
                                                     <div className="flex items-center justify-between">
                                                         <span className="text-sm text-orange-800">Sentiment:</span>
-                                                        <span className={`text-sm font-semibold ${
-                                                            result.realTimeInsights.reddit.sentiment > 20 ? 'text-green-600' :
+                                                        <span className={`text-sm font-semibold ${result.realTimeInsights.reddit.sentiment > 20 ? 'text-green-600' :
                                                             result.realTimeInsights.reddit.sentiment < -20 ? 'text-red-600' :
-                                                            'text-yellow-600'
-                                                        }`}>
+                                                                'text-yellow-600'
+                                                            }`}>
                                                             {result.realTimeInsights.reddit.sentiment > 20 ? '😊 Positive' :
-                                                             result.realTimeInsights.reddit.sentiment < -20 ? '😟 Negative' :
-                                                             '😐 Neutral'}
+                                                                result.realTimeInsights.reddit.sentiment < -20 ? '😟 Negative' :
+                                                                    '😐 Neutral'}
                                                         </span>
                                                     </div>
                                                     {result.realTimeInsights.reddit.topSubreddits.length > 0 && (
@@ -535,10 +533,10 @@ const ResultsPage: React.FC = () => {
                                             </div>
                                         )}
                                     </div>
-                                    
+
                                     <div className="mt-4 text-center">
                                         <div className="text-xs text-gray-500">
-                                            Analysis Confidence: {result.realTimeInsights.confidence}% • 
+                                            Analysis Confidence: {result.realTimeInsights.confidence}% •
                                             Powered by AI Ensemble
                                         </div>
                                     </div>
