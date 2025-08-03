@@ -276,8 +276,8 @@ const ResultsPage: React.FC = () => {
                     {/* Clean Header */}
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900 mb-1">Validation Results</h1>
-                            <p className="text-gray-600">Your startup idea analysis is complete</p>
+                            <h1 className="text-2xl font-bold text-gray-900 mb-1">Internet Intelligence Report</h1>
+                            <p className="text-gray-600">We scanned the internet, here's what we found</p>
                         </div>
                         <div className="flex items-center gap-3 bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200">
                             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
@@ -285,9 +285,9 @@ const ResultsPage: React.FC = () => {
                             </div>
                             <div>
                                 <div className="text-sm font-medium text-gray-900">
-                                    Enhanced Analysis
+                                    Internet Scan Complete
                                     {result.enhancementMetadata?.enhancementApplied && (
-                                        <span className="ml-1 text-xs bg-green-100 text-green-700 px-1 rounded">✨</span>
+                                        <span className="ml-1 text-xs bg-green-100 text-green-700 px-1 rounded">🔍</span>
                                     )}
                                 </div>
                                 <div className="text-xs text-gray-500">
@@ -300,11 +300,11 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Compact Validationly Score Card */}
+                    {/* Internet Intelligence Summary Card */}
                     <div className="mb-12">
                         <div className="bg-white/20 backdrop-blur-2xl rounded-3xl p-8 border border-white/30 shadow-2xl shadow-purple-500/10 max-w-4xl mx-auto">
                             <div className="text-center">
-                                <div className="text-sm font-medium text-gray-600 mb-3">Validationly Score</div>
+                                <div className="text-sm font-medium text-gray-600 mb-3">Internet Signal Strength</div>
                                 <div className="text-6xl font-extralight text-gray-800 mb-4 tracking-tight">
                                     {result.demandScore}
                                     <span className="text-2xl text-gray-500 ml-2">/100</span>
@@ -381,11 +381,11 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Clean Platform Performance Chart */}
+                            {/* Internet Platform Signals */}
                             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                                 <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-lg font-semibold text-gray-900">Platform Performance</h3>
-                                    <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Validation Signals</div>
+                                    <h3 className="text-lg font-semibold text-gray-900">Platform Signals Found</h3>
+                                    <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Live Data</div>
                                 </div>
                                 <div className="space-y-4">
                                     {result.validationlyScore?.breakdown ? Object.entries(result.validationlyScore.breakdown).map(([platform, score]) => (
@@ -420,25 +420,63 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Clean Decision Status */}
+                            {/* What We Found Summary */}
                             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-900">Decision Status</h3>
-                                    <div className="text-2xl">{getOverallStatus(result.demandScore).color === 'green' ? '🟢' : getOverallStatus(result.demandScore).color === 'yellow' ? '🟡' : '🔴'}</div>
+                                    <h3 className="text-lg font-semibold text-gray-900">🔍 What We Found</h3>
+                                    <div className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">Internet Scan Results</div>
                                 </div>
                                 <div className="space-y-4">
-                                    <div className="font-semibold text-gray-900">{getOverallStatus(result.demandScore).text}</div>
-                                    <div className="text-gray-600 leading-relaxed">{getOverallStatus(result.demandScore).desc}</div>
+                                    {/* Enhanced metadata insights */}
+                                    {result.enhancementMetadata && (
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="bg-gray-50 rounded-lg p-4">
+                                                <div className="text-sm font-medium text-gray-900 mb-2">🤖 AI Analysis</div>
+                                                <div className="text-sm text-gray-600">
+                                                    Model: {result.enhancementMetadata.aiModel || 'Gemini'}
+                                                    {result.enhancementMetadata.fallbackUsed && ' (Fallback)'}
+                                                </div>
+                                                <div className="text-sm text-gray-600">
+                                                    Confidence: {result.enhancementMetadata.aiConfidence}%
+                                                </div>
+                                            </div>
+                                            <div className="bg-gray-50 rounded-lg p-4">
+                                                <div className="text-sm font-medium text-gray-900 mb-2">📊 Data Sources</div>
+                                                <div className="text-sm text-gray-600">
+                                                    Reddit: {result.enhancementMetadata.redditAnalyzed ? '✅ Analyzed' : '❌ Skipped'}
+                                                </div>
+                                                <div className="text-sm text-gray-600">
+                                                    Trends: {result.enhancementMetadata.trendsAnalyzed ? '✅ Analyzed' : '❌ Skipped'}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    
+                                    {/* Signal strength summary */}
                                     <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
-                                        <div className="text-sm font-medium text-blue-900">🎯 Recommended Action:</div>
-                                        <div className="text-sm text-blue-800 mt-1">{getOverallStatus(result.demandScore).action}</div>
+                                        <div className="text-sm font-medium text-blue-900 mb-2">📡 Signal Strength: {result.demandScore}/100</div>
+                                        <div className="text-sm text-blue-800">
+                                            {result.demandScore >= 70 ? 'Strong positive signals found across platforms' :
+                                             result.demandScore >= 50 ? 'Mixed signals - some positive indicators' :
+                                             'Weak signals - limited online interest detected'}
+                                        </div>
+                                        {result.enhancementMetadata?.redditBoost && (
+                                            <div className="text-xs text-blue-700 mt-1">
+                                                Reddit boost: {result.enhancementMetadata.redditBoost > 0 ? '+' : ''}{result.enhancementMetadata.redditBoost} points
+                                            </div>
+                                        )}
+                                        {result.enhancementMetadata?.trendsBoost && (
+                                            <div className="text-xs text-blue-700">
+                                                Trends boost: {result.enhancementMetadata.trendsBoost > 0 ? '+' : ''}{result.enhancementMetadata.trendsBoost} points
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
 
-                            {/* Clean Actionable Insights */}
+                            {/* What You Can Do */}
                             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">🎯 What Should You Do Next?</h3>
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">💡 What You Can Do With This Data</h3>
                                 <div className="space-y-3">
                                     {getActionableInsights(result).map((insight, index) => (
                                         <div key={index} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
