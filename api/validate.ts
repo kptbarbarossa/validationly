@@ -519,7 +519,7 @@ export default async function handler(req: any, res: any) {
         } catch (primaryError) {
             console.log('❌ Primary model failed, trying fallback...');
             console.error('Primary error:', primaryError);
-            
+
             // Fallback to Gemini 1.5 Flash
             try {
                 console.log('🔄 Trying fallback model: gemini-1.5-flash');
@@ -543,7 +543,7 @@ export default async function handler(req: any, res: any) {
                 throw new Error('All AI models failed to respond');
             }
         }
-        
+
         const jsonText = result.text?.trim() || "";
         console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
