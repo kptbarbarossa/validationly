@@ -1,7 +1,28 @@
 import AIEnsemble from './ai-ensemble';
 import RedditAnalyzer from './reddit-analyzer';
 import GoogleTrendsAnalyzer from './google-trends';
-import type { ValidationResult } from '../src/types';
+// ValidationResult type definition (inline to avoid import issues)
+interface ValidationResult {
+  idea: string;
+  demandScore: number;
+  scoreJustification: string;
+  signalSummary: any[];
+  tweetSuggestion: string;
+  redditTitleSuggestion: string;
+  redditBodySuggestion: string;
+  linkedinSuggestion: string;
+  content?: string;
+  contentType?: string;
+  confidenceLevel?: number;
+  scoreBreakdown?: any;
+  marketTiming?: any;
+  contentQuality?: any;
+  instagramSuggestion?: string;
+  tiktokSuggestion?: string;
+  facebookSuggestion?: string;
+  validationlyScore?: any;
+  enhancementMetadata?: any;
+}
 
 // Enhanced validation with real-time data integration
 export class EnhancedValidator {
