@@ -1,8 +1,5 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import AIEnsemble from './ai-ensemble';
-import GoogleTrendsAnalyzer from './google-trends';
-import RedditAnalyzer from './reddit-analyzer';
 
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -406,236 +403,50 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         - The 'redditBodySuggestion' must be a detailed, multi-sentence paragraph
         - All content must feel authentic and valuable to entrepreneurs`;
 
-        // 🚀 PHASE 1: Initialize new AI ensemble and data sources
-        console.log('🚀 Initializing AI Ensemble and Real-Time Data Sources...');
+        // 🚀 PHASE 1: Use Enhanced Validator
+        console.log('🚀 Starting enhanced validation process...');
         
-        const aiEnsemble = new AIEnsemble();
-        const trendsAnalyzer = new GoogleTrendsAnalyzer();
-        const redditAnalyzer = new RedditAnalyzer();
+        const { EnhancedValidator } = await import('./enhanced-validate');
+        const validator = new EnhancedValidator();
         
-        // Parallel data collection for better performance
-        console.log('📊 Collecting real-time market data...');
-        const [trendsData, redditData] = await Promise.allSettled([
-            trendsAnalyzer.analyzeTrends(inputContent),
-            redditAnalyzer.analyzeRedditCommunity(inputContent)
-        ]);
-        
-        // Extract data or use fallbacks
-        const trends = trendsData.status === 'fulfilled' ? trendsData.value : null;
-        const reddit = redditData.status === 'fulfilled' ? redditData.value : null;
-        
-        console.log('✅ Real-time data collected:', {
-            trends: !!trends,
-            reddit: !!reddit
-        });
-
-        // Enhanced system instruction with real-time data
-        const enhancedSystemInstruction = systemInstruction + `
-
-REAL-TIME MARKET DATA INTEGRATION:
-${trends ? `
-GOOGLE TRENDS DATA:
-- Overall trend: ${trends.overallTrend}
-- Trend score: ${trends.trendScore}/100
-- Key insights: ${trends.insights.join(', ')}
-- Related topics: ${trends.relatedTopics.join(', ')}
-` : ''}
-
-${reddit ? `
-REDDIT COMMUNITY DATA:
-- Community interest: ${reddit.communityInterest}/100
-- Average sentiment: ${reddit.averageSentiment}/100
-- Top subreddits: ${reddit.topSubreddits.join(', ')}
-- Key insights: ${reddit.keyInsights.join(', ')}
-- Pain points: ${reddit.painPoints.join(', ')}
-` : ''}
-
-Use this real-time data to enhance your analysis accuracy and provide more relevant insights.`;
-
-        // Use AI Ensemble for better reliability
-        console.log('🤖 Starting AI Ensemble analysis...');
-        const ensembleResult = await aiEnsemble.analyzeWithEnsemble(
+        // Use enhanced validator with all improvements
+        const enhancedResult = await validator.validateIdea(
             inputContent,
-            enhancedSystemInstruction,
+            systemInstruction,
             responseSchema
         );
         
-        console.log('✅ AI Ensemble completed:', {
-            success: !!ensembleResult.primaryResponse,
-            confidence: ensembleResult.confidence,
-            fallbackUsed: ensembleResult.fallbackUsed,
-            consensusScore: ensembleResult.consensusScore
-        });
-
-        // Extract result from ensemble
-        let parsedResult = ensembleResult.primaryResponse;
+        console.log('✅ Enhanced validation completed');
         
-        if (!parsedResult) {
-            throw new Error("AI ensemble failed to provide response");
+        // Convert to expected format
+        const result = { text: () => JSON.stringify(enhancedResult) };
+
+        // Enhanced result is already processed
+        const jsonText = result.text?.trim() || "";
+
+        if (!jsonText) {
+            throw new Error("Enhanced validation returned empty response");
         }
 
-        console.log('=== AI ENSEMBLE RESPONSE DEBUG ===');
-        console.log('✅ Successfully got response from AI ensemble');
-        console.log('Parsed result keys:', Object.keys(parsedResult));
-        console.log('Has demandScore:', 'demandScore' in parsedResult);
-        console.log('Has signalSummary:', 'signalSummary' in parsedResult);
-        console.log('Ensemble confidence:', ensembleResult.confidence);
-        console.log('Fallback used:', ensembleResult.fallbackUsed);
+        let parsedResult: any;
+        try {
+            parsedResult = JSON.parse(jsonText);
+            console.log('✅ Enhanced validation completed successfully');
+        } catch (parseError) {
+            console.error('❌ Enhanced validation parse error:', parseError);
+            throw new Error('Failed to parse enhanced validation response');
+        }
 
-        // Response validation - more lenient
+
+
+        // Response validation
         if (typeof parsedResult.demandScore !== 'number' ||
             parsedResult.demandScore < 0 ||
             parsedResult.demandScore > 100) {
-            throw new Error("AI analysis returned invalid data format");
+            throw new Error("Enhanced validation returned invalid data format");
         }
 
-        // Ensure required fields exist with fallbacks
-        if (!parsedResult.signalSummary) {
-            parsedResult.signalSummary = [];
-        }
-        if (!parsedResult.tweetSuggestion) {
-            parsedResult.tweetSuggestion = "Share your idea on X to get feedback!";
-        }
-        if (!parsedResult.redditTitleSuggestion) {
-            parsedResult.redditTitleSuggestion = "Looking for feedback on my idea";
-        }
-        if (!parsedResult.redditBodySuggestion) {
-            parsedResult.redditBodySuggestion = "I'd love to get your thoughts on this concept.";
-        }
-        if (!parsedResult.linkedinSuggestion) {
-            parsedResult.linkedinSuggestion = "Excited to share this new concept with my network.";
-        }
-        if (!parsedResult.facebookSuggestion) {
-            parsedResult.facebookSuggestion = `Excited to share this new concept: ${inputContent.substring(0, 200)}${inputContent.length > 200 ? '...' : ''} Looking forward to connecting with others who have insights in this space!`;
-        }
 
-        // Optional advanced fields - graceful fallbacks
-        if (!parsedResult.contentType) {
-            parsedResult.contentType = "startup_idea";
-        }
-        if (!parsedResult.confidenceLevel) {
-            parsedResult.confidenceLevel = 75;
-        }
-        if (!parsedResult.scoreBreakdown) {
-            const quarter = Math.floor(parsedResult.demandScore / 4);
-            parsedResult.scoreBreakdown = {
-                marketSize: quarter,
-                competition: quarter,
-                trendMomentum: quarter,
-                feasibility: quarter
-            };
-        }
-        if (!parsedResult.marketTiming) {
-            parsedResult.marketTiming = {
-                readiness: parsedResult.demandScore,
-                trendDirection: "Stable",
-                optimalWindow: "Now"
-            };
-        }
-        if (!parsedResult.contentQuality) {
-            parsedResult.contentQuality = {
-                writingQuality: 75,
-                engagementPotential: parsedResult.demandScore,
-                viralityScore: Math.max(50, parsedResult.demandScore - 20),
-                grammarScore: 85,
-                clarityScore: 80,
-                improvements: ["Consider adding more specific details", "Enhance value proposition"]
-            };
-        }
-
-        // Add the original idea to the response
-        parsedResult.idea = inputContent;
-
-        // 🚀 PHASE 1: Enhanced ValidationlyScore with real-time data
-        if (!parsedResult.validationlyScore) {
-            const baseScore = parsedResult.demandScore;
-            
-            // Calculate platform scores using real-time data
-            const twitterScore = Math.round(baseScore * 0.4);
-            const redditScore = reddit ? Math.min(25, Math.round(reddit.communityInterest * 0.25)) : Math.round(baseScore * 0.3);
-            const linkedinScore = Math.round(baseScore * 0.2);
-            const googleTrendsScore = trends ? Math.min(25, Math.round(trends.trendScore * 0.25)) : Math.round(baseScore * 0.1);
-            
-            parsedResult.validationlyScore = {
-                totalScore: baseScore,
-                breakdown: {
-                    twitter: twitterScore,
-                    reddit: redditScore,
-                    linkedin: linkedinScore,
-                    googleTrends: googleTrendsScore
-                },
-                weighting: {
-                    twitter: 40,
-                    reddit: 30,
-                    linkedin: 20,
-                    googleTrends: 10
-                },
-                improvements: [
-                    twitterScore < 20 ? "Increase social media engagement to boost X score" : null,
-                    redditScore < 15 ? "Create more Reddit discussions to improve community validation" : null,
-                    linkedinScore < 10 ? "Build professional network presence on LinkedIn" : null,
-                    googleTrendsScore < 5 ? "Focus on trending keywords to improve search interest" : null
-                ].filter(Boolean)
-            };
-        }
-
-        // 📊 Add real-time data insights to response
-        if (trends || reddit) {
-            parsedResult.realTimeInsights = {
-                trends: trends ? {
-                    overallTrend: trends.overallTrend,
-                    trendScore: trends.trendScore,
-                    insights: trends.insights,
-                    relatedTopics: trends.relatedTopics
-                } : null,
-                reddit: reddit ? {
-                    communityInterest: reddit.communityInterest,
-                    sentiment: reddit.averageSentiment,
-                    topSubreddits: reddit.topSubreddits,
-                    painPoints: reddit.painPoints,
-                    keyInsights: reddit.keyInsights
-                } : null,
-                dataFreshness: new Date().toISOString(),
-                confidence: ensembleResult.confidence
-            };
-        }
-
-        // SELF-LEARNING: Update analytics memory with insights
-        try {
-            const contentType = parsedResult.contentType || 'general_content';
-            const viralScore = parsedResult.contentQuality?.viralityScore || 0;
-            const engagementScore = parsedResult.contentQuality?.engagementPotential || 0;
-
-            // Update content patterns
-            analyticsMemory.contentPatterns.set(contentType,
-                (analyticsMemory.contentPatterns.get(contentType) || 0) + 1);
-
-            // Track successful formats (high scoring content)
-            if (parsedResult.demandScore > 70) {
-                const contentLength = inputContent.length;
-                const lengthCategory = contentLength < 100 ? 'short' : contentLength < 300 ? 'medium' : 'long';
-                analyticsMemory.successfulFormats.set(`${contentType}_${lengthCategory}`,
-                    (analyticsMemory.successfulFormats.get(`${contentType}_${lengthCategory}`) || 0) + 1);
-            }
-
-            // Track viral triggers
-            if (viralScore > 60) {
-                const triggers = detectEmotionalTriggers(inputContent);
-                triggers.forEach(trigger => {
-                    analyticsMemory.viralTriggers.set(trigger,
-                        (analyticsMemory.viralTriggers.get(trigger) || 0) + 1);
-                });
-            }
-
-            console.log('Analytics memory updated:', {
-                contentPatterns: analyticsMemory.contentPatterns.size,
-                successfulFormats: analyticsMemory.successfulFormats.size,
-                viralTriggers: analyticsMemory.viralTriggers.size
-            });
-        } catch (memoryError) {
-            console.warn('Memory update failed:', memoryError);
-            // Don't fail the request if memory update fails
-        }
 
         return res.status(200).json(parsedResult);
 
