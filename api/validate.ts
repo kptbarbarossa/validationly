@@ -493,23 +493,59 @@ export default async function handler(req: any, res: any) {
         - Make suggestions actionable and platform-appropriate
         - All content must feel authentic and valuable to entrepreneurs`;
 
-        console.log('🚀 Starting validation (simple AI mode for debugging)...');
+        console.log('🚀 Starting enhanced validation with Gemini 2.0 + 1.5 fallback...');
 
-        // Temporarily use simple AI to fix 500 error
         const aiInstance = getAI();
-        const result = await aiInstance.models.generateContent({
-            model: "gemini-1.5-flash",
-            contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-            config: {
-                systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
-                responseMimeType: "application/json",
-                responseSchema: responseSchema,
-                temperature: 0.3,
-                maxOutputTokens: 2048,
+        let result: any;
+        let aiModel = '';
+        let fallbackUsed = false;
+
+        // Try Gemini 2.0 Flash Experimental first
+        try {
+            console.log('🎯 Trying primary model: gemini-2.0-flash-exp');
+            result = await aiInstance.models.generateContent({
+                model: "gemini-2.0-flash-exp",
+                contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                config: {
+                    systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema,
+                    temperature: 0.3,
+                    maxOutputTokens: 2048,
+                }
+            });
+            aiModel = 'gemini-2.0-flash-exp';
+            console.log('✅ Primary model succeeded');
+        } catch (primaryError) {
+            console.log('❌ Primary model failed, trying fallback...');
+            console.error('Primary error:', primaryError);
+            
+            // Fallback to Gemini 1.5 Flash
+            try {
+                console.log('🔄 Trying fallback model: gemini-1.5-flash');
+                result = await aiInstance.models.generateContent({
+                    model: "gemini-1.5-flash",
+                    contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                    config: {
+                        systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema,
+                        temperature: 0.3,
+                        maxOutputTokens: 2048,
+                    }
+                });
+                aiModel = 'gemini-1.5-flash';
+                fallbackUsed = true;
+                console.log('✅ Fallback model succeeded');
+            } catch (fallbackError) {
+                console.error('❌ Both models failed');
+                console.error('Fallback error:', fallbackError);
+                throw new Error('All AI models failed to respond');
             }
-        });
+        }
         
         const jsonText = result.text?.trim() || "";
+        console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
@@ -589,6 +625,16 @@ export default async function handler(req: any, res: any) {
         // Add the original idea
         parsedResult.idea = inputContent;
 
+        // Add enhanced metadata
+        parsedResult.enhancementMetadata = {
+            aiModel: aiModel,
+            fallbackUsed: fallbackUsed,
+            aiConfidence: fallbackUsed ? 75 : 85,
+            enhancementApplied: true,
+            timestamp: new Date().toISOString()
+        };
+
+        console.log('✅ Enhanced validation completed with metadata');
         return res.status(200).json(parsedResult);
 
     } catch (error) {
