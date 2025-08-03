@@ -1,5 +1,8 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
+import AIEnsemble from './ai-ensemble';
+import GoogleTrendsAnalyzer from './google-trends';
+import RedditAnalyzer from './reddit-analyzer';
 
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -403,132 +406,81 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         - The 'redditBodySuggestion' must be a detailed, multi-sentence paragraph
         - All content must feel authentic and valuable to entrepreneurs`;
 
-        console.log('Creating AI instance...');
-        let aiInstance: GoogleGenAI;
-        try {
-            aiInstance = getAI();
-            console.log('AI instance created successfully');
-        } catch (error) {
-            console.error('Failed to create AI instance:', error);
-            throw new Error('AI service initialization failed');
+        // 🚀 PHASE 1: Initialize new AI ensemble and data sources
+        console.log('🚀 Initializing AI Ensemble and Real-Time Data Sources...');
+        
+        const aiEnsemble = new AIEnsemble();
+        const trendsAnalyzer = new GoogleTrendsAnalyzer();
+        const redditAnalyzer = new RedditAnalyzer();
+        
+        // Parallel data collection for better performance
+        console.log('📊 Collecting real-time market data...');
+        const [trendsData, redditData] = await Promise.allSettled([
+            trendsAnalyzer.analyzeTrends(inputContent),
+            redditAnalyzer.analyzeRedditCommunity(inputContent)
+        ]);
+        
+        // Extract data or use fallbacks
+        const trends = trendsData.status === 'fulfilled' ? trendsData.value : null;
+        const reddit = redditData.status === 'fulfilled' ? redditData.value : null;
+        
+        console.log('✅ Real-time data collected:', {
+            trends: !!trends,
+            reddit: !!reddit
+        });
+
+        // Enhanced system instruction with real-time data
+        const enhancedSystemInstruction = systemInstruction + `
+
+REAL-TIME MARKET DATA INTEGRATION:
+${trends ? `
+GOOGLE TRENDS DATA:
+- Overall trend: ${trends.overallTrend}
+- Trend score: ${trends.trendScore}/100
+- Key insights: ${trends.insights.join(', ')}
+- Related topics: ${trends.relatedTopics.join(', ')}
+` : ''}
+
+${reddit ? `
+REDDIT COMMUNITY DATA:
+- Community interest: ${reddit.communityInterest}/100
+- Average sentiment: ${reddit.averageSentiment}/100
+- Top subreddits: ${reddit.topSubreddits.join(', ')}
+- Key insights: ${reddit.keyInsights.join(', ')}
+- Pain points: ${reddit.painPoints.join(', ')}
+` : ''}
+
+Use this real-time data to enhance your analysis accuracy and provide more relevant insights.`;
+
+        // Use AI Ensemble for better reliability
+        console.log('🤖 Starting AI Ensemble analysis...');
+        const ensembleResult = await aiEnsemble.analyzeWithEnsemble(
+            inputContent,
+            enhancedSystemInstruction,
+            responseSchema
+        );
+        
+        console.log('✅ AI Ensemble completed:', {
+            success: !!ensembleResult.primaryResponse,
+            confidence: ensembleResult.confidence,
+            fallbackUsed: ensembleResult.fallbackUsed,
+            consensusScore: ensembleResult.consensusScore
+        });
+
+        // Extract result from ensemble
+        let parsedResult = ensembleResult.primaryResponse;
+        
+        if (!parsedResult) {
+            throw new Error("AI ensemble failed to provide response");
         }
 
-        // Model fallback mechanism for better reliability
-        const models = ["gemini-1.5-flash", "gemini-2.0-flash-exp"];
-        let result: any;
-        let lastError: any;
-
-        console.log('Starting model attempts...');
-        for (const modelName of models) {
-            try {
-                console.log(`Trying model: ${modelName}`);
-                result = await aiInstance.models.generateContent({
-                    model: modelName,
-                    contents: `ANALYZE THIS CONTENT: "${inputContent}"
-
-🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.
-
-CRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                    config: {
-                        systemInstruction: systemInstruction + `
-
-RESPONSE FORMAT RULES:
-- You MUST respond with ONLY valid JSON
-- No markdown code blocks (no \`\`\`json)
-- No explanations or text outside JSON
-- Start with { and end with }
-- Include ALL required schema fields`,
-                        responseMimeType: "application/json",
-                        responseSchema: responseSchema,
-                        temperature: 0.3,
-                        maxOutputTokens: 2048,
-                    }
-                });
-                console.log(`Model ${modelName} succeeded`);
-                break; // Success, exit loop
-            } catch (error) {
-                console.error(`Model ${modelName} failed:`, error);
-                lastError = error;
-                // Continue to next model
-            }
-        }
-
-        // If all models failed, throw the last error
-        if (!result) {
-            console.error('All models failed, last error:', lastError);
-            throw lastError || new Error("All AI models failed to respond");
-        }
-
-        const jsonText = result.text?.trim() || "";
-
-        if (!jsonText) {
-            throw new Error("AI response was empty");
-        }
-
-        let parsedResult: any;
-        try {
-            console.log('=== AI RESPONSE DEBUG ===');
-            console.log('Response length:', jsonText.length);
-            console.log('First 200 chars:', jsonText.substring(0, 200));
-            console.log('Last 200 chars:', jsonText.substring(jsonText.length - 200));
-            console.log('Contains {:', jsonText.includes('{'));
-            console.log('Contains }:', jsonText.includes('}'));
-            
-            // Try to extract JSON from response if it's wrapped
-            let cleanJson = jsonText;
-            
-            // Remove markdown code blocks if present
-            if (jsonText.includes('```json')) {
-                const jsonMatch = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
-                if (jsonMatch) {
-                    cleanJson = jsonMatch[1];
-                    console.log('Extracted from ```json blocks');
-                }
-            } else if (jsonText.includes('```')) {
-                const jsonMatch = jsonText.match(/```\s*([\s\S]*?)\s*```/);
-                if (jsonMatch) {
-                    cleanJson = jsonMatch[1];
-                    console.log('Extracted from ``` blocks');
-                }
-            }
-            
-            // Try to find JSON object in the text
-            const jsonStart = cleanJson.indexOf('{');
-            const jsonEnd = cleanJson.lastIndexOf('}');
-            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-                cleanJson = cleanJson.substring(jsonStart, jsonEnd + 1);
-                console.log('Extracted JSON object from text');
-            }
-            
-            console.log('Clean JSON preview:', cleanJson.substring(0, 300));
-            
-            parsedResult = JSON.parse(cleanJson);
-            console.log('✅ Successfully parsed JSON');
-            console.log('Parsed result keys:', Object.keys(parsedResult));
-            console.log('Has demandScore:', 'demandScore' in parsedResult);
-            console.log('Has signalSummary:', 'signalSummary' in parsedResult);
-        } catch (parseError) {
-            console.error('❌ JSON parse error:', parseError);
-            console.error('Raw response that failed to parse:', jsonText);
-            
-            // Create a more comprehensive fallback response
-            console.log('Creating comprehensive fallback response...');
-            parsedResult = {
-                idea: inputContent,
-                demandScore: 65,
-                scoreJustification: "Analysis completed with limited data",
-                signalSummary: [
-                    { platform: "X", summary: "Social media discussions show interest in this type of solution. Users frequently discuss similar concepts and express frustration with current alternatives." },
-                    { platform: "Reddit", summary: "Community discussions across relevant subreddits indicate demand for this solution. Users actively seek recommendations and share experiences with related products." },
-                    { platform: "LinkedIn", summary: "Professional networks show business interest in this concept. Industry discussions highlight the need for solutions in this space." }
-                ],
-                tweetSuggestion: `🚀 Working on something new: ${inputContent.substring(0, 100)}${inputContent.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
-                redditTitleSuggestion: "Looking for feedback on my startup idea",
-                redditBodySuggestion: `I've been working on this concept: ${inputContent}. Would love to get your thoughts and feedback from the community. What are your initial impressions?`,
-                linkedinSuggestion: `Exploring a new business opportunity in the market. The concept: ${inputContent.substring(0, 200)}${inputContent.length > 200 ? '...' : ''} Interested in connecting with others who have experience in this space.`
-            };
-            console.log('✅ Fallback response created');
-        }
+        console.log('=== AI ENSEMBLE RESPONSE DEBUG ===');
+        console.log('✅ Successfully got response from AI ensemble');
+        console.log('Parsed result keys:', Object.keys(parsedResult));
+        console.log('Has demandScore:', 'demandScore' in parsedResult);
+        console.log('Has signalSummary:', 'signalSummary' in parsedResult);
+        console.log('Ensemble confidence:', ensembleResult.confidence);
+        console.log('Fallback used:', ensembleResult.fallbackUsed);
 
         // Response validation - more lenient
         if (typeof parsedResult.demandScore !== 'number' ||
@@ -594,16 +546,23 @@ RESPONSE FORMAT RULES:
         // Add the original idea to the response
         parsedResult.idea = inputContent;
 
-        // Add ValidationlyScore breakdown
+        // 🚀 PHASE 1: Enhanced ValidationlyScore with real-time data
         if (!parsedResult.validationlyScore) {
             const baseScore = parsedResult.demandScore;
+            
+            // Calculate platform scores using real-time data
+            const twitterScore = Math.round(baseScore * 0.4);
+            const redditScore = reddit ? Math.min(25, Math.round(reddit.communityInterest * 0.25)) : Math.round(baseScore * 0.3);
+            const linkedinScore = Math.round(baseScore * 0.2);
+            const googleTrendsScore = trends ? Math.min(25, Math.round(trends.trendScore * 0.25)) : Math.round(baseScore * 0.1);
+            
             parsedResult.validationlyScore = {
                 totalScore: baseScore,
                 breakdown: {
-                    twitter: Math.round(baseScore * 0.4),
-                    reddit: Math.round(baseScore * 0.3),
-                    linkedin: Math.round(baseScore * 0.2),
-                    googleTrends: Math.round(baseScore * 0.1)
+                    twitter: twitterScore,
+                    reddit: redditScore,
+                    linkedin: linkedinScore,
+                    googleTrends: googleTrendsScore
                 },
                 weighting: {
                     twitter: 40,
@@ -612,11 +571,32 @@ RESPONSE FORMAT RULES:
                     googleTrends: 10
                 },
                 improvements: [
-                    baseScore < 70 ? "Increase social media engagement to boost Twitter score" : "Strong Twitter presence detected",
-                    baseScore < 60 ? "Create more Reddit discussions to improve community validation" : "Good Reddit community interest",
-                    baseScore < 50 ? "Build professional network presence on LinkedIn" : "Professional validation looks promising",
-                    baseScore < 40 ? "Focus on trending keywords to improve Google Trends score" : "Search interest is growing"
-                ].filter(tip => !tip.includes("detected") && !tip.includes("promising") && !tip.includes("growing"))
+                    twitterScore < 20 ? "Increase social media engagement to boost X score" : null,
+                    redditScore < 15 ? "Create more Reddit discussions to improve community validation" : null,
+                    linkedinScore < 10 ? "Build professional network presence on LinkedIn" : null,
+                    googleTrendsScore < 5 ? "Focus on trending keywords to improve search interest" : null
+                ].filter(Boolean)
+            };
+        }
+
+        // 📊 Add real-time data insights to response
+        if (trends || reddit) {
+            parsedResult.realTimeInsights = {
+                trends: trends ? {
+                    overallTrend: trends.overallTrend,
+                    trendScore: trends.trendScore,
+                    insights: trends.insights,
+                    relatedTopics: trends.relatedTopics
+                } : null,
+                reddit: reddit ? {
+                    communityInterest: reddit.communityInterest,
+                    sentiment: reddit.averageSentiment,
+                    topSubreddits: reddit.topSubreddits,
+                    painPoints: reddit.painPoints,
+                    keyInsights: reddit.keyInsights
+                } : null,
+                dataFreshness: new Date().toISOString(),
+                confidence: ensembleResult.confidence
             };
         }
 

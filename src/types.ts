@@ -44,6 +44,29 @@ export interface MarketTiming {
 
 export type ContentType = 'startup_idea' | 'social_content' | 'product_idea' | 'general_content';
 
+// Real-time data interfaces
+export interface RealTimeTrendsData {
+  overallTrend: 'rising' | 'stable' | 'declining';
+  trendScore: number;
+  insights: string[];
+  relatedTopics: string[];
+}
+
+export interface RealTimeRedditData {
+  communityInterest: number;
+  sentiment: number;
+  topSubreddits: string[];
+  painPoints: string[];
+  keyInsights: string[];
+}
+
+export interface RealTimeInsights {
+  trends: RealTimeTrendsData | null;
+  reddit: RealTimeRedditData | null;
+  dataFreshness: string;
+  confidence: number;
+}
+
 export interface ValidationResult {
   idea: string;
   demandScore: number;
@@ -64,6 +87,16 @@ export interface ValidationResult {
   tiktokSuggestion?: string;
   facebookSuggestion?: string;
   validationlyScore?: ValidationlyScore;
+  // 🚀 PHASE 1: New real-time data
+  realTimeInsights?: RealTimeInsights;
+  // Enhancement metadata
+  enhancementMetadata?: {
+    redditAnalyzed: boolean;
+    trendsAnalyzed: boolean;
+    aiConfidence: number;
+    fallbackUsed: boolean;
+    enhancementApplied: boolean;
+  };
 }
 
 export interface PlatformSignal {
