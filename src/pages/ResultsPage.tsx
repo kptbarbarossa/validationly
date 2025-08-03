@@ -228,21 +228,21 @@ const ResultsPage: React.FC = () => {
                 <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"></div>
                 <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-100/30 to-blue-100/30 rounded-full blur-3xl"></div>
             </div>
-            {/* Premium Layout */}
-            <div className="flex">
-                {/* Clean Dashboard Sidebar */}
-                <div className="w-60 bg-white border-r border-gray-200 min-h-screen relative z-10 shadow-sm">
-                    <div className="p-6">
+            {/* Responsive Layout */}
+            <div className="flex flex-col lg:flex-row">
+                {/* Mobile-friendly Dashboard Sidebar */}
+                <div className="w-full lg:w-60 bg-white border-b lg:border-b-0 lg:border-r border-gray-200 lg:min-h-screen relative z-10 shadow-sm">
+                    <div className="p-4 lg:p-6">
                         {/* Clean Logo */}
-                        <div className="flex items-center gap-3 mb-12">
+                        <div className="flex items-center gap-3 mb-6 lg:mb-12">
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
                                 <span className="text-white font-bold text-sm">V</span>
                             </div>
                             <span className="font-semibold text-gray-900 text-lg">Validationly</span>
                         </div>
 
-                        {/* Clean Navigation */}
-                        <nav className="space-y-1">
+                        {/* Clean Navigation - Hidden on mobile, visible on desktop */}
+                        <nav className="hidden lg:block space-y-1">
                             <div className="flex items-center gap-3 px-3 py-2 bg-blue-50 text-blue-700 rounded-lg border-l-4 border-blue-600">
                                 <HomeIcon />
                                 <span className="text-sm font-medium">Overview</span>
@@ -257,8 +257,8 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </nav>
 
-                        {/* Clean Bottom Navigation */}
-                        <div className="absolute bottom-6 left-6 right-6 space-y-1">
+                        {/* Clean Bottom Navigation - Hidden on mobile */}
+                        <div className="hidden lg:block absolute bottom-6 left-6 right-6 space-y-1">
                             <div className="flex items-center gap-3 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors">
                                 <SettingsIcon />
                                 <span className="text-sm font-medium">Settings</span>
@@ -271,15 +271,15 @@ const ResultsPage: React.FC = () => {
                     </div>
                 </div>
 
-                {/* Clean Main Content */}
-                <div className="flex-1 p-8 relative z-10">
-                    {/* Clean Header */}
-                    <div className="flex items-center justify-between mb-8">
+                {/* Responsive Main Content */}
+                <div className="flex-1 p-4 lg:p-8 relative z-10">
+                    {/* Responsive Header */}
+                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 lg:mb-8 gap-4">
                         <div>
-                            <h1 className="text-2xl font-bold text-gray-900 mb-1">Internet Intelligence Report</h1>
-                            <p className="text-gray-600">We scanned the internet, here's what we found</p>
+                            <h1 className="text-xl lg:text-2xl font-bold text-gray-900 mb-1">Internet Intelligence Report</h1>
+                            <p className="text-sm lg:text-base text-gray-600">We scanned the internet, here's what we found</p>
                         </div>
-                        <div className="flex items-center gap-3 bg-white rounded-lg px-4 py-2 shadow-sm border border-gray-200">
+                        <div className="flex items-center gap-3 bg-white rounded-lg px-3 lg:px-4 py-2 shadow-sm border border-gray-200 self-start lg:self-auto">
                             <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                                 <span className="text-white font-bold text-xs">AI</span>
                             </div>
@@ -300,14 +300,14 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Internet Intelligence Summary Card */}
-                    <div className="mb-12">
-                        <div className="bg-white/20 backdrop-blur-2xl rounded-3xl p-8 border border-white/30 shadow-2xl shadow-purple-500/10 max-w-4xl mx-auto">
+                    {/* Responsive Intelligence Summary Card */}
+                    <div className="mb-8 lg:mb-12">
+                        <div className="bg-white/20 backdrop-blur-2xl rounded-2xl lg:rounded-3xl p-6 lg:p-8 border border-white/30 shadow-2xl shadow-purple-500/10 max-w-4xl mx-auto">
                             <div className="text-center">
                                 <div className="text-sm font-medium text-gray-600 mb-3">Internet Signal Strength</div>
-                                <div className="text-6xl font-extralight text-gray-800 mb-4 tracking-tight">
+                                <div className="text-4xl lg:text-6xl font-extralight text-gray-800 mb-4 tracking-tight">
                                     {result.demandScore}
-                                    <span className="text-2xl text-gray-500 ml-2">/100</span>
+                                    <span className="text-xl lg:text-2xl text-gray-500 ml-2">/100</span>
                                 </div>
                                 <div className={`inline-flex items-center px-6 py-3 rounded-2xl text-lg font-semibold mb-4 ${result.demandScore >= 80 ? 'bg-green-100/80 text-green-700' :
                                     result.demandScore >= 60 ? 'bg-yellow-100/80 text-yellow-700' :
@@ -317,7 +317,7 @@ const ResultsPage: React.FC = () => {
                                         result.demandScore >= 60 ? '⚡ Moderate Potential' :
                                             '⚠️ Low Potential'}
                                 </div>
-                                <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                                <div className="text-base lg:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed px-4 lg:px-0">
                                     "{result.content || result.idea}"
                                 </div>
                             </div>
@@ -326,14 +326,14 @@ const ResultsPage: React.FC = () => {
 
 
 
-                    {/* Modern Dashboard Grid */}
-                    <div className="grid grid-cols-12 gap-6">
-                        {/* Left Column - Stats */}
-                        <div className="col-span-8 space-y-6">
-                            {/* Clean Stats Cards */}
-                            <div className="grid grid-cols-3 gap-6">
+                    {/* Responsive Dashboard Grid */}
+                    <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 lg:gap-6">
+                        {/* Main Content - Full width on mobile, 8 cols on desktop */}
+                        <div className="xl:col-span-8 space-y-4 lg:space-y-6">
+                            {/* Responsive Stats Cards */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
                                 {/* Market Size Card */}
-                                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
                                             <span className="text-pink-600 text-lg">📊</span>
@@ -349,7 +349,7 @@ const ResultsPage: React.FC = () => {
                                 </div>
 
                                 {/* Competition Card */}
-                                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                                             <span className="text-orange-600 text-lg">⚔️</span>
@@ -365,7 +365,7 @@ const ResultsPage: React.FC = () => {
                                 </div>
 
                                 {/* Feasibility Card */}
-                                <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                                <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                                             <span className="text-purple-600 text-lg">🚀</span>
@@ -382,16 +382,16 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Internet Platform Signals */}
-                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                                <div className="flex items-center justify-between mb-6">
-                                    <h3 className="text-lg font-semibold text-gray-900">Platform Signals Found</h3>
-                                    <div className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">Live Data</div>
+                            <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 lg:mb-6 gap-2">
+                                    <h3 className="text-base lg:text-lg font-semibold text-gray-900">Platform Signals Found</h3>
+                                    <div className="text-xs lg:text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full self-start sm:self-auto">Live Data</div>
                                 </div>
                                 <div className="space-y-4">
                                     {result.validationlyScore?.breakdown ? Object.entries(result.validationlyScore.breakdown).map(([platform, score]) => (
-                                        <div key={platform} className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-lg bg-gray-100 flex items-center justify-center">
-                                                <span className="text-lg">
+                                        <div key={platform} className="flex items-center gap-3 lg:gap-4">
+                                            <div className="w-8 h-8 lg:w-10 lg:h-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                                                <span className="text-sm lg:text-lg">
                                                     {platform === 'twitter' ? '𝕏' :
                                                         platform === 'reddit' ? '🔴' :
                                                             platform === 'linkedin' ? '💼' : '📈'}
@@ -399,8 +399,8 @@ const ResultsPage: React.FC = () => {
                                             </div>
                                             <div className="flex-1">
                                                 <div className="flex items-center justify-between mb-2">
-                                                    <span className="font-medium text-gray-900 capitalize">{platform.replace('googleTrends', 'Google Trends')}</span>
-                                                    <span className="text-sm font-semibold text-gray-900 bg-blue-50 px-2 py-1 rounded">{score}</span>
+                                                    <span className="text-sm lg:text-base font-medium text-gray-900 capitalize">{platform.replace('googleTrends', 'Google Trends')}</span>
+                                                    <span className="text-xs lg:text-sm font-semibold text-gray-900 bg-blue-50 px-2 py-1 rounded">{score}</span>
                                                 </div>
                                                 <div className="w-full bg-gray-200 rounded-full h-2">
                                                     <div
@@ -421,15 +421,15 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* What We Found Summary */}
-                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-900">🔍 What We Found</h3>
-                                    <div className="text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full">Internet Scan Results</div>
+                            <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
+                                    <h3 className="text-base lg:text-lg font-semibold text-gray-900">🔍 What We Found</h3>
+                                    <div className="text-xs lg:text-sm text-gray-500 bg-blue-50 px-3 py-1 rounded-full self-start sm:self-auto">Internet Scan Results</div>
                                 </div>
                                 <div className="space-y-4">
                                     {/* Enhanced metadata insights */}
                                     {result.enhancementMetadata && (
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div className="bg-gray-50 rounded-lg p-4">
                                                 <div className="text-sm font-medium text-gray-900 mb-2">🤖 AI Analysis</div>
                                                 <div className="text-sm text-gray-600">
@@ -475,8 +475,8 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* What You Can Do */}
-                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">💡 What You Can Do With This Data</h3>
+                            <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200">
+                                <h3 className="text-base lg:text-lg font-semibold text-gray-900 mb-4">💡 What You Can Do With This Data</h3>
                                 <div className="space-y-3">
                                     {getActionableInsights(result).map((insight, index) => (
                                         <div key={index} className="flex items-start gap-3 p-4 bg-gray-50 rounded-lg border border-gray-100">
@@ -797,10 +797,10 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Right Column - Clean Sidebar */}
-                        <div className="col-span-4 space-y-6">
+                        {/* Right Column - Responsive Sidebar */}
+                        <div className="xl:col-span-4 space-y-4 lg:space-y-6">
                             {/* Clean Story Card */}
-                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
+                            <div className="bg-white rounded-xl p-4 lg:p-6 shadow-sm border border-gray-200">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                                         <span className="text-purple-600 text-lg">📖</span>
