@@ -1,6 +1,8 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { EnhancedValidator } from './enhanced-validate';
+import AIEnsemble from './ai-ensemble';
+import RedditAnalyzer from './reddit-analyzer';
+import GoogleTrendsAnalyzer from './google-trends';
 
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -404,22 +406,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         - The 'redditBodySuggestion' must be a detailed, multi-sentence paragraph
         - All content must feel authentic and valuable to entrepreneurs`;
 
-        // 🚀 PHASE 1: Use Enhanced Validator
-        console.log('🚀 Starting enhanced validation process...');
+        // 🚀 PHASE 1: Use AI Ensemble directly
+        console.log('🚀 Starting AI ensemble validation...');
         
-        const validator = new EnhancedValidator();
+        const aiEnsemble = new AIEnsemble();
+        const redditAnalyzer = new RedditAnalyzer();
+        const trendsAnalyzer = new GoogleTrendsAnalyzer();
         
-        // Use enhanced validator with all improvements
-        const enhancedResult = await validator.validateIdea(
-            inputContent,
-            systemInstruction,
-            responseSchema
-        );
+        // Run AI analysis and real-time data in parallel
+        const [ensembleResult, redditAnalysis, trendsAnalysis] = await Promise.allSettled([
+            aiEnsemble.analyzeWithEnsemble(inputContent, systemInstruction, responseSchema),
+            redditAnalyzer.analyzeRedditCommunity(inputContent),
+            trendsAnalyzer.analyzeTrends(inputContent)
+        ]);
+        
+        // Extract AI result
+        let baseResult: any;
+        if (ensembleResult.status === 'fulfilled') {
+            baseResult = ensembleResult.value.primaryResponse;
+            console.log(`✅ AI Ensemble succeeded with confidence: ${ensembleResult.value.confidence}%`);
+        } else {
+            console.error('❌ AI Ensemble failed:', ensembleResult.reason);
+            throw new Error("AI analysis failed");
+        }
+        
+        // Add enhancement metadata
+        baseResult.enhancementMetadata = {
+            redditAnalyzed: redditAnalysis.status === 'fulfilled',
+            trendsAnalyzed: trendsAnalysis.status === 'fulfilled',
+            aiConfidence: ensembleResult.status === 'fulfilled' ? ensembleResult.value.confidence : 75,
+            fallbackUsed: ensembleResult.status === 'fulfilled' ? ensembleResult.value.fallbackUsed : false,
+            enhancementApplied: true
+        };
         
         console.log('✅ Enhanced validation completed');
         
         // Convert to expected format
-        const result = { text: () => JSON.stringify(enhancedResult) };
+        const result = { text: () => JSON.stringify(baseResult) };
 
         // Enhanced result is already processed
         const jsonText = result.text?.trim() || "";
