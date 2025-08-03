@@ -63,8 +63,8 @@ const responseSchema = {
         idea: { type: Type.STRING, description: "The original idea analyzed" },
         demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
         scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score." },
-        signalSummary: { 
-            type: Type.ARRAY, 
+        signalSummary: {
+            type: Type.ARRAY,
             items: {
                 type: Type.OBJECT,
                 properties: {
@@ -188,7 +188,7 @@ RESPONSE FORMAT RULES:
         try {
             // Clean JSON response
             let cleanJson = jsonText;
-            
+
             // Remove markdown code blocks if present
             if (jsonText.includes('```json')) {
                 const jsonMatch = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
@@ -201,19 +201,19 @@ RESPONSE FORMAT RULES:
                     cleanJson = jsonMatch[1];
                 }
             }
-            
+
             // Extract JSON object
             const jsonStart = cleanJson.indexOf('{');
             const jsonEnd = cleanJson.lastIndexOf('}');
             if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
                 cleanJson = cleanJson.substring(jsonStart, jsonEnd + 1);
             }
-            
+
             parsedResult = JSON.parse(cleanJson);
             console.log('✅ AI response parsed successfully');
         } catch (parseError) {
             console.error('❌ JSON parse error:', parseError);
-            
+
             // Create fallback response
             parsedResult = {
                 idea: inputContent,
@@ -262,7 +262,7 @@ RESPONSE FORMAT RULES:
 
     } catch (error) {
         console.error("Error in validation API:", error);
-        
+
         return res.status(500).json({
             message: 'Validation failed',
             error: error instanceof Error ? error.message : 'Unknown error'
