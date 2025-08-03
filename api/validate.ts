@@ -2,7 +2,57 @@ import { GoogleGenAI, Type } from "@google/genai";
 import AIEnsemble from './ai-ensemble';
 import RedditAnalyzer from './reddit-analyzer';
 import GoogleTrendsAnalyzer from './google-trends';
-import type { ValidationResult } from '../src/types';
+
+// Inline type definition for serverless compatibility
+interface ValidationResult {
+    idea: string;
+    content?: string;
+    demandScore: number;
+    scoreJustification: string;
+    signalSummary: Array<{
+        platform: string;
+        summary: string;
+    }>;
+    scoreBreakdown?: {
+        marketSize: number;
+        competition: number;
+        trendMomentum: number;
+        feasibility: number;
+    };
+    tweetSuggestion: string;
+    redditTitleSuggestion: string;
+    redditBodySuggestion: string;
+    linkedinSuggestion: string;
+    validationlyScore?: {
+        totalScore: number;
+        breakdown: {
+            twitter: number;
+            reddit: number;
+            linkedin: number;
+            googleTrends: number;
+        };
+        weighting: {
+            twitter: number;
+            reddit: number;
+            linkedin: number;
+            googleTrends: number;
+        };
+        improvements: string[];
+        confidence: number;
+        dataQuality: {
+            aiAnalysis: string;
+            redditData: string;
+            trendsData: string;
+        };
+    };
+    enhancementMetadata?: {
+        redditAnalyzed: boolean;
+        trendsAnalyzed: boolean;
+        aiConfidence: number;
+        fallbackUsed: boolean;
+        enhancementApplied: boolean;
+    };
+}
 
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
