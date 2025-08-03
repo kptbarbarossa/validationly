@@ -451,14 +451,14 @@ const ResultsPage: React.FC = () => {
                                             </div>
                                         </div>
                                     )}
-                                    
+
                                     {/* Signal strength summary */}
                                     <div className="bg-blue-50 rounded-lg p-4 border-l-4 border-blue-500">
                                         <div className="text-sm font-medium text-blue-900 mb-2">📡 Signal Strength: {result.demandScore}/100</div>
                                         <div className="text-sm text-blue-800">
                                             {result.demandScore >= 70 ? 'Strong positive signals found across platforms' :
-                                             result.demandScore >= 50 ? 'Mixed signals - some positive indicators' :
-                                             'Weak signals - limited online interest detected'}
+                                                result.demandScore >= 50 ? 'Mixed signals - some positive indicators' :
+                                                    'Weak signals - limited online interest detected'}
                                         </div>
                                         {result.enhancementMetadata?.redditBoost && (
                                             <div className="text-xs text-blue-700 mt-1">
