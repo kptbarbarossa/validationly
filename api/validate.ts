@@ -489,44 +489,23 @@ export default async function handler(req: any, res: any) {
         - Make suggestions actionable and platform-appropriate
         - All content must feel authentic and valuable to entrepreneurs`;
 
-        console.log('🚀 Starting enhanced validation...');
+        console.log('🚀 Starting validation (simple AI mode for debugging)...');
 
-        let jsonText: string;
+        // Temporarily use simple AI to fix 500 error
+        const aiInstance = getAI();
+        const result = await aiInstance.models.generateContent({
+            model: "gemini-1.5-flash",
+            contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+            config: {
+                systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                responseMimeType: "application/json",
+                responseSchema: responseSchema,
+                temperature: 0.3,
+                maxOutputTokens: 2048,
+            }
+        });
         
-        try {
-            // Use Enhanced Validator with all Phase 1 improvements
-            console.log('📝 Creating EnhancedValidator instance...');
-            const validator = new EnhancedValidator();
-            console.log('✅ EnhancedValidator created successfully');
-            
-            const enhancedResult = await validator.validateIdea(
-                inputContent,
-                systemInstruction,
-                responseSchema
-            );
-
-            console.log('✅ Enhanced validation completed');
-            jsonText = JSON.stringify(enhancedResult);
-            
-        } catch (enhancedError) {
-            console.error('❌ Enhanced validation failed, falling back to simple AI:', enhancedError);
-            
-            // Fallback to simple AI
-            const aiInstance = getAI();
-            const result = await aiInstance.models.generateContent({
-                model: "gemini-1.5-flash",
-                contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                config: {
-                    systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
-                    responseMimeType: "application/json",
-                    responseSchema: responseSchema,
-                    temperature: 0.3,
-                    maxOutputTokens: 2048,
-                }
-            });
-            
-            jsonText = result.text?.trim() || "";
-        }
+        const jsonText = result.text?.trim() || "";
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
