@@ -550,30 +550,30 @@ export default async function handler(req: any, res: any) {
         // Reddit Analysis Simulation
         function simulateRedditAnalysis(content: string) {
             console.log('🔴 Starting Reddit community analysis...');
-            
+
             // Extract keywords for analysis
             const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
             const businessKeywords = ['app', 'platform', 'service', 'tool', 'solution', 'system', 'software', 'ai', 'automation'];
             const positiveKeywords = ['innovative', 'unique', 'helpful', 'efficient', 'smart', 'easy', 'fast', 'better'];
             const negativeKeywords = ['difficult', 'expensive', 'complicated', 'slow', 'hard', 'problem'];
-            
+
             // Calculate community interest (0-100)
             const businessRelevance = keywords.filter(k => businessKeywords.some(bk => k.includes(bk))).length;
             const communityInterest = Math.min(100, Math.max(20, 40 + (businessRelevance * 15) + Math.random() * 20));
-            
+
             // Calculate sentiment (-100 to +100)
             const positiveScore = keywords.filter(k => positiveKeywords.some(pk => k.includes(pk))).length * 20;
             const negativeScore = keywords.filter(k => negativeKeywords.some(nk => k.includes(nk))).length * 15;
             const baseSentiment = positiveScore - negativeScore;
             const sentiment = Math.max(-100, Math.min(100, baseSentiment + (Math.random() * 40 - 20)));
-            
+
             // Calculate boost (-10 to +10)
             const sentimentBoost = Math.round(sentiment / 10);
             const interestBoost = Math.round(communityInterest / 10);
             const totalBoost = Math.max(-10, Math.min(10, Math.round((sentimentBoost + interestBoost) / 2)));
-            
+
             console.log(`📊 Reddit Analysis: Interest=${Math.round(communityInterest)}, Sentiment=${Math.round(sentiment)}, Boost=${totalBoost}`);
-            
+
             return {
                 communityInterest: Math.round(communityInterest),
                 averageSentiment: Math.round(sentiment),
@@ -591,27 +591,27 @@ export default async function handler(req: any, res: any) {
         // Google Trends Analysis Simulation
         function simulateGoogleTrends(content: string) {
             console.log('📈 Starting Google Trends analysis...');
-            
+
             // Extract main keywords
             const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
             const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
             const trendingKeywords = ['fitness', 'health', 'productivity', 'finance', 'education', 'social'];
-            
+
             // Calculate trend score (0-100)
             const techRelevance = keywords.filter(k => techKeywords.some(tk => k.includes(tk))).length;
             const trendingRelevance = keywords.filter(k => trendingKeywords.some(tr => k.includes(tr))).length;
             const baseTrendScore = 40 + (techRelevance * 10) + (trendingRelevance * 15);
             const trendScore = Math.max(10, Math.min(100, baseTrendScore + (Math.random() * 30 - 15)));
-            
+
             // Determine trend direction
             const directions = ['rising', 'stable', 'declining'];
             const trendDirection = trendScore > 60 ? 'rising' : trendScore > 40 ? 'stable' : 'declining';
-            
+
             // Calculate boost (-10 to +10)
             const boost = Math.round((trendScore - 50) / 5);
-            
+
             console.log(`📈 Trends Analysis: Score=${Math.round(trendScore)}, Direction=${trendDirection}, Boost=${boost}`);
-            
+
             return {
                 trendScore: Math.round(trendScore),
                 overallTrend: trendDirection,
@@ -667,9 +667,9 @@ export default async function handler(req: any, res: any) {
             const redditBoost = redditData.boost;
             const trendsBoost = trendsData.boost;
             const enhancedScore = Math.max(0, Math.min(100, originalScore + redditBoost + trendsBoost));
-            
+
             console.log(`📊 Score Enhancement: Original=${originalScore}, Reddit=${redditBoost > 0 ? '+' : ''}${redditBoost}, Trends=${trendsBoost > 0 ? '+' : ''}${trendsBoost}, Final=${enhancedScore}`);
-            
+
             // Update the demand score
             parsedResult.demandScore = enhancedScore;
         } catch (parseError) {
