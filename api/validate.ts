@@ -408,18 +408,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // 🚀 PHASE 1: Use AI Ensemble directly
         console.log('🚀 Starting AI ensemble validation...');
-        
+
         const aiEnsemble = new AIEnsemble();
         const redditAnalyzer = new RedditAnalyzer();
         const trendsAnalyzer = new GoogleTrendsAnalyzer();
-        
+
         // Run AI analysis and real-time data in parallel
         const [ensembleResult, redditAnalysis, trendsAnalysis] = await Promise.allSettled([
             aiEnsemble.analyzeWithEnsemble(inputContent, systemInstruction, responseSchema),
             redditAnalyzer.analyzeRedditCommunity(inputContent),
             trendsAnalyzer.analyzeTrends(inputContent)
         ]);
-        
+
         // Extract AI result
         let baseResult: any;
         if (ensembleResult.status === 'fulfilled') {
@@ -429,7 +429,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             console.error('❌ AI Ensemble failed:', ensembleResult.reason);
             throw new Error("AI analysis failed");
         }
-        
+
         // Add enhancement metadata
         baseResult.enhancementMetadata = {
             redditAnalyzed: redditAnalysis.status === 'fulfilled',
@@ -438,9 +438,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             fallbackUsed: ensembleResult.status === 'fulfilled' ? ensembleResult.value.fallbackUsed : false,
             enhancementApplied: true
         };
-        
+
         console.log('✅ Enhanced validation completed');
-        
+
         // Convert to expected format
         const result = { text: () => JSON.stringify(baseResult) };
 
