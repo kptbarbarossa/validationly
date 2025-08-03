@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import { EnhancedValidator } from './enhanced-validate';
 
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -150,35 +151,19 @@ export default async function handler(req: any, res: any) {
         - Make suggestions actionable and platform-appropriate
         - All content must feel authentic and valuable to entrepreneurs`;
 
-        console.log('🚀 Starting simple AI validation...');
+        console.log('🚀 Starting enhanced validation...');
 
-        const aiInstance = getAI();
-        const result = await aiInstance.models.generateContent({
-            model: "gemini-1.5-flash",
-            contents: `ANALYZE THIS CONTENT: "${inputContent}"
+        // Use Enhanced Validator with all Phase 1 improvements
+        const validator = new EnhancedValidator();
+        const enhancedResult = await validator.validateIdea(
+            inputContent,
+            systemInstruction,
+            responseSchema
+        );
 
-🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.
+        console.log('✅ Enhanced validation completed');
 
-CRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-            config: {
-                systemInstruction: systemInstruction + `
-
-RESPONSE FORMAT RULES:
-- You MUST respond with ONLY valid JSON
-- No markdown code blocks (no \`\`\`json)
-- No explanations or text outside JSON
-- Start with { and end with }
-- Include ALL required schema fields`,
-                responseMimeType: "application/json",
-                responseSchema: responseSchema,
-                temperature: 0.3,
-                maxOutputTokens: 2048,
-            }
-        });
-
-        console.log('✅ AI validation completed');
-
-        const jsonText = result.text?.trim() || "";
+        const jsonText = JSON.stringify(enhancedResult);
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
