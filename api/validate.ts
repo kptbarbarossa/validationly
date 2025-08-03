@@ -1,7 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import AIEnsemble from './ai-ensemble';
-import RedditAnalyzer from './reddit-analyzer';
-import GoogleTrendsAnalyzer from './google-trends';
+// Temporarily remove enhanced imports to fix module not found error
+// import AIEnsemble from './ai-ensemble';
+// import RedditAnalyzer from './reddit-analyzer';
+// import GoogleTrendsAnalyzer from './google-trends';
 
 // Inline type definition for serverless compatibility
 interface ValidationResult {
@@ -102,6 +103,8 @@ function validateInput(content: string): void {
 }
 
 // Enhanced validation with real-time data integration
+// Temporarily disabled due to module import issues
+/*
 class EnhancedValidator {
     private aiEnsemble: AIEnsemble;
     private redditAnalyzer: RedditAnalyzer;
@@ -381,6 +384,7 @@ class EnhancedValidator {
         }
     }
 }
+*/
 
 // AI instance (kept for fallback)
 let ai: GoogleGenAI | null = null;
