@@ -150,24 +150,7 @@ const ResultsPage: React.FC = () => {
         return insights.slice(0, 5); // En fazla 5 insight
     };
 
-    const getRiskOpportunityMatrix = (result: ValidationResult) => {
-        const opportunities = [];
-        const risks = [];
 
-        // Opportunities
-        if ((result.scoreBreakdown?.marketSize || 0) >= 18) opportunities.push("Large market potential");
-        if ((result.scoreBreakdown?.competition || 0) <= 16) opportunities.push("Early mover advantage");
-        if (result.demandScore >= 65) opportunities.push("Strong demand signals");
-        if ((result.scoreBreakdown?.feasibility || 0) >= 18) opportunities.push("Rapid development opportunity");
-
-        // Risks  
-        if ((result.scoreBreakdown?.competition || 0) >= 20) risks.push("High competition environment");
-        if ((result.scoreBreakdown?.feasibility || 0) <= 14) risks.push("Technical challenges");
-        if (result.demandScore <= 50) risks.push("Low market interest");
-        if ((result.scoreBreakdown?.marketSize || 0) <= 12) risks.push("Limited market size");
-
-        return { opportunities, risks };
-    };
 
     const getSuccessScenario = (result: ValidationResult) => {
         const score = result.demandScore;
@@ -581,28 +564,7 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             )}
 
-                            {/* Risk-Opportunity Matrix */}
-                            <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 Risk & Opportunity Analysis</h3>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-green-50/60 backdrop-blur-sm rounded-lg p-4 border border-green-200/30">
-                                        <div className="font-semibold text-green-800 mb-2">🟢 FIRSATLAR</div>
-                                        <div className="space-y-2">
-                                            {getRiskOpportunityMatrix(result).opportunities.map((opp, index) => (
-                                                <div key={index} className="text-sm text-green-700">• {opp}</div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                    <div className="bg-red-50/60 backdrop-blur-sm rounded-lg p-4 border border-red-200/30">
-                                        <div className="font-semibold text-red-800 mb-2">🔴 RİSKLER</div>
-                                        <div className="space-y-2">
-                                            {getRiskOpportunityMatrix(result).risks.map((risk, index) => (
-                                                <div key={index} className="text-sm text-red-700">• {risk}</div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+
 
                             {/* Success Scenario */}
                             <div className="bg-white/20 backdrop-blur-2xl rounded-2xl p-6 border border-white/25 shadow-2xl shadow-purple-500/10">
