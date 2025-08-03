@@ -25,7 +25,7 @@ class GoogleTrendsAnalyzer {
       .split(/\s+/)
       .filter(word => word.length > 3)
       .filter(word => !this.isStopWord(word));
-    
+
     // Get unique words and limit to top 5
     const uniqueWords = [...new Set(words)];
     return uniqueWords.slice(0, 5);
@@ -41,10 +41,10 @@ class GoogleTrendsAnalyzer {
   private async simulateTrendData(keyword: string): Promise<TrendData> {
     // Simulate trend data - in production, use real Google Trends API
     // This creates realistic-looking data for development
-    
+
     const baseInterest = Math.floor(Math.random() * 100);
     const trendVariation = (Math.random() - 0.5) * 20;
-    
+
     let trend: 'rising' | 'stable' | 'declining';
     if (trendVariation > 5) trend = 'rising';
     else if (trendVariation < -5) trend = 'declining';
@@ -66,63 +66,63 @@ class GoogleTrendsAnalyzer {
     // Generate realistic related queries
     const prefixes = ['how to', 'best', 'free', 'online', 'top'];
     const suffixes = ['app', 'tool', 'software', 'service', 'platform', 'solution'];
-    
+
     const related: string[] = [];
-    
+
     // Add some prefixed queries
     prefixes.forEach(prefix => {
       if (Math.random() > 0.6) {
         related.push(`${prefix} ${keyword}`);
       }
     });
-    
+
     // Add some suffixed queries
     suffixes.forEach(suffix => {
       if (Math.random() > 0.7) {
         related.push(`${keyword} ${suffix}`);
       }
     });
-    
+
     return related.slice(0, 3);
   }
 
   async analyzeTrends(content: string): Promise<TrendsAnalysis> {
     try {
       console.log('🔍 Analyzing trends for content:', content.substring(0, 100));
-      
+
       // Extract keywords from content
       const keywords = await this.extractKeywords(content);
       console.log('📊 Extracted keywords:', keywords);
-      
+
       // Get trend data for each keyword
       const trendDataPromises = keywords.map(keyword => this.simulateTrendData(keyword));
       const mainKeywords = await Promise.all(trendDataPromises);
-      
+
       // Calculate overall trend
       const risingCount = mainKeywords.filter(t => t.trend === 'rising').length;
       const decliningCount = mainKeywords.filter(t => t.trend === 'declining').length;
-      
+
       let overallTrend: 'rising' | 'stable' | 'declining';
       if (risingCount > decliningCount) overallTrend = 'rising';
       else if (decliningCount > risingCount) overallTrend = 'declining';
       else overallTrend = 'stable';
-      
+
       // Calculate trend score
       const avgInterest = mainKeywords.reduce((sum, t) => sum + t.interest, 0) / mainKeywords.length;
       const trendBonus = overallTrend === 'rising' ? 20 : overallTrend === 'declining' ? -10 : 0;
       const trendScore = Math.max(0, Math.min(100, avgInterest + trendBonus));
-      
+
       // Generate insights
       const insights = this.generateInsights(mainKeywords, overallTrend, trendScore);
-      
+
       // Collect related topics
       const relatedTopics = mainKeywords
         .flatMap(t => t.relatedQueries)
         .filter((topic, index, arr) => arr.indexOf(topic) === index)
         .slice(0, 5);
-      
+
       console.log('✅ Trends analysis completed');
-      
+
       return {
         mainKeywords,
         overallTrend,
@@ -130,10 +130,10 @@ class GoogleTrendsAnalyzer {
         insights,
         relatedTopics
       };
-      
+
     } catch (error) {
       console.error('❌ Trends analysis failed:', error);
-      
+
       // Return fallback data
       return {
         mainKeywords: [],
@@ -146,12 +146,12 @@ class GoogleTrendsAnalyzer {
   }
 
   private generateInsights(
-    keywords: TrendData[], 
+    keywords: TrendData[],
     overallTrend: 'rising' | 'stable' | 'declining',
     trendScore: number
   ): string[] {
     const insights: string[] = [];
-    
+
     // Overall trend insight
     if (overallTrend === 'rising') {
       insights.push('📈 Market interest is growing - good timing for launch');
@@ -160,25 +160,25 @@ class GoogleTrendsAnalyzer {
     } else {
       insights.push('📊 Market interest is stable - consistent demand exists');
     }
-    
+
     // Score-based insights
     if (trendScore > 70) {
       insights.push('🔥 High search volume indicates strong market demand');
     } else if (trendScore < 30) {
       insights.push('🔍 Low search volume - niche market or early-stage concept');
     }
-    
+
     // Keyword-specific insights
     const highInterestKeywords = keywords.filter(k => k.interest > 60);
     if (highInterestKeywords.length > 0) {
       insights.push(`💡 Focus on "${highInterestKeywords[0].keyword}" - highest search interest`);
     }
-    
+
     const risingKeywords = keywords.filter(k => k.trend === 'rising');
     if (risingKeywords.length > 0) {
       insights.push(`🚀 "${risingKeywords[0].keyword}" is trending upward - leverage this momentum`);
     }
-    
+
     return insights.slice(0, 4); // Limit to 4 insights
   }
 

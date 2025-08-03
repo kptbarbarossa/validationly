@@ -1,5 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
+import { EnhancedValidator } from './enhanced-validate';
 
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -406,7 +407,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         // 🚀 PHASE 1: Use Enhanced Validator
         console.log('🚀 Starting enhanced validation process...');
         
-        const { EnhancedValidator } = await import('./enhanced-validate');
         const validator = new EnhancedValidator();
         
         // Use enhanced validator with all improvements
