@@ -59,28 +59,17 @@
   }
   </script>
 
-  <!-- Google Analytics - Will be replaced with actual ID -->
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-80LXQSRZ2P"></script>
   <script>
-    // Google Analytics setup - ID will be injected by environment
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-    
-    // Check if GA ID is available
-    const GA_ID = '%VITE_GA_MEASUREMENT_ID%';
-    if (GA_ID && GA_ID !== '%VITE_GA_MEASUREMENT_ID%') {
-      // Load GA script dynamically
-      const script = document.createElement('script');
-      script.async = true;
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-      document.head.appendChild(script);
-      
-      // Configure GA
-      gtag('config', GA_ID, {
-        page_title: document.title,
-        page_location: window.location.href
-      });
-    }
+    gtag('config', 'G-80LXQSRZ2P', {
+      page_title: document.title,
+      page_location: window.location.href,
+      send_page_view: true
+    });
   </script>
   
   <script type="importmap">
