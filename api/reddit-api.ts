@@ -40,7 +40,7 @@ class RedditAPI {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'Authorization': `Basic ${Buffer.from(`${this.clientId}:${this.clientSecret}`).toString('base64')}`,
+                    'Authorization': `Basic ${btoa(`${this.clientId}:${this.clientSecret}`)}`,
                     'User-Agent': 'Validationly/1.0'
                 },
                 body: new URLSearchParams({
