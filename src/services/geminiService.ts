@@ -12,16 +12,18 @@ interface ApiResponse<T> {
 
 export const validateIdea = async (idea: string): Promise<ValidationResult> => {
   try {
-    // Input validation
+    // Input validation with better error handling
     if (!idea || typeof idea !== 'string') {
       throw new Error('Idea is required and must be a string');
     }
 
-    if (idea.trim().length < 3) {
+    const trimmedIdea = idea.trim();
+    
+    if (trimmedIdea.length < 3) {
       throw new Error('Idea must be at least 3 characters long');
     }
 
-    if (idea.length > 1000) {
+    if (trimmedIdea.length > 1000) {
       throw new Error('Idea must be less than 1000 characters');
     }
 
@@ -30,7 +32,7 @@ export const validateIdea = async (idea: string): Promise<ValidationResult> => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ idea: idea.trim() } as ValidationRequest),
+      body: JSON.stringify({ idea: trimmedIdea } as ValidationRequest),
     });
 
     const result = await response.json();

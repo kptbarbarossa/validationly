@@ -75,7 +75,8 @@ const sampleCategories = [
 const HomePage: React.FC = () => {
     const [userInput, setUserInput] = useState<UserInput>({
         idea: '',
-        isValid: false
+        isValid: false,
+        errorMessage: undefined
     });
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
@@ -86,25 +87,27 @@ const HomePage: React.FC = () => {
     }, []);
 
     const validateInput = (idea: string): UserInput => {
-        const trimmedIdea = idea.trim();
+        // Ensure idea is a string and handle null/undefined cases
+        const safeIdea = idea || '';
+        const trimmedIdea = safeIdea.trim();
 
         if (!trimmedIdea) {
-            return { idea, isValid: false, errorMessage: 'Please enter an idea to validate.' };
+            return { idea: safeIdea, isValid: false, errorMessage: 'Please enter an idea to validate.' };
         }
 
         if (trimmedIdea.length < 3) {
-            return { idea, isValid: false, errorMessage: 'Idea must be at least 3 characters long.' };
+            return { idea: safeIdea, isValid: false, errorMessage: 'Idea must be at least 3 characters long.' };
         }
 
         if (trimmedIdea.length > 1000) {
-            return { idea, isValid: false, errorMessage: 'Idea must be less than 1000 characters.' };
+            return { idea: safeIdea, isValid: false, errorMessage: 'Idea must be less than 1000 characters.' };
         }
 
-        return { idea, isValid: true };
+        return { idea: safeIdea, isValid: true };
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        const newValue = e.target.value;
+        const newValue = e.target.value || '';
         const validation = validateInput(newValue);
         setUserInput(validation);
     };
@@ -112,7 +115,7 @@ const HomePage: React.FC = () => {
     const triggerValidation = async () => {
         console.log('triggerValidation called', { isValid: userInput.isValid, idea: userInput.idea });
 
-        if (!userInput.isValid) {
+        if (!userInput.isValid || !userInput.idea?.trim()) {
             console.log('Validation failed - input not valid');
             return;
         }
@@ -125,6 +128,7 @@ const HomePage: React.FC = () => {
             console.log('API call successful', result);
             navigate('/results', { state: { result } });
         } catch (err) {
+            console.error('API call failed:', err);
             if (err instanceof Error) {
                 setUserInput(prev => ({
                     ...prev,
@@ -154,6 +158,11 @@ const HomePage: React.FC = () => {
     };
 
     const handleSampleIdeaClick = (sampleIdea: string) => {
+        if (!sampleIdea || typeof sampleIdea !== 'string') {
+            console.error('Invalid sample idea:', sampleIdea);
+            return;
+        }
+        
         const validation = validateInput(sampleIdea);
         setUserInput(validation);
         textareaRef.current?.focus();
