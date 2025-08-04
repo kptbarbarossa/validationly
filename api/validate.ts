@@ -1,6 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
-// Re-enable Reddit API with better error handling
-import RedditAPI from './reddit-api';
+// Reddit API disabled for stability
+// import RedditAPI from './reddit-api';
 // Keep Google Trends disabled for now
 // import GoogleTrendsAPI from './google-trends-api';
 // Temporarily remove enhanced imports to fix module not found error
@@ -556,158 +556,19 @@ export default async function handler(req: any, res: any) {
         const jsonText = result.text?.trim() || "";
         console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
-        // Real Reddit API Analysis
-        async function analyzeRedditData(content: string) {
-            console.log('🔴 Starting real Reddit API analysis...');
 
-            try {
-                const redditAPI = new RedditAPI();
 
-                // Extract main keywords for search
-                const keywords = content.toLowerCase()
-                    .split(' ')
-                    .filter(word => word.length > 3)
-                    .slice(0, 3) // Use top 3 keywords
-                    .join(' ');
+        // Use fallback data for now - Reddit API disabled for stability
+        const redditData = {
+            communityInterest: 50,
+            averageSentiment: 0,
+            totalPosts: 5,
+            topSubreddits: ['entrepreneur', 'startups'],
+            keyInsights: ['Reddit API temporarily disabled for stability'],
+            boost: 0,
+            realData: false
+        };
 
-                console.log(`🔍 Searching Reddit for: "${keywords}"`);
-
-                // Search Reddit posts
-                const searchResult = await redditAPI.searchPosts(keywords, 20);
-
-                // Calculate metrics
-                const communityInterest = Math.min(100, Math.max(10,
-                    (searchResult.totalPosts * 2) +
-                    (searchResult.averageScore > 5 ? 20 : 0) +
-                    (searchResult.averageComments > 3 ? 15 : 0)
-                ));
-
-                const averageSentiment = searchResult.sentiment;
-
-                // Calculate boost (-10 to +10)
-                const sentimentBoost = Math.round(averageSentiment / 10);
-                const interestBoost = Math.round(communityInterest / 10);
-                const totalBoost = Math.max(-10, Math.min(10, Math.round((sentimentBoost + interestBoost) / 2)));
-
-                // Generate insights based on real data
-                const keyInsights: string[] = [];
-                if (searchResult.totalPosts > 10) {
-                    keyInsights.push(`Found ${searchResult.totalPosts} relevant discussions`);
-                }
-                if (searchResult.averageScore > 10) {
-                    keyInsights.push('Posts show strong community engagement');
-                } else if (searchResult.averageScore > 0) {
-                    keyInsights.push('Moderate community interest detected');
-                } else {
-                    keyInsights.push('Limited community engagement found');
-                }
-                if (searchResult.topSubreddits.length > 0) {
-                    keyInsights.push(`Active in r/${searchResult.topSubreddits[0]} and ${searchResult.topSubreddits.length - 1} other subreddits`);
-                }
-
-                console.log(`📊 Reddit API Results: Posts=${searchResult.totalPosts}, AvgScore=${searchResult.averageScore.toFixed(1)}, Sentiment=${averageSentiment}, Boost=${totalBoost}`);
-
-                return {
-                    communityInterest: Math.round(communityInterest),
-                    averageSentiment: averageSentiment,
-                    totalPosts: searchResult.totalPosts,
-                    topSubreddits: searchResult.topSubreddits,
-                    keyInsights: keyInsights.length > 0 ? keyInsights : ['Limited Reddit data available'],
-                    boost: totalBoost,
-                    realData: true,
-                    averageScore: searchResult.averageScore,
-                    averageComments: searchResult.averageComments
-                };
-
-            } catch (error) {
-                console.error('❌ Reddit API error, falling back to simulation:', error);
-
-                // Fallback to simulation if API fails
-                const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
-                const businessKeywords = ['app', 'platform', 'service', 'tool', 'solution', 'system', 'software', 'ai', 'automation'];
-                const businessRelevance = keywords.filter(k => businessKeywords.some(bk => k.includes(bk))).length;
-                const communityInterest = Math.min(100, Math.max(20, 40 + (businessRelevance * 15)));
-                const sentiment = Math.max(-50, Math.min(50, (businessRelevance * 10) - 10));
-                const totalBoost = Math.round((sentiment + communityInterest) / 20);
-
-                return {
-                    communityInterest: Math.round(communityInterest),
-                    averageSentiment: Math.round(sentiment),
-                    totalPosts: Math.floor(Math.random() * 20) + 5,
-                    topSubreddits: ['entrepreneur', 'startups'],
-                    keyInsights: ['Reddit API unavailable - using fallback analysis'],
-                    boost: totalBoost,
-                    realData: false
-                };
-            }
-        }
-
-        // Real Google Trends API Analysis
-        async function analyzeGoogleTrends(content: string) {
-            console.log('📈 Starting real Google Trends analysis...');
-
-            try {
-                const trendsAPI = new GoogleTrendsAPI();
-                const trendsData = await trendsAPI.analyzeTrends(content);
-
-                console.log(`📈 Google Trends Results: Score=${trendsData.trendScore}, Direction=${trendsData.trendDirection}, Boost=${trendsData.boost}`);
-
-                return {
-                    trendScore: trendsData.trendScore,
-                    overallTrend: trendsData.trendDirection,
-                    searchVolume: trendsData.searchVolume,
-                    relatedQueries: trendsData.relatedQueries,
-                    insights: trendsData.insights,
-                    boost: trendsData.boost,
-                    keyword: trendsData.keyword,
-                    realData: true
-                };
-
-            } catch (error) {
-                console.error('❌ Google Trends API error, falling back to simulation:', error);
-
-                // Fallback to simulation
-                const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
-                const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
-                const trendingKeywords = ['fitness', 'health', 'productivity', 'finance', 'education', 'social'];
-
-                const techRelevance = keywords.filter(k => techKeywords.some(tk => k.includes(tk))).length;
-                const trendingRelevance = keywords.filter(k => trendingKeywords.some(tr => k.includes(tr))).length;
-                const baseTrendScore = 40 + (techRelevance * 10) + (trendingRelevance * 15);
-                const trendScore = Math.max(10, Math.min(100, baseTrendScore));
-
-                const trendDirection = trendScore > 60 ? 'rising' : trendScore > 40 ? 'stable' : 'declining';
-                const boost = Math.round((trendScore - 50) / 5);
-
-                return {
-                    trendScore: Math.round(trendScore),
-                    overallTrend: trendDirection,
-                    searchVolume: Math.floor(Math.random() * 5000) + 1000,
-                    relatedQueries: ['startup ideas', 'business automation'],
-                    insights: ['Google Trends API unavailable - using fallback analysis'],
-                    boost: boost,
-                    realData: false
-                };
-            }
-        }
-
-        // Run analyses with improved error handling
-        let redditData;
-        try {
-            redditData = await analyzeRedditData(inputContent);
-        } catch (error) {
-            console.error('Reddit API failed, using fallback:', error);
-            redditData = {
-                communityInterest: 50,
-                averageSentiment: 0,
-                totalPosts: 5,
-                topSubreddits: ['entrepreneur', 'startups'],
-                keyInsights: ['Reddit API unavailable - using fallback'],
-                boost: 0,
-                realData: false
-            };
-        }
-        
         // Keep Google Trends disabled for now
         const trendsData = {
             trendScore: 50,
