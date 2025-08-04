@@ -375,14 +375,14 @@ const ResultsPage: React.FC = () => {
                                         <p className="text-sm text-gray-600">Real community discussions and sentiment</p>
                                     </div>
                                 </div>
-                                
+
                                 {result.validationlyScore?.dataQuality?.redditData === 'real' ? (
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div className="bg-orange-50 rounded-lg p-4">
                                                 <div className="text-2xl font-bold text-orange-600 mb-1">
-                                                    {result.enhancementMetadata?.redditBoost || 0 > 0 ? 
-                                                        `+${result.enhancementMetadata?.redditBoost}` : 
+                                                    {result.enhancementMetadata?.redditBoost || 0 > 0 ?
+                                                        `+${result.enhancementMetadata?.redditBoost}` :
                                                         result.enhancementMetadata?.redditBoost || 0}
                                                 </div>
                                                 <div className="text-sm font-medium text-gray-900">Score Impact</div>
@@ -403,7 +403,7 @@ const ResultsPage: React.FC = () => {
                                                 <div className="text-xs text-gray-600">Community reaction</div>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="bg-gray-50 rounded-lg p-4">
                                             <div className="text-sm font-medium text-gray-900 mb-2">🔍 Key Findings</div>
                                             <ul className="text-sm text-gray-600 space-y-1">
@@ -433,14 +433,14 @@ const ResultsPage: React.FC = () => {
                                         <p className="text-sm text-gray-600">Search interest and trend direction</p>
                                     </div>
                                 </div>
-                                
+
                                 {result.validationlyScore?.dataQuality?.trendsData === 'real' ? (
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div className="bg-blue-50 rounded-lg p-4">
                                                 <div className="text-2xl font-bold text-blue-600 mb-1">
-                                                    {result.enhancementMetadata?.trendsBoost || 0 > 0 ? 
-                                                        `+${result.enhancementMetadata?.trendsBoost}` : 
+                                                    {result.enhancementMetadata?.trendsBoost || 0 > 0 ?
+                                                        `+${result.enhancementMetadata?.trendsBoost}` :
                                                         result.enhancementMetadata?.trendsBoost || 0}
                                                 </div>
                                                 <div className="text-sm font-medium text-gray-900">Score Impact</div>
@@ -462,7 +462,7 @@ const ResultsPage: React.FC = () => {
                                                 <div className="text-xs text-gray-600">6-month outlook</div>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="bg-gray-50 rounded-lg p-4">
                                             <div className="text-sm font-medium text-gray-900 mb-2">📈 Trend Insights</div>
                                             <ul className="text-sm text-gray-600 space-y-1">
