@@ -643,13 +643,13 @@ export default async function handler(req: any, res: any) {
         // Real Google Trends API Analysis
         async function analyzeGoogleTrends(content: string) {
             console.log('📈 Starting real Google Trends analysis...');
-            
+
             try {
                 const trendsAPI = new GoogleTrendsAPI();
                 const trendsData = await trendsAPI.analyzeTrends(content);
-                
+
                 console.log(`📈 Google Trends Results: Score=${trendsData.trendScore}, Direction=${trendsData.trendDirection}, Boost=${trendsData.boost}`);
-                
+
                 return {
                     trendScore: trendsData.trendScore,
                     overallTrend: trendsData.trendDirection,
@@ -660,10 +660,10 @@ export default async function handler(req: any, res: any) {
                     keyword: trendsData.keyword,
                     realData: true
                 };
-                
+
             } catch (error) {
                 console.error('❌ Google Trends API error, falling back to simulation:', error);
-                
+
                 // Fallback to simulation
                 const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
                 const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
