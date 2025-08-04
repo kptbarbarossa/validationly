@@ -519,7 +519,7 @@ export default async function handler(req: any, res: any) {
         // Multi-AI Analysis Function
         async function getMultiAIAnalysis(content: string, systemPrompt: string): Promise<any> {
             const analyses: any[] = [];
-            
+
             // Try Gemini 2.0 Flash Experimental
             try {
                 console.log('🎯 Trying Gemini 2.0 Flash Experimental...');
@@ -589,7 +589,7 @@ export default async function handler(req: any, res: any) {
 
         // Get multi-AI analysis
         const aiAnalyses = await getMultiAIAnalysis(inputContent, systemInstruction);
-        
+
         // Find the best successful analysis
         const successfulAnalysis = aiAnalyses.find(a => a.success && a.result);
         if (!successfulAnalysis) {
@@ -670,7 +670,7 @@ export default async function handler(req: any, res: any) {
                 console.error('Google Trends API error:', error);
                 const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
                 const trendScore = Math.min(100, Math.max(10, 40 + (keywords.length * 5)));
-                
+
                 return {
                     trendScore,
                     overallTrend: trendScore > 60 ? 'rising' as const : 'stable' as const,
