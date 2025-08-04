@@ -6,6 +6,7 @@ import type { ValidationResult, UserInput } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import Logo from '../components/Logo';
+import { useAnalytics } from '../components/Analytics';
 
 const sampleCategories = [
     {
@@ -81,6 +82,7 @@ const HomePage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const { trackEvent, trackValidation } = useAnalytics();
 
     useEffect(() => {
         textareaRef.current?.focus();
@@ -120,15 +122,38 @@ const HomePage: React.FC = () => {
             return;
         }
 
+        // Track validation start
+        trackEvent('validation_started', {
+            event_category: 'engagement',
+            event_label: 'idea_validation_started',
+            custom_parameters: {
+                idea_length: userInput.idea.length
+            }
+        });
+
         setIsLoading(true);
         console.log('Starting API call...');
 
         try {
             const result: ValidationResult = await validateIdea(userInput.idea);
             console.log('API call successful', result);
+            
+            // Track successful validation
+            trackValidation(userInput.idea, result.demandScore);
+            
             navigate('/results', { state: { result } });
         } catch (err) {
             console.error('API call failed:', err);
+            
+            // Track validation error
+            trackEvent('validation_error', {
+                event_category: 'error',
+                event_label: 'api_call_failed',
+                custom_parameters: {
+                    error_message: err instanceof Error ? err.message : 'Unknown error'
+                }
+            });
+            
             if (err instanceof Error) {
                 setUserInput(prev => ({
                     ...prev,
@@ -162,6 +187,15 @@ const HomePage: React.FC = () => {
             console.error('Invalid sample idea:', sampleIdea);
             return;
         }
+        
+        // Track sample idea usage
+        trackEvent('sample_idea_clicked', {
+            event_category: 'engagement',
+            event_label: 'sample_idea_selected',
+            custom_parameters: {
+                sample_idea: sampleIdea.substring(0, 50) // First 50 chars for privacy
+            }
+        });
         
         const validation = validateInput(sampleIdea);
         setUserInput(validation);

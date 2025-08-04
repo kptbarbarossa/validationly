@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
 import Header from './components/Header';
+import Analytics from './components/Analytics';
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component<
@@ -54,6 +55,7 @@ const App: React.FC = () => {
     <ErrorBoundary>
       <div className="bg-white text-gray-800 min-h-screen font-sans antialiased">
         <BrowserRouter>
+          <Analytics />
           <header className="py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-200/80">
             <div className="container mx-auto flex justify-center">
               <Link 
