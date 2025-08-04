@@ -516,13 +516,11 @@ export default async function handler(req: any, res: any) {
 
         console.log('🚀 Starting enhanced validation with multi-AI analysis...');
 
-        // Multi-AI Analysis Function
-        async function getMultiAIAnalysis(content: string, systemPrompt: string): Promise<any> {
-            const analyses: any[] = [];
-
-            // Try Gemini 2.0 Flash Experimental
+        // Simplified AI Analysis - use only Gemini 2.0 for now
+        async function getAIAnalysis(content: string, systemPrompt: string): Promise<any> {
+            console.log('🎯 Using Gemini 2.0 Flash Experimental...');
+            
             try {
-                console.log('🎯 Trying Gemini 2.0 Flash Experimental...');
                 const aiInstance = getAI();
                 const result = await aiInstance.models.generateContent({
                     model: "gemini-2.0-flash-exp",
@@ -535,70 +533,50 @@ export default async function handler(req: any, res: any) {
                         maxOutputTokens: 2048,
                     }
                 });
-                analyses.push({ model: 'gemini-2.0-flash-exp', result: result.text?.trim(), success: true });
-                console.log('✅ Gemini 2.0 succeeded');
+                
+                return { 
+                    model: 'gemini-2.0-flash-exp', 
+                    result: result.text?.trim(), 
+                    success: true,
+                    fallbackUsed: false
+                };
             } catch (error) {
-                console.log('❌ Gemini 2.0 failed:', error);
-                analyses.push({ model: 'gemini-2.0-flash-exp', error: error, success: false });
+                console.log('❌ Gemini 2.0 failed, trying Gemini 1.5...', error);
+                
+                // Fallback to Gemini 1.5
+                try {
+                    const aiInstance = getAI();
+                    const result = await aiInstance.models.generateContent({
+                        model: "gemini-1.5-flash",
+                        contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                        config: {
+                            systemInstruction: systemPrompt + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                            responseMimeType: "application/json",
+                            responseSchema: responseSchema,
+                            temperature: 0.3,
+                            maxOutputTokens: 2048,
+                        }
+                    });
+                    
+                    return { 
+                        model: 'gemini-1.5-flash', 
+                        result: result.text?.trim(), 
+                        success: true,
+                        fallbackUsed: true
+                    };
+                } catch (fallbackError) {
+                    console.error('❌ Both Gemini models failed:', fallbackError);
+                    throw new Error('All AI models failed to respond');
+                }
             }
-
-            // Try Groq Llama
-            try {
-                console.log('🎯 Trying Groq Llama...');
-                const groqInstance = getGroq();
-                const result = await groqInstance.chat.completions.create({
-                    messages: [
-                        { role: "system", content: systemPrompt + "\n\nRESPOND ONLY WITH VALID JSON. No markdown, no explanations." },
-                        { role: "user", content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: Respond in the SAME LANGUAGE as the user input.\n\nReturn valid JSON with all required fields.` }
-                    ],
-                    model: "llama-3.1-70b-versatile",
-                    temperature: 0.3,
-                    max_tokens: 2048,
-                });
-                analyses.push({ model: 'groq-llama-3.1-70b', result: result.choices[0]?.message?.content?.trim(), success: true });
-                console.log('✅ Groq Llama succeeded');
-            } catch (error) {
-                console.log('❌ Groq Llama failed:', error);
-                analyses.push({ model: 'groq-llama-3.1-70b', error: error, success: false });
-            }
-
-            // Try Gemini 1.5 Flash as final fallback
-            try {
-                console.log('🔄 Trying Gemini 1.5 Flash fallback...');
-                const aiInstance = getAI();
-                const result = await aiInstance.models.generateContent({
-                    model: "gemini-1.5-flash",
-                    contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                    config: {
-                        systemInstruction: systemPrompt + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
-                        responseMimeType: "application/json",
-                        responseSchema: responseSchema,
-                        temperature: 0.3,
-                        maxOutputTokens: 2048,
-                    }
-                });
-                analyses.push({ model: 'gemini-1.5-flash', result: result.text?.trim(), success: true });
-                console.log('✅ Gemini 1.5 fallback succeeded');
-            } catch (error) {
-                console.log('❌ Gemini 1.5 fallback failed:', error);
-                analyses.push({ model: 'gemini-1.5-flash', error: error, success: false });
-            }
-
-            return analyses;
         }
 
-        // Get multi-AI analysis
-        const aiAnalyses = await getMultiAIAnalysis(inputContent, systemInstruction);
-
-        // Find the best successful analysis
-        const successfulAnalysis = aiAnalyses.find(a => a.success && a.result);
-        if (!successfulAnalysis) {
-            throw new Error('All AI models failed to respond');
-        }
-
-        const jsonText = successfulAnalysis.result;
-        const aiModel = successfulAnalysis.model;
-        const fallbackUsed = aiModel !== 'gemini-2.0-flash-exp'; // Primary model is Gemini 2.0, others are fallbacks
+        // Get AI analysis
+        const aiAnalysis = await getAIAnalysis(inputContent, systemInstruction);
+        
+        const jsonText = aiAnalysis.result;
+        const aiModel = aiAnalysis.model;
+        const fallbackUsed = aiAnalysis.fallbackUsed;
         console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
 
@@ -684,11 +662,28 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Run both analyses in parallel
-        const [redditData, trendsData] = await Promise.all([
-            analyzeRedditSafely(inputContent),
-            analyzeTrendsSafely(inputContent)
-        ]);
+        // Use fallback data for now to ensure stability
+        const redditData = {
+            communityInterest: 50,
+            averageSentiment: 0,
+            totalPosts: 5,
+            topSubreddits: ['entrepreneur', 'startups'],
+            keyInsights: ['Reddit API temporarily disabled for stability'],
+            boost: 0,
+            realData: false,
+            averageScore: 10,
+            averageComments: 3
+        };
+        
+        const trendsData = {
+            trendScore: 50,
+            overallTrend: 'stable' as const,
+            searchVolume: 1000,
+            relatedQueries: ['startup ideas', 'business trends'],
+            insights: ['Google Trends API temporarily disabled for stability'],
+            boost: 0,
+            realData: false
+        };
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
