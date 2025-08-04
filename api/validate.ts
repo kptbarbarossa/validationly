@@ -507,7 +507,7 @@ export default async function handler(req: any, res: any) {
         // Simplified AI Analysis - use only Gemini 2.0 for now
         async function getAIAnalysis(content: string, systemPrompt: string): Promise<any> {
             console.log('🎯 Using Gemini 2.0 Flash Experimental...');
-            
+
             try {
                 const aiInstance = getAI();
                 const result = await aiInstance.models.generateContent({
@@ -521,16 +521,16 @@ export default async function handler(req: any, res: any) {
                         maxOutputTokens: 2048,
                     }
                 });
-                
-                return { 
-                    model: 'gemini-2.0-flash-exp', 
-                    result: result.text?.trim(), 
+
+                return {
+                    model: 'gemini-2.0-flash-exp',
+                    result: result.text?.trim(),
                     success: true,
                     fallbackUsed: false
                 };
             } catch (error) {
                 console.log('❌ Gemini 2.0 failed, trying Gemini 1.5...', error);
-                
+
                 // Fallback to Gemini 1.5
                 try {
                     const aiInstance = getAI();
@@ -545,10 +545,10 @@ export default async function handler(req: any, res: any) {
                             maxOutputTokens: 2048,
                         }
                     });
-                    
-                    return { 
-                        model: 'gemini-1.5-flash', 
-                        result: result.text?.trim(), 
+
+                    return {
+                        model: 'gemini-1.5-flash',
+                        result: result.text?.trim(),
                         success: true,
                         fallbackUsed: true
                     };
@@ -561,7 +561,7 @@ export default async function handler(req: any, res: any) {
 
         // Get AI analysis
         const aiAnalysis = await getAIAnalysis(inputContent, systemInstruction);
-        
+
         const jsonText = aiAnalysis.result;
         const aiModel = aiAnalysis.model;
         const fallbackUsed = aiAnalysis.fallbackUsed;
@@ -584,7 +584,7 @@ export default async function handler(req: any, res: any) {
             averageScore: 10,
             averageComments: 3
         };
-        
+
         const trendsData = {
             trendScore: 50,
             overallTrend: 'stable' as const,
