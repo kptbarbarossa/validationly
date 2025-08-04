@@ -1,7 +1,24 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import Groq from "groq-sdk";
-import RedditAPI from './reddit-api';
-import GoogleTrendsAPI from './google-trends-api';
+
+// Dynamic imports to avoid module resolution issues in serverless
+let RedditAPI: any = null;
+let GoogleTrendsAPI: any = null;
+
+async function loadModules() {
+    try {
+        if (!RedditAPI) {
+            const redditModule = await import('./reddit-api.js');
+            RedditAPI = redditModule.default;
+        }
+        if (!GoogleTrendsAPI) {
+            const trendsModule = await import('./google-trends-api.js');
+            GoogleTrendsAPI = trendsModule.default;
+        }
+    } catch (error) {
+        console.error('Failed to load modules:', error);
+    }
+}
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
 // import RedditAnalyzer from './reddit-analyzer';
@@ -582,6 +599,12 @@ export default async function handler(req: any, res: any) {
         async function analyzeReddit(content: string) {
             try {
                 console.log('🔴 Starting Reddit analysis...');
+                await loadModules();
+                
+                if (!RedditAPI) {
+                    throw new Error('Reddit API module not available');
+                }
+                
                 const redditAPI = new RedditAPI();
 
                 // Extract keywords from content
@@ -644,6 +667,12 @@ export default async function handler(req: any, res: any) {
         async function analyzeTrends(content: string) {
             try {
                 console.log('📈 Starting Google Trends analysis...');
+                await loadModules();
+                
+                if (!GoogleTrendsAPI) {
+                    throw new Error('Google Trends API module not available');
+                }
+                
                 const trendsAPI = new GoogleTrendsAPI();
                 const trendsData = await trendsAPI.analyzeTrends(content);
 
