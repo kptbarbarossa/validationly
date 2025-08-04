@@ -1,8 +1,8 @@
 import { GoogleGenAI, Type } from "@google/genai";
-// Reddit API disabled for stability
-// import RedditAPI from './reddit-api';
-// Keep Google Trends disabled for now
-// import GoogleTrendsAPI from './google-trends-api';
+import Groq from "groq-sdk";
+// Re-enable Reddit and Google Trends APIs with proper error handling
+import RedditAPI from './reddit-api';
+import GoogleTrendsAPI from './google-trends-api';
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
 // import RedditAnalyzer from './reddit-analyzer';
@@ -390,8 +390,9 @@ class EnhancedValidator {
 }
 */
 
-// AI instance (kept for fallback)
+// AI instances
 let ai: GoogleGenAI | null = null;
+let groq: Groq | null = null;
 
 function getAI(): GoogleGenAI {
     if (!ai) {
@@ -402,6 +403,17 @@ function getAI(): GoogleGenAI {
         ai = new GoogleGenAI({ apiKey });
     }
     return ai;
+}
+
+function getGroq(): Groq {
+    if (!groq) {
+        const apiKey = process.env.GROQ_API_KEY;
+        if (!apiKey) {
+            throw new Error("GROQ_API_KEY environment variable is not set");
+        }
+        groq = new Groq({ apiKey });
+    }
+    return groq;
 }
 
 const responseSchema = {
@@ -502,83 +514,180 @@ export default async function handler(req: any, res: any) {
         - Make suggestions actionable and platform-appropriate
         - All content must feel authentic and valuable to entrepreneurs`;
 
-        console.log('🚀 Starting enhanced validation with Gemini 2.0 + 1.5 fallback...');
+        console.log('🚀 Starting enhanced validation with multi-AI analysis...');
 
-        const aiInstance = getAI();
-        let result: any;
-        let aiModel = '';
-        let fallbackUsed = false;
-
-        // Try Gemini 2.0 Flash Experimental first
-        try {
-            console.log('🎯 Trying primary model: gemini-2.0-flash-exp');
-            result = await aiInstance.models.generateContent({
-                model: "gemini-2.0-flash-exp",
-                contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                config: {
-                    systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
-                    responseMimeType: "application/json",
-                    responseSchema: responseSchema,
-                    temperature: 0.3,
-                    maxOutputTokens: 2048,
-                }
-            });
-            aiModel = 'gemini-2.0-flash-exp';
-            console.log('✅ Primary model succeeded');
-        } catch (primaryError) {
-            console.log('❌ Primary model failed, trying fallback...');
-            console.error('Primary error:', primaryError);
-
-            // Fallback to Gemini 1.5 Flash
+        // Multi-AI Analysis Function
+        async function getMultiAIAnalysis(content: string, systemPrompt: string): Promise<any> {
+            const analyses: any[] = [];
+            
+            // Try Gemini 2.0 Flash Experimental
             try {
-                console.log('🔄 Trying fallback model: gemini-1.5-flash');
-                result = await aiInstance.models.generateContent({
-                    model: "gemini-1.5-flash",
-                    contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                console.log('🎯 Trying Gemini 2.0 Flash Experimental...');
+                const aiInstance = getAI();
+                const result = await aiInstance.models.generateContent({
+                    model: "gemini-2.0-flash-exp",
+                    contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
                     config: {
-                        systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                        systemInstruction: systemPrompt + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
                         responseMimeType: "application/json",
                         responseSchema: responseSchema,
                         temperature: 0.3,
                         maxOutputTokens: 2048,
                     }
                 });
-                aiModel = 'gemini-1.5-flash';
-                fallbackUsed = true;
-                console.log('✅ Fallback model succeeded');
-            } catch (fallbackError) {
-                console.error('❌ Both models failed');
-                console.error('Fallback error:', fallbackError);
-                throw new Error('All AI models failed to respond');
+                analyses.push({ model: 'gemini-2.0-flash-exp', result: result.text?.trim(), success: true });
+                console.log('✅ Gemini 2.0 succeeded');
+            } catch (error) {
+                console.log('❌ Gemini 2.0 failed:', error);
+                analyses.push({ model: 'gemini-2.0-flash-exp', error: error, success: false });
+            }
+
+            // Try Groq Llama
+            try {
+                console.log('🎯 Trying Groq Llama...');
+                const groqInstance = getGroq();
+                const result = await groqInstance.chat.completions.create({
+                    messages: [
+                        { role: "system", content: systemPrompt + "\n\nRESPOND ONLY WITH VALID JSON. No markdown, no explanations." },
+                        { role: "user", content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: Respond in the SAME LANGUAGE as the user input.\n\nReturn valid JSON with all required fields.` }
+                    ],
+                    model: "llama-3.1-70b-versatile",
+                    temperature: 0.3,
+                    max_tokens: 2048,
+                });
+                analyses.push({ model: 'groq-llama-3.1-70b', result: result.choices[0]?.message?.content?.trim(), success: true });
+                console.log('✅ Groq Llama succeeded');
+            } catch (error) {
+                console.log('❌ Groq Llama failed:', error);
+                analyses.push({ model: 'groq-llama-3.1-70b', error: error, success: false });
+            }
+
+            // Try Gemini 1.5 Flash as final fallback
+            try {
+                console.log('🔄 Trying Gemini 1.5 Flash fallback...');
+                const aiInstance = getAI();
+                const result = await aiInstance.models.generateContent({
+                    model: "gemini-1.5-flash",
+                    contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                    config: {
+                        systemInstruction: systemPrompt + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                        responseMimeType: "application/json",
+                        responseSchema: responseSchema,
+                        temperature: 0.3,
+                        maxOutputTokens: 2048,
+                    }
+                });
+                analyses.push({ model: 'gemini-1.5-flash', result: result.text?.trim(), success: true });
+                console.log('✅ Gemini 1.5 fallback succeeded');
+            } catch (error) {
+                console.log('❌ Gemini 1.5 fallback failed:', error);
+                analyses.push({ model: 'gemini-1.5-flash', error: error, success: false });
+            }
+
+            return analyses;
+        }
+
+        // Get multi-AI analysis
+        const aiAnalyses = await getMultiAIAnalysis(inputContent, systemInstruction);
+        
+        // Find the best successful analysis
+        const successfulAnalysis = aiAnalyses.find(a => a.success && a.result);
+        if (!successfulAnalysis) {
+            throw new Error('All AI models failed to respond');
+        }
+
+        const jsonText = successfulAnalysis.result;
+        const aiModel = successfulAnalysis.model;
+        console.log(`🤖 AI Model used: ${aiModel}`);
+
+
+
+
+        // Reddit API Analysis with safe error handling
+        async function analyzeRedditSafely(content: string) {
+            try {
+                const redditAPI = new RedditAPI();
+                const keywords = content.toLowerCase()
+                    .split(' ')
+                    .filter(word => word.length > 3)
+                    .slice(0, 3)
+                    .join(' ');
+
+                console.log(`🔍 Searching Reddit for: "${keywords}"`);
+                const searchResult = await redditAPI.searchPosts(keywords, 20);
+
+                const communityInterest = Math.min(100, Math.max(10,
+                    (searchResult.totalPosts * 2) +
+                    (searchResult.averageScore > 5 ? 20 : 0) +
+                    (searchResult.averageComments > 3 ? 15 : 0)
+                ));
+
+                const boost = Math.max(-10, Math.min(10, Math.round((searchResult.sentiment + communityInterest) / 20)));
+
+                return {
+                    communityInterest: Math.round(communityInterest),
+                    averageSentiment: searchResult.sentiment,
+                    totalPosts: searchResult.totalPosts,
+                    topSubreddits: searchResult.topSubreddits,
+                    keyInsights: [`Found ${searchResult.totalPosts} discussions`, `Active in r/${searchResult.topSubreddits[0] || 'entrepreneur'}`],
+                    boost,
+                    realData: true,
+                    averageScore: searchResult.averageScore,
+                    averageComments: searchResult.averageComments
+                };
+            } catch (error) {
+                console.error('Reddit API error:', error);
+                return {
+                    communityInterest: 50,
+                    averageSentiment: 0,
+                    totalPosts: 5,
+                    topSubreddits: ['entrepreneur', 'startups'],
+                    keyInsights: ['Reddit API unavailable - using fallback'],
+                    boost: 0,
+                    realData: false
+                };
             }
         }
 
-        const jsonText = result.text?.trim() || "";
-        console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
+        // Google Trends API Analysis with safe error handling
+        async function analyzeTrendsSafely(content: string) {
+            try {
+                const trendsAPI = new GoogleTrendsAPI();
+                const trendsData = await trendsAPI.analyzeTrends(content);
 
+                console.log(`📈 Trends: Score=${trendsData.trendScore}, Direction=${trendsData.trendDirection}`);
 
+                return {
+                    trendScore: trendsData.trendScore,
+                    overallTrend: trendsData.trendDirection,
+                    searchVolume: trendsData.searchVolume,
+                    relatedQueries: trendsData.relatedQueries,
+                    insights: trendsData.insights,
+                    boost: trendsData.boost,
+                    realData: true
+                };
+            } catch (error) {
+                console.error('Google Trends API error:', error);
+                const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
+                const trendScore = Math.min(100, Math.max(10, 40 + (keywords.length * 5)));
+                
+                return {
+                    trendScore,
+                    overallTrend: trendScore > 60 ? 'rising' as const : 'stable' as const,
+                    searchVolume: Math.floor(Math.random() * 5000) + 1000,
+                    relatedQueries: ['startup ideas', 'business trends'],
+                    insights: ['Google Trends API unavailable - using fallback'],
+                    boost: Math.round((trendScore - 50) / 5),
+                    realData: false
+                };
+            }
+        }
 
-        // Use fallback data for now - Reddit API disabled for stability
-        const redditData = {
-            communityInterest: 50,
-            averageSentiment: 0,
-            totalPosts: 5,
-            topSubreddits: ['entrepreneur', 'startups'],
-            keyInsights: ['Reddit API temporarily disabled for stability'],
-            boost: 0,
-            realData: false
-        };
-
-        // Keep Google Trends disabled for now
-        const trendsData = {
-            trendScore: 50,
-            overallTrend: 'stable' as const,
-            searchVolume: 1000,
-            relatedQueries: ['startup ideas'],
-            insights: ['Google Trends API temporarily disabled'],
-            boost: 0,
-            realData: false
-        };
+        // Run both analyses in parallel
+        const [redditData, trendsData] = await Promise.all([
+            analyzeRedditSafely(inputContent),
+            analyzeTrendsSafely(inputContent)
+        ]);
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
