@@ -61,6 +61,9 @@ class RedditAPI {
                 this.accessToken = null;
             }, (data.expires_in - 60) * 1000); // Refresh 1 minute before expiry
 
+            if (!this.accessToken) {
+                throw new Error('Failed to obtain access token');
+            }
             return this.accessToken;
         } catch (error) {
             console.error('Reddit token error:', error);

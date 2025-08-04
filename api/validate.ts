@@ -598,7 +598,8 @@ export default async function handler(req: any, res: any) {
 
         const jsonText = successfulAnalysis.result;
         const aiModel = successfulAnalysis.model;
-        console.log(`🤖 AI Model used: ${aiModel}`);
+        const fallbackUsed = aiModel !== 'gemini-2.0-flash-exp'; // Primary model is Gemini 2.0, others are fallbacks
+        console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
 
 
