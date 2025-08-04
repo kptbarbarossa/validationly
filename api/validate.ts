@@ -1,5 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import RedditAPI from './reddit-api';
+import GoogleTrendsAPI from './google-trends-api';
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
 // import RedditAnalyzer from './reddit-analyzer';
@@ -587,7 +588,7 @@ export default async function handler(req: any, res: any) {
                 const totalBoost = Math.max(-10, Math.min(10, Math.round((sentimentBoost + interestBoost) / 2)));
 
                 // Generate insights based on real data
-                const keyInsights = [];
+                const keyInsights: string[] = [];
                 if (searchResult.totalPosts > 10) {
                     keyInsights.push(`Found ${searchResult.totalPosts} relevant discussions`);
                 }
@@ -639,47 +640,58 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Google Trends Analysis Simulation
-        function simulateGoogleTrends(content: string) {
-            console.log('📈 Starting Google Trends analysis...');
+        // Real Google Trends API Analysis
+        async function analyzeGoogleTrends(content: string) {
+            console.log('📈 Starting real Google Trends analysis...');
+            
+            try {
+                const trendsAPI = new GoogleTrendsAPI();
+                const trendsData = await trendsAPI.analyzeTrends(content);
+                
+                console.log(`📈 Google Trends Results: Score=${trendsData.trendScore}, Direction=${trendsData.trendDirection}, Boost=${trendsData.boost}`);
+                
+                return {
+                    trendScore: trendsData.trendScore,
+                    overallTrend: trendsData.trendDirection,
+                    searchVolume: trendsData.searchVolume,
+                    relatedQueries: trendsData.relatedQueries,
+                    insights: trendsData.insights,
+                    boost: trendsData.boost,
+                    keyword: trendsData.keyword,
+                    realData: true
+                };
+                
+            } catch (error) {
+                console.error('❌ Google Trends API error, falling back to simulation:', error);
+                
+                // Fallback to simulation
+                const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
+                const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
+                const trendingKeywords = ['fitness', 'health', 'productivity', 'finance', 'education', 'social'];
 
-            // Extract main keywords
-            const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
-            const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
-            const trendingKeywords = ['fitness', 'health', 'productivity', 'finance', 'education', 'social'];
+                const techRelevance = keywords.filter(k => techKeywords.some(tk => k.includes(tk))).length;
+                const trendingRelevance = keywords.filter(k => trendingKeywords.some(tr => k.includes(tr))).length;
+                const baseTrendScore = 40 + (techRelevance * 10) + (trendingRelevance * 15);
+                const trendScore = Math.max(10, Math.min(100, baseTrendScore));
 
-            // Calculate trend score (0-100)
-            const techRelevance = keywords.filter(k => techKeywords.some(tk => k.includes(tk))).length;
-            const trendingRelevance = keywords.filter(k => trendingKeywords.some(tr => k.includes(tr))).length;
-            const baseTrendScore = 40 + (techRelevance * 10) + (trendingRelevance * 15);
-            const trendScore = Math.max(10, Math.min(100, baseTrendScore + (Math.random() * 30 - 15)));
+                const trendDirection = trendScore > 60 ? 'rising' : trendScore > 40 ? 'stable' : 'declining';
+                const boost = Math.round((trendScore - 50) / 5);
 
-            // Determine trend direction
-            const directions = ['rising', 'stable', 'declining'];
-            const trendDirection = trendScore > 60 ? 'rising' : trendScore > 40 ? 'stable' : 'declining';
-
-            // Calculate boost (-10 to +10)
-            const boost = Math.round((trendScore - 50) / 5);
-
-            console.log(`📈 Trends Analysis: Score=${Math.round(trendScore)}, Direction=${trendDirection}, Boost=${boost}`);
-
-            return {
-                trendScore: Math.round(trendScore),
-                overallTrend: trendDirection,
-                searchVolume: Math.floor(Math.random() * 10000) + 1000,
-                relatedQueries: ['startup ideas', 'business automation', 'productivity tools'],
-                insights: [
-                    trendDirection === 'rising' ? 'Search interest is growing' : 'Stable search patterns',
-                    trendScore > 70 ? 'High market interest' : 'Moderate market interest',
-                    'Related searches show demand'
-                ],
-                boost: boost
-            };
+                return {
+                    trendScore: Math.round(trendScore),
+                    overallTrend: trendDirection,
+                    searchVolume: Math.floor(Math.random() * 5000) + 1000,
+                    relatedQueries: ['startup ideas', 'business automation'],
+                    insights: ['Google Trends API unavailable - using fallback analysis'],
+                    boost: boost,
+                    realData: false
+                };
+            }
         }
 
         // Run analyses
         const redditData = await analyzeRedditData(inputContent);
-        const trendsData = simulateGoogleTrends(inputContent);
+        const trendsData = await analyzeGoogleTrends(inputContent);
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
@@ -789,8 +801,8 @@ export default async function handler(req: any, res: any) {
             confidence: fallbackUsed ? 75 : 85,
             dataQuality: {
                 aiAnalysis: fallbackUsed ? 'medium' : 'high',
-                redditData: 'simulated',
-                trendsData: 'simulated'
+                redditData: redditData.realData ? 'real' : 'simulated',
+                trendsData: trendsData.realData ? 'real' : 'simulated'
             }
         };
 
