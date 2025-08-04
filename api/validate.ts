@@ -1,8 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
-// Temporarily remove all external imports to fix serverless issues
-// import Groq from "groq-sdk";
-// import RedditAPI from './reddit-api';
-// import GoogleTrendsAPI from './google-trends-api';
+import Groq from "groq-sdk";
+import RedditAPI from './reddit-api';
+import GoogleTrendsAPI from './google-trends-api';
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
 // import RedditAnalyzer from './reddit-analyzer';
@@ -390,8 +389,9 @@ class EnhancedValidator {
 }
 */
 
-// AI instance
+// AI instances
 let ai: GoogleGenAI | null = null;
+let groq: Groq | null = null;
 
 function getAI(): GoogleGenAI {
     if (!ai) {
@@ -402,6 +402,17 @@ function getAI(): GoogleGenAI {
         ai = new GoogleGenAI({ apiKey });
     }
     return ai;
+}
+
+function getGroq(): Groq {
+    if (!groq) {
+        const apiKey = process.env.GROQ_API_KEY;
+        if (!apiKey) {
+            throw new Error("GROQ_API_KEY environment variable is not set");
+        }
+        groq = new Groq({ apiKey });
+    }
+    return groq;
 }
 
 const responseSchema = {
@@ -567,20 +578,115 @@ export default async function handler(req: any, res: any) {
         const fallbackUsed = aiAnalysis.fallbackUsed;
         console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
+        // Reddit API Analysis
+        async function analyzeReddit(content: string) {
+            try {
+                console.log('🔴 Starting Reddit analysis...');
+                const redditAPI = new RedditAPI();
+                
+                // Extract keywords from content
+                const keywords = content.toLowerCase()
+                    .split(' ')
+                    .filter(word => word.length > 3)
+                    .slice(0, 3)
+                    .join(' ');
 
+                console.log(`🔍 Searching Reddit for: "${keywords}"`);
+                const searchResult = await redditAPI.searchPosts(keywords, 20);
 
+                // Calculate community interest score
+                const communityInterest = Math.min(100, Math.max(10,
+                    (searchResult.totalPosts * 2) +
+                    (searchResult.averageScore > 5 ? 20 : 0) +
+                    (searchResult.averageComments > 3 ? 15 : 0)
+                ));
 
+                // Calculate boost for demand score
+                const boost = Math.max(-10, Math.min(10, Math.round((searchResult.sentiment + communityInterest) / 20)));
 
+                console.log(`📊 Reddit Results: Posts=${searchResult.totalPosts}, AvgScore=${searchResult.averageScore.toFixed(1)}, Sentiment=${searchResult.sentiment}, Boost=${boost}`);
 
-        // Use fallback data for now to ensure stability
-        const redditData = {
-            communityInterest: 50,
-            averageSentiment: 0,
-            totalPosts: 5,
-            topSubreddits: ['entrepreneur', 'startups'],
-            keyInsights: ['Reddit API temporarily disabled for stability'],
-            boost: 0,
-            realData: false,
+                return {
+                    communityInterest: Math.round(communityInterest),
+                    averageSentiment: searchResult.sentiment,
+                    totalPosts: searchResult.totalPosts,
+                    topSubreddits: searchResult.topSubreddits,
+                    keyInsights: [
+                        `Found ${searchResult.totalPosts} relevant discussions`,
+                        `Average score: ${searchResult.averageScore.toFixed(1)}`,
+                        `Active in r/${searchResult.topSubreddits[0] || 'entrepreneur'} and ${searchResult.topSubreddits.length - 1} other subreddits`
+                    ],
+                    boost,
+                    realData: true,
+                    averageScore: searchResult.averageScore,
+                    averageComments: searchResult.averageComments
+                };
+            } catch (error) {
+                console.error('❌ Reddit API error:', error);
+                return {
+                    communityInterest: 50,
+                    averageSentiment: 0,
+                    totalPosts: 5,
+                    topSubreddits: ['entrepreneur', 'startups'],
+                    keyInsights: ['Reddit API unavailable - using fallback data'],
+                    boost: 0,
+                    realData: false,
+                    averageScore: 10,
+                    averageComments: 3
+                };
+            }
+        }
+
+        // Get Reddit data
+        const redditData = await analyzeReddit(inputContent);
+
+        // Google Trends API Analysis
+        async function analyzeTrends(content: string) {
+            try {
+                console.log('📈 Starting Google Trends analysis...');
+                const trendsAPI = new GoogleTrendsAPI();
+                const trendsData = await trendsAPI.analyzeTrends(content);
+
+                console.log(`📈 Trends Results: Score=${trendsData.trendScore}, Direction=${trendsData.trendDirection}, Boost=${trendsData.boost}`);
+
+                return {
+                    trendScore: trendsData.trendScore,
+                    overallTrend: trendsData.trendDirection,
+                    searchVolume: trendsData.searchVolume,
+                    relatedQueries: trendsData.relatedQueries,
+                    insights: trendsData.insights,
+                    boost: trendsData.boost,
+                    realData: true
+                };
+            } catch (error) {
+                console.error('❌ Google Trends API error:', error);
+                
+                // Generate fallback based on content analysis
+                const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
+                const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
+                const trendingKeywords = ['fitness', 'health', 'productivity', 'finance', 'education', 'social'];
+                
+                const techRelevance = keywords.filter(k => techKeywords.some(tk => k.includes(tk))).length;
+                const trendingRelevance = keywords.filter(k => trendingKeywords.some(tr => k.includes(tr))).length;
+                const trendScore = Math.min(100, Math.max(10, 40 + (techRelevance * 10) + (trendingRelevance * 15)));
+
+                return {
+                    trendScore,
+                    overallTrend: trendScore > 60 ? 'rising' as const : trendScore > 40 ? 'stable' as const : 'declining' as const,
+                    searchVolume: Math.floor(Math.random() * 5000) + 1000,
+                    relatedQueries: ['startup ideas', 'business trends', ...keywords.slice(0, 2)],
+                    insights: ['Google Trends API unavailable - using content-based analysis'],
+                    boost: Math.round((trendScore - 50) / 5),
+                    realData: false
+                };
+            }
+        }
+
+        // Get Google Trends data
+        const trendsData = await analyzeTrends(inputContent);
+
+        // Fallback structure for compatibility
+        const fallbackTrendsData = {
             averageScore: 10,
             averageComments: 3
         };
