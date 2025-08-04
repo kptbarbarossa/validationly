@@ -8,8 +8,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3000', // Default port for `vercel dev`
+        target: 'https://validationly.com',
         changeOrigin: true,
+        secure: true,
       },
     },
   },
