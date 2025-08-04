@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import RedditAPI from './reddit-api';
-import GoogleTrendsAPI from './google-trends-api';
+// Temporarily disable Reddit and Trends imports to fix serverless issues
+// import RedditAPI from './reddit-api';
+// import GoogleTrendsAPI from './google-trends-api';
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
 // import RedditAnalyzer from './reddit-analyzer';
@@ -689,9 +690,30 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Run analyses
-        const redditData = await analyzeRedditData(inputContent);
-        const trendsData = await analyzeGoogleTrends(inputContent);
+        // Run analyses - temporarily disabled to fix serverless issues
+        // const redditData = await analyzeRedditData(inputContent);
+        // const trendsData = await analyzeGoogleTrends(inputContent);
+        
+        // Fallback data for now
+        const redditData = {
+            communityInterest: 50,
+            averageSentiment: 0,
+            totalPosts: 5,
+            topSubreddits: ['entrepreneur', 'startups'],
+            keyInsights: ['Reddit API temporarily disabled'],
+            boost: 0,
+            realData: false
+        };
+        
+        const trendsData = {
+            trendScore: 50,
+            overallTrend: 'stable' as const,
+            searchVolume: 1000,
+            relatedQueries: ['startup ideas'],
+            insights: ['Google Trends API temporarily disabled'],
+            boost: 0,
+            realData: false
+        };
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
