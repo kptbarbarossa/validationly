@@ -583,7 +583,7 @@ export default async function handler(req: any, res: any) {
             try {
                 console.log('🔴 Starting Reddit analysis...');
                 const redditAPI = new RedditAPI();
-                
+
                 // Extract keywords from content
                 const keywords = content.toLowerCase()
                     .split(' ')
@@ -660,12 +660,12 @@ export default async function handler(req: any, res: any) {
                 };
             } catch (error) {
                 console.error('❌ Google Trends API error:', error);
-                
+
                 // Generate fallback based on content analysis
                 const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
                 const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
                 const trendingKeywords = ['fitness', 'health', 'productivity', 'finance', 'education', 'social'];
-                
+
                 const techRelevance = keywords.filter(k => techKeywords.some(tk => k.includes(tk))).length;
                 const trendingRelevance = keywords.filter(k => trendingKeywords.some(tr => k.includes(tr))).length;
                 const trendScore = Math.min(100, Math.max(10, 40 + (techRelevance * 10) + (trendingRelevance * 15)));
@@ -684,22 +684,6 @@ export default async function handler(req: any, res: any) {
 
         // Get Google Trends data
         const trendsData = await analyzeTrends(inputContent);
-
-        // Fallback structure for compatibility
-        const fallbackTrendsData = {
-            averageScore: 10,
-            averageComments: 3
-        };
-
-        const trendsData = {
-            trendScore: 50,
-            overallTrend: 'stable' as const,
-            searchVolume: 1000,
-            relatedQueries: ['startup ideas', 'business trends'],
-            insights: ['Google Trends API temporarily disabled for stability'],
-            boost: 0,
-            realData: false
-        };
 
         if (!jsonText) {
             throw new Error("AI returned empty response");
