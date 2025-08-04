@@ -468,9 +468,14 @@ export default async function handler(req: any, res: any) {
         }
 
         const { idea, content } = req.body;
-        const inputContent = content || idea;
+        const inputContent = idea || content;
 
         // Input validation
+        if (!inputContent) {
+            return res.status(400).json({
+                message: 'Idea or content is required'
+            });
+        }
         validateInput(inputContent);
 
         const systemInstruction = `You are 'Validationly', an expert AI market research analyst. Analyze the user's business idea and provide a comprehensive validation report.
