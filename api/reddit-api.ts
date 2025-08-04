@@ -1,4 +1,10 @@
 // Reddit API Helper Functions
+interface RedditTokenResponse {
+    access_token: string;
+    expires_in: number;
+    token_type: string;
+}
+
 interface RedditPost {
     title: string;
     selftext: string;
@@ -48,14 +54,14 @@ class RedditAPI {
                 })
             });
 
-            const data = await response.json();
-            
+            const data = await response.json() as RedditTokenResponse;
+
             if (!response.ok) {
                 throw new Error(`Token request failed: ${JSON.stringify(data)}`);
             }
 
             this.accessToken = data.access_token;
-            
+
             // Token expires, clear it after some time
             setTimeout(() => {
                 this.accessToken = null;
@@ -75,7 +81,7 @@ class RedditAPI {
     async searchPosts(query: string, limit: number = 25): Promise<RedditSearchResult> {
         try {
             const token = await this.getAccessToken();
-            
+
             // Search in relevant subreddits
             const subreddits = [
                 'entrepreneur', 'startups', 'SaaS', 'technology', 'business',
@@ -89,7 +95,7 @@ class RedditAPI {
             for (const subreddit of subreddits.slice(0, 5)) { // Limit to 5 subreddits to avoid rate limits
                 try {
                     const searchUrl = `https://oauth.reddit.com/r/${subreddit}/search.json?q=${encodeURIComponent(query)}&restrict_sr=1&sort=relevance&limit=${Math.ceil(limit / 5)}`;
-                    
+
                     const response = await fetch(searchUrl, {
                         headers: {
                             'Authorization': `Bearer ${token}`,
@@ -132,9 +138,9 @@ class RedditAPI {
             const totalPosts = allPosts.length;
             const averageScore = totalPosts > 0 ? allPosts.reduce((sum, post) => sum + post.score, 0) / totalPosts : 0;
             const averageComments = totalPosts > 0 ? allPosts.reduce((sum, post) => sum + post.num_comments, 0) / totalPosts : 0;
-            
+
             const topSubreddits = Object.entries(subredditCounts)
-                .sort(([,a], [,b]) => b - a)
+                .sort(([, a], [, b]) => b - a)
                 .slice(0, 5)
                 .map(([subreddit]) => subreddit);
 
@@ -161,13 +167,13 @@ class RedditAPI {
 
         // Simple sentiment based on engagement metrics
         let sentimentScore = 0;
-        
+
         posts.forEach(post => {
             // Positive indicators
             if (post.score > 10) sentimentScore += 2;
             if (post.num_comments > 5) sentimentScore += 1;
             if (post.score > 50) sentimentScore += 3;
-            
+
             // Negative indicators (very low scores might indicate negative sentiment)
             if (post.score < 0) sentimentScore -= 2;
         });
@@ -175,7 +181,7 @@ class RedditAPI {
         // Normalize to -100 to +100 range
         const maxPossibleScore = posts.length * 6; // Max positive score per post
         const normalizedSentiment = Math.max(-100, Math.min(100, (sentimentScore / maxPossibleScore) * 100));
-        
+
         return Math.round(normalizedSentiment);
     }
 
