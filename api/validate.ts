@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
-// Temporarily disable Reddit and Trends imports to fix serverless issues
-// import RedditAPI from './reddit-api';
+// Re-enable Reddit API with better error handling
+import RedditAPI from './reddit-api';
+// Keep Google Trends disabled for now
 // import GoogleTrendsAPI from './google-trends-api';
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
@@ -690,21 +691,24 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Run analyses - temporarily disabled to fix serverless issues
-        // const redditData = await analyzeRedditData(inputContent);
-        // const trendsData = await analyzeGoogleTrends(inputContent);
+        // Run analyses with improved error handling
+        let redditData;
+        try {
+            redditData = await analyzeRedditData(inputContent);
+        } catch (error) {
+            console.error('Reddit API failed, using fallback:', error);
+            redditData = {
+                communityInterest: 50,
+                averageSentiment: 0,
+                totalPosts: 5,
+                topSubreddits: ['entrepreneur', 'startups'],
+                keyInsights: ['Reddit API unavailable - using fallback'],
+                boost: 0,
+                realData: false
+            };
+        }
         
-        // Fallback data for now
-        const redditData = {
-            communityInterest: 50,
-            averageSentiment: 0,
-            totalPosts: 5,
-            topSubreddits: ['entrepreneur', 'startups'],
-            keyInsights: ['Reddit API temporarily disabled'],
-            boost: 0,
-            realData: false
-        };
-        
+        // Keep Google Trends disabled for now
         const trendsData = {
             trendScore: 50,
             overallTrend: 'stable' as const,
