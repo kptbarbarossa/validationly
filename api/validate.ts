@@ -1,4 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import RedditAPI from './reddit-api';
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
 // import RedditAnalyzer from './reddit-analyzer';
@@ -547,45 +548,90 @@ export default async function handler(req: any, res: any) {
         const jsonText = result.text?.trim() || "";
         console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
-        // Reddit Analysis Simulation
-        function simulateRedditAnalysis(content: string) {
-            console.log('🔴 Starting Reddit community analysis...');
-
-            // Extract keywords for analysis
-            const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
-            const businessKeywords = ['app', 'platform', 'service', 'tool', 'solution', 'system', 'software', 'ai', 'automation'];
-            const positiveKeywords = ['innovative', 'unique', 'helpful', 'efficient', 'smart', 'easy', 'fast', 'better'];
-            const negativeKeywords = ['difficult', 'expensive', 'complicated', 'slow', 'hard', 'problem'];
-
-            // Calculate community interest (0-100)
-            const businessRelevance = keywords.filter(k => businessKeywords.some(bk => k.includes(bk))).length;
-            const communityInterest = Math.min(100, Math.max(20, 40 + (businessRelevance * 15) + Math.random() * 20));
-
-            // Calculate sentiment (-100 to +100)
-            const positiveScore = keywords.filter(k => positiveKeywords.some(pk => k.includes(pk))).length * 20;
-            const negativeScore = keywords.filter(k => negativeKeywords.some(nk => k.includes(nk))).length * 15;
-            const baseSentiment = positiveScore - negativeScore;
-            const sentiment = Math.max(-100, Math.min(100, baseSentiment + (Math.random() * 40 - 20)));
-
-            // Calculate boost (-10 to +10)
-            const sentimentBoost = Math.round(sentiment / 10);
-            const interestBoost = Math.round(communityInterest / 10);
-            const totalBoost = Math.max(-10, Math.min(10, Math.round((sentimentBoost + interestBoost) / 2)));
-
-            console.log(`📊 Reddit Analysis: Interest=${Math.round(communityInterest)}, Sentiment=${Math.round(sentiment)}, Boost=${totalBoost}`);
-
-            return {
-                communityInterest: Math.round(communityInterest),
-                averageSentiment: Math.round(sentiment),
-                totalPosts: Math.floor(Math.random() * 50) + 10,
-                topSubreddits: ['entrepreneur', 'startups', 'SaaS', 'technology'],
-                keyInsights: [
-                    sentiment > 0 ? 'Community shows positive interest' : 'Mixed community reactions',
-                    communityInterest > 60 ? 'High engagement potential' : 'Moderate engagement expected',
-                    'Active discussions in relevant subreddits'
-                ],
-                boost: totalBoost
-            };
+        // Real Reddit API Analysis
+        async function analyzeRedditData(content: string) {
+            console.log('🔴 Starting real Reddit API analysis...');
+            
+            try {
+                const redditAPI = new RedditAPI();
+                
+                // Extract main keywords for search
+                const keywords = content.toLowerCase()
+                    .split(' ')
+                    .filter(word => word.length > 3)
+                    .slice(0, 3) // Use top 3 keywords
+                    .join(' ');
+                
+                console.log(`🔍 Searching Reddit for: "${keywords}"`);
+                
+                // Search Reddit posts
+                const searchResult = await redditAPI.searchPosts(keywords, 20);
+                
+                // Calculate metrics
+                const communityInterest = Math.min(100, Math.max(10, 
+                    (searchResult.totalPosts * 2) + 
+                    (searchResult.averageScore > 5 ? 20 : 0) +
+                    (searchResult.averageComments > 3 ? 15 : 0)
+                ));
+                
+                const averageSentiment = searchResult.sentiment;
+                
+                // Calculate boost (-10 to +10)
+                const sentimentBoost = Math.round(averageSentiment / 10);
+                const interestBoost = Math.round(communityInterest / 10);
+                const totalBoost = Math.max(-10, Math.min(10, Math.round((sentimentBoost + interestBoost) / 2)));
+                
+                // Generate insights based on real data
+                const keyInsights = [];
+                if (searchResult.totalPosts > 10) {
+                    keyInsights.push(`Found ${searchResult.totalPosts} relevant discussions`);
+                }
+                if (searchResult.averageScore > 10) {
+                    keyInsights.push('Posts show strong community engagement');
+                } else if (searchResult.averageScore > 0) {
+                    keyInsights.push('Moderate community interest detected');
+                } else {
+                    keyInsights.push('Limited community engagement found');
+                }
+                if (searchResult.topSubreddits.length > 0) {
+                    keyInsights.push(`Active in r/${searchResult.topSubreddits[0]} and ${searchResult.topSubreddits.length - 1} other subreddits`);
+                }
+                
+                console.log(`📊 Reddit API Results: Posts=${searchResult.totalPosts}, AvgScore=${searchResult.averageScore.toFixed(1)}, Sentiment=${averageSentiment}, Boost=${totalBoost}`);
+                
+                return {
+                    communityInterest: Math.round(communityInterest),
+                    averageSentiment: averageSentiment,
+                    totalPosts: searchResult.totalPosts,
+                    topSubreddits: searchResult.topSubreddits,
+                    keyInsights: keyInsights.length > 0 ? keyInsights : ['Limited Reddit data available'],
+                    boost: totalBoost,
+                    realData: true,
+                    averageScore: searchResult.averageScore,
+                    averageComments: searchResult.averageComments
+                };
+                
+            } catch (error) {
+                console.error('❌ Reddit API error, falling back to simulation:', error);
+                
+                // Fallback to simulation if API fails
+                const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
+                const businessKeywords = ['app', 'platform', 'service', 'tool', 'solution', 'system', 'software', 'ai', 'automation'];
+                const businessRelevance = keywords.filter(k => businessKeywords.some(bk => k.includes(bk))).length;
+                const communityInterest = Math.min(100, Math.max(20, 40 + (businessRelevance * 15)));
+                const sentiment = Math.max(-50, Math.min(50, (businessRelevance * 10) - 10));
+                const totalBoost = Math.round((sentiment + communityInterest) / 20);
+                
+                return {
+                    communityInterest: Math.round(communityInterest),
+                    averageSentiment: Math.round(sentiment),
+                    totalPosts: Math.floor(Math.random() * 20) + 5,
+                    topSubreddits: ['entrepreneur', 'startups'],
+                    keyInsights: ['Reddit API unavailable - using fallback analysis'],
+                    boost: totalBoost,
+                    realData: false
+                };
+            }
         }
 
         // Google Trends Analysis Simulation
@@ -627,7 +673,7 @@ export default async function handler(req: any, res: any) {
         }
 
         // Run analyses
-        const redditData = simulateRedditAnalysis(inputContent);
+        const redditData = await analyzeRedditData(inputContent);
         const trendsData = simulateGoogleTrends(inputContent);
 
         if (!jsonText) {
