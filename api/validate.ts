@@ -551,36 +551,36 @@ export default async function handler(req: any, res: any) {
         // Real Reddit API Analysis
         async function analyzeRedditData(content: string) {
             console.log('🔴 Starting real Reddit API analysis...');
-            
+
             try {
                 const redditAPI = new RedditAPI();
-                
+
                 // Extract main keywords for search
                 const keywords = content.toLowerCase()
                     .split(' ')
                     .filter(word => word.length > 3)
                     .slice(0, 3) // Use top 3 keywords
                     .join(' ');
-                
+
                 console.log(`🔍 Searching Reddit for: "${keywords}"`);
-                
+
                 // Search Reddit posts
                 const searchResult = await redditAPI.searchPosts(keywords, 20);
-                
+
                 // Calculate metrics
-                const communityInterest = Math.min(100, Math.max(10, 
-                    (searchResult.totalPosts * 2) + 
+                const communityInterest = Math.min(100, Math.max(10,
+                    (searchResult.totalPosts * 2) +
                     (searchResult.averageScore > 5 ? 20 : 0) +
                     (searchResult.averageComments > 3 ? 15 : 0)
                 ));
-                
+
                 const averageSentiment = searchResult.sentiment;
-                
+
                 // Calculate boost (-10 to +10)
                 const sentimentBoost = Math.round(averageSentiment / 10);
                 const interestBoost = Math.round(communityInterest / 10);
                 const totalBoost = Math.max(-10, Math.min(10, Math.round((sentimentBoost + interestBoost) / 2)));
-                
+
                 // Generate insights based on real data
                 const keyInsights = [];
                 if (searchResult.totalPosts > 10) {
@@ -596,9 +596,9 @@ export default async function handler(req: any, res: any) {
                 if (searchResult.topSubreddits.length > 0) {
                     keyInsights.push(`Active in r/${searchResult.topSubreddits[0]} and ${searchResult.topSubreddits.length - 1} other subreddits`);
                 }
-                
+
                 console.log(`📊 Reddit API Results: Posts=${searchResult.totalPosts}, AvgScore=${searchResult.averageScore.toFixed(1)}, Sentiment=${averageSentiment}, Boost=${totalBoost}`);
-                
+
                 return {
                     communityInterest: Math.round(communityInterest),
                     averageSentiment: averageSentiment,
@@ -610,10 +610,10 @@ export default async function handler(req: any, res: any) {
                     averageScore: searchResult.averageScore,
                     averageComments: searchResult.averageComments
                 };
-                
+
             } catch (error) {
                 console.error('❌ Reddit API error, falling back to simulation:', error);
-                
+
                 // Fallback to simulation if API fails
                 const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
                 const businessKeywords = ['app', 'platform', 'service', 'tool', 'solution', 'system', 'software', 'ai', 'automation'];
@@ -621,7 +621,7 @@ export default async function handler(req: any, res: any) {
                 const communityInterest = Math.min(100, Math.max(20, 40 + (businessRelevance * 15)));
                 const sentiment = Math.max(-50, Math.min(50, (businessRelevance * 10) - 10));
                 const totalBoost = Math.round((sentiment + communityInterest) / 20);
-                
+
                 return {
                     communityInterest: Math.round(communityInterest),
                     averageSentiment: Math.round(sentiment),
