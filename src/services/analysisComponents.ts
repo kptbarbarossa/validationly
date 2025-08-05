@@ -9,14 +9,14 @@ import {
   RiskMatrix,
   RiskAssessment,
   RiskLevel
-} from '../types';
-import { getIndustryScoringWeights, getIndustryFramework } from './industryFrameworks';
-import { ScoreCalculator, IndustryScoreAdjuster } from './scoreCalculator';
+} from '../types.js';
+import { getIndustryScoringWeights, getIndustryFramework } from './industryFrameworks.js';
+import { ScoreCalculator, IndustryScoreAdjuster } from './scoreCalculator.js';
 import { 
   DimensionalPromptBuilder, 
   LanguageConsistencyEnforcer, 
   AnalysisType 
-} from './dimensionalPrompts';
+} from './dimensionalPrompts.js';
 
 /**
  * Enhanced Multi-Dimensional Scorer Implementation

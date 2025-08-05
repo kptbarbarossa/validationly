@@ -1,4 +1,4 @@
-import { IndustryCategory } from '../types';
+import { IndustryCategory } from '../types.js';
 
 /**
  * Dimensional Scoring AI Prompts System

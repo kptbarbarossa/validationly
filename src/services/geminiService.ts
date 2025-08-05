@@ -1,5 +1,5 @@
 
-import type { ValidationResult, ApiError } from '../types';
+import type { ValidationResult, ApiError } from '../types.js';
 
 interface ValidationRequest {
   idea: string;

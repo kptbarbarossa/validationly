@@ -1,5 +1,5 @@
-import { DimensionalScores, DimensionalScore, IndustryCategory, IndustryFramework } from '../types';
-import { getIndustryFramework } from './industryFrameworks';
+import { DimensionalScores, DimensionalScore, IndustryCategory, IndustryFramework } from '../types.js';
+import { getIndustryFramework } from './industryFrameworks.js';
 
 /**
  * Score Calculator Utilities

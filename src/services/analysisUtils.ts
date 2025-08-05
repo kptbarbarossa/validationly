@@ -5,7 +5,7 @@ import {
   RiskMatrix,
   EnhancedValidationResult,
   ValidationResult
-} from '../types';
+} from '../types.js';
 
 /**
  * Analysis utility functions and constants

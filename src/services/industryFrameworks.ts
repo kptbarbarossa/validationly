@@ -1,4 +1,4 @@
-import { IndustryCategory, IndustryFramework } from '../types';
+import { IndustryCategory, IndustryFramework } from '../types.js';
 
 /**
  * Industry-specific analysis frameworks and configurations

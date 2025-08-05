@@ -1,5 +1,5 @@
-import { IndustryCategory, IndustryFramework } from '../types';
-import { INDUSTRY_FRAMEWORKS, getIndustryFramework } from './industryFrameworks';
+import { IndustryCategory, IndustryFramework } from '../types.js';
+import { INDUSTRY_FRAMEWORKS, getIndustryFramework } from './industryFrameworks.js';
 
 /**
  * Enhanced Industry Knowledge Base

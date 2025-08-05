@@ -1,5 +1,5 @@
-import { IndustryCategory, IndustryClassifier } from '../types';
-import { getIndustryFramework } from './industryFrameworks';
+import { IndustryCategory, IndustryClassifier } from '../types.js';
+import { getIndustryFramework } from './industryFrameworks.js';
 import { GoogleGenAI } from '@google/genai';
 
 /**
