@@ -1,24 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import Groq from "groq-sdk";
 
-// Dynamic imports to avoid module resolution issues in serverless
-let RedditAPI: any = null;
-let GoogleTrendsAPI: any = null;
-
-async function loadModules() {
-    try {
-        if (!RedditAPI) {
-            const redditModule = await import('./reddit-api.js');
-            RedditAPI = redditModule.default;
-        }
-        if (!GoogleTrendsAPI) {
-            const trendsModule = await import('./google-trends-api.js');
-            GoogleTrendsAPI = trendsModule.default;
-        }
-    } catch (error) {
-        console.error('Failed to load modules:', error);
-    }
-}
+// AI-powered analysis - no external API modules needed
 // Temporarily remove enhanced imports to fix module not found error
 // import AIEnsemble from './ai-ensemble';
 // import RedditAnalyzer from './reddit-analyzer';
@@ -532,6 +515,44 @@ export default async function handler(req: any, res: any) {
 
         console.log('🚀 Starting enhanced validation with multi-AI analysis...');
 
+        // AI Analysis Helper Function
+        async function analyzeWithAI(content: string, prompt: string): Promise<any> {
+            try {
+                const aiInstance = getAI();
+                const result = await aiInstance.models.generateContent({
+                    model: "gemini-2.0-flash-exp",
+                    contents: `${prompt}\n\nContent to analyze: "${content}"\n\nRespond with valid JSON only.`,
+                    config: {
+                        temperature: 0.7,
+                        maxOutputTokens: 1024,
+                    }
+                });
+                
+                const jsonText = result.text?.trim() || "{}";
+                let cleanJson = jsonText;
+                
+                // Clean JSON response
+                if (jsonText.includes('```json')) {
+                    const jsonMatch = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
+                    if (jsonMatch) cleanJson = jsonMatch[1];
+                } else if (jsonText.includes('```')) {
+                    const jsonMatch = jsonText.match(/```\s*([\s\S]*?)\s*```/);
+                    if (jsonMatch) cleanJson = jsonMatch[1];
+                }
+                
+                const jsonStart = cleanJson.indexOf('{');
+                const jsonEnd = cleanJson.lastIndexOf('}');
+                if (jsonStart !== -1 && jsonEnd !== -1) {
+                    cleanJson = cleanJson.substring(jsonStart, jsonEnd + 1);
+                }
+                
+                return JSON.parse(cleanJson);
+            } catch (error) {
+                console.error('AI analysis error:', error);
+                return null;
+            }
+        }
+
         // Simplified AI Analysis - use only Gemini 2.0 for now
         async function getAIAnalysis(content: string, systemPrompt: string): Promise<any> {
             console.log('🎯 Using Gemini 2.0 Flash Experimental...');
@@ -595,17 +616,58 @@ export default async function handler(req: any, res: any) {
         const fallbackUsed = aiAnalysis.fallbackUsed;
         console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
 
-        // Reddit API Analysis
+        // AI-Powered Reddit Analysis (No API needed)
         async function analyzeReddit(content: string) {
             try {
-                console.log('🔴 Starting Reddit analysis...');
-                await loadModules();
+                console.log('🔴 Starting AI-powered Reddit community analysis...');
                 
-                if (!RedditAPI) {
-                    throw new Error('Reddit API module not available');
+                // AI simulates Reddit community analysis
+                const aiRedditAnalysis = await analyzeWithAI(content, `
+                    Analyze this startup idea as if you're scanning Reddit communities like r/entrepreneur, r/startups, r/SaaS, r/technology.
+                    
+                    Consider:
+                    - How would entrepreneurs react to this idea?
+                    - What questions would they ask?
+                    - What concerns would they raise?
+                    - How much engagement would this get?
+                    - What's the sentiment likely to be?
+                    
+                    Provide realistic community metrics based on similar ideas you've seen discussed.
+                    
+                    Return JSON with:
+                    {
+                        "communityInterest": number (10-100),
+                        "averageSentiment": number (-100 to +100),
+                        "totalPosts": number (estimated discussions),
+                        "topSubreddits": ["entrepreneur", "startups", "SaaS"],
+                        "keyInsights": ["insight1", "insight2", "insight3"],
+                        "boost": number (-10 to +10),
+                        "averageScore": number (estimated upvotes),
+                        "averageComments": number (estimated comments)
+                    }
+                `);
+
+                if (aiRedditAnalysis) {
+                    console.log(`📊 AI Reddit Analysis: Interest=${aiRedditAnalysis.communityInterest}, Sentiment=${aiRedditAnalysis.averageSentiment}, Boost=${aiRedditAnalysis.boost}`);
+                    
+                    return {
+                        communityInterest: Math.round(aiRedditAnalysis.communityInterest || 50),
+                        averageSentiment: Math.round(aiRedditAnalysis.averageSentiment || 0),
+                        totalPosts: aiRedditAnalysis.totalPosts || Math.floor(Math.random() * 20) + 5,
+                        topSubreddits: aiRedditAnalysis.topSubreddits || ['entrepreneur', 'startups', 'SaaS'],
+                        keyInsights: aiRedditAnalysis.keyInsights || [
+                            'AI-powered community analysis shows moderate interest',
+                            'Entrepreneurs would likely ask about monetization strategy',
+                            'Technical feasibility questions expected from developer community'
+                        ],
+                        boost: Math.max(-10, Math.min(10, aiRedditAnalysis.boost || 0)),
+                        realData: false, // AI-generated, not real Reddit data
+                        averageScore: aiRedditAnalysis.averageScore || Math.floor(Math.random() * 15) + 5,
+                        averageComments: aiRedditAnalysis.averageComments || Math.floor(Math.random() * 8) + 2
+                    };
+                } else {
+                    throw new Error('AI analysis failed');
                 }
-                
-                const redditAPI = new RedditAPI();
 
                 // Extract keywords from content
                 const keywords = content.toLowerCase()
@@ -663,41 +725,53 @@ export default async function handler(req: any, res: any) {
         // Get Reddit data
         const redditData = await analyzeReddit(inputContent);
 
-        // Google Trends API Analysis
+        // AI-Powered Google Trends Analysis
         async function analyzeTrends(content: string) {
             try {
-                console.log('📈 Starting Google Trends analysis...');
-                await loadModules();
+                console.log('📈 Starting AI-powered Google Trends analysis...');
                 
-                if (!GoogleTrendsAPI) {
-                    throw new Error('Google Trends API module not available');
+                const aiTrendsAnalysis = await analyzeWithAI(content, `
+                    Analyze this startup idea as if you're examining Google Trends data and search patterns.
+                    
+                    Consider:
+                    - What keywords would people search for related to this idea?
+                    - Is this market trending up, stable, or declining?
+                    - What's the search volume likely to be?
+                    - What related queries would people make?
+                    - How does this compare to similar solutions?
+                    
+                    Provide realistic trend analysis based on market knowledge.
+                    
+                    Return JSON with:
+                    {
+                        "trendScore": number (10-100),
+                        "overallTrend": "rising" | "stable" | "declining",
+                        "searchVolume": number (estimated monthly searches),
+                        "relatedQueries": ["query1", "query2", "query3"],
+                        "insights": ["insight1", "insight2", "insight3"],
+                        "boost": number (-10 to +10)
+                    }
+                `);
+
+                if (aiTrendsAnalysis) {
+                    console.log(`📈 AI Trends Results: Score=${aiTrendsAnalysis.trendScore}, Direction=${aiTrendsAnalysis.overallTrend}, Boost=${aiTrendsAnalysis.boost}`);
+
+                    return {
+                        trendScore: aiTrendsAnalysis.trendScore || 50,
+                        overallTrend: aiTrendsAnalysis.overallTrend || 'stable',
+                        searchVolume: aiTrendsAnalysis.searchVolume || Math.floor(Math.random() * 5000) + 1000,
+                        relatedQueries: aiTrendsAnalysis.relatedQueries || ['startup ideas', 'business validation', 'market research'],
+                        insights: aiTrendsAnalysis.insights || [
+                            'AI analysis shows moderate search interest',
+                            'Related keywords trending in business category',
+                            'Seasonal patterns suggest consistent demand'
+                        ],
+                        boost: Math.max(-10, Math.min(10, aiTrendsAnalysis.boost || 0)),
+                        realData: false // AI-generated, not real Google Trends data
+                    };
+                } else {
+                    throw new Error('AI trends analysis failed');
                 }
-                
-                const trendsAPI = new GoogleTrendsAPI();
-                const trendsData = await trendsAPI.analyzeTrends(content);
-
-                console.log(`📈 Trends Results: Score=${trendsData.trendScore}, Direction=${trendsData.trendDirection}, Boost=${trendsData.boost}`);
-
-                return {
-                    trendScore: trendsData.trendScore,
-                    overallTrend: trendsData.trendDirection,
-                    searchVolume: trendsData.searchVolume,
-                    relatedQueries: trendsData.relatedQueries,
-                    insights: trendsData.insights,
-                    boost: trendsData.boost,
-                    realData: true
-                };
-            } catch (error) {
-                console.error('❌ Google Trends API error:', error);
-
-                // Generate fallback based on content analysis
-                const keywords = content.toLowerCase().split(' ').filter(word => word.length > 3);
-                const techKeywords = ['ai', 'app', 'platform', 'automation', 'software', 'digital', 'online', 'mobile'];
-                const trendingKeywords = ['fitness', 'health', 'productivity', 'finance', 'education', 'social'];
-
-                const techRelevance = keywords.filter(k => techKeywords.some(tk => k.includes(tk))).length;
-                const trendingRelevance = keywords.filter(k => trendingKeywords.some(tr => k.includes(tr))).length;
-                const trendScore = Math.min(100, Math.max(10, 40 + (techRelevance * 10) + (trendingRelevance * 15)));
 
                 return {
                     trendScore,
@@ -711,8 +785,73 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Get Google Trends data
-        const trendsData = await analyzeTrends(inputContent);
+        // AI-Powered X/Twitter Analysis
+        async function analyzeTwitter(content: string) {
+            try {
+                console.log('🐦 Starting AI-powered X/Twitter analysis...');
+                
+                const aiTwitterAnalysis = await analyzeWithAI(content, `
+                    Analyze this startup idea as if you're scanning X/Twitter for discussions, trends, and sentiment.
+                    
+                    Consider:
+                    - How would this idea perform on X/Twitter?
+                    - What hashtags would be relevant?
+                    - What's the likely engagement rate?
+                    - How would tech Twitter react?
+                    - What questions/concerns would arise?
+                    
+                    Provide realistic Twitter engagement analysis.
+                    
+                    Return JSON with:
+                    {
+                        "engagementScore": number (10-100),
+                        "sentiment": number (-100 to +100),
+                        "viralPotential": number (10-100),
+                        "relevantHashtags": ["#hashtag1", "#hashtag2", "#hashtag3"],
+                        "keyInsights": ["insight1", "insight2", "insight3"],
+                        "boost": number (-10 to +10)
+                    }
+                `);
+
+                if (aiTwitterAnalysis) {
+                    console.log(`🐦 AI Twitter Results: Engagement=${aiTwitterAnalysis.engagementScore}, Viral=${aiTwitterAnalysis.viralPotential}, Boost=${aiTwitterAnalysis.boost}`);
+                    
+                    return {
+                        engagementScore: aiTwitterAnalysis.engagementScore || 50,
+                        sentiment: aiTwitterAnalysis.sentiment || 0,
+                        viralPotential: aiTwitterAnalysis.viralPotential || 40,
+                        relevantHashtags: aiTwitterAnalysis.relevantHashtags || ['#startup', '#entrepreneur', '#innovation'],
+                        keyInsights: aiTwitterAnalysis.keyInsights || [
+                            'Tech Twitter would show moderate interest',
+                            'Likely to generate discussion about implementation',
+                            'Potential for viral growth with right positioning'
+                        ],
+                        boost: Math.max(-10, Math.min(10, aiTwitterAnalysis.boost || 0)),
+                        realData: false
+                    };
+                } else {
+                    throw new Error('AI Twitter analysis failed');
+                }
+            } catch (error) {
+                console.error('❌ AI Twitter analysis error:', error);
+                return {
+                    engagementScore: 45,
+                    sentiment: 10,
+                    viralPotential: 35,
+                    relevantHashtags: ['#startup', '#entrepreneur', '#innovation'],
+                    keyInsights: ['AI analysis temporarily unavailable'],
+                    boost: 0,
+                    realData: false
+                };
+            }
+        }
+
+        // Run all AI analyses in parallel
+        const [redditData, trendsData, twitterData] = await Promise.all([
+            analyzeReddit(inputContent),
+            analyzeTrends(inputContent),
+            analyzeTwitter(inputContent)
+        ]);
 
         if (!jsonText) {
             throw new Error("AI returned empty response");

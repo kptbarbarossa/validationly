@@ -383,7 +383,7 @@ const ResultsPage: React.FC = () => {
                                     </div>
                                 </div>
 
-                                {result.validationlyScore?.dataQuality?.redditData === 'real' ? (
+                                {true ? ( // Always show AI analysis
                                     <div className="space-y-4">
                                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                             <div className="bg-orange-50 rounded-lg p-4">
@@ -412,19 +412,19 @@ const ResultsPage: React.FC = () => {
                                         </div>
 
                                         <div className="bg-gray-50 rounded-lg p-4">
-                                            <div className="text-sm font-medium text-gray-900 mb-2">🔍 Key Findings</div>
+                                            <div className="text-sm font-medium text-gray-900 mb-2">🤖 AI Community Analysis</div>
                                             <ul className="text-sm text-gray-600 space-y-1">
-                                                <li>• Active discussions in r/entrepreneur and r/startups</li>
-                                                <li>• Community shows interest in similar solutions</li>
-                                                <li>• Users frequently ask for recommendations in this space</li>
-                                                <li>• Positive engagement on related posts</li>
+                                                <li>• AI analyzed entrepreneur community patterns</li>
+                                                <li>• Simulated discussions based on similar ideas</li>
+                                                <li>• Predicted community engagement and sentiment</li>
+                                                <li>• Generated insights from startup ecosystem knowledge</li>
                                             </ul>
                                         </div>
                                     </div>
                                 ) : (
                                     <div className="bg-gray-50 rounded-lg p-4 text-center">
-                                        <div className="text-gray-500 mb-2">📊 Using simulated Reddit data</div>
-                                        <div className="text-sm text-gray-600">Real Reddit API analysis temporarily unavailable</div>
+                                        <div className="text-gray-500 mb-2">🤖 AI-Powered Analysis</div>
+                                        <div className="text-sm text-gray-600">Advanced AI simulation of community discussions</div>
                                     </div>
                                 )}
                             </div>
