@@ -97,6 +97,14 @@ export interface ValidationResult {
     fallbackUsed: boolean;
     enhancementApplied: boolean;
   };
+  // Enhanced Analysis Fields (from enhanced-validate API)
+  industry?: IndustryCategory;
+  industryConfidence?: number;
+  industryFramework?: IndustryFramework;
+  industrySpecificInsights?: string[];
+  dimensionalScores?: DimensionalScores;
+  riskMatrix?: RiskMatrix;
+  overallRiskLevel?: RiskLevel;
 }
 
 export interface PlatformSignal {

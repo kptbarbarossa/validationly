@@ -182,12 +182,12 @@ const ResultsPage: React.FC = () => {
 
     return (
         <>
-            <SEOHead 
+            <SEOHead
                 title={`Validation Results: ${result.demandScore}/100 - Validationly`}
                 description={`AI analysis shows ${result.demandScore}/100 demand score for "${(result.content || result.idea).substring(0, 100)}...". Get detailed market validation insights.`}
                 keywords="startup validation results, market demand analysis, AI validation report, business idea score"
             />
-            
+
             {/* Premium Background */}
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 relative overflow-hidden">
                 {/* Animated Background Elements */}
@@ -278,19 +278,18 @@ const ResultsPage: React.FC = () => {
                                             {status.text}
                                         </div>
                                     </div>
-                                    
+
                                     {/* Animated Progress Bar */}
                                     <div className="w-full bg-gray-200 rounded-full h-3 mb-6 overflow-hidden">
-                                        <div 
-                                            className={`h-full rounded-full transition-all duration-2000 ease-out bg-gradient-to-r ${
-                                                result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
-                                                result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
-                                                'from-red-400 to-red-600'
-                                            } ${isVisible ? `w-[${result.demandScore}%]` : 'w-0'}`}
+                                        <div
+                                            className={`h-full rounded-full transition-all duration-2000 ease-out bg-gradient-to-r ${result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
+                                                    result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
+                                                        'from-red-400 to-red-600'
+                                                } ${isVisible ? `w-[${result.demandScore}%]` : 'w-0'}`}
                                             style={{ width: isVisible ? `${result.demandScore}%` : '0%' }}
                                         ></div>
                                     </div>
-                                    
+
                                     <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
                                         "{result.content || result.idea}"
                                     </div>
@@ -341,10 +340,10 @@ const ResultsPage: React.FC = () => {
                                                         </div>
                                                     </div>
                                                 )) || (
-                                                    <div className="text-sm text-gray-600 italic">
-                                                        Industry-specific insights will be generated based on your business model
-                                                    </div>
-                                                )}
+                                                        <div className="text-sm text-gray-600 italic">
+                                                            Industry-specific insights will be generated based on your business model
+                                                        </div>
+                                                    )}
                                             </div>
                                         </div>
                                     </div>
@@ -608,7 +607,7 @@ const ResultsPage: React.FC = () => {
                                         <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-100 rounded-xl">
                                             <div className="flex items-center gap-3">
                                                 <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                                 </svg>
                                                 <span className="font-medium text-gray-900">LinkedIn</span>
                                             </div>
@@ -685,7 +684,7 @@ const ResultsPage: React.FC = () => {
                                     <p className="text-gray-600 mb-4 text-sm leading-relaxed">
                                         Get updates and startup insights on X
                                     </p>
-                                    <button 
+                                    <button
                                         onClick={() => window.open('https://x.com/kptbarbarossa', '_blank')}
                                         className="bg-gradient-to-r from-gray-800 to-black text-white px-5 py-2.5 rounded-xl font-semibold hover:from-gray-900 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
                                     >
@@ -704,7 +703,7 @@ const ResultsPage: React.FC = () => {
                                     <p className="text-gray-600 mb-4 text-sm leading-relaxed">
                                         Help us improve our AI analysis
                                     </p>
-                                    <button 
+                                    <button
                                         onClick={() => window.open('mailto:feedback@validationly.com?subject=Feedback on Analysis Results', '_blank')}
                                         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
                                     >
@@ -723,7 +722,7 @@ const ResultsPage: React.FC = () => {
                                     <p className="text-gray-600 mb-4 text-sm leading-relaxed">
                                         Buy us a coffee to keep improving
                                     </p>
-                                    <button 
+                                    <button
                                         onClick={() => window.open('https://buymeacoffee.com/kptbarbarossa', '_blank')}
                                         className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
                                     >
@@ -740,7 +739,7 @@ const ResultsPage: React.FC = () => {
                                 <p className="text-blue-100 mb-6 text-lg">
                                     {status.desc} {status.action}.
                                 </p>
-                                <button 
+                                <button
                                     onClick={() => navigate('/')}
                                     className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                                 >
