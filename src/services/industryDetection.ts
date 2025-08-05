@@ -49,7 +49,12 @@ class GeminiAIService implements AIService {
       // Parse JSON response
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
+        try {
+          return JSON.parse(jsonMatch[0]);
+        } catch (parseError) {
+          console.warn('Failed to parse AI JSON response:', parseError);
+          throw new Error('Invalid JSON format in AI response');
+        }
       }
       
       throw new Error('No valid JSON found in AI response');
@@ -73,7 +78,12 @@ class GeminiAIService implements AIService {
         
         const fallbackJsonMatch = fallbackText.match(/\{[\s\S]*\}/);
         if (fallbackJsonMatch) {
-          return JSON.parse(fallbackJsonMatch[0]);
+          try {
+            return JSON.parse(fallbackJsonMatch[0]);
+          } catch (parseError) {
+            console.warn('Failed to parse fallback AI JSON response:', parseError);
+            throw new Error('Invalid JSON format in fallback AI response');
+          }
         }
         
         throw new Error('No valid JSON found in fallback AI response');

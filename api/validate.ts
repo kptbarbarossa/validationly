@@ -722,8 +722,7 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Get Reddit data
-        const redditData = await analyzeReddit(inputContent);
+        // Reddit data will be fetched in parallel with other analyses below
 
         // AI-Powered Google Trends Analysis
         async function analyzeTrends(content: string) {
