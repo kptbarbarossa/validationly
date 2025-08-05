@@ -4,8 +4,8 @@ import {
   IndustryCategory,
   ValidationRequest,
   ApiResponse
-} from '../src/types';
-import { AnalysisOrchestrator } from '../src/services/analysisComponents';
+} from '../src/types.js';
+import { AnalysisOrchestrator } from '../src/services/analysisComponents.js';
 import { 
   generateAnalysisMetadata, 
   calculateAnalysisCompleteness,
@@ -14,8 +14,8 @@ import {
   AnalysisError,
   handleAnalysisError,
   DEFAULT_ANALYSIS_CONFIG
-} from '../src/services/analysisUtils';
-import { getIndustryFramework } from '../src/services/industryFrameworks';
+} from '../src/services/analysisUtils.js';
+import { getIndustryFramework } from '../src/services/industryFrameworks.js';
 
 /**
  * Enhanced Validation API Endpoint
