@@ -298,6 +298,99 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
 
+                        {/* Industry Analysis Section */}
+                        {result.industry && (
+                            <div className={`mb-12 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                                <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 max-w-4xl mx-auto">
+                                    <div className="text-center mb-8">
+                                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                            <span className="text-3xl">🏭</span>
+                                        </div>
+                                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Industry Analysis</h3>
+                                        <p className="text-gray-600">AI-powered industry classification and insights</p>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        {/* Industry Classification */}
+                                        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6">
+                                            <div className="flex items-center justify-between mb-4">
+                                                <h4 className="font-semibold text-gray-900">Industry Category</h4>
+                                                <div className="text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
+                                                    {result.industryConfidence || 85}% confidence
+                                                </div>
+                                            </div>
+                                            <div className="text-2xl font-bold text-indigo-700 mb-2 capitalize">
+                                                {result.industry.replace('_', ' ')}
+                                            </div>
+                                            <div className="text-sm text-gray-600">
+                                                Classified using AI analysis of market patterns and business model characteristics
+                                            </div>
+                                        </div>
+
+                                        {/* Industry Insights */}
+                                        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
+                                            <h4 className="font-semibold text-gray-900 mb-4">Key Insights</h4>
+                                            <div className="space-y-3">
+                                                {result.industrySpecificInsights?.slice(0, 3).map((insight, index) => (
+                                                    <div key={index} className="flex items-start gap-3">
+                                                        <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                            <span className="text-purple-600 text-xs">✓</span>
+                                                        </div>
+                                                        <div className="text-sm text-gray-700 leading-relaxed">
+                                                            {insight}
+                                                        </div>
+                                                    </div>
+                                                )) || (
+                                                    <div className="text-sm text-gray-600 italic">
+                                                        Industry-specific insights will be generated based on your business model
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Industry Framework Preview */}
+                                    {result.industryFramework && (
+                                        <div className="mt-8 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
+                                            <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                                                <span className="text-lg">📊</span>
+                                                Industry Framework Applied
+                                            </h4>
+                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                                                <div className="bg-white rounded-lg p-3 shadow-sm">
+                                                    <div className="text-lg font-bold text-blue-600">
+                                                        {Math.round((result.industryFramework.scoringWeights?.marketSize || 0.25) * 100)}%
+                                                    </div>
+                                                    <div className="text-xs text-gray-600">Market Size Weight</div>
+                                                </div>
+                                                <div className="bg-white rounded-lg p-3 shadow-sm">
+                                                    <div className="text-lg font-bold text-orange-600">
+                                                        {Math.round((result.industryFramework.scoringWeights?.competition || 0.25) * 100)}%
+                                                    </div>
+                                                    <div className="text-xs text-gray-600">Competition Weight</div>
+                                                </div>
+                                                <div className="bg-white rounded-lg p-3 shadow-sm">
+                                                    <div className="text-lg font-bold text-purple-600">
+                                                        {Math.round((result.industryFramework.scoringWeights?.technical || 0.25) * 100)}%
+                                                    </div>
+                                                    <div className="text-xs text-gray-600">Technical Weight</div>
+                                                </div>
+                                                <div className="bg-white rounded-lg p-3 shadow-sm">
+                                                    <div className="text-lg font-bold text-green-600">
+                                                        {Math.round((result.industryFramework.scoringWeights?.monetization || 0.25) * 100)}%
+                                                    </div>
+                                                    <div className="text-xs text-gray-600">Monetization Weight</div>
+                                                </div>
+                                            </div>
+                                            <div className="mt-4 text-sm text-gray-600 text-center">
+                                                Scoring weights are automatically adjusted based on industry best practices
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Key Metrics Grid */}
                         <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                             {/* Market Size */}
