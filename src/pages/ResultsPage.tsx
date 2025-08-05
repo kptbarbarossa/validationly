@@ -263,22 +263,35 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* Hero Score Card */}
-                        <div className={`mb-16 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            <div className="bg-white/60 backdrop-blur-2xl rounded-3xl p-12 border border-white/50 shadow-2xl max-w-4xl mx-auto">
-                                <div className="text-center">
-                                    <div className="text-lg font-medium text-gray-600 mb-6">Market Demand Score</div>
-                                    <div className="relative mb-8">
-                                        <div className="text-8xl font-extralight text-gray-800 mb-4 tracking-tight">
+                        {/* Compact Score Card with Animated Bar */}
+                        <div className={`mb-12 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                            <div className="bg-white/60 backdrop-blur-2xl rounded-2xl p-8 border border-white/50 shadow-xl max-w-3xl mx-auto">
+                                <div className="text-center mb-6">
+                                    <div className="text-base font-medium text-gray-600 mb-4">Market Demand Score</div>
+                                    <div className="flex items-center justify-center gap-4 mb-6">
+                                        <div className="text-4xl font-bold text-gray-800">
                                             {result.demandScore}
-                                            <span className="text-3xl text-gray-500 ml-3">/100</span>
+                                            <span className="text-xl text-gray-500 ml-1">/100</span>
                                         </div>
-                                        <div className={`inline-flex items-center gap-3 px-8 py-4 rounded-2xl text-xl font-semibold shadow-lg bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200`}>
-                                            <span className="text-2xl">{status.icon}</span>
+                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold shadow-md bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200`}>
+                                            <span className="text-lg">{status.icon}</span>
                                             {status.text}
                                         </div>
                                     </div>
-                                    <div className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+                                    
+                                    {/* Animated Progress Bar */}
+                                    <div className="w-full bg-gray-200 rounded-full h-3 mb-6 overflow-hidden">
+                                        <div 
+                                            className={`h-full rounded-full transition-all duration-2000 ease-out bg-gradient-to-r ${
+                                                result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
+                                                result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
+                                                'from-red-400 to-red-600'
+                                            } ${isVisible ? `w-[${result.demandScore}%]` : 'w-0'}`}
+                                            style={{ width: isVisible ? `${result.demandScore}%` : '0%' }}
+                                        ></div>
+                                    </div>
+                                    
+                                    <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
                                         "{result.content || result.idea}"
                                     </div>
                                 </div>
@@ -567,8 +580,49 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
 
+                        {/* Feedback & Support Section */}
+                        <div className={`mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8 transition-all duration-700 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                            {/* Feedback Card */}
+                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50">
+                                <div className="text-center">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                        <span className="text-3xl">💬</span>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-4">Share Your Feedback</h3>
+                                    <p className="text-gray-600 mb-6 leading-relaxed">
+                                        Help us improve Validationly! Your insights make our AI analysis better for everyone.
+                                    </p>
+                                    <button 
+                                        onClick={() => window.open('mailto:feedback@validationly.com?subject=Feedback on Analysis Results', '_blank')}
+                                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                    >
+                                        Send Feedback
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Buy Me a Coffee Card */}
+                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50">
+                                <div className="text-center">
+                                    <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                                        <span className="text-3xl">☕</span>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-gray-900 mb-4">Support Our Work</h3>
+                                    <p className="text-gray-600 mb-6 leading-relaxed">
+                                        Enjoyed the analysis? Support us with a coffee to keep improving our AI tools!
+                                    </p>
+                                    <button 
+                                        onClick={() => window.open('https://buymeacoffee.com/validationly', '_blank')}
+                                        className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                    >
+                                        Buy Me a Coffee
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Bottom CTA */}
-                        <div className={`mt-16 text-center transition-all duration-700 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                        <div className={`mt-12 text-center transition-all duration-700 delay-1100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
                             <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl">
                                 <h3 className="text-2xl font-bold mb-4">Ready to Build Your Idea?</h3>
                                 <p className="text-blue-100 mb-6 text-lg">
