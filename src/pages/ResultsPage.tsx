@@ -283,8 +283,8 @@ const ResultsPage: React.FC = () => {
                                     <div className="w-full bg-gray-200 rounded-full h-3 mb-6 overflow-hidden">
                                         <div
                                             className={`h-full rounded-full transition-all duration-2000 ease-out bg-gradient-to-r ${result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
-                                                    result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
-                                                        'from-red-400 to-red-600'
+                                                result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
+                                                    'from-red-400 to-red-600'
                                                 } ${isVisible ? `w-[${result.demandScore}%]` : 'w-0'}`}
                                             style={{ width: isVisible ? `${result.demandScore}%` : '0%' }}
                                         ></div>
