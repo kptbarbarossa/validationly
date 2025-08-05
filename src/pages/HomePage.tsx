@@ -7,6 +7,7 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
+import SEOHead from '../components/SEOHead';
 
 const sampleCategories = [
     {
@@ -204,7 +205,13 @@ const HomePage: React.FC = () => {
     };
 
     return (
-        <div className="text-center max-w-4xl mx-auto">
+        <>
+            <SEOHead 
+                title="Validationly - Validate Your Startup Idea Before You Build It"
+                description="Get AI-driven market validation for your startup idea in seconds. Analyze demand across X, Reddit, and LinkedIn with actionable insights and social media suggestions."
+                keywords="startup validation, idea validation, market research, AI analysis, startup tools, entrepreneur, indie hacker, business validation, market demand"
+            />
+            <div className="text-center max-w-4xl mx-auto">
             {/* Enhanced Hero Section - Reduced spacing */}
             <div className="relative mb-0">
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
@@ -308,7 +315,7 @@ const HomePage: React.FC = () => {
                 </div>
             </div>
         </div>
-    );
+        </>
 };
 
 export default HomePage;

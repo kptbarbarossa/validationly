@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { ValidationResult } from '../types';
+import SEOHead from '../components/SEOHead';
 
 // Clean Minimal Icons
 const HomeIcon = () => (
@@ -205,7 +206,13 @@ const ResultsPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 relative overflow-hidden">
+        <>
+            <SEOHead 
+                title={`Validation Results: ${result.demandScore}/100 - Validationly`}
+                description={`AI analysis shows ${result.demandScore}/100 demand score for "${(result.content || result.idea).substring(0, 100)}...". Get detailed market validation insights.`}
+                keywords="startup validation results, market demand analysis, AI validation report, business idea score"
+            />
+            <div className="min-h-screen bg-gray-50 relative overflow-hidden">
             {/* Subtle Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-100/30 to-purple-100/30 rounded-full blur-3xl"></div>
@@ -1053,7 +1060,7 @@ const ResultsPage: React.FC = () => {
                 </div>
             </div>
         </div>
-    );
+        </>
 };
 
 export default ResultsPage;

@@ -1,0 +1,21 @@
+# Google Search Console Sitemap Submission
+# After verifying ownership, submit these URLs:
+
+Main Sitemap:
+https://validationly.com/sitemap.xml
+
+# Additional URLs to monitor:
+https://validationly.com/
+https://validationly.com/results
+
+# Keywords to track:
+- startup validation
+- idea validation  
+- market research AI
+- startup idea validator
+- business idea analysis
+- reddit market research
+- google trends analysis
+- AI startup tools
+- entrepreneur validation
+- indie hacker tools
