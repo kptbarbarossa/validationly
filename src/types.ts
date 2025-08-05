@@ -130,3 +130,398 @@ export interface UserInput {
   isValid: boolean;
   errorMessage?: string;
 }
+
+// ===== ENHANCED ANALYSIS METHODOLOGY INTERFACES =====
+
+// Industry Classification System
+export enum IndustryCategory {
+  SAAS_TECH = 'saas_tech',
+  ECOMMERCE = 'ecommerce',
+  HEALTH_FITNESS = 'health_fitness',
+  EDUCATION = 'education',
+  FINTECH = 'fintech',
+  MARKETPLACE = 'marketplace',
+  CONSUMER_APP = 'consumer_app',
+  B2B_SERVICES = 'b2b_services',
+  HARDWARE = 'hardware',
+  CONTENT_MEDIA = 'content_media'
+}
+
+// Risk Assessment Types
+export type RiskLevel = 'Low' | 'Medium' | 'High';
+
+export interface RiskAssessment {
+  level: RiskLevel;
+  description: string;
+  mitigationStrategies: string[];
+  impact: number; // 1-10
+  probability: number; // 1-10
+}
+
+// Multi-Dimensional Scoring
+export interface DimensionalScore {
+  score: number; // 0-100
+  reasoning: string;
+  keyFactors: string[];
+  improvementAreas: string[];
+}
+
+export interface DimensionalScores {
+  marketSize: DimensionalScore;
+  competitionIntensity: DimensionalScore;
+  technicalFeasibility: DimensionalScore;
+  monetizationPotential: DimensionalScore;
+  timingTrend: DimensionalScore;
+}
+
+// Risk Matrix
+export interface RiskMatrix {
+  technical: RiskAssessment;
+  market: RiskAssessment;
+  financial: RiskAssessment;
+  regulatory: RiskAssessment;
+  execution: RiskAssessment;
+}
+
+// Competitor Analysis
+export interface CompetitorAnalysis {
+  majorPlayers: string[];
+  marketGaps: string[];
+  differentiationOpportunities: string[];
+  competitiveAdvantages: string[];
+  competitorStrengths: Record<string, string[]>;
+  marketPositioning: string[];
+}
+
+// Financial Projections
+export interface YearlyProjection {
+  year: number;
+  conservative: number;
+  realistic: number;
+  optimistic: number;
+  keyAssumptions: string[];
+}
+
+export interface CostBreakdown {
+  development: number;
+  marketing: number;
+  operations: number;
+  personnel: number;
+  other: number;
+  breakdown: Record<string, number>;
+}
+
+export interface FundingStage {
+  stage: 'seed' | 'series_a' | 'growth';
+  amount: string;
+  timeline: string;
+  keyMilestones: string[];
+  investorTypes: string[];
+}
+
+export interface FinancialProjections {
+  revenueProjection: YearlyProjection[];
+  costStructure: CostBreakdown;
+  breakEvenTimeline: string;
+  fundingRequirements: FundingStage[];
+  keyMetrics: Record<string, string>;
+}
+
+// Platform Analysis
+export interface PlatformScore {
+  score: number; // 0-100
+  viralPotential: number;
+  audienceFit: number;
+  contentStrategy: string[];
+  successFactors: string[];
+  challenges: string[];
+  recommendedApproach: string;
+}
+
+export interface PlatformAnalysis {
+  twitter: PlatformScore;
+  reddit: PlatformScore;
+  linkedin: PlatformScore;
+  tiktok: PlatformScore;
+  productHunt: PlatformScore;
+  rankedRecommendations: string[];
+}
+
+// Persona Analysis
+export interface PersonaInsight {
+  name: string;
+  description: string;
+  adoptionLikelihood: number; // 0-100
+  keyConcerns: string[];
+  persuasionStrategies: string[];
+  valueProposition: string;
+  demographicProfile: string;
+  behaviorPatterns: string[];
+}
+
+// Validation Framework
+export interface Assumption {
+  id: string;
+  description: string;
+  criticality: 'High' | 'Medium' | 'Low';
+  confidence: number; // 0-100
+  category: 'market' | 'technical' | 'business' | 'user';
+}
+
+export interface ValidationExperiment {
+  assumptionId: string;
+  experimentType: string;
+  description: string;
+  successCriteria: string;
+  failureCriteria: string;
+  requiredSampleSize: number;
+  estimatedCost: string;
+  timeframe: string;
+  resources: string[];
+  riskLevel: RiskLevel;
+}
+
+export interface ValidationTimeline {
+  totalDuration: string;
+  phases: Array<{
+    phase: string;
+    duration: string;
+    experiments: string[];
+    deliverables: string[];
+  }>;
+  decisionPoints: Array<{
+    week: number;
+    decision: string;
+    criteria: string[];
+    pivotTriggers: string[];
+  }>;
+}
+
+export interface ValidationRoadmap {
+  criticalAssumptions: Assumption[];
+  experiments: ValidationExperiment[];
+  timeline: ValidationTimeline;
+  successMetrics: string[];
+  pivotIndicators: string[];
+}
+
+// Action Planning
+export interface ActionItem {
+  id: string;
+  task: string;
+  description: string;
+  successCriteria: string;
+  requiredResources: string[];
+  timeEstimate: string;
+  priority: 'High' | 'Medium' | 'Low';
+  dependencies: string[];
+  category: 'research' | 'development' | 'marketing' | 'validation';
+}
+
+export interface WeeklyPlan {
+  week: number;
+  theme: string;
+  objectives: string[];
+  tasks: ActionItem[];
+  deliverables: string[];
+  successMetrics: string[];
+}
+
+export interface NextSteps {
+  week1: WeeklyPlan;
+  week2: WeeklyPlan;
+  week3: WeeklyPlan;
+  week4: WeeklyPlan;
+  overallGoal: string;
+  keyMilestones: string[];
+}
+
+// Market Timing Analysis
+export interface TimingAnalysis {
+  currentReadiness: number; // 0-100
+  optimalTiming: string;
+  marketConditions: string[];
+  recommendations: string[];
+  trendAnalysis: {
+    technology: string;
+    consumer: string;
+    economic: string;
+    regulatory: string;
+  };
+  waitingStrategy?: {
+    whatToWaitFor: string[];
+    preparationSteps: string[];
+    timeframe: string;
+  };
+}
+
+// Industry-Specific Framework
+export interface IndustryFramework {
+  category: IndustryCategory;
+  scoringWeights: {
+    marketSize: number;
+    competition: number;
+    technical: number;
+    monetization: number;
+    timing: number;
+  };
+  specificConsiderations: string[];
+  regulatoryFactors: string[];
+  keyMetrics: string[];
+  successPatterns: string[];
+  commonChallenges: string[];
+  typicalTimelines: {
+    mvp: string;
+    marketEntry: string;
+    profitability: string;
+  };
+}
+
+// Enhanced Validation Result
+export interface EnhancedValidationResult {
+  // Core Analysis
+  idea: string;
+  industry: IndustryCategory;
+  industryConfidence: number; // 0-100
+  overallScore: number;
+  
+  // Multi-Dimensional Scoring (Requirement 1.1)
+  dimensionalScores: DimensionalScores;
+  
+  // Industry-Specific Analysis (Requirement 2.2)
+  industryFramework: IndustryFramework;
+  industrySpecificInsights: string[];
+  
+  // Risk Assessment
+  riskMatrix: RiskMatrix;
+  overallRiskLevel: RiskLevel;
+  
+  // Competitor Intelligence
+  competitorAnalysis: CompetitorAnalysis;
+  
+  // Financial Projections
+  financialProjections: FinancialProjections;
+  
+  // Platform Analysis
+  platformAnalysis: PlatformAnalysis;
+  
+  // Persona Analysis
+  personaAnalysis: PersonaInsight[];
+  
+  // Validation Roadmap
+  validationRoadmap: ValidationRoadmap;
+  
+  // Actionable Steps
+  nextSteps: NextSteps;
+  
+  // Market Timing
+  timingAnalysis: TimingAnalysis;
+  
+  // Analysis Metadata
+  analysisMetadata: {
+    analysisDate: string;
+    aiModel: string;
+    fallbackUsed: boolean;
+    analysisVersion: string;
+    processingTime: number;
+    confidence: number; // 0-100
+    language: string;
+    completeness: number; // 0-100 - percentage of analysis components completed
+  };
+  
+  // Backward Compatibility (maintain existing interface)
+  demandScore: number; // Maps to overallScore
+  scoreJustification: string;
+  signalSummary: PlatformSignal[];
+  tweetSuggestion: string;
+  redditTitleSuggestion: string;
+  redditBodySuggestion: string;
+  linkedinSuggestion: string;
+}
+
+// Analysis Component Base Classes
+export abstract class AnalysisComponent {
+  protected industry: IndustryCategory;
+  protected language: string;
+  
+  constructor(industry: IndustryCategory, language: string = 'en') {
+    this.industry = industry;
+    this.language = language;
+  }
+  
+  abstract analyze(input: string): Promise<any>;
+  
+  protected getIndustryWeights(): { marketSize: number; competition: number; technical: number; monetization: number; timing: number } {
+    // Default weights - to be overridden by specific components
+    return {
+      marketSize: 0.25,
+      competition: 0.20,
+      technical: 0.20,
+      monetization: 0.20,
+      timing: 0.15
+    };
+  }
+  
+  protected validateScore(score: number): number {
+    return Math.max(0, Math.min(100, Math.round(score)));
+  }
+}
+
+export abstract class DimensionalScorer extends AnalysisComponent {
+  abstract calculateDimensionalScores(input: string): Promise<DimensionalScores>;
+  
+  protected calculateOverallScore(scores: DimensionalScores): number {
+    const weights = this.getIndustryWeights();
+    return this.validateScore(
+      scores.marketSize.score * weights.marketSize +
+      scores.competitionIntensity.score * weights.competition +
+      scores.technicalFeasibility.score * weights.technical +
+      scores.monetizationPotential.score * weights.monetization +
+      scores.timingTrend.score * weights.timing
+    );
+  }
+}
+
+export abstract class RiskAssessor extends AnalysisComponent {
+  abstract assessRisks(input: string): Promise<RiskMatrix>;
+  
+  protected calculateOverallRisk(risks: RiskMatrix): RiskLevel {
+    const riskScores = Object.values(risks).map(risk => {
+      switch (risk.level) {
+        case 'Low': return 1;
+        case 'Medium': return 2;
+        case 'High': return 3;
+        default: return 2;
+      }
+    });
+    
+    const averageRisk = riskScores.reduce((sum, score) => sum + score, 0) / riskScores.length;
+    
+    if (averageRisk <= 1.5) return 'Low';
+    if (averageRisk <= 2.5) return 'Medium';
+    return 'High';
+  }
+}
+
+export abstract class IndustryClassifier extends AnalysisComponent {
+  abstract classifyIndustry(input: string): Promise<{
+    category: IndustryCategory;
+    confidence: number;
+    reasoning: string;
+  }>;
+  
+  protected getIndustryKeywords(): Record<IndustryCategory, string[]> {
+    return {
+      [IndustryCategory.SAAS_TECH]: ['software', 'saas', 'api', 'platform', 'cloud', 'tech', 'app'],
+      [IndustryCategory.ECOMMERCE]: ['ecommerce', 'online store', 'marketplace', 'retail', 'shopping'],
+      [IndustryCategory.HEALTH_FITNESS]: ['health', 'fitness', 'wellness', 'medical', 'healthcare'],
+      [IndustryCategory.EDUCATION]: ['education', 'learning', 'course', 'training', 'teaching'],
+      [IndustryCategory.FINTECH]: ['finance', 'fintech', 'payment', 'banking', 'investment'],
+      [IndustryCategory.MARKETPLACE]: ['marketplace', 'platform', 'connect', 'network', 'community'],
+      [IndustryCategory.CONSUMER_APP]: ['mobile app', 'consumer', 'social', 'entertainment'],
+      [IndustryCategory.B2B_SERVICES]: ['b2b', 'business', 'enterprise', 'service', 'consulting'],
+      [IndustryCategory.HARDWARE]: ['hardware', 'device', 'iot', 'physical', 'manufacturing'],
+      [IndustryCategory.CONTENT_MEDIA]: ['content', 'media', 'publishing', 'creative', 'video']
+    };
+  }
+}

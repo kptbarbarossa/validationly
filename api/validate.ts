@@ -527,10 +527,10 @@ export default async function handler(req: any, res: any) {
                         maxOutputTokens: 1024,
                     }
                 });
-                
+
                 const jsonText = result.text?.trim() || "{}";
                 let cleanJson = jsonText;
-                
+
                 // Clean JSON response
                 if (jsonText.includes('```json')) {
                     const jsonMatch = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
@@ -539,13 +539,13 @@ export default async function handler(req: any, res: any) {
                     const jsonMatch = jsonText.match(/```\s*([\s\S]*?)\s*```/);
                     if (jsonMatch) cleanJson = jsonMatch[1];
                 }
-                
+
                 const jsonStart = cleanJson.indexOf('{');
                 const jsonEnd = cleanJson.lastIndexOf('}');
                 if (jsonStart !== -1 && jsonEnd !== -1) {
                     cleanJson = cleanJson.substring(jsonStart, jsonEnd + 1);
                 }
-                
+
                 return JSON.parse(cleanJson);
             } catch (error) {
                 console.error('AI analysis error:', error);
@@ -620,7 +620,7 @@ export default async function handler(req: any, res: any) {
         async function analyzeReddit(content: string) {
             try {
                 console.log('🔴 Starting AI-powered Reddit community analysis...');
-                
+
                 // AI simulates Reddit community analysis
                 const aiRedditAnalysis = await analyzeWithAI(content, `
                     Analyze this startup idea as if you're scanning Reddit communities like r/entrepreneur, r/startups, r/SaaS, r/technology.
@@ -649,7 +649,7 @@ export default async function handler(req: any, res: any) {
 
                 if (aiRedditAnalysis) {
                     console.log(`📊 AI Reddit Analysis: Interest=${aiRedditAnalysis.communityInterest}, Sentiment=${aiRedditAnalysis.averageSentiment}, Boost=${aiRedditAnalysis.boost}`);
-                    
+
                     return {
                         communityInterest: Math.round(aiRedditAnalysis.communityInterest || 50),
                         averageSentiment: Math.round(aiRedditAnalysis.averageSentiment || 0),
@@ -729,7 +729,7 @@ export default async function handler(req: any, res: any) {
         async function analyzeTrends(content: string) {
             try {
                 console.log('📈 Starting AI-powered Google Trends analysis...');
-                
+
                 const aiTrendsAnalysis = await analyzeWithAI(content, `
                     Analyze this startup idea as if you're examining Google Trends data and search patterns.
                     
@@ -789,7 +789,7 @@ export default async function handler(req: any, res: any) {
         async function analyzeTwitter(content: string) {
             try {
                 console.log('🐦 Starting AI-powered X/Twitter analysis...');
-                
+
                 const aiTwitterAnalysis = await analyzeWithAI(content, `
                     Analyze this startup idea as if you're scanning X/Twitter for discussions, trends, and sentiment.
                     
@@ -815,7 +815,7 @@ export default async function handler(req: any, res: any) {
 
                 if (aiTwitterAnalysis) {
                     console.log(`🐦 AI Twitter Results: Engagement=${aiTwitterAnalysis.engagementScore}, Viral=${aiTwitterAnalysis.viralPotential}, Boost=${aiTwitterAnalysis.boost}`);
-                    
+
                     return {
                         engagementScore: aiTwitterAnalysis.engagementScore || 50,
                         sentiment: aiTwitterAnalysis.sentiment || 0,
