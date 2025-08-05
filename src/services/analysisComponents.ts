@@ -901,11 +901,28 @@ export class EnhancedRiskAssessor extends RiskAssessor {
 /**
  * Enhanced Industry Classifier Implementation
  * Implements requirement 2.1 for industry detection system
+ * Uses the new IndustryDetectionService for comprehensive classification
  */
 export class EnhancedIndustryClassifier extends IndustryClassifier {
-  constructor(language: string = 'en') {
+  private industryDetectionService: any; // Will be injected
+  
+  constructor(language: string = 'en', apiKey?: string) {
     // Industry classifier doesn't need a specific industry as it determines the industry
     super(IndustryCategory.SAAS_TECH, language);
+    
+    // Import and create industry detection service
+    // Using dynamic import to avoid circular dependencies
+    this.initializeDetectionService(apiKey);
+  }
+
+  private async initializeDetectionService(apiKey?: string) {
+    try {
+      const { createIndustryDetectionService } = await import('./industryDetection');
+      this.industryDetectionService = createIndustryDetectionService(apiKey);
+    } catch (error) {
+      console.warn('Failed to initialize industry detection service:', error);
+      this.industryDetectionService = null;
+    }
   }
 
   async analyze(input: string): Promise<{ category: IndustryCategory; confidence: number; reasoning: string; }> {
@@ -917,9 +934,39 @@ export class EnhancedIndustryClassifier extends IndustryClassifier {
     confidence: number;
     reasoning: string;
   }> {
-    // This will be implemented with AI integration in later tasks
-    // For now, implementing keyword-based fallback classification
-    
+    try {
+      // Use the enhanced industry detection service if available
+      if (this.industryDetectionService) {
+        const result = await this.industryDetectionService.detectIndustry(input);
+        
+        // Validate the result
+        if (this.industryDetectionService.validateClassification(result)) {
+          return {
+            category: result.category,
+            confidence: this.industryDetectionService.getConfidenceScore(result),
+            reasoning: result.reasoning
+          };
+        }
+      }
+      
+      // Fallback to keyword-based classification
+      console.warn('Industry detection service unavailable, using fallback classification');
+      return this.fallbackClassification(input);
+      
+    } catch (error) {
+      console.error('Industry classification failed, using fallback:', error);
+      return this.fallbackClassification(input);
+    }
+  }
+
+  /**
+   * Fallback classification using keyword matching
+   */
+  private fallbackClassification(input: string): {
+    category: IndustryCategory;
+    confidence: number;
+    reasoning: string;
+  } {
     const keywords = this.getIndustryKeywords();
     const inputLower = input.toLowerCase();
     
@@ -951,13 +998,15 @@ export class EnhancedIndustryClassifier extends IndustryClassifier {
     });
     
     // Calculate confidence based on keyword matches
-    const totalKeywords = Object.values(keywords).flat().length;
-    const confidence = Math.min(100, Math.max(30, (bestScore / totalKeywords) * 100 + 30));
+    const totalKeywords = keywords[bestIndustry].length;
+    const confidence = Math.min(75, Math.max(25, (bestScore / totalKeywords) * 100 + 25));
+    
+    const matchedKeywords = this.getMatchedKeywords(inputLower, keywords[bestIndustry]);
     
     return {
       category: bestIndustry,
       confidence: Math.round(confidence),
-      reasoning: `Classified as ${bestIndustry} based on ${bestScore} keyword matches. Keywords found: ${this.getMatchedKeywords(inputLower, keywords[bestIndustry]).join(', ')}`
+      reasoning: `Classified as ${bestIndustry} using keyword analysis. Found ${bestScore} relevant keywords: ${matchedKeywords.slice(0, 3).join(', ')}${matchedKeywords.length > 3 ? '...' : ''}`
     };
   }
 
@@ -979,8 +1028,8 @@ export class AnalysisComponentFactory {
     return new EnhancedRiskAssessor(industry, language);
   }
 
-  static createIndustryClassifier(language: string = 'en'): EnhancedIndustryClassifier {
-    return new EnhancedIndustryClassifier(language);
+  static createIndustryClassifier(language: string = 'en', apiKey?: string): EnhancedIndustryClassifier {
+    return new EnhancedIndustryClassifier(language, apiKey);
   }
 }
 
@@ -990,9 +1039,11 @@ export class AnalysisComponentFactory {
  */
 export class AnalysisOrchestrator {
   private language: string;
+  private apiKey?: string;
   
-  constructor(language: string = 'en') {
+  constructor(language: string = 'en', apiKey?: string) {
     this.language = language;
+    this.apiKey = apiKey;
   }
 
   async performBasicAnalysis(input: string): Promise<{
@@ -1002,8 +1053,8 @@ export class AnalysisOrchestrator {
     overallScore: number;
     overallRisk: RiskLevel;
   }> {
-    // Step 1: Classify industry
-    const industryClassifier = AnalysisComponentFactory.createIndustryClassifier(this.language);
+    // Step 1: Classify industry using enhanced detection service
+    const industryClassifier = AnalysisComponentFactory.createIndustryClassifier(this.language, this.apiKey);
     const industryResult = await industryClassifier.classifyIndustry(input);
 
     // Step 2: Perform dimensional scoring

@@ -96,9 +96,9 @@ class EnhancedAnalysisService {
   private orchestrator: AnalysisOrchestrator;
   private language: string;
   
-  constructor(language: string = 'en') {
+  constructor(language: string = 'en', apiKey?: string) {
     this.language = language;
-    this.orchestrator = new AnalysisOrchestrator(language);
+    this.orchestrator = new AnalysisOrchestrator(language, apiKey);
   }
 
   async performEnhancedAnalysis(input: string): Promise<EnhancedValidationResult> {
@@ -536,7 +536,8 @@ export default async function handler(req: any, res: any) {
     console.log(`🌍 Detected language: ${language}`);
 
     // Perform enhanced analysis
-    const analysisService = new EnhancedAnalysisService(language);
+    const apiKey = process.env.API_KEY;
+    const analysisService = new EnhancedAnalysisService(language, apiKey);
     const enhancedResult = await analysisService.performEnhancedAnalysis(inputContent);
 
     // Return enhanced result
