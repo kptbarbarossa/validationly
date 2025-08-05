@@ -581,20 +581,39 @@ const ResultsPage: React.FC = () => {
                         </div>
 
                         {/* Feedback & Support Section */}
-                        <div className={`mt-16 grid grid-cols-1 lg:grid-cols-2 gap-8 transition-all duration-700 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            {/* Feedback Card */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50">
+                        <div className={`mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-700 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+                            {/* X (Twitter) Card */}
+                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50">
                                 <div className="text-center">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                                        <span className="text-3xl">💬</span>
+                                    <div className="w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                        <XIcon />
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-4">Share Your Feedback</h3>
-                                    <p className="text-gray-600 mb-6 leading-relaxed">
-                                        Help us improve Validationly! Your insights make our AI analysis better for everyone.
+                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Follow on X</h3>
+                                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                                        Get updates and startup insights on X
+                                    </p>
+                                    <button 
+                                        onClick={() => window.open('https://x.com/kptbarbarossa', '_blank')}
+                                        className="bg-gradient-to-r from-gray-800 to-black text-white px-5 py-2.5 rounded-xl font-semibold hover:from-gray-900 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
+                                    >
+                                        Follow @kptbarbarossa
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Feedback Card */}
+                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50">
+                                <div className="text-center">
+                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                        <span className="text-2xl">💬</span>
+                                    </div>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Share Feedback</h3>
+                                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                                        Help us improve our AI analysis
                                     </p>
                                     <button 
                                         onClick={() => window.open('mailto:feedback@validationly.com?subject=Feedback on Analysis Results', '_blank')}
-                                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
                                     >
                                         Send Feedback
                                     </button>
@@ -602,18 +621,18 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Buy Me a Coffee Card */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50">
+                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50">
                                 <div className="text-center">
-                                    <div className="w-16 h-16 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                                        <span className="text-3xl">☕</span>
+                                    <div className="w-14 h-14 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                        <span className="text-2xl">☕</span>
                                     </div>
-                                    <h3 className="text-xl font-bold text-gray-900 mb-4">Support Our Work</h3>
-                                    <p className="text-gray-600 mb-6 leading-relaxed">
-                                        Enjoyed the analysis? Support us with a coffee to keep improving our AI tools!
+                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Support Us</h3>
+                                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">
+                                        Buy us a coffee to keep improving
                                     </p>
                                     <button 
-                                        onClick={() => window.open('https://buymeacoffee.com/validationly', '_blank')}
-                                        className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                                        onClick={() => window.open('https://buymeacoffee.com/kptbarbarossa', '_blank')}
+                                        className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
                                     >
                                         Buy Me a Coffee
                                     </button>
