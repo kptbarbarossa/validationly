@@ -1061,6 +1061,7 @@ const ResultsPage: React.FC = () => {
             </div>
         </div>
         </>
+    );
 };
 
 export default ResultsPage;
