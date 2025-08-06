@@ -704,7 +704,7 @@ const ResultsPage: React.FC = () => {
                                         Help us improve our AI analysis
                                     </p>
                                     <button
-                                        onClick={() => window.open('mailto:feedback@validationly.com?subject=Feedback on Analysis Results', '_blank')}
+                                        onClick={() => window.open('https://x.com/kptbarbarossa', '_blank')}
                                         className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
                                     >
                                         Send Feedback
