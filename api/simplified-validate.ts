@@ -6,14 +6,14 @@ interface SimplifiedValidationResult {
     content?: string;
     demandScore: number;
     scoreJustification: string;
-    
+
     // Simplified platform analyses
     platformAnalyses: {
         twitter: SimplePlatformAnalysis;
         reddit: SimplePlatformAnalysis;
         linkedin: SimplePlatformAnalysis;
     };
-    
+
     // Simple content suggestions
     tweetSuggestion: string;
     redditTitleSuggestion: string;
@@ -134,25 +134,25 @@ const simplifiedResponseSchema = {
 // Error handling utilities
 function getErrorMessage(error: any, platform: string, userLanguage: string): string {
     const isturkish = userLanguage === 'tr';
-    
+
     if (error?.message?.includes('rate limit') || error?.message?.includes('quota')) {
-        return isturkish 
+        return isturkish
             ? `${platform} analizi geçici olarak kullanılamıyor (hız sınırı). Lütfen birkaç dakika sonra tekrar deneyin.`
             : `${platform} analysis temporarily unavailable (rate limit). Please try again in a few minutes.`;
     }
-    
+
     if (error?.message?.includes('network') || error?.message?.includes('timeout')) {
         return isturkish
             ? `${platform} analizi için ağ bağlantısı sorunu. Lütfen tekrar deneyin.`
             : `Network connection issue for ${platform} analysis. Please try again.`;
     }
-    
+
     if (error?.message?.includes('API_KEY') || error?.message?.includes('authentication')) {
         return isturkish
             ? `${platform} analizi geçici olarak kullanılamıyor (kimlik doğrulama sorunu).`
             : `${platform} analysis temporarily unavailable (authentication issue).`;
     }
-    
+
     // Generic error message
     return isturkish
         ? `${platform} analizi şu anda mevcut değil. Lütfen daha sonra tekrar deneyin.`
@@ -162,10 +162,10 @@ function getErrorMessage(error: any, platform: string, userLanguage: string): st
 // Enhanced default platform analysis with more meaningful content
 function createDefaultPlatformAnalysis(platform: string, userLanguage: string, errorMessage?: string): SimplePlatformAnalysis {
     const isturkish = userLanguage === 'tr';
-    
+
     const defaultMessages = {
         twitter: {
-            summary: isturkish 
+            summary: isturkish
                 ? "Twitter analizi geçici olarak mevcut değil. Genel startup fikirleri için orta seviyede viral potansiyel bekleniyor. Kısa ve etkileyici içerikler Twitter'da daha iyi performans gösterir."
                 : "Twitter analysis temporarily unavailable. Generally moderate viral potential expected for startup ideas. Short, impactful content performs better on Twitter.",
             keyFindings: [
@@ -173,12 +173,12 @@ function createDefaultPlatformAnalysis(platform: string, userLanguage: string, e
                 isturkish ? "Hashtag stratejisi: Sektör etiketleri kullanın" : "Hashtag strategy: Use industry-relevant tags",
                 isturkish ? "İçerik formatı: Kısa ve net mesajlar tercih edilir" : "Content format: Short, clear messages preferred"
             ],
-            contentSuggestion: isturkish 
+            contentSuggestion: isturkish
                 ? "280 karakter sınırını göz önünde bulundurarak kısa ve etkileyici tweet'ler hazırlayın. Sektörünüze uygun hashtag'ler kullanın ve görsel içerik ekleyerek etkileşimi artırın."
                 : "Create short, impactful tweets within the 280-character limit. Use industry-relevant hashtags and add visual content to increase engagement."
         },
         reddit: {
-            summary: isturkish 
+            summary: isturkish
                 ? "Reddit analizi geçici olarak mevcut değil. Startup fikirleri genellikle Reddit topluluklarında orta seviyede ilgi görür. Detaylı açıklamalar ve samimi yaklaşım önemlidir."
                 : "Reddit analysis temporarily unavailable. Startup ideas typically receive moderate interest in Reddit communities. Detailed explanations and authentic approach are important.",
             keyFindings: [
@@ -186,12 +186,12 @@ function createDefaultPlatformAnalysis(platform: string, userLanguage: string, e
                 isturkish ? "Subreddit önerileri: r/startups, r/entrepreneur gibi" : "Subreddit suggestions: r/startups, r/entrepreneur, etc.",
                 isturkish ? "Tartışma potansiyeli: Samimi yaklaşımla artırılabilir" : "Discussion potential: Can be increased with authentic approach"
             ],
-            contentSuggestion: isturkish 
+            contentSuggestion: isturkish
                 ? "Fikrinizi detaylı bir şekilde açıklayın, hangi problemi çözdüğünü belirtin ve topluluktan geri bildirim isteyin. r/startups, r/entrepreneur gibi ilgili subreddit'lerde paylaşın."
                 : "Explain your idea in detail, specify what problem it solves, and ask for community feedback. Share in relevant subreddits like r/startups, r/entrepreneur."
         },
         linkedin: {
-            summary: isturkish 
+            summary: isturkish
                 ? "LinkedIn analizi geçici olarak mevcut değil. İş fikirleri LinkedIn'de genellikle orta seviyede profesyonel ilgi görür. B2B odaklı yaklaşım ve iş değeri vurgusu önemlidir."
                 : "LinkedIn analysis temporarily unavailable. Business ideas typically receive moderate professional interest on LinkedIn. B2B-focused approach and business value emphasis are important.",
             keyFindings: [
@@ -199,7 +199,7 @@ function createDefaultPlatformAnalysis(platform: string, userLanguage: string, e
                 isturkish ? "Hedef kitle: Girişimciler ve sektör uzmanları" : "Target audience: Entrepreneurs and industry experts",
                 isturkish ? "Ağ değeri: Profesyonel bağlantılar kurma potansiyeli" : "Network value: Potential for professional connections"
             ],
-            contentSuggestion: isturkish 
+            contentSuggestion: isturkish
                 ? "Profesyonel bir dil kullanarak fikrinizin iş değerini vurgulayın. Sektör uzmanlarından görüş alın ve potansiyel ortaklık fırsatlarını araştırın."
                 : "Use professional language to emphasize your idea's business value. Seek insights from industry experts and explore potential partnership opportunities."
         }
@@ -222,18 +222,18 @@ function createDefaultContentSuggestions(content: string, userLanguage: string) 
     const isturkish = userLanguage === 'tr';
     const shortContent = content.substring(0, 100);
     const mediumContent = content.substring(0, 150);
-    
+
     return {
-        tweetSuggestion: isturkish 
+        tweetSuggestion: isturkish
             ? `🚀 Yeni bir fikir üzerinde çalışıyorum: "${shortContent}..." \n\nBu konuda deneyimi olan var mı? Görüşlerinizi merak ediyorum! 💭\n\n#startup #girişim #fikir #validasyon`
             : `🚀 Working on a new idea: "${shortContent}..."\n\nAnyone with experience in this area? Would love your thoughts! 💭\n\n#startup #idea #validation #feedback`,
-        redditTitleSuggestion: isturkish 
+        redditTitleSuggestion: isturkish
             ? `[Fikir Paylaşımı] ${content.substring(0, 80)}... - Topluluktan geri bildirim arıyorum`
             : `[Idea Sharing] ${content.substring(0, 80)}... - Seeking community feedback`,
-        redditBodySuggestion: isturkish 
+        redditBodySuggestion: isturkish
             ? `Merhaba r/startups topluluğu!\n\nŞu fikir üzerinde çalışıyorum ve sizin görüşlerinizi almak istiyorum:\n\n**Fikir:** ${content}\n\n**Sorularım:**\n- Bu problemi yaşayan var mı?\n- Benzer çözümler kullandınız mı?\n- Hangi özellikler en önemli olurdu?\n\nHer türlü geri bildirime açığım. Teşekkürler!`
             : `Hi r/startups community!\n\nI'm working on this idea and would love your feedback:\n\n**Idea:** ${content}\n\n**Questions:**\n- Has anyone experienced this problem?\n- Have you used similar solutions?\n- What features would be most important?\n\nOpen to all feedback. Thanks!`,
-        linkedinSuggestion: isturkish 
+        linkedinSuggestion: isturkish
             ? `💡 Yeni bir iş fikri geliştiriyorum ve sektör uzmanlarının görüşlerini almak istiyorum:\n\n"${mediumContent}..."\n\nBu alanda deneyimi olan profesyonellerden öneriler ve geri bildirimler bekliyorum. Yorumlarınızı paylaşır mısınız?\n\n#girişimcilik #startup #inovasyon #işfikri`
             : `💡 Developing a new business idea and seeking insights from industry experts:\n\n"${mediumContent}..."\n\nLooking for suggestions and feedback from professionals with experience in this area. Would you share your thoughts?\n\n#entrepreneurship #startup #innovation #businessidea`
     };
@@ -243,7 +243,7 @@ function createDefaultContentSuggestions(content: string, userLanguage: string) 
 async function analyzeTwitter(content: string, userLanguage: string): Promise<SimplePlatformAnalysis> {
     const languageInstructions = getLanguageInstructions(userLanguage);
     const platformName = userLanguage === 'tr' ? 'Twitter' : 'Twitter';
-    
+
     const systemInstruction = `You are a Twitter/X social media expert analyzing startup ideas for viral potential and trend alignment.
 
     ${languageInstructions}
@@ -301,7 +301,7 @@ async function analyzeTwitter(content: string, userLanguage: string): Promise<Si
         }
 
         const parsedResult = JSON.parse(responseText);
-        
+
         // Validate the parsed result structure
         if (!parsedResult.platformName || !parsedResult.score || !parsedResult.summary) {
             throw new Error('Invalid Twitter analysis response structure');
@@ -310,7 +310,7 @@ async function analyzeTwitter(content: string, userLanguage: string): Promise<Si
         // Validate language consistency
         const summaryLanguageValid = validateLanguageConsistency(parsedResult.summary, userLanguage);
         const contentSuggestionLanguageValid = validateLanguageConsistency(parsedResult.contentSuggestion, userLanguage);
-        
+
         if (!summaryLanguageValid || !contentSuggestionLanguageValid) {
             console.warn(`Twitter analysis language inconsistency detected. Expected: ${userLanguage}`);
             // Continue with the result but log the issue for monitoring
@@ -327,7 +327,7 @@ async function analyzeTwitter(content: string, userLanguage: string): Promise<Si
 async function analyzeReddit(content: string, userLanguage: string): Promise<SimplePlatformAnalysis> {
     const languageInstructions = getLanguageInstructions(userLanguage);
     const platformName = userLanguage === 'tr' ? 'Reddit' : 'Reddit';
-    
+
     const systemInstruction = `You are a Reddit community expert analyzing startup ideas for community fit and discussion potential.
 
     ${languageInstructions}
@@ -385,7 +385,7 @@ async function analyzeReddit(content: string, userLanguage: string): Promise<Sim
         }
 
         const parsedResult = JSON.parse(responseText);
-        
+
         // Validate the parsed result structure
         if (!parsedResult.platformName || !parsedResult.score || !parsedResult.summary) {
             throw new Error('Invalid Reddit analysis response structure');
@@ -394,7 +394,7 @@ async function analyzeReddit(content: string, userLanguage: string): Promise<Sim
         // Validate language consistency
         const summaryLanguageValid = validateLanguageConsistency(parsedResult.summary, userLanguage);
         const contentSuggestionLanguageValid = validateLanguageConsistency(parsedResult.contentSuggestion, userLanguage);
-        
+
         if (!summaryLanguageValid || !contentSuggestionLanguageValid) {
             console.warn(`Reddit analysis language inconsistency detected. Expected: ${userLanguage}`);
             // Continue with the result but log the issue for monitoring
@@ -411,7 +411,7 @@ async function analyzeReddit(content: string, userLanguage: string): Promise<Sim
 async function analyzeLinkedIn(content: string, userLanguage: string): Promise<SimplePlatformAnalysis> {
     const languageInstructions = getLanguageInstructions(userLanguage);
     const platformName = userLanguage === 'tr' ? 'LinkedIn' : 'LinkedIn';
-    
+
     const systemInstruction = `You are a LinkedIn professional network expert analyzing startup ideas for business potential and professional relevance.
 
     ${languageInstructions}
@@ -469,7 +469,7 @@ async function analyzeLinkedIn(content: string, userLanguage: string): Promise<S
         }
 
         const parsedResult = JSON.parse(responseText);
-        
+
         // Validate the parsed result structure
         if (!parsedResult.platformName || !parsedResult.score || !parsedResult.summary) {
             throw new Error('Invalid LinkedIn analysis response structure');
@@ -478,7 +478,7 @@ async function analyzeLinkedIn(content: string, userLanguage: string): Promise<S
         // Validate language consistency
         const summaryLanguageValid = validateLanguageConsistency(parsedResult.summary, userLanguage);
         const contentSuggestionLanguageValid = validateLanguageConsistency(parsedResult.contentSuggestion, userLanguage);
-        
+
         if (!summaryLanguageValid || !contentSuggestionLanguageValid) {
             console.warn(`LinkedIn analysis language inconsistency detected. Expected: ${userLanguage}`);
             // Continue with the result but log the issue for monitoring
@@ -497,45 +497,45 @@ function detectLanguage(content: string): string {
     if (!content || typeof content !== 'string') {
         return 'en'; // Default to English for invalid input
     }
-    
+
     const text = content.toLowerCase();
-    
+
     // Turkish character detection (more comprehensive)
     const turkishChars = /[çğıöşüÇĞIİÖŞÜ]/g;
     const turkishCharMatches = text.match(turkishChars);
     const turkishCharCount = turkishCharMatches ? turkishCharMatches.length : 0;
-    
+
     // Turkish words detection (expanded list)
     const turkishWords = /\b(ve|bir|bu|şu|için|ile|olan|gibi|daha|çok|en|de|da|ki|mi|mu|mı|mü|ben|sen|o|biz|siz|onlar|var|yok|iyi|kötü|büyük|küçük|yeni|eski|gelen|giden|yapan|eden|olan|şey|yer|zaman|kişi|insan|adam|kadın|çocuk|anne|baba|ev|iş|para|su|yemek|içmek|gitmek|gelmek|yapmak|etmek|olmak|vermek|almak|görmek|bilmek|söylemek|demek|çalışmak|oturmak|kalkmak|uyumak|uyanmak|sevmek|istemek|gerekli|lazım|mümkün|imkansız|kolay|zor|hızlı|yavaş|sıcak|soğuk|açık|kapalı|doğru|yanlış|güzel|çirkin|temiz|kirli|zengin|fakir|mutlu|üzgün|sağlıklı|hasta|genç|yaşlı|uzun|kısa|geniş|dar|yüksek|alçak|ağır|hafif|sert|yumuşak|tatlı|acı|tuzlu|ekşi|beyaz|siyah|kırmızı|mavi|yeşil|sarı|turuncu|mor|pembe|kahverengi|gri)\b/g;
     const turkishWordMatches = text.match(turkishWords);
     const turkishWordCount = turkishWordMatches ? turkishWordMatches.length : 0;
-    
+
     // Turkish suffixes detection
     const turkishSuffixes = /(lar|ler|dan|den|ta|te|da|de|ya|ye|a|e|ı|i|u|ü|ın|in|un|ün|nın|nin|nun|nün|sı|si|su|sü|nı|ni|nu|nü|dır|dir|dur|dür|tır|tir|tur|tür|ken|iken|ince|ınca|unca|ünce|erek|arak|arak|erek|mak|mek|acak|ecek|yor|iyor|uyor|üyor|dı|di|du|dü|tı|ti|tu|tü|mış|miş|muş|müş|se|sa|yse|ysa|ise|ısa|usa|üse)$/g;
     const turkishSuffixMatches = text.match(turkishSuffixes);
     const turkishSuffixCount = turkishSuffixMatches ? turkishSuffixMatches.length : 0;
-    
+
     // Calculate Turkish indicators score
     const totalLength = content.length;
     const turkishScore = (turkishCharCount * 3) + (turkishWordCount * 2) + turkishSuffixCount;
     const turkishRatio = totalLength > 0 ? turkishScore / totalLength : 0;
-    
+
     // Enhanced detection logic
     // If we have Turkish characters and words, it's likely Turkish
     if (turkishCharCount > 0 && turkishWordCount > 0) {
         return 'tr';
     }
-    
+
     // If we have a high ratio of Turkish indicators
     if (turkishRatio > 0.1 && turkishWordCount > 1) {
         return 'tr';
     }
-    
+
     // If we have multiple Turkish words even without special characters
     if (turkishWordCount > 2) {
         return 'tr';
     }
-    
+
     // Default to English
     return 'en';
 }
@@ -545,7 +545,7 @@ function validateLanguageConsistency(response: string, expectedLanguage: string)
     if (!response || typeof response !== 'string') {
         return false;
     }
-    
+
     const detectedLanguage = detectLanguage(response);
     return detectedLanguage === expectedLanguage;
 }
@@ -592,7 +592,7 @@ function validateAnalysisResult(result: SimplifiedValidationResult): SimplifiedV
         redditBodySuggestion: result.redditBodySuggestion || 'Reddit body suggestion unavailable',
         linkedinSuggestion: result.linkedinSuggestion || 'LinkedIn suggestion unavailable'
     };
-    
+
     return validated;
 }
 
@@ -606,13 +606,13 @@ function validatePlatformAnalysis(analysis: SimplePlatformAnalysis | undefined, 
             contentSuggestion: 'Content suggestion unavailable'
         };
     }
-    
+
     return {
         platformName: analysis.platformName || platformName,
         score: Math.max(1, Math.min(5, analysis.score || 3)),
         summary: analysis.summary || `${platformName} analysis unavailable`,
-        keyFindings: Array.isArray(analysis.keyFindings) && analysis.keyFindings.length > 0 
-            ? analysis.keyFindings 
+        keyFindings: Array.isArray(analysis.keyFindings) && analysis.keyFindings.length > 0
+            ? analysis.keyFindings
             : ['Analysis pending'],
         contentSuggestion: analysis.contentSuggestion || 'Content suggestion unavailable'
     };
@@ -623,9 +623,9 @@ function validatePlatformAnalysis(analysis: SimplePlatformAnalysis | undefined, 
 // Simplified AI analysis using platform-specific functions with enhanced error handling
 async function getSimplifiedAIAnalysis(content: string): Promise<SimplifiedValidationResult> {
     const userLanguage = detectLanguage(content);
-    
+
     const languageInstructions = getLanguageInstructions(userLanguage);
-    
+
     const systemInstruction = `You are 'Validationly', an expert AI market research analyst. Provide a simplified overall validation assessment.
 
     ${languageInstructions}
@@ -653,7 +653,7 @@ async function getSimplifiedAIAnalysis(content: string): Promise<SimplifiedValid
 
     try {
         console.log('🎯 Using platform-specific analysis approach...');
-        
+
         // Run platform analyses in parallel with individual error handling
         const [twitterAnalysis, redditAnalysis, linkedinAnalysis] = await Promise.allSettled([
             analyzeTwitter(content, userLanguage),
@@ -662,16 +662,16 @@ async function getSimplifiedAIAnalysis(content: string): Promise<SimplifiedValid
         ]);
 
         // Extract results or use defaults for failed analyses
-        const twitter = twitterAnalysis.status === 'fulfilled' 
-            ? twitterAnalysis.value 
+        const twitter = twitterAnalysis.status === 'fulfilled'
+            ? twitterAnalysis.value
             : createDefaultPlatformAnalysis('Twitter', userLanguage);
-        
-        const reddit = redditAnalysis.status === 'fulfilled' 
-            ? redditAnalysis.value 
+
+        const reddit = redditAnalysis.status === 'fulfilled'
+            ? redditAnalysis.value
             : createDefaultPlatformAnalysis('Reddit', userLanguage);
-        
-        const linkedin = linkedinAnalysis.status === 'fulfilled' 
-            ? linkedinAnalysis.value 
+
+        const linkedin = linkedinAnalysis.status === 'fulfilled'
+            ? linkedinAnalysis.value
             : createDefaultPlatformAnalysis('LinkedIn', userLanguage);
 
         // Try overall analysis with fallback
@@ -689,27 +689,27 @@ async function getSimplifiedAIAnalysis(content: string): Promise<SimplifiedValid
                     maxOutputTokens: 1024,
                 }
             });
-            
+
             const responseText = result.text?.trim();
             if (!responseText) {
                 throw new Error('Empty overall analysis response');
             }
-            
+
             overallAnalysis = JSON.parse(responseText);
         } catch (overallError) {
             console.error('Overall analysis failed, using defaults:', overallError);
             const defaultContent = createDefaultContentSuggestions(content, userLanguage);
-            
+
             // Provide more meaningful default score based on content length and complexity
             let defaultScore = 50;
             if (content.length > 200) defaultScore = 55; // Longer descriptions might indicate more thought
             if (content.includes('AI') || content.includes('app') || content.includes('platform')) defaultScore = 60; // Tech ideas often have demand
             if (content.includes('problem') || content.includes('solution')) defaultScore = 65; // Problem-solution fit awareness
-            
+
             overallAnalysis = {
                 idea: content,
                 demandScore: defaultScore,
-                scoreJustification: userLanguage === 'tr' 
+                scoreJustification: userLanguage === 'tr'
                     ? 'Detaylı analiz geçici olarak mevcut değil. Genel pazar değerlendirmesi yapıldı.'
                     : 'Detailed analysis temporarily unavailable. General market assessment provided.',
                 ...defaultContent
@@ -736,46 +736,46 @@ async function getSimplifiedAIAnalysis(content: string): Promise<SimplifiedValid
 
     } catch (error) {
         console.error('❌ Complete analysis failed, using full fallback:', error);
-        
+
         // Complete fallback when everything fails - still provide value to user
         const defaultContent = createDefaultContentSuggestions(content, userLanguage);
-        
+
         // Provide basic heuristic scoring even when AI fails
         let fallbackScore = 45; // Slightly below neutral to indicate uncertainty
         if (content.length > 100) fallbackScore += 5; // More detailed ideas
         if (content.toLowerCase().includes('ai') || content.toLowerCase().includes('app')) fallbackScore += 10;
         if (content.toLowerCase().includes('problem') || content.toLowerCase().includes('solve')) fallbackScore += 10;
         if (content.toLowerCase().includes('market') || content.toLowerCase().includes('customer')) fallbackScore += 5;
-        
+
         // Cap the score
         fallbackScore = Math.min(fallbackScore, 70);
-        
+
         const fallbackResult = {
             idea: content,
             demandScore: fallbackScore,
-            scoreJustification: userLanguage === 'tr' 
+            scoreJustification: userLanguage === 'tr'
                 ? 'AI analiz sistemi geçici olarak kullanılamıyor. Temel değerlendirme yapıldı. Daha detaylı analiz için lütfen daha sonra tekrar deneyin.'
                 : 'AI analysis system temporarily unavailable. Basic assessment provided. Please try again later for detailed analysis.',
             platformAnalyses: {
-                twitter: createDefaultPlatformAnalysis('Twitter', userLanguage, 
-                    userLanguage === 'tr' 
+                twitter: createDefaultPlatformAnalysis('Twitter', userLanguage,
+                    userLanguage === 'tr'
                         ? 'Twitter analizi geçici olarak mevcut değil, ancak genel startup fikirleri için öneriler sunuldu.'
                         : 'Twitter analysis temporarily unavailable, but general startup idea recommendations provided.'
                 ),
                 reddit: createDefaultPlatformAnalysis('Reddit', userLanguage,
-                    userLanguage === 'tr' 
+                    userLanguage === 'tr'
                         ? 'Reddit analizi geçici olarak mevcut değil, ancak topluluk etkileşimi için öneriler sunuldu.'
                         : 'Reddit analysis temporarily unavailable, but community engagement recommendations provided.'
                 ),
                 linkedin: createDefaultPlatformAnalysis('LinkedIn', userLanguage,
-                    userLanguage === 'tr' 
+                    userLanguage === 'tr'
                         ? 'LinkedIn analizi geçici olarak mevcut değil, ancak profesyonel ağ için öneriler sunuldu.'
                         : 'LinkedIn analysis temporarily unavailable, but professional networking recommendations provided.'
                 )
             },
             ...defaultContent
         };
-        
+
         return validateAnalysisResult(fallbackResult);
     }
 }
@@ -841,44 +841,44 @@ export default async function handler(req: any, res: any) {
 
     } catch (error) {
         console.error('❌ Simplified validation error:', error);
-        
+
         // Determine user language for error messages
         const { idea, content } = req.body;
         const inputContent = idea || content || '';
         const userLanguage = detectLanguage(inputContent);
         const isturkish = userLanguage === 'tr';
-        
+
         // Create user-friendly error messages
         let errorMessage = 'Analysis failed. Please try again.';
         let statusCode = 500;
-        
+
         if (error?.message?.includes('rate limit') || error?.message?.includes('quota')) {
             statusCode = 429;
-            errorMessage = isturkish 
+            errorMessage = isturkish
                 ? 'Çok fazla istek gönderildi. Lütfen birkaç dakika bekleyip tekrar deneyin.'
                 : 'Too many requests. Please wait a few minutes and try again.';
         } else if (error?.message?.includes('API_KEY') || error?.message?.includes('authentication')) {
             statusCode = 503;
-            errorMessage = isturkish 
+            errorMessage = isturkish
                 ? 'Analiz servisi geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin.'
                 : 'Analysis service temporarily unavailable. Please try again later.';
         } else if (error?.message?.includes('network') || error?.message?.includes('timeout')) {
             statusCode = 503;
-            errorMessage = isturkish 
+            errorMessage = isturkish
                 ? 'Ağ bağlantısı sorunu. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.'
                 : 'Network connection issue. Please check your internet connection and try again.';
         } else if (error?.message?.includes('validation') || error?.message?.includes('required')) {
             statusCode = 400;
-            errorMessage = isturkish 
+            errorMessage = isturkish
                 ? 'Geçersiz veri gönderildi. Lütfen fikrinizi kontrol edip tekrar deneyin.'
                 : 'Invalid data provided. Please check your idea and try again.';
         } else {
             // Generic error
-            errorMessage = isturkish 
+            errorMessage = isturkish
                 ? 'Analiz sırasında bir hata oluştu. Lütfen daha sonra tekrar deneyin.'
                 : 'An error occurred during analysis. Please try again later.';
         }
-        
+
         return res.status(statusCode).json({
             message: errorMessage,
             error: process.env.NODE_ENV === 'development' ? error.message : undefined
