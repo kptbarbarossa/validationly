@@ -67,6 +67,36 @@ export interface RealTimeInsights {
   confidence: number;
 }
 
+// Simplified validation result interface for streamlined analysis
+export interface SimplifiedValidationResult {
+  idea: string;
+  content?: string;
+  demandScore: number;
+  scoreJustification: string;
+  
+  // Simplified platform analyses
+  platformAnalyses: {
+    twitter: SimplePlatformAnalysis;
+    reddit: SimplePlatformAnalysis;
+    linkedin: SimplePlatformAnalysis;
+  };
+  
+  // Simple content suggestions (keeping existing structure)
+  tweetSuggestion: string;
+  redditTitleSuggestion: string;
+  redditBodySuggestion: string;
+  linkedinSuggestion: string;
+}
+
+export interface SimplePlatformAnalysis {
+  platformName: string;
+  score: number; // 1-5 simple score
+  summary: string; // 2-3 sentence simple explanation
+  keyFindings: string[]; // 2-3 key findings
+  contentSuggestion: string; // Platform-specific content suggestion
+}
+
+// Legacy interface for backward compatibility
 export interface ValidationResult {
   idea: string;
   demandScore: number;

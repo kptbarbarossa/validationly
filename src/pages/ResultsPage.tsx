@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { ValidationResult } from '../types';
+import type { ValidationResult, SimplifiedValidationResult } from '../types';
 import SEOHead from '../components/SEOHead';
 
 // Minimalist Premium Icons
@@ -63,7 +63,7 @@ const InfoIcon = () => (
 const ResultsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const result = location.state?.result as ValidationResult;
+    const result = location.state?.result as ValidationResult | SimplifiedValidationResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -72,30 +72,6 @@ const ResultsPage: React.FC = () => {
         const timer = setTimeout(() => setIsVisible(true), 100);
         return () => clearTimeout(timer);
     }, []);
-
-    // Helper Functions for Better UX
-    const getScoreInterpretation = (score: number = 0, type: 'market' | 'competition' | 'feasibility') => {
-        const interpretations = {
-            market: {
-                high: { text: "High Market Potential", desc: "Large addressable market with millions of potential customers.", icon: "🎯" },
-                medium: { text: "Medium Market Size", desc: "Niche market with focused targeting opportunities.", icon: "📊" },
-                low: { text: "Small Market Niche", desc: "Specialized market with limited but dedicated audience.", icon: "🔍" }
-            },
-            competition: {
-                high: { text: "High Competition", desc: "Crowded market requiring strong differentiation strategy.", icon: "⚔️" },
-                medium: { text: "Moderate Competition", desc: "Competitive but not saturated market with opportunities.", icon: "⚖️" },
-                low: { text: "Low Competition", desc: "Great! Few competitors, early mover advantage available.", icon: "🏆" }
-            },
-            feasibility: {
-                high: { text: "High Feasibility", desc: "Technically achievable with current resources and technology.", icon: "🚀" },
-                medium: { text: "Medium Complexity", desc: "Some technical challenges but manageable with planning.", icon: "🛠️" },
-                low: { text: "High Complexity", desc: "Significant technical challenges requiring expert team.", icon: "🧗" }
-            }
-        };
-
-        const level = score >= 20 ? 'high' : score >= 15 ? 'medium' : 'low';
-        return interpretations[type][level];
-    };
 
     const getOverallStatus = (score: number) => {
         if (score >= 70) return {
@@ -121,41 +97,6 @@ const ResultsPage: React.FC = () => {
         };
     };
 
-    const getActionableInsights = (result: ValidationResult) => {
-        const insights = [];
-        const marketSize = result.scoreBreakdown?.marketSize || 0;
-        const competition = result.scoreBreakdown?.competition || 0;
-        const feasibility = result.scoreBreakdown?.feasibility || 0;
-
-        if (marketSize >= 20) insights.push({ text: "Focus on large market opportunity", icon: "🎯" });
-        if (competition <= 15) insights.push({ text: "Leverage early mover advantage", icon: "🏃‍♂️" });
-        if (feasibility >= 18) insights.push({ text: "Build rapid prototype", icon: "⚡" });
-        if (result.demandScore >= 70) insights.push({ text: "Prepare investor pitch", icon: "💼" });
-
-        // Platform recommendations
-        const validationlyScore = result.validationlyScore;
-        if (validationlyScore?.breakdown?.twitter && validationlyScore.breakdown.twitter >= 25) {
-            insights.push({ text: "Launch viral campaign on X", icon: "📱" });
-        }
-        if (validationlyScore?.breakdown?.linkedin && validationlyScore.breakdown.linkedin >= 20) {
-            insights.push({ text: "Focus on B2B marketing", icon: "💼" });
-        }
-        if (validationlyScore?.breakdown?.reddit && validationlyScore.breakdown.reddit >= 20) {
-            insights.push({ text: "Build community engagement", icon: "🔴" });
-        }
-
-        // Fallback insights
-        if (insights.length === 0) {
-            insights.push(
-                { text: "Continue developing your idea", icon: "💡" },
-                { text: "Conduct market research", icon: "📊" },
-                { text: "Define target audience", icon: "🎯" }
-            );
-        }
-
-        return insights.slice(0, 6);
-    };
-
     useEffect(() => {
         if (!result) {
             navigate('/');
@@ -179,6 +120,66 @@ const ResultsPage: React.FC = () => {
     };
 
     const status = getOverallStatus(result.demandScore);
+    
+    // Check if this is a simplified result
+    const isSimplifiedResult = 'platformAnalyses' in result;
+
+    // Simple Platform Analysis Card Component
+    const PlatformCard: React.FC<{ 
+        platform: string; 
+        analysis: any; 
+        icon: React.ReactNode; 
+        bgColor: string;
+    }> = ({ platform, analysis, icon, bgColor }) => {
+        const getScoreColor = (score: number) => {
+            if (score >= 4) return 'text-green-600';
+            if (score >= 3) return 'text-yellow-600';
+            return 'text-red-600';
+        };
+
+        const getScoreText = (score: number) => {
+            if (score >= 4) return 'Excellent';
+            if (score >= 3) return 'Good';
+            if (score >= 2) return 'Fair';
+            return 'Poor';
+        };
+
+        return (
+            <div className={`bg-white rounded-xl p-6 shadow-lg border border-gray-200 ${bgColor}`}>
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                        {icon}
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-gray-900">{platform}</h3>
+                        <div className={`text-sm font-medium ${getScoreColor(analysis?.score || 3)}`}>
+                            {analysis?.score || 3}/5 - {getScoreText(analysis?.score || 3)}
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="mb-4">
+                    <p className="text-sm text-gray-600 leading-relaxed">
+                        {analysis?.summary || `AI analysis shows moderate potential for ${platform.toLowerCase()} with room for improvement through targeted content strategy.`}
+                    </p>
+                </div>
+
+                {analysis?.keyFindings && analysis.keyFindings.length > 0 && (
+                    <div className="space-y-2">
+                        <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Key Findings</h4>
+                        <ul className="space-y-1">
+                            {analysis.keyFindings.slice(0, 3).map((finding: string, index: number) => (
+                                <li key={index} className="text-xs text-gray-600 flex items-start gap-2">
+                                    <span className="text-blue-500 mt-1">•</span>
+                                    {finding}
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                )}
+            </div>
+        );
+    };
 
     return (
         <>
@@ -188,585 +189,249 @@ const ResultsPage: React.FC = () => {
                 keywords="startup validation results, market demand analysis, AI validation report, business idea score"
             />
 
-            {/* Premium Background */}
-            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 relative overflow-hidden">
-                {/* Animated Background Elements */}
-                <div className="absolute inset-0 overflow-hidden">
-                    <div className={`absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-br from-blue-100/40 to-purple-100/40 rounded-full blur-3xl transition-all duration-1000 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}></div>
-                    <div className={`absolute -bottom-40 -left-40 w-96 h-96 bg-gradient-to-br from-purple-100/40 to-blue-100/40 rounded-full blur-3xl transition-all duration-1000 delay-300 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}></div>
-                    <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-emerald-100/30 to-teal-100/30 rounded-full blur-3xl transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'}`}></div>
-                </div>
+            {/* Simplified Background */}
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+                <div className="container mx-auto px-4 py-8">
+                    {/* Header */}
+                    <div className="text-center mb-8">
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <span className="text-white font-bold text-lg">V</span>
+                            </div>
+                            <span className="font-bold text-gray-900 text-xl">Validationly</span>
+                        </div>
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                            Market Analysis Results
+                        </h1>
+                        <p className="text-gray-600">AI-powered analysis of your business idea</p>
+                    </div>
 
-                {/* Responsive Layout */}
-                <div className="flex flex-col lg:flex-row">
-                    {/* Minimalist Sidebar */}
-                    <div className="w-full lg:w-64 bg-white/80 backdrop-blur-xl border-b lg:border-b-0 lg:border-r border-gray-200/50 lg:min-h-screen relative z-10 shadow-sm">
-                        <div className="p-6">
-                            {/* Clean Logo */}
-                            <div className={`flex items-center gap-3 mb-12 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-                                <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                                    <span className="text-white font-bold text-lg">V</span>
+                    {/* Overall Score Card */}
+                    <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 max-w-3xl mx-auto mb-8">
+                        <div className="text-center">
+                            <div className="text-base font-medium text-gray-600 mb-4">Market Demand Score</div>
+                            <div className="flex items-center justify-center gap-4 mb-6">
+                                <div className="text-4xl font-bold text-gray-800">
+                                    {result.demandScore}
+                                    <span className="text-xl text-gray-500 ml-1">/100</span>
                                 </div>
-                                <span className="font-bold text-gray-900 text-xl">Validationly</span>
+                                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold shadow-md bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200`}>
+                                    <span className="text-lg">{status.icon}</span>
+                                    {status.text}
+                                </div>
                             </div>
 
-                            {/* Minimalist Navigation */}
-                            <nav className="hidden lg:block space-y-2">
-                                <div className={`flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 rounded-xl border-l-4 border-blue-600 transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-                                    <HomeIcon />
-                                    <span className="font-medium">Analysis</span>
-                                </div>
-                                <div className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50/80 rounded-xl cursor-pointer transition-all duration-300 delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-                                    <ChartIcon />
-                                    <span className="font-medium">Insights</span>
-                                </div>
-                                <div className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50/80 rounded-xl cursor-pointer transition-all duration-300 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-                                    <BookmarkIcon />
-                                    <span className="font-medium">Saved</span>
-                                </div>
-                            </nav>
+                            {/* Progress Bar */}
+                            <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
+                                <div
+                                    className={`h-full rounded-full bg-gradient-to-r ${result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
+                                        result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
+                                            'from-red-400 to-red-600'
+                                        }`}
+                                    style={{ width: `${result.demandScore}%` }}
+                                ></div>
+                            </div>
 
-                            {/* Bottom Navigation */}
-                            <div className="hidden lg:block absolute bottom-6 left-6 right-6 space-y-2">
-                                <div className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50/80 rounded-xl cursor-pointer transition-all duration-300 delay-400 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-                                    <SettingsIcon />
-                                    <span className="font-medium">Settings</span>
+                            <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                                "{result.content || result.idea}"
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Platform Analysis Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        {isSimplifiedResult ? (
+                            // Simplified result with platform analyses
+                            <>
+                                <PlatformCard
+                                    platform="X (Twitter)"
+                                    analysis={(result as SimplifiedValidationResult).platformAnalyses?.twitter}
+                                    icon={<XIcon />}
+                                    bgColor="hover:bg-blue-50"
+                                />
+                                <PlatformCard
+                                    platform="Reddit"
+                                    analysis={(result as SimplifiedValidationResult).platformAnalyses?.reddit}
+                                    icon={<RedditIcon />}
+                                    bgColor="hover:bg-orange-50"
+                                />
+                                <PlatformCard
+                                    platform="LinkedIn"
+                                    analysis={(result as SimplifiedValidationResult).platformAnalyses?.linkedin}
+                                    icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                    </svg>}
+                                    bgColor="hover:bg-indigo-50"
+                                />
+                            </>
+                        ) : (
+                            // Legacy result - create simplified cards from existing data
+                            <>
+                                <PlatformCard
+                                    platform="X (Twitter)"
+                                    analysis={{
+                                        score: Math.min(5, Math.max(1, Math.round(((result as ValidationResult).validationlyScore?.breakdown?.twitter || 25) / 20))),
+                                        summary: `Twitter shows ${(result as ValidationResult).demandScore >= 60 ? 'strong' : (result as ValidationResult).demandScore >= 40 ? 'moderate' : 'limited'} potential for viral content and community engagement.`,
+                                        keyFindings: [
+                                            'AI-generated content suggestions available',
+                                            `${(result as ValidationResult).demandScore >= 50 ? 'Good' : 'Moderate'} audience alignment detected`,
+                                            'Hashtag strategy recommended'
+                                        ]
+                                    }}
+                                    icon={<XIcon />}
+                                    bgColor="hover:bg-blue-50"
+                                />
+                                <PlatformCard
+                                    platform="Reddit"
+                                    analysis={{
+                                        score: Math.min(5, Math.max(1, Math.round(((result as ValidationResult).validationlyScore?.breakdown?.reddit || 20) / 20))),
+                                        summary: `Reddit communities show ${(result as ValidationResult).demandScore >= 60 ? 'high' : (result as ValidationResult).demandScore >= 40 ? 'moderate' : 'limited'} interest in discussing similar topics.`,
+                                        keyFindings: [
+                                            'Community engagement potential identified',
+                                            `${(result as ValidationResult).realTimeInsights?.reddit?.sentiment ? 'Positive' : 'Mixed'} sentiment detected`,
+                                            'Subreddit recommendations available'
+                                        ]
+                                    }}
+                                    icon={<RedditIcon />}
+                                    bgColor="hover:bg-orange-50"
+                                />
+                                <PlatformCard
+                                    platform="LinkedIn"
+                                    analysis={{
+                                        score: Math.min(5, Math.max(1, Math.round(((result as ValidationResult).validationlyScore?.breakdown?.linkedin || 18) / 20))),
+                                        summary: `LinkedIn shows ${(result as ValidationResult).demandScore >= 60 ? 'strong' : (result as ValidationResult).demandScore >= 40 ? 'moderate' : 'limited'} potential for professional networking and B2B engagement.`,
+                                        keyFindings: [
+                                            'Professional audience alignment',
+                                            'B2B networking opportunities',
+                                            'Thought leadership potential'
+                                        ]
+                                    }}
+                                    icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                    </svg>}
+                                    bgColor="hover:bg-indigo-50"
+                                />
+                            </>
+                        )}
+                    </div>
+
+                    {/* Simplified Content Suggestions */}
+                    <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 max-w-4xl mx-auto mb-8">
+                        <div className="text-center mb-6">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">Test Your Idea</h3>
+                            <p className="text-gray-600">Copy and use these AI-generated posts to validate your idea on social platforms</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Twitter Suggestion */}
+                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                            <XIcon />
+                                        </div>
+                                        <span className="font-semibold text-gray-900">X (Twitter)</span>
+                                    </div>
+                                    <button
+                                        onClick={() => handleCopyToClipboard(result.tweetSuggestion, 'tweet')}
+                                        className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                                    >
+                                        {copiedId === 'tweet' ? '✓ Copied!' : 'Copy'}
+                                    </button>
                                 </div>
-                                <div className={`flex items-center gap-3 px-4 py-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50/80 rounded-xl cursor-pointer transition-all duration-300 delay-500 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-4'}`}>
-                                    <HelpIcon />
-                                    <span className="font-medium">Help</span>
+                                <div className="text-sm text-gray-700 leading-relaxed bg-white rounded-lg p-4 border border-blue-200">
+                                    {result.tweetSuggestion}
+                                </div>
+                                <div className="mt-3 text-xs text-blue-700 font-medium">
+                                    💡 Best for: Quick validation & viral potential
+                                </div>
+                            </div>
+
+                            {/* Reddit Suggestion */}
+                            <div className="bg-gradient-to-br from-orange-50 to-red-100 rounded-xl p-6 border border-orange-200">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                                            <RedditIcon />
+                                        </div>
+                                        <span className="font-semibold text-gray-900">Reddit</span>
+                                    </div>
+                                    <button
+                                        onClick={() => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit')}
+                                        className="text-xs bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+                                    >
+                                        {copiedId === 'reddit' ? '✓ Copied!' : 'Copy'}
+                                    </button>
+                                </div>
+                                <div className="bg-white rounded-lg p-4 border border-orange-200">
+                                    <div className="text-sm font-semibold text-gray-900 mb-2">
+                                        {result.redditTitleSuggestion}
+                                    </div>
+                                    <div className="text-sm text-gray-700 leading-relaxed">
+                                        {result.redditBodySuggestion}
+                                    </div>
+                                </div>
+                                <div className="mt-3 text-xs text-orange-700 font-medium">
+                                    💡 Best for: Detailed feedback & community insights
+                                </div>
+                            </div>
+
+                            {/* LinkedIn Suggestion */}
+                            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 border border-indigo-200">
+                                <div className="flex items-center justify-between mb-4">
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                                            <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                            </svg>
+                                        </div>
+                                        <span className="font-semibold text-gray-900">LinkedIn</span>
+                                    </div>
+                                    <button
+                                        onClick={() => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin')}
+                                        className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                                    >
+                                        {copiedId === 'linkedin' ? '✓ Copied!' : 'Copy'}
+                                    </button>
+                                </div>
+                                <div className="text-sm text-gray-700 leading-relaxed bg-white rounded-lg p-4 border border-indigo-200">
+                                    {result.linkedinSuggestion}
+                                </div>
+                                <div className="mt-3 text-xs text-indigo-700 font-medium">
+                                    💡 Best for: Professional validation & B2B feedback
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <div className="flex items-start gap-3">
+                                <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-blue-600 text-sm">💡</span>
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-semibold text-gray-900 mb-1">Quick Validation Tips</h4>
+                                    <p className="text-xs text-gray-600 leading-relaxed">
+                                        Post these suggestions on the respective platforms and monitor engagement, comments, and direct messages. 
+                                        High engagement indicates strong market interest. Save positive responses as social proof for future marketing.
+                                    </p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Main Content */}
-                    <div className="flex-1 p-6 lg:p-12 relative z-10">
-                        {/* Header */}
-                        <div className={`flex flex-col lg:flex-row lg:items-center lg:justify-between mb-12 gap-6 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            <div>
-                                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                                    Market Intelligence Report
-                                </h1>
-                                <p className="text-lg text-gray-600">AI-powered analysis of your business idea</p>
-                            </div>
-                            <div className="flex items-center gap-4 bg-white/80 backdrop-blur-xl rounded-2xl px-6 py-4 shadow-lg border border-gray-200/50">
-                                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg">
-                                    <span className="text-white font-bold text-lg">AI</span>
-                                </div>
-                                <div>
-                                    <div className="font-semibold text-gray-900">Analysis Complete</div>
-                                    <div className="text-sm text-gray-500">
-                                        {result.enhancementMetadata?.aiConfidence ? `${result.enhancementMetadata.aiConfidence}% confidence` : 'High confidence'}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Compact Score Card with Animated Bar */}
-                        <div className={`mb-12 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            <div className="bg-white/60 backdrop-blur-2xl rounded-2xl p-8 border border-white/50 shadow-xl max-w-3xl mx-auto">
-                                <div className="text-center mb-6">
-                                    <div className="text-base font-medium text-gray-600 mb-4">Market Demand Score</div>
-                                    <div className="flex items-center justify-center gap-4 mb-6">
-                                        <div className="text-4xl font-bold text-gray-800">
-                                            {result.demandScore}
-                                            <span className="text-xl text-gray-500 ml-1">/100</span>
-                                        </div>
-                                        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold shadow-md bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200`}>
-                                            <span className="text-lg">{status.icon}</span>
-                                            {status.text}
-                                        </div>
-                                    </div>
-
-                                    {/* Animated Progress Bar */}
-                                    <div className="w-full bg-gray-200 rounded-full h-3 mb-6 overflow-hidden">
-                                        <div
-                                            className={`h-full rounded-full transition-all duration-2000 ease-out bg-gradient-to-r ${result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
-                                                result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
-                                                    'from-red-400 to-red-600'
-                                                } ${isVisible ? `w-[${result.demandScore}%]` : 'w-0'}`}
-                                            style={{ width: isVisible ? `${result.demandScore}%` : '0%' }}
-                                        ></div>
-                                    </div>
-
-                                    <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-                                        "{result.content || result.idea}"
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Industry Analysis Section */}
-                        {result.industry && (
-                            <div className={`mb-12 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 max-w-4xl mx-auto">
-                                    <div className="text-center mb-8">
-                                        <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                            <span className="text-3xl">🏭</span>
-                                        </div>
-                                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Industry Analysis</h3>
-                                        <p className="text-gray-600">AI-powered industry classification and insights</p>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                        {/* Industry Classification */}
-                                        <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <h4 className="font-semibold text-gray-900">Industry Category</h4>
-                                                <div className="text-sm bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full">
-                                                    {result.industryConfidence || 85}% confidence
-                                                </div>
-                                            </div>
-                                            <div className="text-2xl font-bold text-indigo-700 mb-2 capitalize">
-                                                {result.industry.replace('_', ' ')}
-                                            </div>
-                                            <div className="text-sm text-gray-600">
-                                                Classified using AI analysis of market patterns and business model characteristics
-                                            </div>
-                                        </div>
-
-                                        {/* Industry Insights */}
-                                        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
-                                            <h4 className="font-semibold text-gray-900 mb-4">Key Insights</h4>
-                                            <div className="space-y-3">
-                                                {result.industrySpecificInsights?.slice(0, 3).map((insight, index) => (
-                                                    <div key={index} className="flex items-start gap-3">
-                                                        <div className="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                                            <span className="text-purple-600 text-xs">✓</span>
-                                                        </div>
-                                                        <div className="text-sm text-gray-700 leading-relaxed">
-                                                            {insight}
-                                                        </div>
-                                                    </div>
-                                                )) || (
-                                                        <div className="text-sm text-gray-600 italic">
-                                                            Industry-specific insights will be generated based on your business model
-                                                        </div>
-                                                    )}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Industry Framework Preview */}
-                                    {result.industryFramework && (
-                                        <div className="mt-8 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
-                                            <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-                                                <span className="text-lg">📊</span>
-                                                Industry Framework Applied
-                                            </h4>
-                                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                                                <div className="bg-white rounded-lg p-3 shadow-sm">
-                                                    <div className="text-lg font-bold text-blue-600">
-                                                        {Math.round((result.industryFramework.scoringWeights?.marketSize || 0.25) * 100)}%
-                                                    </div>
-                                                    <div className="text-xs text-gray-600">Market Size Weight</div>
-                                                </div>
-                                                <div className="bg-white rounded-lg p-3 shadow-sm">
-                                                    <div className="text-lg font-bold text-orange-600">
-                                                        {Math.round((result.industryFramework.scoringWeights?.competition || 0.25) * 100)}%
-                                                    </div>
-                                                    <div className="text-xs text-gray-600">Competition Weight</div>
-                                                </div>
-                                                <div className="bg-white rounded-lg p-3 shadow-sm">
-                                                    <div className="text-lg font-bold text-purple-600">
-                                                        {Math.round((result.industryFramework.scoringWeights?.technical || 0.25) * 100)}%
-                                                    </div>
-                                                    <div className="text-xs text-gray-600">Technical Weight</div>
-                                                </div>
-                                                <div className="bg-white rounded-lg p-3 shadow-sm">
-                                                    <div className="text-lg font-bold text-green-600">
-                                                        {Math.round((result.industryFramework.scoringWeights?.monetization || 0.25) * 100)}%
-                                                    </div>
-                                                    <div className="text-xs text-gray-600">Monetization Weight</div>
-                                                </div>
-                                            </div>
-                                            <div className="mt-4 text-sm text-gray-600 text-center">
-                                                Scoring weights are automatically adjusted based on industry best practices
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Key Metrics Grid */}
-                        <div className={`grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            {/* Market Size */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-pink-100 to-pink-200 rounded-2xl flex items-center justify-center shadow-lg">
-                                        <span className="text-2xl">{getScoreInterpretation(result.scoreBreakdown?.marketSize ?? 20, 'market').icon}</span>
-                                    </div>
-                                    <div className="text-4xl font-bold text-gray-900">{result.scoreBreakdown?.marketSize ?? 20}</div>
-                                </div>
-                                <div className="text-gray-900 font-semibold text-lg mb-3">
-                                    {getScoreInterpretation(result.scoreBreakdown?.marketSize ?? 20, 'market').text}
-                                </div>
-                                <div className="text-gray-600 leading-relaxed">
-                                    {getScoreInterpretation(result.scoreBreakdown?.marketSize ?? 20, 'market').desc}
-                                </div>
-                            </div>
-
-                            {/* Competition */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-orange-100 to-orange-200 rounded-2xl flex items-center justify-center shadow-lg">
-                                        <span className="text-2xl">{getScoreInterpretation(result.scoreBreakdown?.competition ?? 15, 'competition').icon}</span>
-                                    </div>
-                                    <div className="text-4xl font-bold text-gray-900">{result.scoreBreakdown?.competition ?? 15}</div>
-                                </div>
-                                <div className="text-gray-900 font-semibold text-lg mb-3">
-                                    {getScoreInterpretation(result.scoreBreakdown?.competition ?? 15, 'competition').text}
-                                </div>
-                                <div className="text-gray-600 leading-relaxed">
-                                    {getScoreInterpretation(result.scoreBreakdown?.competition ?? 15, 'competition').desc}
-                                </div>
-                            </div>
-
-                            {/* Feasibility */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-purple-100 to-purple-200 rounded-2xl flex items-center justify-center shadow-lg">
-                                        <span className="text-2xl">{getScoreInterpretation(result.scoreBreakdown?.feasibility ?? 17, 'feasibility').icon}</span>
-                                    </div>
-                                    <div className="text-4xl font-bold text-gray-900">{result.scoreBreakdown?.feasibility ?? 17}</div>
-                                </div>
-                                <div className="text-gray-900 font-semibold text-lg mb-3">
-                                    {getScoreInterpretation(result.scoreBreakdown?.feasibility ?? 17, 'feasibility').text}
-                                </div>
-                                <div className="text-gray-600 leading-relaxed">
-                                    {getScoreInterpretation(result.scoreBreakdown?.feasibility ?? 17, 'feasibility').desc}
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Two Column Layout */}
-                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-12">
-                            {/* Left Column - Analysis */}
-                            <div className="space-y-8">
-                                {/* Community Analysis */}
-                                <div className={`bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 transition-all duration-700 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-orange-100 to-red-100 rounded-2xl flex items-center justify-center shadow-lg">
-                                            <RedditIcon />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900">Community Analysis</h3>
-                                            <p className="text-gray-600">Real discussions and sentiment</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-3 gap-4 mb-6">
-                                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 text-center">
-                                            <div className="text-2xl font-bold text-orange-600 mb-1">
-                                                {result.enhancementMetadata?.redditBoost || 0 > 0 ? `+${result.enhancementMetadata?.redditBoost}` : result.enhancementMetadata?.redditBoost || 0}
-                                            </div>
-                                            <div className="text-sm font-medium text-gray-900">Impact</div>
-                                        </div>
-                                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
-                                            <div className="text-2xl font-bold text-blue-600 mb-1">
-                                                {result.realTimeInsights?.reddit?.topSubreddits?.length || 
-                                                 result.signalSummary?.find(s => s.platform === 'Reddit') ? '15+' : '5+'}
-                                            </div>
-                                            <div className="text-sm font-medium text-gray-900">Posts</div>
-                                        </div>
-                                        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
-                                            <div className="text-2xl font-bold text-green-600 mb-1">
-                                                {result.realTimeInsights?.reddit?.sentiment ? 
-                                                 (result.realTimeInsights.reddit.sentiment > 0 ? 'Positive' : 
-                                                  result.realTimeInsights.reddit.sentiment === 0 ? 'Neutral' : 'Mixed') :
-                                                 (result.demandScore >= 60 ? 'Positive' : result.demandScore >= 40 ? 'Mixed' : 'Cautious')}
-                                            </div>
-                                            <div className="text-sm font-medium text-gray-900">Sentiment</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-6">
-                                        <div className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            <span className="text-lg">🤖</span>
-                                            AI Community Analysis
-                                        </div>
-                                        {result.realTimeInsights?.reddit?.keyInsights?.length ? (
-                                            <ul className="text-sm text-gray-600 space-y-2">
-                                                {result.realTimeInsights.reddit.keyInsights.slice(0, 3).map((insight, index) => (
-                                                    <li key={index} className="flex items-start gap-2">
-                                                        <span className="text-blue-500 mt-1">•</span>
-                                                        {insight}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        ) : (
-                                            <ul className="text-sm text-gray-600 space-y-2">
-                                                <li className="flex items-start gap-2">
-                                                    <span className="text-blue-500 mt-1">•</span>
-                                                    AI analyzed market patterns and community discussions
-                                                </li>
-                                                <li className="flex items-start gap-2">
-                                                    <span className="text-blue-500 mt-1">•</span>
-                                                    Generated insights based on similar successful ideas
-                                                </li>
-                                                <li className="flex items-start gap-2">
-                                                    <span className="text-blue-500 mt-1">•</span>
-                                                    Evaluated community engagement potential using AI analysis
-                                                </li>
-                                            </ul>
-                                        )}
-                                    </div>
-                                </div>
-
-                                {/* Trends Analysis */}
-                                <div className={`bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 transition-all duration-700 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center shadow-lg">
-                                            <TrendUpIcon />
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900">Trend Analysis</h3>
-                                            <p className="text-gray-600">Search interest and momentum</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-3 gap-4 mb-6">
-                                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 text-center">
-                                            <div className="text-2xl font-bold text-blue-600 mb-1">
-                                                {result.enhancementMetadata?.trendsBoost || 0 > 0 ? `+${result.enhancementMetadata?.trendsBoost}` : result.enhancementMetadata?.trendsBoost || 0}
-                                            </div>
-                                            <div className="text-sm font-medium text-gray-900">Impact</div>
-                                        </div>
-                                        <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 text-center">
-                                            <div className="text-2xl font-bold text-green-600 mb-1">
-                                                {result.realTimeInsights?.trends?.trendScore || 
-                                                 Math.round(result.demandScore * 0.7)}
-                                            </div>
-                                            <div className="text-sm font-medium text-gray-900">Interest</div>
-                                        </div>
-                                        <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 text-center">
-                                            <div className="text-2xl font-bold text-purple-600 mb-1">
-                                                {result.realTimeInsights?.trends?.overallTrend === 'rising' ? 'Rising' :
-                                                 result.realTimeInsights?.trends?.overallTrend === 'declining' ? 'Declining' :
-                                                 result.realTimeInsights?.trends?.overallTrend === 'stable' ? 'Stable' :
-                                                 (result.demandScore >= 60 ? 'Rising' : result.demandScore >= 40 ? 'Stable' : 'Mixed')}
-                                            </div>
-                                            <div className="text-sm font-medium text-gray-900">Trend</div>
-                                        </div>
-                                    </div>
-
-                                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
-                                        <div className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                                            <span className="text-lg">📈</span>
-                                            Market Momentum
-                                        </div>
-                                        <div className="text-sm text-gray-600">
-                                            {result.realTimeInsights?.trends?.insights?.length ? 
-                                                result.realTimeInsights.trends.insights.slice(0, 2).join('. ') + '.' :
-                                                `Search interest analysis shows ${result.demandScore >= 60 ? 'positive momentum' : result.demandScore >= 40 ? 'moderate interest' : 'emerging potential'} with ${result.demandScore >= 50 ? 'growing' : 'developing'} awareness in your target market.`}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Right Column - Insights & Actions */}
-                            <div className="space-y-8">
-                                {/* Action Items */}
-                                <div className={`bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-2xl flex items-center justify-center shadow-lg">
-                                            <span className="text-2xl">🎯</span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900">Next Actions</h3>
-                                            <p className="text-gray-600">Recommended steps forward</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        {getActionableInsights(result).map((insight, index) => (
-                                            <div key={index} className="flex items-start gap-4 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl hover:from-gray-100 hover:to-gray-200 transition-all duration-300">
-                                                <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                                                    <span className="text-lg">{insight.icon}</span>
-                                                </div>
-                                                <div className="flex-1">
-                                                    <div className="font-medium text-gray-900">{insight.text}</div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-
-                                {/* Platform Recommendations */}
-                                <div className={`bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 transition-all duration-700 delay-800 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-violet-100 to-purple-100 rounded-2xl flex items-center justify-center shadow-lg">
-                                            <span className="text-2xl">📱</span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900">Platform Strategy</h3>
-                                            <p className="text-gray-600">Where to focus your efforts</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl">
-                                            <div className="flex items-center gap-3">
-                                                <XIcon />
-                                                <span className="font-medium text-gray-900">X (Twitter)</span>
-                                            </div>
-                                            <div className="text-lg font-bold text-blue-600">
-                                                {result.validationlyScore?.breakdown?.twitter || 25}
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-red-100 rounded-xl">
-                                            <div className="flex items-center gap-3">
-                                                <RedditIcon />
-                                                <span className="font-medium text-gray-900">Reddit</span>
-                                            </div>
-                                            <div className="text-lg font-bold text-orange-600">
-                                                {result.validationlyScore?.breakdown?.reddit || 20}
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-blue-50 to-indigo-100 rounded-xl">
-                                            <div className="flex items-center gap-3">
-                                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                                </svg>
-                                                <span className="font-medium text-gray-900">LinkedIn</span>
-                                            </div>
-                                            <div className="text-lg font-bold text-blue-600">
-                                                {result.validationlyScore?.breakdown?.linkedin || 18}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Content Suggestions */}
-                                <div className={`bg-white/70 backdrop-blur-xl rounded-2xl p-8 shadow-xl border border-white/50 transition-all duration-700 delay-900 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                                    <div className="flex items-center gap-4 mb-8">
-                                        <div className="w-14 h-14 bg-gradient-to-br from-pink-100 to-rose-100 rounded-2xl flex items-center justify-center shadow-lg">
-                                            <span className="text-2xl">✨</span>
-                                        </div>
-                                        <div>
-                                            <h3 className="text-xl font-bold text-gray-900">Content Ideas</h3>
-                                            <p className="text-gray-600">Ready-to-use suggestions</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="space-y-6">
-                                        {/* Twitter Suggestion */}
-                                        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-6">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <XIcon />
-                                                <span className="font-semibold text-gray-900">X Post</span>
-                                                <button
-                                                    onClick={() => handleCopyToClipboard(result.tweetSuggestion, 'tweet')}
-                                                    className="ml-auto text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition-colors"
-                                                >
-                                                    {copiedId === 'tweet' ? 'Copied!' : 'Copy'}
-                                                </button>
-                                            </div>
-                                            <div className="text-sm text-gray-700 leading-relaxed">
-                                                {result.tweetSuggestion}
-                                            </div>
-                                        </div>
-
-                                        {/* Reddit Suggestion */}
-                                        <div className="bg-gradient-to-r from-orange-50 to-red-100 rounded-xl p-6">
-                                            <div className="flex items-center gap-2 mb-3">
-                                                <RedditIcon />
-                                                <span className="font-semibold text-gray-900">Reddit Post</span>
-                                                <button
-                                                    onClick={() => handleCopyToClipboard(result.redditTitleSuggestion, 'reddit')}
-                                                    className="ml-auto text-xs bg-orange-600 text-white px-3 py-1 rounded-lg hover:bg-orange-700 transition-colors"
-                                                >
-                                                    {copiedId === 'reddit' ? 'Copied!' : 'Copy'}
-                                                </button>
-                                            </div>
-                                            <div className="text-sm font-medium text-gray-900 mb-2">
-                                                {result.redditTitleSuggestion}
-                                            </div>
-                                            <div className="text-sm text-gray-700 leading-relaxed">
-                                                {result.redditBodySuggestion}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Feedback & Support Section */}
-                        <div className={`mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 transition-all duration-700 delay-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            {/* X (Twitter) Card */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50">
-                                <div className="text-center">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                        <XIcon />
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Follow on X</h3>
-                                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                                        Get updates and startup insights on X
-                                    </p>
-                                    <button
-                                        onClick={() => window.open('https://x.com/kptbarbarossa', '_blank')}
-                                        className="bg-gradient-to-r from-gray-800 to-black text-white px-5 py-2.5 rounded-xl font-semibold hover:from-gray-900 hover:to-gray-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
-                                    >
-                                        Follow @kptbarbarossa
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Feedback Card */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50">
-                                <div className="text-center">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-blue-100 to-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                        <span className="text-2xl">💬</span>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Share Feedback</h3>
-                                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                                        Help us improve our AI analysis
-                                    </p>
-                                    <button
-                                        onClick={() => window.open('https://x.com/kptbarbarossa', '_blank')}
-                                        className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
-                                    >
-                                        Send Feedback
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Buy Me a Coffee Card */}
-                            <div className="bg-white/70 backdrop-blur-xl rounded-2xl p-6 shadow-xl border border-white/50">
-                                <div className="text-center">
-                                    <div className="w-14 h-14 bg-gradient-to-br from-amber-100 to-orange-100 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                        <span className="text-2xl">☕</span>
-                                    </div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-3">Support Us</h3>
-                                    <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-                                        Buy us a coffee to keep improving
-                                    </p>
-                                    <button
-                                        onClick={() => window.open('https://buymeacoffee.com/kptbarbarossa', '_blank')}
-                                        className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-5 py-2.5 rounded-xl font-semibold hover:from-amber-600 hover:to-orange-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
-                                    >
-                                        Buy Me a Coffee
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Bottom CTA */}
-                        <div className={`mt-12 text-center transition-all duration-700 delay-1100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
-                            <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-2xl">
-                                <h3 className="text-2xl font-bold mb-4">Ready to Build Your Idea?</h3>
-                                <p className="text-blue-100 mb-6 text-lg">
-                                    {status.desc} {status.action}.
-                                </p>
-                                <button
-                                    onClick={() => navigate('/')}
-                                    className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                                >
-                                    Analyze Another Idea
-                                </button>
-                            </div>
+                    {/* Bottom CTA */}
+                    <div className="text-center">
+                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg max-w-2xl mx-auto">
+                            <h3 className="text-2xl font-bold mb-4">Ready to Build Your Idea?</h3>
+                            <p className="text-blue-100 mb-6 text-lg">
+                                {status.desc} {status.action}.
+                            </p>
+                            <button
+                                onClick={() => navigate('/')}
+                                className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 shadow-lg"
+                            >
+                                Analyze Another Idea
+                            </button>
                         </div>
                     </div>
                 </div>

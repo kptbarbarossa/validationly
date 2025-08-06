@@ -7,7 +7,36 @@ import Groq from "groq-sdk";
 // import RedditAnalyzer from './reddit-analyzer';
 // import GoogleTrendsAnalyzer from './google-trends';
 
-// Inline type definition for serverless compatibility
+// Simplified validation result interface
+interface SimplifiedValidationResult {
+    idea: string;
+    content?: string;
+    demandScore: number;
+    scoreJustification: string;
+    
+    // Simplified platform analyses
+    platformAnalyses: {
+        twitter: SimplePlatformAnalysis;
+        reddit: SimplePlatformAnalysis;
+        linkedin: SimplePlatformAnalysis;
+    };
+    
+    // Simple content suggestions
+    tweetSuggestion: string;
+    redditTitleSuggestion: string;
+    redditBodySuggestion: string;
+    linkedinSuggestion: string;
+}
+
+interface SimplePlatformAnalysis {
+    platformName: string;
+    score: number; // 1-5 simple score
+    summary: string; // 2-3 sentence simple explanation
+    keyFindings: string[]; // 2-3 key findings
+    contentSuggestion: string; // Platform-specific content suggestion
+}
+
+// Legacy interface for backward compatibility
 interface ValidationResult {
     idea: string;
     content?: string;
@@ -415,7 +444,58 @@ function getGroq(): Groq {
     return groq;
 }
 
-const responseSchema = {
+// Simplified response schema
+const simplifiedResponseSchema = {
+    type: Type.OBJECT,
+    properties: {
+        idea: { type: Type.STRING, description: "The original idea analyzed" },
+        demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand" },
+        scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score" },
+        platformAnalyses: {
+            type: Type.OBJECT,
+            properties: {
+                twitter: {
+                    type: Type.OBJECT,
+                    properties: {
+                        platformName: { type: Type.STRING },
+                        score: { type: Type.INTEGER, description: "1-5 score" },
+                        summary: { type: Type.STRING, description: "2-3 sentence summary" },
+                        keyFindings: { type: Type.ARRAY, items: { type: Type.STRING } },
+                        contentSuggestion: { type: Type.STRING }
+                    }
+                },
+                reddit: {
+                    type: Type.OBJECT,
+                    properties: {
+                        platformName: { type: Type.STRING },
+                        score: { type: Type.INTEGER, description: "1-5 score" },
+                        summary: { type: Type.STRING, description: "2-3 sentence summary" },
+                        keyFindings: { type: Type.ARRAY, items: { type: Type.STRING } },
+                        contentSuggestion: { type: Type.STRING }
+                    }
+                },
+                linkedin: {
+                    type: Type.OBJECT,
+                    properties: {
+                        platformName: { type: Type.STRING },
+                        score: { type: Type.INTEGER, description: "1-5 score" },
+                        summary: { type: Type.STRING, description: "2-3 sentence summary" },
+                        keyFindings: { type: Type.ARRAY, items: { type: Type.STRING } },
+                        contentSuggestion: { type: Type.STRING }
+                    }
+                }
+            }
+        },
+        tweetSuggestion: { type: Type.STRING, description: "An optimized X (Twitter) post version" },
+        redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for Reddit" },
+        redditBodySuggestion: { type: Type.STRING, description: "A detailed body for Reddit post" },
+        linkedinSuggestion: { type: Type.STRING, description: "A professional LinkedIn post version" }
+    },
+    required: ["idea", "demandScore", "scoreJustification", "platformAnalyses", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
+};
+
+// Legacy response schema for backward compatibility
+const legacyResponseSchema = {
     type: Type.OBJECT,
     properties: {
         idea: { type: Type.STRING, description: "The original idea analyzed" },
@@ -608,385 +688,278 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Get AI analysis
-        const aiAnalysis = await getAIAnalysis(inputContent, systemInstruction);
+        // Use simplified analysis approach
+        const result = await getSimplifiedAIAnalysis(inputContent);
 
-        const jsonText = aiAnalysis.result;
-        const aiModel = aiAnalysis.model;
-        const fallbackUsed = aiAnalysis.fallbackUsed;
-        console.log(`🤖 AI Model used: ${aiModel} ${fallbackUsed ? '(fallback)' : '(primary)'}`);
+        // Convert to legacy format for backward compatibility
+        const legacyResult = convertToLegacyFormat(result);
 
-        // AI-Powered Reddit Analysis (No API needed)
-        async function analyzeReddit(content: string) {
-            try {
-                console.log('🔴 Starting AI-powered Reddit community analysis...');
-
-                // AI simulates Reddit community analysis
-                const aiRedditAnalysis = await analyzeWithAI(content, `
-                    Analyze this startup idea as if you're scanning Reddit communities like r/entrepreneur, r/startups, r/SaaS, r/technology.
-                    
-                    Consider:
-                    - How would entrepreneurs react to this idea?
-                    - What questions would they ask?
-                    - What concerns would they raise?
-                    - How much engagement would this get?
-                    - What's the sentiment likely to be?
-                    
-                    Provide realistic community metrics based on similar ideas you've seen discussed.
-                    
-                    Return JSON with:
-                    {
-                        "communityInterest": number (10-100),
-                        "averageSentiment": number (-100 to +100),
-                        "totalPosts": number (estimated discussions),
-                        "topSubreddits": ["entrepreneur", "startups", "SaaS"],
-                        "keyInsights": ["insight1", "insight2", "insight3"],
-                        "boost": number (-10 to +10),
-                        "averageScore": number (estimated upvotes),
-                        "averageComments": number (estimated comments)
-                    }
-                `);
-
-                if (aiRedditAnalysis) {
-                    console.log(`📊 AI Reddit Analysis: Interest=${aiRedditAnalysis.communityInterest}, Sentiment=${aiRedditAnalysis.averageSentiment}, Boost=${aiRedditAnalysis.boost}`);
-
-                    return {
-                        communityInterest: Math.round(aiRedditAnalysis.communityInterest || 50),
-                        averageSentiment: Math.round(aiRedditAnalysis.averageSentiment || 0),
-                        totalPosts: aiRedditAnalysis.totalPosts || Math.floor(Math.random() * 20) + 5,
-                        topSubreddits: aiRedditAnalysis.topSubreddits || ['entrepreneur', 'startups', 'SaaS'],
-                        keyInsights: aiRedditAnalysis.keyInsights || [
-                            'AI-powered community analysis shows moderate interest',
-                            'Entrepreneurs would likely ask about monetization strategy',
-                            'Technical feasibility questions expected from developer community'
-                        ],
-                        boost: Math.max(-10, Math.min(10, aiRedditAnalysis.boost || 0)),
-                        realData: false, // AI-generated, not real Reddit data
-                        averageScore: aiRedditAnalysis.averageScore || Math.floor(Math.random() * 15) + 5,
-                        averageComments: aiRedditAnalysis.averageComments || Math.floor(Math.random() * 8) + 2
-                    };
-                } else {
-                    throw new Error('AI analysis failed');
-                }
-
-                // Extract keywords from content
-                const keywords = content.toLowerCase()
-                    .split(' ')
-                    .filter(word => word.length > 3)
-                    .slice(0, 3)
-                    .join(' ');
-
-                console.log(`🔍 Searching Reddit for: "${keywords}"`);
-                const searchResult = await redditAPI.searchPosts(keywords, 20);
-
-                // Calculate community interest score
-                const communityInterest = Math.min(100, Math.max(10,
-                    (searchResult.totalPosts * 2) +
-                    (searchResult.averageScore > 5 ? 20 : 0) +
-                    (searchResult.averageComments > 3 ? 15 : 0)
-                ));
-
-                // Calculate boost for demand score
-                const boost = Math.max(-10, Math.min(10, Math.round((searchResult.sentiment + communityInterest) / 20)));
-
-                console.log(`📊 Reddit Results: Posts=${searchResult.totalPosts}, AvgScore=${searchResult.averageScore.toFixed(1)}, Sentiment=${searchResult.sentiment}, Boost=${boost}`);
-
-                return {
-                    communityInterest: Math.round(communityInterest),
-                    averageSentiment: searchResult.sentiment,
-                    totalPosts: searchResult.totalPosts,
-                    topSubreddits: searchResult.topSubreddits,
-                    keyInsights: [
-                        `Found ${searchResult.totalPosts} relevant discussions`,
-                        `Average score: ${searchResult.averageScore.toFixed(1)}`,
-                        `Active in r/${searchResult.topSubreddits[0] || 'entrepreneur'} and ${searchResult.topSubreddits.length - 1} other subreddits`
-                    ],
-                    boost,
-                    realData: true,
-                    averageScore: searchResult.averageScore,
-                    averageComments: searchResult.averageComments
-                };
-            } catch (error) {
-                console.error('❌ Reddit API error:', error);
-                return {
-                    communityInterest: 50,
-                    averageSentiment: 0,
-                    totalPosts: 5,
-                    topSubreddits: ['entrepreneur', 'startups'],
-                    keyInsights: ['Reddit API unavailable - using fallback data'],
-                    boost: 0,
-                    realData: false,
-                    averageScore: 10,
-                    averageComments: 3
-                };
-            }
-        }
-
-        // Reddit data will be fetched in parallel with other analyses below
-
-        // AI-Powered Google Trends Analysis
-        async function analyzeTrends(content: string) {
-            try {
-                console.log('📈 Starting AI-powered Google Trends analysis...');
-
-                const aiTrendsAnalysis = await analyzeWithAI(content, `
-                    Analyze this startup idea as if you're examining Google Trends data and search patterns.
-                    
-                    Consider:
-                    - What keywords would people search for related to this idea?
-                    - Is this market trending up, stable, or declining?
-                    - What's the search volume likely to be?
-                    - What related queries would people make?
-                    - How does this compare to similar solutions?
-                    
-                    Provide realistic trend analysis based on market knowledge.
-                    
-                    Return JSON with:
-                    {
-                        "trendScore": number (10-100),
-                        "overallTrend": "rising" | "stable" | "declining",
-                        "searchVolume": number (estimated monthly searches),
-                        "relatedQueries": ["query1", "query2", "query3"],
-                        "insights": ["insight1", "insight2", "insight3"],
-                        "boost": number (-10 to +10)
-                    }
-                `);
-
-                if (aiTrendsAnalysis) {
-                    console.log(`📈 AI Trends Results: Score=${aiTrendsAnalysis.trendScore}, Direction=${aiTrendsAnalysis.overallTrend}, Boost=${aiTrendsAnalysis.boost}`);
-
-                    return {
-                        trendScore: aiTrendsAnalysis.trendScore || 50,
-                        overallTrend: aiTrendsAnalysis.overallTrend || 'stable',
-                        searchVolume: aiTrendsAnalysis.searchVolume || Math.floor(Math.random() * 5000) + 1000,
-                        relatedQueries: aiTrendsAnalysis.relatedQueries || ['startup ideas', 'business validation', 'market research'],
-                        insights: aiTrendsAnalysis.insights || [
-                            'AI analysis shows moderate search interest',
-                            'Related keywords trending in business category',
-                            'Seasonal patterns suggest consistent demand'
-                        ],
-                        boost: Math.max(-10, Math.min(10, aiTrendsAnalysis.boost || 0)),
-                        realData: false // AI-generated, not real Google Trends data
-                    };
-                } else {
-                    throw new Error('AI trends analysis failed');
-                }
-
-                return {
-                    trendScore,
-                    overallTrend: trendScore > 60 ? 'rising' as const : trendScore > 40 ? 'stable' as const : 'declining' as const,
-                    searchVolume: Math.floor(Math.random() * 5000) + 1000,
-                    relatedQueries: ['startup ideas', 'business trends', ...keywords.slice(0, 2)],
-                    insights: ['Google Trends API unavailable - using content-based analysis'],
-                    boost: Math.round((trendScore - 50) / 5),
-                    realData: false
-                };
-            }
-        }
-
-        // AI-Powered X/Twitter Analysis
-        async function analyzeTwitter(content: string) {
-            try {
-                console.log('🐦 Starting AI-powered X/Twitter analysis...');
-
-                const aiTwitterAnalysis = await analyzeWithAI(content, `
-                    Analyze this startup idea as if you're scanning X/Twitter for discussions, trends, and sentiment.
-                    
-                    Consider:
-                    - How would this idea perform on X/Twitter?
-                    - What hashtags would be relevant?
-                    - What's the likely engagement rate?
-                    - How would tech Twitter react?
-                    - What questions/concerns would arise?
-                    
-                    Provide realistic Twitter engagement analysis.
-                    
-                    Return JSON with:
-                    {
-                        "engagementScore": number (10-100),
-                        "sentiment": number (-100 to +100),
-                        "viralPotential": number (10-100),
-                        "relevantHashtags": ["#hashtag1", "#hashtag2", "#hashtag3"],
-                        "keyInsights": ["insight1", "insight2", "insight3"],
-                        "boost": number (-10 to +10)
-                    }
-                `);
-
-                if (aiTwitterAnalysis) {
-                    console.log(`🐦 AI Twitter Results: Engagement=${aiTwitterAnalysis.engagementScore}, Viral=${aiTwitterAnalysis.viralPotential}, Boost=${aiTwitterAnalysis.boost}`);
-
-                    return {
-                        engagementScore: aiTwitterAnalysis.engagementScore || 50,
-                        sentiment: aiTwitterAnalysis.sentiment || 0,
-                        viralPotential: aiTwitterAnalysis.viralPotential || 40,
-                        relevantHashtags: aiTwitterAnalysis.relevantHashtags || ['#startup', '#entrepreneur', '#innovation'],
-                        keyInsights: aiTwitterAnalysis.keyInsights || [
-                            'Tech Twitter would show moderate interest',
-                            'Likely to generate discussion about implementation',
-                            'Potential for viral growth with right positioning'
-                        ],
-                        boost: Math.max(-10, Math.min(10, aiTwitterAnalysis.boost || 0)),
-                        realData: false
-                    };
-                } else {
-                    throw new Error('AI Twitter analysis failed');
-                }
-            } catch (error) {
-                console.error('❌ AI Twitter analysis error:', error);
-                return {
-                    engagementScore: 45,
-                    sentiment: 10,
-                    viralPotential: 35,
-                    relevantHashtags: ['#startup', '#entrepreneur', '#innovation'],
-                    keyInsights: ['AI analysis temporarily unavailable'],
-                    boost: 0,
-                    realData: false
-                };
-            }
-        }
-
-        // Run all AI analyses in parallel
-        const [redditData, trendsData, twitterData] = await Promise.all([
-            analyzeReddit(inputContent),
-            analyzeTrends(inputContent),
-            analyzeTwitter(inputContent)
-        ]);
-
-        if (!jsonText) {
-            throw new Error("AI returned empty response");
-        }
-
-        let parsedResult: any;
-        try {
-            // Clean JSON response
-            let cleanJson = jsonText;
-
-            // Remove markdown code blocks if present
-            if (jsonText.includes('```json')) {
-                const jsonMatch = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
-                if (jsonMatch) {
-                    cleanJson = jsonMatch[1];
-                }
-            } else if (jsonText.includes('```')) {
-                const jsonMatch = jsonText.match(/```\s*([\s\S]*?)\s*```/);
-                if (jsonMatch) {
-                    cleanJson = jsonMatch[1];
-                }
-            }
-
-            // Extract JSON object
-            const jsonStart = cleanJson.indexOf('{');
-            const jsonEnd = cleanJson.lastIndexOf('}');
-            if (jsonStart !== -1 && jsonEnd !== -1 && jsonEnd > jsonStart) {
-                cleanJson = cleanJson.substring(jsonStart, jsonEnd + 1);
-            }
-
-            parsedResult = JSON.parse(cleanJson);
-            console.log('✅ AI response parsed successfully');
-
-            // Apply Reddit and Trends boosts to demand score
-            const originalScore = parsedResult.demandScore || 65;
-            const redditBoost = redditData.boost;
-            const trendsBoost = trendsData.boost;
-            const enhancedScore = Math.max(0, Math.min(100, originalScore + redditBoost + trendsBoost));
-
-            console.log(`📊 Score Enhancement: Original=${originalScore}, Reddit=${redditBoost > 0 ? '+' : ''}${redditBoost}, Trends=${trendsBoost > 0 ? '+' : ''}${trendsBoost}, Final=${enhancedScore}`);
-
-            // Update the demand score
-            parsedResult.demandScore = enhancedScore;
-        } catch (parseError) {
-            console.error('❌ JSON parse error:', parseError);
-
-            // Create fallback response
-            parsedResult = {
-                idea: inputContent,
-                demandScore: 65,
-                scoreJustification: "Analysis completed with limited data",
-                signalSummary: [
-                    { platform: "X", summary: "Social media discussions show interest in this type of solution. Users frequently discuss similar concepts and express frustration with current alternatives." },
-                    { platform: "Reddit", summary: "Community discussions across relevant subreddits indicate demand for this solution. Users actively seek recommendations and share experiences with related products." },
-                    { platform: "LinkedIn", summary: "Professional networks show business interest in this concept. Industry discussions highlight the need for solutions in this space." }
-                ],
-                tweetSuggestion: `🚀 Working on something new: ${inputContent.substring(0, 100)}${inputContent.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
-                redditTitleSuggestion: "Looking for feedback on my startup idea",
-                redditBodySuggestion: `I've been working on this concept: ${inputContent}. Would love to get your thoughts and feedback from the community. What are your initial impressions?`,
-                linkedinSuggestion: `Exploring a new business opportunity: ${inputContent.substring(0, 200)}${inputContent.length > 200 ? '...' : ''} Interested in connecting with others who have experience in this space.`
-            };
-        }
-
-        // Response validation
-        if (typeof parsedResult.demandScore !== 'number' ||
-            parsedResult.demandScore < 0 ||
-            parsedResult.demandScore > 100) {
-            parsedResult.demandScore = 65; // Safe fallback
-        }
-
-        // Ensure required fields exist
-        if (!parsedResult.signalSummary) {
-            parsedResult.signalSummary = [];
-        }
-        if (!parsedResult.tweetSuggestion) {
-            parsedResult.tweetSuggestion = "Share your idea on X to get feedback!";
-        }
-        if (!parsedResult.redditTitleSuggestion) {
-            parsedResult.redditTitleSuggestion = "Looking for feedback on my idea";
-        }
-        if (!parsedResult.redditBodySuggestion) {
-            parsedResult.redditBodySuggestion = "I'd love to get your thoughts on this concept.";
-        }
-        if (!parsedResult.linkedinSuggestion) {
-            parsedResult.linkedinSuggestion = "Excited to share this new concept with my network.";
-        }
-
-        // Add the original idea
-        parsedResult.idea = inputContent;
-
-        // Add ValidationlyScore breakdown
-        const baseScore = parsedResult.demandScore;
-        parsedResult.validationlyScore = {
-            totalScore: baseScore,
-            breakdown: {
-                twitter: Math.round(baseScore * 0.4),
-                reddit: Math.round((redditData.communityInterest + (redditData.averageSentiment + 100) / 2) / 2),
-                linkedin: Math.round(baseScore * 0.2),
-                googleTrends: trendsData.trendScore
-            },
-            weighting: {
-                twitter: 40,
-                reddit: 30,
-                linkedin: 20,
-                googleTrends: 10
-            },
-            confidence: fallbackUsed ? 75 : 85,
-            dataQuality: {
-                aiAnalysis: fallbackUsed ? 'medium' : 'high',
-                redditData: redditData.realData ? 'real' : 'simulated',
-                trendsData: trendsData.realData ? 'real' : 'simulated'
-            }
-        };
-
-        // Add enhanced metadata
-        parsedResult.enhancementMetadata = {
-            aiModel: aiModel,
-            fallbackUsed: fallbackUsed,
-            aiConfidence: fallbackUsed ? 75 : 85,
-            redditAnalyzed: true,
-            trendsAnalyzed: true,
-            enhancementApplied: true,
-            redditBoost: redditData.boost,
-            trendsBoost: trendsData.boost,
-            timestamp: new Date().toISOString()
-        };
-
-        console.log('✅ Enhanced validation completed with metadata');
-        return res.status(200).json(parsedResult);
+        console.log('✅ Simplified validation completed successfully');
+        return res.status(200).json(legacyResult);
 
     } catch (error) {
-        console.error("Error in validation API:", error);
-
+        console.error('❌ Simplified validation error:', error);
+        
+        // Return simplified error response
         return res.status(500).json({
-            message: 'Validation failed',
-            error: error instanceof Error ? error.message : 'Unknown error'
+            message: 'Analysis failed. Please try again.',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }
 }
+
+// Platform-specific AI analysis functions
+async function analyzePlatform(content: string, platform: 'twitter' | 'reddit' | 'linkedin'): Promise<SimplePlatformAnalysis> {
+    const platformPrompts = {
+        twitter: `Analyze this startup idea for Twitter/X platform:
+        
+        Consider:
+        - Viral potential and trend alignment
+        - How tech Twitter would react
+        - Hashtag opportunities
+        - Expected engagement and reach
+        - Audience reaction predictions
+        
+        Provide a simple 1-5 score and 2-3 sentence summary in plain language.
+        Focus on practical insights about Twitter performance.`,
+        
+        reddit: `Analyze this startup idea for Reddit communities:
+        
+        Consider:
+        - Community fit across relevant subreddits (r/entrepreneur, r/startups, etc.)
+        - Discussion potential and engagement
+        - Expected sentiment from Reddit users
+        - Subreddit recommendations
+        - Community concerns and questions
+        
+        Provide a simple 1-5 score and 2-3 sentence summary in plain language.
+        Focus on how Reddit communities would receive this idea.`,
+        
+        linkedin: `Analyze this startup idea for LinkedIn professional network:
+        
+        Consider:
+        - Professional relevance and business potential
+        - Networking value and B2B opportunities
+        - Target professional audience
+        - Business development potential
+        - Industry connections and partnerships
+        
+        Provide a simple 1-5 score and 2-3 sentence summary in plain language.
+        Focus on professional and business networking aspects.`
+    };
+
+    const systemInstruction = `You are analyzing a startup idea for ${platform}. ${platformPrompts[platform]}
+
+    🌍 LANGUAGE REQUIREMENT: Respond in the EXACT SAME LANGUAGE as the user's input.
+    
+    Return a JSON object with:
+    {
+        "platformName": "${platform === 'twitter' ? 'Twitter' : platform === 'reddit' ? 'Reddit' : 'LinkedIn'}",
+        "score": number (1-5),
+        "summary": "2-3 sentence summary in simple language",
+        "keyFindings": ["finding1", "finding2", "finding3"],
+        "contentSuggestion": "Platform-specific content suggestion"
+    }`;
+
+    try {
+        const aiInstance = getAI();
+        const result = await aiInstance.models.generateContent({
+            model: "gemini-2.0-flash-exp",
+            contents: `ANALYZE FOR ${platform.toUpperCase()}: "${content}"`,
+            config: {
+                systemInstruction,
+                responseMimeType: "application/json",
+                temperature: 0.3,
+                maxOutputTokens: 1024,
+            }
+        });
+
+        const responseText = result.text?.trim();
+        if (!responseText) {
+            throw new Error(`Empty response from AI for ${platform}`);
+        }
+
+        const parsedResult = JSON.parse(responseText);
+        
+        // Ensure score is within 1-5 range
+        parsedResult.score = Math.max(1, Math.min(5, parsedResult.score || 3));
+        
+        return parsedResult;
+
+    } catch (error) {
+        console.log(`❌ ${platform} analysis failed, using fallback...`, error);
+        
+        // Fallback analysis
+        return {
+            platformName: platform === 'twitter' ? 'Twitter' : platform === 'reddit' ? 'Reddit' : 'LinkedIn',
+            score: 3,
+            summary: `Analysis for ${platform} is temporarily unavailable. This idea shows moderate potential for the platform.`,
+            keyFindings: [
+                'Platform analysis temporarily unavailable',
+                'Using fallback assessment',
+                'Moderate potential estimated'
+            ],
+            contentSuggestion: `Share your idea on ${platform} to get community feedback.`
+        };
+    }
+}
+
+// Simplified AI analysis using only Gemini 2.0
+async function getSimplifiedAIAnalysis(content: string): Promise<SimplifiedValidationResult> {
+    const systemInstruction = `You are 'Validationly', an expert AI market research analyst. Analyze the user's business idea and provide a simplified validation report.
+
+    🌍 CRITICAL LANGUAGE REQUIREMENT: 
+    - DETECT the language of the user's input content
+    - RESPOND in the EXACT SAME LANGUAGE throughout your ENTIRE response
+    - If input is in Turkish → ALL fields must be in Turkish
+    - If input is in English → ALL fields must be in English  
+    - This applies to ALL text fields including platform analyses
+    - NO MIXING of languages - maintain consistency across all fields
+
+    SIMPLIFIED ANALYSIS METHODOLOGY:
+    1. Overall Demand Score (0-100): Simple market demand assessment
+    2. Platform-Specific Analysis: For each platform (Twitter/X, Reddit, LinkedIn):
+       - Simple 1-5 score
+       - 2-3 sentence summary in plain language
+       - 2-3 key findings as bullet points
+       - Platform-specific content suggestion
+    3. Content Suggestions: Create platform-optimized versions
+
+    CRITICAL RULES:
+    - Use "Twitter" for the platform name (not X)
+    - Write simple, clear summaries without technical jargon
+    - Make all suggestions actionable and platform-appropriate
+    - Keep explanations concise and user-friendly
+    - Focus on practical insights entrepreneurs can understand immediately`;
+
+    try {
+        console.log('🎯 Using simplified platform-specific analysis...');
+        
+        // Run platform analyses in parallel
+        const [twitterAnalysis, redditAnalysis, linkedinAnalysis] = await Promise.all([
+            analyzePlatform(content, 'twitter'),
+            analyzePlatform(content, 'reddit'),
+            analyzePlatform(content, 'linkedin')
+        ]);
+
+        // Get overall analysis for demand score and content suggestions
+        const aiInstance = getAI();
+        const overallResult = await aiInstance.models.generateContent({
+            model: "gemini-2.0-flash-exp",
+            contents: `ANALYZE THIS STARTUP IDEA: "${content}"\n\n🌍 LANGUAGE REMINDER: You MUST respond in the EXACT SAME LANGUAGE as the user's input.\n\nProvide overall demand score and content suggestions.`,
+            config: {
+                systemInstruction: `Analyze this startup idea and provide:
+                1. Overall demand score (0-100)
+                2. Score justification (short phrase)
+                3. Content suggestions for each platform
+                
+                🌍 LANGUAGE REQUIREMENT: Respond in the EXACT SAME LANGUAGE as the user's input.
+                
+                Return JSON with:
+                {
+                    "demandScore": number (0-100),
+                    "scoreJustification": "short justification phrase",
+                    "tweetSuggestion": "optimized Twitter post",
+                    "redditTitleSuggestion": "compelling Reddit title",
+                    "redditBodySuggestion": "detailed Reddit post body",
+                    "linkedinSuggestion": "professional LinkedIn post"
+                }`,
+                responseMimeType: "application/json",
+                temperature: 0.3,
+                maxOutputTokens: 1024,
+            }
+        });
+
+        const overallResponseText = overallResult.text?.trim();
+        if (!overallResponseText) {
+            throw new Error('Empty response from overall analysis');
+        }
+
+        const overallParsed = JSON.parse(overallResponseText);
+
+        // Combine results
+        const result: SimplifiedValidationResult = {
+            idea: content,
+            demandScore: Math.max(0, Math.min(100, overallParsed.demandScore || 65)),
+            scoreJustification: overallParsed.scoreJustification || 'Market analysis completed',
+            platformAnalyses: {
+                twitter: twitterAnalysis,
+                reddit: redditAnalysis,
+                linkedin: linkedinAnalysis
+            },
+            tweetSuggestion: overallParsed.tweetSuggestion || 'Share your startup idea on Twitter!',
+            redditTitleSuggestion: overallParsed.redditTitleSuggestion || 'Looking for feedback on my startup idea',
+            redditBodySuggestion: overallParsed.redditBodySuggestion || 'I would love to get your thoughts on this concept.',
+            linkedinSuggestion: overallParsed.linkedinSuggestion || 'Excited to share this new business concept with my network.'
+        };
+
+        console.log('✅ Simplified platform-specific analysis completed');
+        return result;
+
+    } catch (error) {
+        console.log('❌ Platform analysis failed, using fallback...', error);
+
+        // Fallback analysis
+        return {
+            idea: content,
+            demandScore: 65,
+            scoreJustification: 'Analysis completed with limited data',
+            platformAnalyses: {
+                twitter: {
+                    platformName: 'Twitter',
+                    score: 3,
+                    summary: 'Twitter analysis temporarily unavailable. Moderate potential estimated.',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
+                    contentSuggestion: 'Share your idea on Twitter to get feedback.'
+                },
+                reddit: {
+                    platformName: 'Reddit',
+                    score: 3,
+                    summary: 'Reddit analysis temporarily unavailable. Community interest estimated as moderate.',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate community fit'],
+                    contentSuggestion: 'Post in relevant subreddits for community feedback.'
+                },
+                linkedin: {
+                    platformName: 'LinkedIn',
+                    score: 3,
+                    summary: 'LinkedIn analysis temporarily unavailable. Professional relevance estimated as moderate.',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                    contentSuggestion: 'Share with your professional network on LinkedIn.'
+                }
+            },
+            tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
+            redditTitleSuggestion: 'Looking for feedback on my startup idea',
+            redditBodySuggestion: `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
+            linkedinSuggestion: `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`
+        };
+    }
+}
+
+// Convert simplified result to legacy format for backward compatibility
+function convertToLegacyFormat(simplified: SimplifiedValidationResult): ValidationResult {
+    return {
+        idea: simplified.idea,
+        content: simplified.content,
+        demandScore: simplified.demandScore,
+        scoreJustification: simplified.scoreJustification,
+        signalSummary: [
+            {
+                platform: 'Twitter',
+                summary: simplified.platformAnalyses.twitter.summary
+            },
+            {
+                platform: 'Reddit', 
+                summary: simplified.platformAnalyses.reddit.summary
+            },
+            {
+                platform: 'LinkedIn',
+                summary: simplified.platformAnalyses.linkedin.summary
+            }
+        ],
+        tweetSuggestion: simplified.tweetSuggestion,
+        redditTitleSuggestion: simplified.redditTitleSuggestion,
+        redditBodySuggestion: simplified.redditBodySuggestion,
+        linkedinSuggestion: simplified.linkedinSuggestion
+    };
+}
+
