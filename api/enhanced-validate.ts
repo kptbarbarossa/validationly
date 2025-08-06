@@ -106,7 +106,11 @@ class EnhancedAnalysisService {
     console.log('🚀 Starting enhanced analysis methodology...');
 
     try {
-      // Step 1: Basic analysis (industry classification, dimensional scoring, risk assessment)
+      // Step 1: Get real AI analysis
+      console.log('🤖 Performing AI-powered market analysis...');
+      const legacyAIResult = await this.performRealAIAnalysis(input);
+      
+      // Step 2: Basic analysis (industry classification, dimensional scoring, risk assessment)
       console.log('📊 Performing basic multi-dimensional analysis...');
       const basicAnalysis = await this.orchestrator.performBasicAnalysis(input);
       
@@ -138,18 +142,49 @@ class EnhancedAnalysisService {
       enhancedResult.nextSteps = this.generatePlaceholderNextSteps();
       enhancedResult.timingAnalysis = this.generatePlaceholderTimingAnalysis();
 
-      // Step 6: Generate backward compatibility fields
-      enhancedResult.demandScore = enhancedResult.overallScore;
-      enhancedResult.scoreJustification = enhancedResult.dimensionalScores.marketSize.reasoning;
-      enhancedResult.signalSummary = [
-        { platform: 'X', summary: 'Enhanced analysis shows positive market signals' },
-        { platform: 'Reddit', summary: 'Community interest detected in relevant subreddits' },
-        { platform: 'LinkedIn', summary: 'Professional network shows potential for B2B adoption' }
-      ];
-      enhancedResult.tweetSuggestion = this.generatePlatformSuggestion(input, 'twitter');
-      enhancedResult.redditTitleSuggestion = this.generatePlatformSuggestion(input, 'reddit_title');
-      enhancedResult.redditBodySuggestion = this.generatePlatformSuggestion(input, 'reddit_body');
-      enhancedResult.linkedinSuggestion = this.generatePlatformSuggestion(input, 'linkedin');
+      // Step 6: Integrate legacy AI results if available
+      if (legacyAIResult) {
+        console.log('✅ Integrating legacy AI analysis results...');
+        
+        // Use legacy AI score if higher than enhanced score
+        enhancedResult.overallScore = Math.max(enhancedResult.overallScore, legacyAIResult.demandScore || 0);
+        enhancedResult.demandScore = enhancedResult.overallScore;
+        
+        // Use legacy AI content suggestions
+        enhancedResult.scoreJustification = legacyAIResult.scoreJustification || enhancedResult.dimensionalScores.marketSize.reasoning;
+        enhancedResult.signalSummary = legacyAIResult.signalSummary || [
+          { platform: 'X', summary: 'Enhanced analysis shows positive market signals' },
+          { platform: 'Reddit', summary: 'Community interest detected in relevant subreddits' },
+          { platform: 'LinkedIn', summary: 'Professional network shows potential for B2B adoption' }
+        ];
+        enhancedResult.tweetSuggestion = legacyAIResult.tweetSuggestion || this.generatePlatformSuggestion(input, 'twitter');
+        enhancedResult.redditTitleSuggestion = legacyAIResult.redditTitleSuggestion || this.generatePlatformSuggestion(input, 'reddit_title');
+        enhancedResult.redditBodySuggestion = legacyAIResult.redditBodySuggestion || this.generatePlatformSuggestion(input, 'reddit_body');
+        enhancedResult.linkedinSuggestion = legacyAIResult.linkedinSuggestion || this.generatePlatformSuggestion(input, 'linkedin');
+        
+        // Add real-time insights if available
+        if (legacyAIResult.realTimeInsights) {
+          enhancedResult.realTimeInsights = legacyAIResult.realTimeInsights;
+        }
+        
+        // Add enhancement metadata
+        if (legacyAIResult.enhancementMetadata) {
+          enhancedResult.enhancementMetadata = legacyAIResult.enhancementMetadata;
+        }
+      } else {
+        // Fallback to generated content
+        enhancedResult.demandScore = enhancedResult.overallScore;
+        enhancedResult.scoreJustification = enhancedResult.dimensionalScores.marketSize.reasoning;
+        enhancedResult.signalSummary = [
+          { platform: 'X', summary: 'Enhanced analysis shows positive market signals' },
+          { platform: 'Reddit', summary: 'Community interest detected in relevant subreddits' },
+          { platform: 'LinkedIn', summary: 'Professional network shows potential for B2B adoption' }
+        ];
+        enhancedResult.tweetSuggestion = this.generatePlatformSuggestion(input, 'twitter');
+        enhancedResult.redditTitleSuggestion = this.generatePlatformSuggestion(input, 'reddit_title');
+        enhancedResult.redditBodySuggestion = this.generatePlatformSuggestion(input, 'reddit_body');
+        enhancedResult.linkedinSuggestion = this.generatePlatformSuggestion(input, 'linkedin');
+      }
 
       // Step 7: Calculate analysis metadata
       const processingTime = Date.now() - startTime;
@@ -174,6 +209,83 @@ class EnhancedAnalysisService {
     } catch (error) {
       console.error('❌ Enhanced analysis failed:', error);
       throw handleAnalysisError(error, 'EnhancedAnalysisService');
+    }
+  }
+
+  /**
+   * Perform real AI analysis using Gemini
+   */
+  private async performRealAIAnalysis(input: string): Promise<any> {
+    try {
+      console.log('🤖 Performing real AI analysis with Gemini...');
+      
+      const apiKey = process.env.API_KEY;
+      if (!apiKey) {
+        console.warn('No API key available for AI analysis');
+        return null;
+      }
+      
+      const ai = new GoogleGenAI({ apiKey });
+      const model = ai.getGenerativeModel({ 
+        model: "gemini-2.0-flash-exp",
+        generationConfig: {
+          temperature: 0.7,
+          topP: 0.8,
+          maxOutputTokens: 2000,
+        }
+      });
+
+      const prompt = `
+Analyze this business idea and provide a comprehensive market validation report:
+
+"${input}"
+
+Provide a JSON response with:
+{
+  "demandScore": number (0-100),
+  "scoreJustification": "detailed explanation",
+  "signalSummary": [
+    {"platform": "X", "summary": "market signals from X/Twitter"},
+    {"platform": "Reddit", "summary": "community discussions and sentiment"},
+    {"platform": "LinkedIn", "summary": "professional network insights"}
+  ],
+  "tweetSuggestion": "engaging X post to test the idea",
+  "redditTitleSuggestion": "compelling Reddit post title",
+  "redditBodySuggestion": "detailed Reddit post body",
+  "linkedinSuggestion": "professional LinkedIn post",
+  "realTimeInsights": {
+    "reddit": {
+      "communityInterest": number (0-100),
+      "sentiment": number (-100 to 100),
+      "keyInsights": ["insight1", "insight2", "insight3"]
+    },
+    "trends": {
+      "overallTrend": "rising|stable|declining",
+      "trendScore": number (0-100),
+      "insights": ["trend insight 1", "trend insight 2"]
+    }
+  }
+}
+
+Focus on realistic market analysis, competitor landscape, and actionable insights.
+`;
+
+      const result = await model.generateContent(prompt);
+      const response = result.response;
+      const text = response.text();
+      
+      // Parse JSON response
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        const aiResult = JSON.parse(jsonMatch[0]);
+        console.log('✅ AI analysis completed successfully');
+        return aiResult;
+      }
+      
+      throw new Error('No valid JSON found in AI response');
+    } catch (error) {
+      console.warn('Real AI analysis failed:', error);
+      return null;
     }
   }
 
