@@ -697,8 +697,8 @@ export default async function handler(req: any, res: any) {
             }
         }
 
-        // Use simplified analysis approach
-        const result = await getSimplifiedAIAnalysis(inputContent);
+        // Use simplified analysis approach with dynamic prompts
+        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction);
 
         // Convert to legacy format for backward compatibility
         const legacyResult = convertToLegacyFormat(result);
@@ -814,32 +814,8 @@ async function analyzePlatform(content: string, platform: 'twitter' | 'reddit' |
 }
 
 // Simplified AI analysis using only Gemini 2.0
-async function getSimplifiedAIAnalysis(content: string): Promise<SimplifiedValidationResult> {
-    const systemInstruction = `You are 'Validationly', an expert AI market research analyst. Analyze the user's business idea and provide a simplified validation report.
-
-    🌍 CRITICAL LANGUAGE REQUIREMENT: 
-    - DETECT the language of the user's input content
-    - RESPOND in the EXACT SAME LANGUAGE throughout your ENTIRE response
-    - If input is in Turkish → ALL fields must be in Turkish
-    - If input is in English → ALL fields must be in English  
-    - This applies to ALL text fields including platform analyses
-    - NO MIXING of languages - maintain consistency across all fields
-
-    SIMPLIFIED ANALYSIS METHODOLOGY:
-    1. Overall Demand Score (0-100): Simple market demand assessment
-    2. Platform-Specific Analysis: For each platform (Twitter/X, Reddit, LinkedIn):
-       - Simple 1-5 score
-       - 2-3 sentence summary in plain language
-       - 2-3 key findings as bullet points
-       - Platform-specific content suggestion
-    3. Content Suggestions: Create platform-optimized versions
-
-    CRITICAL RULES:
-    - Use "Twitter" for the platform name (not X)
-    - Write simple, clear summaries without technical jargon
-    - Make all suggestions actionable and platform-appropriate
-    - Keep explanations concise and user-friendly
-    - Focus on practical insights entrepreneurs can understand immediately`;
+async function getSimplifiedAIAnalysis(content: string, systemInstruction: string): Promise<SimplifiedValidationResult> {
+    // Use the dynamic system instruction passed from the main function
 
     try {
         console.log('🎯 Using simplified platform-specific analysis...');
