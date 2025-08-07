@@ -237,17 +237,17 @@ Reference specific competitors, provide market share estimates where available, 
   detectSector(input: string): string[] {
     const inputLower = input.toLowerCase();
     const detectedSectors: string[] = [];
-    
+
     for (const [sector, keywords] of Object.entries(this.sectorKeywords)) {
-      const matchCount = keywords.filter(keyword => 
+      const matchCount = keywords.filter(keyword =>
         inputLower.includes(keyword)
       ).length;
-      
+
       if (matchCount > 0) {
         detectedSectors.push(sector);
       }
     }
-    
+
     // Default to saas if no clear sector detected
     return detectedSectors.length > 0 ? detectedSectors : ['saas'];
   }
@@ -255,17 +255,17 @@ Reference specific competitors, provide market share estimates where available, 
   detectAnalysisNeeds(input: string): string[] {
     const inputLower = input.toLowerCase();
     const detectedAnalysis: string[] = [];
-    
+
     for (const [analysis, keywords] of Object.entries(this.analysisKeywords)) {
-      const matchCount = keywords.filter(keyword => 
+      const matchCount = keywords.filter(keyword =>
         inputLower.includes(keyword)
       ).length;
-      
+
       if (matchCount > 0) {
         detectedAnalysis.push(analysis);
       }
     }
-    
+
     // Default analysis types
     return detectedAnalysis.length > 0 ? detectedAnalysis : ['market', 'competitive'];
   }
@@ -273,7 +273,7 @@ Reference specific competitors, provide market share estimates where available, 
   async selectPrompts(input: string): Promise<PromptSelection> {
     const sectors = this.detectSector(input);
     const analysisTypes = this.detectAnalysisNeeds(input);
-    
+
     const basePrompt = await this.loadPrompt('base-analyst');
     const sectorPrompts = await Promise.all(
       sectors.map(sector => this.loadPrompt(`${sector}-sector`))
@@ -281,7 +281,7 @@ Reference specific competitors, provide market share estimates where available, 
     const analysisPrompts = await Promise.all(
       analysisTypes.map(analysis => this.loadPrompt(`${analysis}-opportunity`))
     );
-    
+
     return {
       basePrompt,
       sectorPrompts: sectorPrompts.filter(p => p.length > 0),
@@ -299,15 +299,15 @@ Reference specific competitors, provide market share estimates where available, 
 
   combinePrompts(selection: PromptSelection): string {
     const parts = [selection.basePrompt];
-    
+
     if (selection.sectorPrompts.length > 0) {
       parts.push('\n\n' + selection.sectorPrompts.join('\n\n'));
     }
-    
+
     if (selection.analysisPrompts.length > 0) {
       parts.push('\n\n' + selection.analysisPrompts.join('\n\n'));
     }
-    
+
     return parts.join('');
   }
 }
