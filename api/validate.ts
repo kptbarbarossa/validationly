@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import Groq from "groq-sdk";
+import { promptManager } from "../src/services/promptManager";
 
 // AI-powered analysis - no external API modules needed
 // Temporarily remove enhanced imports to fix module not found error
@@ -572,7 +572,14 @@ export default async function handler(req: any, res: any) {
         }
         validateInput(inputContent);
 
-        const systemInstruction = `You are 'Validationly', an expert AI market research analyst. Analyze the user's business idea and provide a comprehensive validation report.
+        // Dynamic prompt selection based on input
+        const promptSelection = await promptManager.selectPrompts(inputContent);
+        const systemInstruction = promptManager.combinePrompts(promptSelection);
+
+        console.log(`🎯 Selected prompts - Sectors: ${promptSelection.sectorPrompts.length}, Analysis: ${promptSelection.analysisPrompts.length}, Confidence: ${promptSelection.confidence}`);
+
+        // Add language and format requirements
+        const finalSystemInstruction = `${systemInstruction}
 
         🌍 CRITICAL LANGUAGE REQUIREMENT: 
         - DETECT the language of the user's input content
@@ -591,7 +598,9 @@ export default async function handler(req: any, res: any) {
         - Use "X" instead of "Twitter" throughout your response
         - Write detailed, insightful summaries that sound like real market research
         - Make suggestions actionable and platform-appropriate
-        - All content must feel authentic and valuable to entrepreneurs`;
+        - All content must feel authentic and valuable to entrepreneurs
+
+        Analyze the following startup idea: "${inputContent}"`;
 
         console.log('🚀 Starting enhanced validation with multi-AI analysis...');
 
@@ -643,9 +652,9 @@ export default async function handler(req: any, res: any) {
                     model: "gemini-2.0-flash-exp",
                     contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
                     config: {
-                        systemInstruction: systemPrompt + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                        systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
                         responseMimeType: "application/json",
-                        responseSchema: responseSchema,
+                        responseSchema: legacyResponseSchema,
                         temperature: 0.3,
                         maxOutputTokens: 2048,
                     }
@@ -667,9 +676,9 @@ export default async function handler(req: any, res: any) {
                         model: "gemini-1.5-flash",
                         contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
                         config: {
-                            systemInstruction: systemPrompt + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
                             responseMimeType: "application/json",
-                            responseSchema: responseSchema,
+                            responseSchema: legacyResponseSchema,
                             temperature: 0.3,
                             maxOutputTokens: 2048,
                         }
