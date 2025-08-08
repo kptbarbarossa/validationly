@@ -1146,16 +1146,16 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                         score: 3,
                         summary: 'LinkedIn analysis temporarily unavailable. Professional relevance estimated as moderate.',
                         keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                        contentSuggestion: parsedResult.platformAnalyses?.linkedin?.contentSuggestion || 'Share with your professional network on LinkedIn.'
+                        contentSuggestion: 'Share with your professional network on LinkedIn.'
                     }
                 },
-                tweetSuggestion: parsedResult.tweetSuggestion || `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
-                redditTitleSuggestion: parsedResult.redditTitleSuggestion || 'Looking for feedback on my startup idea',
-                redditBodySuggestion: parsedResult.redditBodySuggestion || `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
-                linkedinSuggestion: parsedResult.linkedinSuggestion || `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`,
+                tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
+                redditTitleSuggestion: 'Looking for feedback on my startup idea',
+                redditBodySuggestion: `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
+                linkedinSuggestion: `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`,
                 
-                // 8 Analysis Components with real AI data
-                marketIntelligence: parsedResult.marketIntelligence || {
+                // 8 Analysis Components with fallback data
+                marketIntelligence: {
                     tam: '$2.5B Global Market',
                     sam: '$450M Addressable Market',
                     som: '$12M Realistic Target',
@@ -1164,7 +1164,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     keyTrends: ['AI adoption', 'Remote work growth', 'Digital transformation']
                 },
                 
-                competitiveLandscape: parsedResult.competitiveLandscape || {
+                competitiveLandscape: {
                     directCompetitors: ['Competitor A', 'Competitor B', 'Competitor C'],
                     indirectCompetitors: ['Alternative 1', 'Alternative 2'],
                     marketPosition: 'Blue Ocean Opportunity',
@@ -1173,7 +1173,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     entryBarriers: 'Technical expertise required'
                 },
                 
-                revenueModel: parsedResult.revenueModel || {
+                revenueModel: {
                     primaryModel: 'Freemium SaaS',
                     pricePoint: '$29/month',
                     revenueStreams: ['Subscriptions', 'Premium features', 'Enterprise plans'],
@@ -1182,7 +1182,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     projectedMrr: '$25K by Year 1'
                 },
                 
-                targetAudience: parsedResult.targetAudience || {
+                targetAudience: {
                     primarySegment: 'Small business owners (40%)',
                     secondarySegment: 'Freelancers (35%)',
                     tertiarySegment: 'Enterprise teams (25%)',
@@ -1191,7 +1191,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     customerAcquisitionChannels: ['Content marketing', 'Social media', 'Referrals']
                 },
                 
-                riskAssessment: parsedResult.riskAssessment || {
+                riskAssessment: {
                     technicalRisk: 'Low',
                     marketRisk: 'Medium',
                     financialRisk: 'Low',
@@ -1200,7 +1200,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     mitigationStrategies: ['MVP validation', 'Market research', 'Financial planning']
                 },
                 
-                goToMarket: parsedResult.goToMarket || {
+                goToMarket: {
                     phase1: 'MVP launch + early adopters',
                     phase2: 'Product-market fit + scaling',
                     phase3: 'Market expansion + partnerships',
@@ -1209,7 +1209,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     keyChannels: ['Digital marketing', 'Content strategy', 'Community building']
                 },
                 
-                developmentRoadmap: parsedResult.developmentRoadmap || {
+                developmentRoadmap: {
                     mvpTimeline: '3 months',
                     betaLaunch: '5 months',
                     publicLaunch: '8 months',
@@ -1218,7 +1218,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     techStack: ['React', 'Node.js', 'PostgreSQL']
                 },
                 
-                productMarketFit: parsedResult.productMarketFit || {
+                productMarketFit: {
                     problemSolutionFit: 75,
                     solutionMarketFit: 68,
                     earlyAdopterSignals: 'Strong interest from target users',
