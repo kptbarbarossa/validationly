@@ -812,30 +812,30 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
 }
 
 // Convert simplified result to legacy format for backward compatibility
-function convertToLegacyFormat(simplified: SimplifiedValidationResult): ValidationResult {
+function convertToLegacyFormat(dynamic: DynamicPromptResult): ValidationResult {
     return {
-        idea: simplified.idea,
-        content: simplified.content,
-        demandScore: simplified.demandScore,
-        scoreJustification: simplified.scoreJustification,
+        idea: dynamic.idea,
+        content: dynamic.content,
+        demandScore: dynamic.demandScore,
+        scoreJustification: dynamic.scoreJustification,
         signalSummary: [
             {
                 platform: 'Twitter',
-                summary: simplified.platformAnalyses.twitter.summary
+                summary: dynamic.platformAnalyses.twitter.summary
             },
             {
                 platform: 'Reddit', 
-                summary: simplified.platformAnalyses.reddit.summary
+                summary: dynamic.platformAnalyses.reddit.summary
             },
             {
                 platform: 'LinkedIn',
-                summary: simplified.platformAnalyses.linkedin.summary
+                summary: dynamic.platformAnalyses.linkedin.summary
             }
         ],
-        tweetSuggestion: simplified.tweetSuggestion,
-        redditTitleSuggestion: simplified.redditTitleSuggestion,
-        redditBodySuggestion: simplified.redditBodySuggestion,
-        linkedinSuggestion: simplified.linkedinSuggestion
+        tweetSuggestion: dynamic.tweetSuggestion,
+        redditTitleSuggestion: dynamic.redditTitleSuggestion,
+        redditBodySuggestion: dynamic.redditBodySuggestion,
+        linkedinSuggestion: dynamic.linkedinSuggestion
     };
 }
 
