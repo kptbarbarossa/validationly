@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { validateIdea } from '../services/geminiService';
+// Direct API call - no service layer needed
 import type { ValidationResult, UserInput } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
@@ -136,7 +136,20 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            const result: ValidationResult = await validateIdea(userInput.idea);
+            // Direct API call to our dynamic prompt system
+            const response = await fetch('/api/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ idea: userInput.idea })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result: ValidationResult = await response.json();
             console.log('API call successful', result);
             
             // Track successful validation
