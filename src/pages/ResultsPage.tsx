@@ -125,7 +125,7 @@ const ResultsPage: React.FC = () => {
 
     // Market Intelligence Card Component
     const MarketIntelligenceCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-green-50">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-green-50 animate-card-hover animate-card-entrance" style={{ animationDelay: '400ms' }}>
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                     <TrendUpIcon />
@@ -166,7 +166,7 @@ const ResultsPage: React.FC = () => {
 
     // Competitive Landscape Card Component
     const CompetitiveLandscapeCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-red-50">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-red-50 animate-card-hover animate-card-entrance" style={{ animationDelay: '500ms' }}>
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                     <span className="text-red-600 font-bold">🥊</span>
@@ -201,7 +201,7 @@ const ResultsPage: React.FC = () => {
 
     // Revenue Model Card Component
     const RevenueModelCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-yellow-50">
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-yellow-50 animate-card-hover animate-card-entrance" style={{ animationDelay: '600ms' }}>
             <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
                     <span className="text-yellow-600 font-bold">💰</span>
@@ -444,7 +444,8 @@ const ResultsPage: React.FC = () => {
         analysis: any;
         icon: React.ReactNode;
         bgColor: string;
-    }> = ({ platform, analysis, icon, bgColor }) => {
+        delay?: number;
+    }> = ({ platform, analysis, icon, bgColor, delay = 0 }) => {
         const getScoreColor = (score: number) => {
             if (score >= 4) return 'text-green-600';
             if (score >= 3) return 'text-yellow-600';
@@ -459,7 +460,10 @@ const ResultsPage: React.FC = () => {
         };
 
         return (
-            <div className={`bg-white rounded-xl p-6 shadow-lg border border-gray-200 ${bgColor}`}>
+            <div 
+                className={`bg-white rounded-xl p-6 shadow-lg border border-gray-200 ${bgColor} animate-card-hover animate-card-entrance`}
+                style={{ animationDelay: `${delay}ms` }}
+            >
                 <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
                         {icon}
@@ -506,60 +510,62 @@ const ResultsPage: React.FC = () => {
             {/* Simplified Background */}
             <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
                 <div className="container mx-auto px-4 py-8">
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                    {/* Compact Animated Header */}
+                    <div className="text-center mb-6 animate-fade-in">
+                        <h1 className="text-2xl font-bold text-gray-900 mb-1">
                             Market Analysis Results
                         </h1>
-                        <p className="text-gray-600">AI-powered analysis of your business idea</p>
+                        <p className="text-sm text-gray-500">AI-powered analysis of your business idea</p>
                     </div>
 
-                    {/* Overall Score Card */}
-                    <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 max-w-3xl mx-auto mb-8">
+                    {/* Compact Animated Score Card */}
+                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 max-w-2xl mx-auto mb-6 animate-slide-up">
                         <div className="text-center">
-                            <div className="text-base font-medium text-gray-600 mb-4">Market Demand Score</div>
-                            <div className="flex items-center justify-center gap-4 mb-6">
-                                <div className="text-4xl font-bold text-gray-800">
+                            <div className="text-sm font-medium text-gray-500 mb-3">Market Demand Score</div>
+                            <div className="flex items-center justify-center gap-3 mb-4">
+                                <div className="text-3xl font-bold text-gray-800 animate-count-up">
                                     {result.demandScore}
-                                    <span className="text-xl text-gray-500 ml-1">/100</span>
+                                    <span className="text-lg text-gray-500 ml-1">/100</span>
                                 </div>
-                                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold shadow-md bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200`}>
-                                    <span className="text-lg">{status.icon}</span>
+                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200 animate-bounce-in`}>
+                                    <span className="text-sm">{status.icon}</span>
                                     {status.text}
                                 </div>
                             </div>
 
-                            {/* Progress Bar */}
-                            <div className="w-full bg-gray-200 rounded-full h-3 mb-6">
+                            {/* Animated Progress Bar */}
+                            <div className="w-full bg-gray-200 rounded-full h-2 mb-4 overflow-hidden">
                                 <div
-                                    className={`h-full rounded-full bg-gradient-to-r ${result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
+                                    className={`h-full rounded-full bg-gradient-to-r transition-all duration-1000 ease-out ${result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
                                         result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
                                             'from-red-400 to-red-600'
-                                        }`}
+                                        } animate-progress-fill`}
                                     style={{ width: `${result.demandScore}%` }}
                                 ></div>
                             </div>
 
-                            <div className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                            <div className="text-sm text-gray-600 max-w-xl mx-auto leading-relaxed">
                                 "{result.content || result.idea}"
                             </div>
                         </div>
                     </div>
 
-                    {/* Platform Analysis Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Animated Platform Analysis Cards */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                         {/* Always use real AI analysis from dynamic prompt system */}
                         <PlatformCard
                             platform="X (Twitter)"
                             analysis={(result as DynamicPromptResult).platformAnalyses?.twitter}
                             icon={<XIcon />}
                             bgColor="hover:bg-blue-50"
+                            delay={100}
                         />
                         <PlatformCard
                             platform="Reddit"
                             analysis={(result as DynamicPromptResult).platformAnalyses?.reddit}
                             icon={<RedditIcon />}
                             bgColor="hover:bg-orange-50"
+                            delay={200}
                         />
                         <PlatformCard
                             platform="LinkedIn"
@@ -568,6 +574,7 @@ const ResultsPage: React.FC = () => {
                                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                             </svg>}
                             bgColor="hover:bg-indigo-50"
+                            delay={300}
                         />
                     </div>
 

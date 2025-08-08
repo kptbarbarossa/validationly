@@ -229,45 +229,45 @@ Reference specific competitors, provide market share estimates where available, 
     detectSector(input: string): string[] {
         const inputLower = input.toLowerCase();
         const detectedSectors: string[] = [];
-        
+
         for (const [sector, keywords] of Object.entries(this.sectorKeywords)) {
-            const matchCount = keywords.filter(keyword => 
+            const matchCount = keywords.filter(keyword =>
                 inputLower.includes(keyword)
             ).length;
-            
+
             if (matchCount > 0) {
                 detectedSectors.push(sector);
             }
         }
-        
+
         return detectedSectors.length > 0 ? detectedSectors : ['saas'];
     }
 
     detectAnalysisNeeds(input: string): string[] {
         const inputLower = input.toLowerCase();
         const detectedAnalysis: string[] = [];
-        
+
         for (const [analysis, keywords] of Object.entries(this.analysisKeywords)) {
-            const matchCount = keywords.filter(keyword => 
+            const matchCount = keywords.filter(keyword =>
                 inputLower.includes(keyword)
             ).length;
-            
+
             if (matchCount > 0) {
                 detectedAnalysis.push(analysis);
             }
         }
-        
+
         return detectedAnalysis.length > 0 ? detectedAnalysis : ['market', 'competitive'];
     }
 
     async selectPrompts(input: string): Promise<PromptSelection> {
         const sectors = this.detectSector(input);
         const analysisTypes = this.detectAnalysisNeeds(input);
-        
+
         const basePrompt = this.prompts['base-analyst'];
         const sectorPrompts = sectors.map(sector => this.prompts[`${sector}-sector`]).filter(p => p);
         const analysisPrompts = analysisTypes.map(analysis => this.prompts[`${analysis}-opportunity`]).filter(p => p);
-        
+
         return {
             basePrompt,
             sectorPrompts,
@@ -284,15 +284,15 @@ Reference specific competitors, provide market share estimates where available, 
 
     combinePrompts(selection: PromptSelection): string {
         const parts = [selection.basePrompt];
-        
+
         if (selection.sectorPrompts.length > 0) {
             parts.push('\n\n' + selection.sectorPrompts.join('\n\n'));
         }
-        
+
         if (selection.analysisPrompts.length > 0) {
             parts.push('\n\n' + selection.analysisPrompts.join('\n\n'));
         }
-        
+
         return parts.join('');
     }
 }
@@ -305,20 +305,20 @@ interface DynamicPromptResult {
     content?: string;
     demandScore: number;
     scoreJustification: string;
-    
+
     // Platform analyses from our dynamic prompt system
     platformAnalyses: {
         twitter: PlatformAnalysis;
         reddit: PlatformAnalysis;
         linkedin: PlatformAnalysis;
     };
-    
+
     // Content suggestions
     tweetSuggestion: string;
     redditTitleSuggestion: string;
     redditBodySuggestion: string;
     linkedinSuggestion: string;
-    
+
     // Metadata
     promptMetadata?: {
         sectorsDetected: string[];
@@ -606,7 +606,7 @@ export default async function handler(req: any, res: any) {
 
     } catch (error) {
         console.error('❌ Simplified validation error:', error);
-        
+
         // Return simplified error response
         return res.status(500).json({
             message: 'Analysis failed. Please try again.',
@@ -625,14 +625,11 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         console.log('🎯 Using single AI call with dynamic prompt system...');
         console.log('📝 System instruction length:', systemInstruction.length);
         console.log('🎯 Input content:', content);
-        
-        // Detect input language first
-        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || 
-                         /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
-        
-        const languageInstruction = isTurkish ? 
-            "🇹🇷 TÜRKÇE ZORUNLU: Tüm cevabınız Türkçe olmalı. Hiç İngilizce kelime kullanmayın." :
-            "🇺🇸 ENGLISH REQUIRED: All your response must be in English.";
+
+        // Simple language detection
+        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || /\b(bir|bu|için|ile|olan|var|çok|iyi|yeni)\b/i.test(content);
+        const language = isTurkish ? 'Turkish' : 'English';
+        const languageInstruction = `RESPOND IN ${language.toUpperCase()} ONLY. All text fields must be in ${language}.`;
 
         // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
@@ -728,7 +725,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             redditTitleSuggestion: parsedResult.redditTitleSuggestion || 'Looking for feedback on my startup idea',
             redditBodySuggestion: parsedResult.redditBodySuggestion || 'I would love to get your thoughts on this concept.',
             linkedinSuggestion: parsedResult.linkedinSuggestion || 'Excited to share this new business concept with my network.',
-            
+
             // Add comprehensive analysis with fallbacks
             marketIntelligence: parsedResult.marketIntelligence || {
                 tam: "Market analysis in progress",
@@ -764,7 +761,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             },
             riskAssessment: parsedResult.riskAssessment || {
                 technicalRisk: "Medium",
-                marketRisk: "Medium", 
+                marketRisk: "Medium",
                 financialRisk: "Medium",
                 regulatoryRisk: "Low",
                 overallRiskLevel: "Medium",
@@ -803,8 +800,8 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         console.log('❌ Platform analysis failed, using fallback...', error);
 
         // Detect language for fallback
-        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || 
-                         /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
+        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) ||
+            /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
 
         if (isTurkish) {
             // Turkish fallback

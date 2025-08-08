@@ -18,3 +18,69 @@ body {
 #root {
   min-height: 100vh;
 }
+
+/* Custom Animations for Results Page */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes progressFill {
+  from { width: 0%; }
+  to { width: var(--progress-width); }
+}
+
+@keyframes countUp {
+  from { opacity: 0; transform: scale(0.5); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes cardHover {
+  from { transform: translateY(0px); }
+  to { transform: translateY(-5px); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.8s ease-out;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.8s ease-out 0.3s both;
+}
+
+.animate-progress-fill {
+  animation: progressFill 1.5s ease-out 0.5s both;
+}
+
+.animate-count-up {
+  animation: countUp 0.8s ease-out 0.2s both;
+}
+
+.animate-card-entrance {
+  animation: slideUp 0.6s ease-out both;
+}
+
+.animate-card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.animate-card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
