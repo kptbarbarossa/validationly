@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import type { ValidationResult, DynamicPromptResult } from '../types';
+import type { DynamicPromptResult } from '../types';
 import SEOHead from '../components/SEOHead';
 
 // Minimalist Premium Icons
@@ -63,7 +63,7 @@ const InfoIcon = () => (
 const ResultsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
-    const result = location.state?.result as ValidationResult | DynamicPromptResult;
+    const result = location.state?.result as DynamicPromptResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -121,8 +121,7 @@ const ResultsPage: React.FC = () => {
 
     const status = getOverallStatus(result.demandScore);
 
-    // Check if this is a dynamic prompt result
-    const isDynamicPromptResult = 'platformAnalyses' in result;
+    // All results are now from dynamic prompt system
 
     // Simple Platform Analysis Card Component
     const PlatformCard: React.FC<{
@@ -240,79 +239,27 @@ const ResultsPage: React.FC = () => {
 
                     {/* Platform Analysis Cards */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        {isDynamicPromptResult ? (
-                            // Dynamic prompt result with platform analyses
-                            <>
-                                <PlatformCard
-                                    platform="X (Twitter)"
-                                    analysis={(result as DynamicPromptResult).platformAnalyses?.twitter}
-                                    icon={<XIcon />}
-                                    bgColor="hover:bg-blue-50"
-                                />
-                                <PlatformCard
-                                    platform="Reddit"
-                                    analysis={(result as DynamicPromptResult).platformAnalyses?.reddit}
-                                    icon={<RedditIcon />}
-                                    bgColor="hover:bg-orange-50"
-                                />
-                                <PlatformCard
-                                    platform="LinkedIn"
-                                    analysis={(result as DynamicPromptResult).platformAnalyses?.linkedin}
-                                    icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                    </svg>}
-                                    bgColor="hover:bg-indigo-50"
-                                />
-                            </>
-                        ) : (
-                            // Legacy result - create simplified cards from existing data
-                            <>
-                                <PlatformCard
-                                    platform="X (Twitter)"
-                                    analysis={{
-                                        score: Math.min(5, Math.max(1, Math.round(((result as ValidationResult).validationlyScore?.breakdown?.twitter || 25) / 20))),
-                                        summary: `Twitter shows ${(result as ValidationResult).demandScore >= 60 ? 'strong' : (result as ValidationResult).demandScore >= 40 ? 'moderate' : 'limited'} potential for viral content and community engagement.`,
-                                        keyFindings: [
-                                            'AI-generated content suggestions available',
-                                            `${(result as ValidationResult).demandScore >= 50 ? 'Good' : 'Moderate'} audience alignment detected`,
-                                            'Hashtag strategy recommended'
-                                        ]
-                                    }}
-                                    icon={<XIcon />}
-                                    bgColor="hover:bg-blue-50"
-                                />
-                                <PlatformCard
-                                    platform="Reddit"
-                                    analysis={{
-                                        score: Math.min(5, Math.max(1, Math.round(((result as ValidationResult).validationlyScore?.breakdown?.reddit || 20) / 20))),
-                                        summary: `Reddit communities show ${(result as ValidationResult).demandScore >= 60 ? 'high' : (result as ValidationResult).demandScore >= 40 ? 'moderate' : 'limited'} interest in discussing similar topics.`,
-                                        keyFindings: [
-                                            'Community engagement potential identified',
-                                            `${(result as ValidationResult).realTimeInsights?.reddit?.sentiment ? 'Positive' : 'Mixed'} sentiment detected`,
-                                            'Subreddit recommendations available'
-                                        ]
-                                    }}
-                                    icon={<RedditIcon />}
-                                    bgColor="hover:bg-orange-50"
-                                />
-                                <PlatformCard
-                                    platform="LinkedIn"
-                                    analysis={{
-                                        score: Math.min(5, Math.max(1, Math.round(((result as ValidationResult).validationlyScore?.breakdown?.linkedin || 18) / 20))),
-                                        summary: `LinkedIn shows ${(result as ValidationResult).demandScore >= 60 ? 'strong' : (result as ValidationResult).demandScore >= 40 ? 'moderate' : 'limited'} potential for professional networking and B2B engagement.`,
-                                        keyFindings: [
-                                            'Professional audience alignment',
-                                            'B2B networking opportunities',
-                                            'Thought leadership potential'
-                                        ]
-                                    }}
-                                    icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                    </svg>}
-                                    bgColor="hover:bg-indigo-50"
-                                />
-                            </>
-                        )}
+                            {/* Always use real AI analysis from dynamic prompt system */}
+                        <PlatformCard
+                            platform="X (Twitter)"
+                            analysis={(result as DynamicPromptResult).platformAnalyses?.twitter}
+                            icon={<XIcon />}
+                            bgColor="hover:bg-blue-50"
+                        />
+                        <PlatformCard
+                            platform="Reddit"
+                            analysis={(result as DynamicPromptResult).platformAnalyses?.reddit}
+                            icon={<RedditIcon />}
+                            bgColor="hover:bg-orange-50"
+                        />
+                        <PlatformCard
+                            platform="LinkedIn"
+                            analysis={(result as DynamicPromptResult).platformAnalyses?.linkedin}
+                            icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                            </svg>}
+                            bgColor="hover:bg-indigo-50"
+                        />
                     </div>
 
                     {/* Simplified Content Suggestions */}
