@@ -67,7 +67,7 @@ export interface RealTimeInsights {
   confidence: number;
 }
 
-// Dynamic Prompt System Result - Our new clean interface
+// Dynamic Prompt System Result - Our new comprehensive interface
 export interface DynamicPromptResult {
   idea: string;
   content?: string;
@@ -87,6 +87,16 @@ export interface DynamicPromptResult {
   redditBodySuggestion: string;
   linkedinSuggestion: string;
   
+  // New comprehensive analysis cards
+  marketIntelligence: MarketIntelligence;
+  competitiveLandscape: CompetitiveLandscape;
+  revenueModel: RevenueModel;
+  targetAudience: TargetAudience;
+  riskAssessment: RiskAssessment;
+  goToMarket: GoToMarket;
+  developmentRoadmap: DevelopmentRoadmap;
+  productMarketFit: ProductMarketFit;
+  
   // Metadata
   promptMetadata?: {
     sectorsDetected: string[];
@@ -94,6 +104,81 @@ export interface DynamicPromptResult {
     confidence: number;
   };
 }
+
+// New analysis interfaces
+export interface MarketIntelligence {
+  tam: string; // Total Addressable Market
+  sam: string; // Serviceable Addressable Market  
+  som: string; // Serviceable Obtainable Market
+  growthRate: string;
+  marketTiming: number; // 1-5 stars
+  keyTrends: string[];
+}
+
+export interface CompetitiveLandscape {
+  directCompetitors: string[];
+  indirectCompetitors: string[];
+  marketPosition: string;
+  differentiationScore: number; // 1-10
+  competitiveMoat: string;
+  entryBarriers: string;
+}
+
+export interface RevenueModel {
+  primaryModel: string;
+  pricePoint: string;
+  revenueStreams: string[];
+  breakEvenTimeline: string;
+  ltvCacRatio: string;
+  projectedMrr: string;
+}
+
+export interface TargetAudience {
+  primarySegment: string;
+  secondarySegment: string;
+  tertiarySegment: string;
+  painPoints: string[];
+  willingnessToPay: string;
+  customerAcquisitionChannels: string[];
+}
+
+export interface RiskAssessment {
+  technicalRisk: RiskLevel;
+  marketRisk: RiskLevel;
+  financialRisk: RiskLevel;
+  regulatoryRisk: RiskLevel;
+  overallRiskLevel: RiskLevel;
+  mitigationStrategies: string[];
+}
+
+export interface GoToMarket {
+  phase1: string;
+  phase2: string;
+  phase3: string;
+  timeline: string;
+  budgetNeeded: string;
+  keyChannels: string[];
+}
+
+export interface DevelopmentRoadmap {
+  mvpTimeline: string;
+  betaLaunch: string;
+  publicLaunch: string;
+  keyFeatures: string[];
+  teamNeeded: string[];
+  techStack: string[];
+}
+
+export interface ProductMarketFit {
+  problemSolutionFit: number; // percentage
+  solutionMarketFit: number; // percentage
+  earlyAdopterSignals: string;
+  retentionPrediction: string;
+  viralCoefficient: string;
+  pmfIndicators: string[];
+}
+
+export type RiskLevel = 'Very Low' | 'Low' | 'Medium' | 'High' | 'Very High';
 
 export interface PlatformAnalysis {
   platformName: string;

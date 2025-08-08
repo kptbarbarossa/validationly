@@ -123,6 +123,321 @@ const ResultsPage: React.FC = () => {
 
     // All results are now from dynamic prompt system
 
+    // Market Intelligence Card Component
+    const MarketIntelligenceCard: React.FC<{ data?: any }> = ({ data }) => (
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-green-50">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <TrendUpIcon />
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">Market Intelligence</h3>
+                    <div className="text-sm text-green-600 font-medium">Market Opportunity</div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">TAM:</span> 
+                    <span className="text-gray-600 ml-2">{data?.tam || '$2.5B Design Software Market'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">SAM:</span> 
+                    <span className="text-gray-600 ml-2">{data?.sam || '$450M SaaS Design Tools'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">SOM:</span> 
+                    <span className="text-gray-600 ml-2">{data?.som || '$12M Realistic 3-year target'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Growth:</span> 
+                    <span className="text-green-600 ml-2 font-medium">{data?.growthRate || '15% YoY'}</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                    <span className="font-medium text-gray-700">Timing:</span>
+                    <div className="flex">
+                        {[...Array(data?.marketTiming || 4)].map((_, i) => (
+                            <span key={i} className="text-yellow-400">⭐</span>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Competitive Landscape Card Component
+    const CompetitiveLandscapeCard: React.FC<{ data?: any }> = ({ data }) => (
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-red-50">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                    <span className="text-red-600 font-bold">🥊</span>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">Competition Analysis</h3>
+                    <div className="text-sm text-red-600 font-medium">Competitive Landscape</div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Direct Competitors:</span>
+                    <div className="text-gray-600 mt-1">
+                        {data?.directCompetitors?.join(', ') || 'Figma, Sketch, Adobe XD'}
+                    </div>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Position:</span> 
+                    <span className="text-gray-600 ml-2">{data?.marketPosition || 'Blue Ocean Opportunity'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Differentiation:</span> 
+                    <span className="text-blue-600 ml-2 font-medium">{data?.differentiationScore || '8'}/10</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Moat:</span> 
+                    <span className="text-gray-600 ml-2">{data?.competitiveMoat || 'AI-powered features'}</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Revenue Model Card Component
+    const RevenueModelCard: React.FC<{ data?: any }> = ({ data }) => (
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-yellow-50">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
+                    <span className="text-yellow-600 font-bold">💰</span>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">Revenue Model</h3>
+                    <div className="text-sm text-yellow-600 font-medium">Monetization Strategy</div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Model:</span> 
+                    <span className="text-gray-600 ml-2">{data?.primaryModel || 'Freemium SaaS'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Price:</span> 
+                    <span className="text-green-600 ml-2 font-medium">{data?.pricePoint || '$29/month'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Break-even:</span> 
+                    <span className="text-gray-600 ml-2">{data?.breakEvenTimeline || '18 months'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">LTV/CAC:</span> 
+                    <span className="text-blue-600 ml-2 font-medium">{data?.ltvCacRatio || '4.2x'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Projected MRR:</span> 
+                    <span className="text-green-600 ml-2 font-medium">{data?.projectedMrr || '$25K by Year 1'}</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Target Audience Card Component
+    const TargetAudienceCard: React.FC<{ data?: any }> = ({ data }) => (
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-purple-50">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <span className="text-purple-600 font-bold">👥</span>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">Target Audience</h3>
+                    <div className="text-sm text-purple-600 font-medium">Customer Segments</div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Primary:</span> 
+                    <span className="text-gray-600 ml-2">{data?.primarySegment || 'Freelance Designers (40%)'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Secondary:</span> 
+                    <span className="text-gray-600 ml-2">{data?.secondarySegment || 'Design Agencies (35%)'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Pain Points:</span>
+                    <div className="text-gray-600 mt-1">
+                        {data?.painPoints?.join(', ') || 'Project chaos, client communication'}
+                    </div>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Willingness to Pay:</span> 
+                    <span className="text-green-600 ml-2 font-medium">{data?.willingnessToPay || 'High ($25-50/month)'}</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Risk Assessment Card Component
+    const RiskAssessmentCard: React.FC<{ data?: any }> = ({ data }) => {
+        const getRiskColor = (risk: string) => {
+            switch (risk?.toLowerCase()) {
+                case 'low': case 'very low': return 'text-green-600';
+                case 'medium': return 'text-yellow-600';
+                case 'high': case 'very high': return 'text-red-600';
+                default: return 'text-gray-600';
+            }
+        };
+
+        return (
+            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-orange-50">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                        <span className="text-orange-600 font-bold">⚠️</span>
+                    </div>
+                    <div>
+                        <h3 className="font-semibold text-gray-900">Risk Assessment</h3>
+                        <div className="text-sm text-orange-600 font-medium">Risk Matrix</div>
+                    </div>
+                </div>
+                <div className="space-y-3">
+                    <div className="text-sm">
+                        <span className="font-medium text-gray-700">Technical:</span> 
+                        <span className={`ml-2 font-medium ${getRiskColor(data?.technicalRisk || 'Low')}`}>
+                            {data?.technicalRisk || 'Low'}
+                        </span>
+                    </div>
+                    <div className="text-sm">
+                        <span className="font-medium text-gray-700">Market:</span> 
+                        <span className={`ml-2 font-medium ${getRiskColor(data?.marketRisk || 'Medium')}`}>
+                            {data?.marketRisk || 'Medium'}
+                        </span>
+                    </div>
+                    <div className="text-sm">
+                        <span className="font-medium text-gray-700">Financial:</span> 
+                        <span className={`ml-2 font-medium ${getRiskColor(data?.financialRisk || 'Low')}`}>
+                            {data?.financialRisk || 'Low'}
+                        </span>
+                    </div>
+                    <div className="text-sm border-t pt-2">
+                        <span className="font-medium text-gray-700">Overall:</span> 
+                        <span className={`ml-2 font-bold ${getRiskColor(data?.overallRiskLevel || 'Medium')}`}>
+                            {data?.overallRiskLevel || 'MEDIUM'}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    // Go-to-Market Card Component
+    const GoToMarketCard: React.FC<{ data?: any }> = ({ data }) => (
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-indigo-50">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <span className="text-indigo-600 font-bold">🚀</span>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">Go-to-Market</h3>
+                    <div className="text-sm text-indigo-600 font-medium">Launch Strategy</div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Phase 1:</span> 
+                    <span className="text-gray-600 ml-2">{data?.phase1 || 'Design Twitter + Product Hunt'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Phase 2:</span> 
+                    <span className="text-gray-600 ml-2">{data?.phase2 || 'Design communities (Dribbble, Behance)'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Phase 3:</span> 
+                    <span className="text-gray-600 ml-2">{data?.phase3 || 'Partnership with design schools'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Timeline:</span> 
+                    <span className="text-blue-600 ml-2 font-medium">{data?.timeline || '6-month rollout'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Budget:</span> 
+                    <span className="text-green-600 ml-2 font-medium">{data?.budgetNeeded || '$50K initial'}</span>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Development Roadmap Card Component
+    const DevelopmentRoadmapCard: React.FC<{ data?: any }> = ({ data }) => (
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-teal-50">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
+                    <span className="text-teal-600 font-bold">🛠️</span>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">Development Roadmap</h3>
+                    <div className="text-sm text-teal-600 font-medium">Build Timeline</div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">MVP:</span> 
+                    <span className="text-gray-600 ml-2">{data?.mvpTimeline || '3 months'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Beta:</span> 
+                    <span className="text-gray-600 ml-2">{data?.betaLaunch || '5 months'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Launch:</span> 
+                    <span className="text-blue-600 ml-2 font-medium">{data?.publicLaunch || '8 months'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Team:</span>
+                    <div className="text-gray-600 mt-1">
+                        {data?.teamNeeded?.join(', ') || '2 developers, 1 designer'}
+                    </div>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Tech Stack:</span>
+                    <div className="text-gray-600 mt-1">
+                        {data?.techStack?.join(', ') || 'React, Node.js, PostgreSQL'}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
+    // Product-Market Fit Card Component
+    const ProductMarketFitCard: React.FC<{ data?: any }> = ({ data }) => (
+        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-pink-50">
+            <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
+                    <span className="text-pink-600 font-bold">🎯</span>
+                </div>
+                <div>
+                    <h3 className="font-semibold text-gray-900">Product-Market Fit</h3>
+                    <div className="text-sm text-pink-600 font-medium">PMF Indicators</div>
+                </div>
+            </div>
+            <div className="space-y-3">
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Problem-Solution Fit:</span> 
+                    <span className="text-green-600 ml-2 font-medium">{data?.problemSolutionFit || '85'}%</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Solution-Market Fit:</span> 
+                    <span className="text-blue-600 ml-2 font-medium">{data?.solutionMarketFit || '78'}%</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Early Adopters:</span> 
+                    <span className="text-gray-600 ml-2">{data?.earlyAdopterSignals || 'Strong signals'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Retention:</span> 
+                    <span className="text-gray-600 ml-2">{data?.retentionPrediction || '65% (Month 1)'}</span>
+                </div>
+                <div className="text-sm">
+                    <span className="font-medium text-gray-700">Viral Coefficient:</span> 
+                    <span className="text-purple-600 ml-2 font-medium">{data?.viralCoefficient || '0.3'}</span>
+                </div>
+            </div>
+        </div>
+    );
+
     // Simple Platform Analysis Card Component
     const PlatformCard: React.FC<{
         platform: string;
@@ -256,7 +571,27 @@ const ResultsPage: React.FC = () => {
                         />
                     </div>
 
-                    {/* Simplified Content Suggestions */}
+                    {/* Market Intelligence Cards - Tier 1 */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <MarketIntelligenceCard data={result.marketIntelligence} />
+                        <CompetitiveLandscapeCard data={result.competitiveLandscape} />
+                        <RevenueModelCard data={result.revenueModel} />
+                    </div>
+
+                    {/* Strategic Analysis Cards - Tier 2 */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <TargetAudienceCard data={result.targetAudience} />
+                        <RiskAssessmentCard data={result.riskAssessment} />
+                        <GoToMarketCard data={result.goToMarket} />
+                    </div>
+
+                    {/* Advanced Analysis Cards - Tier 3 */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <DevelopmentRoadmapCard data={result.developmentRoadmap} />
+                        <ProductMarketFitCard data={result.productMarketFit} />
+                    </div>
+
+                    {/* Content Suggestions */}
                     <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 max-w-4xl mx-auto mb-8">
                         <div className="text-center mb-6">
                             <h3 className="text-xl font-bold text-gray-900 mb-2">Test Your Idea</h3>
