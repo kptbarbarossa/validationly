@@ -19,7 +19,7 @@ const sampleCategories = [
         ),
         description: "Business software solutions",
         example: "SaaS platform for automated invoice processing using AI",
-        platforms: "GitHub, Stack Overflow, Product Hunt"
+        platforms: "GitHub, Stack Overflow, Slack, Dev.to, Indie Hackers"
     },
     {
         name: "E-commerce",
@@ -30,7 +30,7 @@ const sampleCategories = [
         ),
         description: "Online retail & marketplaces",
         example: "Sustainable fashion marketplace for eco-conscious consumers",
-        platforms: "Instagram, Pinterest, TikTok"
+        platforms: "Instagram, Pinterest, Etsy, Shopify, Amazon"
     },
     {
         name: "Fintech",
@@ -41,7 +41,7 @@ const sampleCategories = [
         ),
         description: "Financial technology solutions",
         example: "Mobile app for real-time expense splitting with friends",
-        platforms: "AngelList, Crunchbase, LinkedIn"
+        platforms: "AngelList, Crunchbase, Substack, Clubhouse"
     },
     {
         name: "Design & Creative",
@@ -52,7 +52,7 @@ const sampleCategories = [
         ),
         description: "Design tools & creative platforms",
         example: "AI-powered design tool for creating social media graphics",
-        platforms: "Dribbble, Behance, Figma Community"
+        platforms: "Dribbble, Behance, Awwwards, Canva, Unsplash"
     },
     {
         name: "Mobile Apps",
@@ -63,7 +63,7 @@ const sampleCategories = [
         ),
         description: "Consumer mobile applications",
         example: "Mental health app with AI-powered mood tracking",
-        platforms: "Product Hunt, GitHub, Reddit"
+        platforms: "Product Hunt, GitHub, Dev.to, Indie Hackers"
     },
     {
         name: "Marketplace",
@@ -74,7 +74,7 @@ const sampleCategories = [
         ),
         description: "Two-sided marketplace platforms",
         example: "Freelance marketplace for specialized AI consultants",
-        platforms: "AngelList, Product Hunt, LinkedIn"
+        platforms: "AngelList, Product Hunt, Indie Hackers, Etsy"
     }
 ];
 
@@ -330,6 +330,9 @@ const HomePage: React.FC = () => {
                             </p>
                             <div className="text-xs text-indigo-600 font-medium">
                                 📱 {category.platforms}
+                            </div>
+                            <div className="text-xs text-gray-500 mt-1">
+                                Phase 3: Enhanced platform coverage
                             </div>
 
                         </div>

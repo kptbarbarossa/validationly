@@ -109,6 +109,32 @@ export interface DynamicPromptResult {
     dribbble: PlatformAnalysis;
     behance: PlatformAnalysis;
     figma: PlatformAnalysis;
+    
+    // Phase 3 - Professional & Business Platforms
+    slack: PlatformAnalysis;
+    clubhouse: PlatformAnalysis;
+    substack: PlatformAnalysis;
+    notion: PlatformAnalysis;
+    
+    // Phase 3 - Developer & Tech Platforms
+    devto: PlatformAnalysis;
+    hashnode: PlatformAnalysis;
+    gitlab: PlatformAnalysis;
+    codepen: PlatformAnalysis;
+    indiehackers: PlatformAnalysis;
+    
+    // Phase 3 - Creative & Design Platforms
+    awwwards: PlatformAnalysis;
+    designs99: PlatformAnalysis;
+    canva: PlatformAnalysis;
+    adobe: PlatformAnalysis;
+    unsplash: PlatformAnalysis;
+    
+    // Phase 3 - E-commerce & Retail Platforms
+    etsy: PlatformAnalysis;
+    amazon: PlatformAnalysis;
+    shopify: PlatformAnalysis;
+    woocommerce: PlatformAnalysis;
   };
   
   // Content suggestions
