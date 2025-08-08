@@ -616,6 +616,8 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
 
     try {
         console.log('🎯 Using single AI call with dynamic prompt system...');
+        console.log('📝 System instruction length:', systemInstruction.length);
+        console.log('🎯 Input content:', content);
         
         // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
