@@ -511,12 +511,13 @@ export default async function handler(req: any, res: any) {
         const finalSystemInstruction = `${systemInstruction}
 
         🌍 CRITICAL LANGUAGE REQUIREMENT: 
-        - DETECT the language of the user's input content
-        - RESPOND in the EXACT SAME LANGUAGE throughout your ENTIRE response
-        - If input is in Turkish → ALL fields must be in Turkish
-        - If input is in English → ALL fields must be in English  
-        - This applies to ALL text fields
-        - NO MIXING of languages - maintain consistency across all fields
+        - The user's input language has been detected and specified above
+        - You MUST respond in the EXACT SAME LANGUAGE as specified
+        - If Turkish is specified → ALL fields must be in Turkish (summary, keyFindings, contentSuggestion, etc.)
+        - If English is specified → ALL fields must be in English
+        - This applies to EVERY SINGLE text field in your JSON response
+        - NO MIXING of languages - maintain 100% consistency
+        - Platform names can stay as "Twitter", "Reddit", "LinkedIn" but all descriptions must match the specified language
 
         ANALYSIS METHODOLOGY:
         1. Demand Score (0-100): Overall market demand assessment
@@ -617,11 +618,19 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         console.log('📝 System instruction length:', systemInstruction.length);
         console.log('🎯 Input content:', content);
         
+        // Detect input language first
+        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || 
+                         /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
+        
+        const languageInstruction = isTurkish ? 
+            "🇹🇷 TÜRKÇE ZORUNLU: Tüm cevabınız Türkçe olmalı. Hiç İngilizce kelime kullanmayın." :
+            "🇺🇸 ENGLISH REQUIRED: All your response must be in English.";
+
         // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
         const result = await aiInstance.models.generateContent({
             model: "gemini-2.0-flash-exp",
-            contents: `ANALYZE THIS STARTUP IDEA: "${content}"\n\n🌍 LANGUAGE REMINDER: You MUST respond in the EXACT SAME LANGUAGE as the user's input.\n\nProvide comprehensive analysis including platform-specific insights and content suggestions.`,
+            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\nProvide comprehensive analysis including platform-specific insights and content suggestions.`,
             config: {
                 systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT: Return JSON with this exact structure:
                 {
@@ -709,39 +718,79 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
     } catch (error) {
         console.log('❌ Platform analysis failed, using fallback...', error);
 
-        // Fallback analysis
-        return {
-            idea: content,
-            demandScore: 65,
-            scoreJustification: 'Analysis completed with limited data',
-            platformAnalyses: {
-                twitter: {
-                    platformName: 'Twitter',
-                    score: 3,
-                    summary: 'Twitter analysis temporarily unavailable. Moderate potential estimated.',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
-                    contentSuggestion: 'Share your idea on Twitter to get feedback.'
+        // Detect language for fallback
+        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || 
+                         /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
+
+        if (isTurkish) {
+            // Turkish fallback
+            return {
+                idea: content,
+                demandScore: 65,
+                scoreJustification: 'Sınırlı veri ile analiz tamamlandı',
+                platformAnalyses: {
+                    twitter: {
+                        platformName: 'Twitter',
+                        score: 3,
+                        summary: 'Twitter analizi geçici olarak kullanılamıyor. Orta düzey potansiyel tahmin ediliyor.',
+                        keyFindings: ['Analiz kullanılamıyor', 'Yedek değerlendirme', 'Orta potansiyel'],
+                        contentSuggestion: 'Fikrinizi Twitter\'da paylaşarak geri bildirim alın.'
+                    },
+                    reddit: {
+                        platformName: 'Reddit',
+                        score: 3,
+                        summary: 'Reddit analizi geçici olarak kullanılamıyor. Topluluk ilgisi orta düzey olarak tahmin ediliyor.',
+                        keyFindings: ['Analiz kullanılamıyor', 'Yedek değerlendirme', 'Orta topluluk uyumu'],
+                        contentSuggestion: 'İlgili subreddit\'lerde topluluk geri bildirimi için paylaşın.'
+                    },
+                    linkedin: {
+                        platformName: 'LinkedIn',
+                        score: 3,
+                        summary: 'LinkedIn analizi geçici olarak kullanılamıyor. Profesyonel uygunluk orta düzey olarak tahmin ediliyor.',
+                        keyFindings: ['Analiz kullanılamıyor', 'Yedek değerlendirme', 'Orta iş potansiyeli'],
+                        contentSuggestion: 'Profesyonel ağınızla LinkedIn\'de paylaşın.'
+                    }
                 },
-                reddit: {
-                    platformName: 'Reddit',
-                    score: 3,
-                    summary: 'Reddit analysis temporarily unavailable. Community interest estimated as moderate.',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate community fit'],
-                    contentSuggestion: 'Post in relevant subreddits for community feedback.'
+                tweetSuggestion: `🚀 Yeni bir fikir üzerinde çalışıyorum: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} Ne düşünüyorsunuz? #startup #girişim`,
+                redditTitleSuggestion: 'Startup fikrimi için geri bildirim arıyorum',
+                redditBodySuggestion: `Bu konsept üzerinde çalışıyorum: ${content}. Topluluktan düşüncelerinizi ve geri bildirimlerinizi almak isterim.`,
+                linkedinSuggestion: `Yeni bir iş fırsatı keşfediyorum: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Bu alanda başkalarıyla bağlantı kurmakla ilgileniyorum.`
+            };
+        } else {
+            // English fallback
+            return {
+                idea: content,
+                demandScore: 65,
+                scoreJustification: 'Analysis completed with limited data',
+                platformAnalyses: {
+                    twitter: {
+                        platformName: 'Twitter',
+                        score: 3,
+                        summary: 'Twitter analysis temporarily unavailable. Moderate potential estimated.',
+                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
+                        contentSuggestion: 'Share your idea on Twitter to get feedback.'
+                    },
+                    reddit: {
+                        platformName: 'Reddit',
+                        score: 3,
+                        summary: 'Reddit analysis temporarily unavailable. Community interest estimated as moderate.',
+                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate community fit'],
+                        contentSuggestion: 'Post in relevant subreddits for community feedback.'
+                    },
+                    linkedin: {
+                        platformName: 'LinkedIn',
+                        score: 3,
+                        summary: 'LinkedIn analysis temporarily unavailable. Professional relevance estimated as moderate.',
+                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                        contentSuggestion: 'Share with your professional network on LinkedIn.'
+                    }
                 },
-                linkedin: {
-                    platformName: 'LinkedIn',
-                    score: 3,
-                    summary: 'LinkedIn analysis temporarily unavailable. Professional relevance estimated as moderate.',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                    contentSuggestion: 'Share with your professional network on LinkedIn.'
-                }
-            },
-            tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
-            redditTitleSuggestion: 'Looking for feedback on my startup idea',
-            redditBodySuggestion: `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
-            linkedinSuggestion: `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`
-        };
+                tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
+                redditTitleSuggestion: 'Looking for feedback on my startup idea',
+                redditBodySuggestion: `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
+                linkedinSuggestion: `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`
+            };
+        }
     }
 }
 
