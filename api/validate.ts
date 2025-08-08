@@ -735,7 +735,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         // Language detection with optional override
         const isTurkishAuto = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || /\b(bir|bu|için|ile|olan|var|çok|iyi|yeni)\b/i.test(content);
         const language = forcedLang === 'tr' ? 'Turkish' : forcedLang === 'en' ? 'English' : (isTurkishAuto ? 'Turkish' : 'English');
-        const languageInstruction = `RESPOND IN ${language.toUpperCase()} ONLY. All text fields must be in ${language}.`;
+        const languageInstruction = `YOU MUST RESPOND IN ${language.toUpperCase()} ONLY. Do not include any words from other languages.`;
 
         // Detect sector and get relevant platforms
         const sectors = promptManager.detectSector(content);
@@ -748,7 +748,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         const aiInstance = getAI();
         const result = await aiInstance.models.generateContent({
             model: "gemini-2.0-flash-exp",
-            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA:
+            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep language strictly ${language}.:
 
             📊 MARKET INTELLIGENCE (provide specific numbers):
             - TAM: Research actual market size with $ amounts
@@ -836,7 +836,7 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             ${sectors.includes('design') ? '- Awwwards: Web design excellence showcase' : ''}
             ${sectors.includes('design') ? '- Canva Community: Design tool ecosystem' : ''}`,
             config: {
-                systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL relevant platforms:
+                systemInstruction: systemInstruction + `\n\nLANGUAGE ENFORCEMENT: Respond ONLY in ${language}. Do not mix languages. All text fields must be in ${language}.\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL required keys (even if estimated). Use non-empty strings for all text fields. No nulls, no empty arrays. Include ALL relevant platforms as specified:
                 {
                     "idea": "${content}",
                     "demandScore": number (0-100),
@@ -965,6 +965,21 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         const parsedResult = safeJsonParse(responseText);
         if (!parsedResult) {
             throw new Error('Invalid JSON from AI');
+        }
+
+        // If language fields sneak in mixed-language content, enforce by simple heuristic
+        const textFields = [
+            parsedResult.scoreJustification,
+            parsedResult?.platformAnalyses?.twitter?.summary,
+            parsedResult?.platformAnalyses?.reddit?.summary,
+            parsedResult?.platformAnalyses?.linkedin?.summary,
+        ].filter(Boolean).join(' ');
+        const containsTurkishChars = /[çğıöşüÇĞIİÖŞÜ]/.test(textFields);
+        if (language === 'English' && containsTurkishChars) {
+            throw new Error('Language mismatch: expected English, detected Turkish characters');
+        }
+        if (language === 'Turkish' && !/[çğıöşüÇĞIİÖŞÜ]/.test(textFields)) {
+            // if Turkish expected but no Turkish chars present, allow; no strict block
         }
 
         // Validate and clean the result
