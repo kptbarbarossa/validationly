@@ -194,7 +194,7 @@ const ResultsPage: React.FC = () => {
                     {/* Header */}
                     <div className="text-center mb-8">
                         </div>
-                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
                             Market Analysis Results
                         </h1>
                         <p className="text-gray-600">AI-powered analysis of your business idea</p>
