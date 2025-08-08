@@ -608,133 +608,49 @@ export default async function handler(req: any, res: any) {
     }
 }
 
-// Platform-specific AI analysis functions
-async function analyzePlatform(content: string, platform: 'twitter' | 'reddit' | 'linkedin'): Promise<SimplePlatformAnalysis> {
-    const platformPrompts = {
-        twitter: `Analyze this startup idea for Twitter/X platform:
-        
-        Consider:
-        - Viral potential and trend alignment
-        - How tech Twitter would react
-        - Hashtag opportunities
-        - Expected engagement and reach
-        - Audience reaction predictions
-        
-        Provide a simple 1-5 score and 2-3 sentence summary in plain language.
-        Focus on practical insights about Twitter performance.`,
-        
-        reddit: `Analyze this startup idea for Reddit communities:
-        
-        Consider:
-        - Community fit across relevant subreddits (r/entrepreneur, r/startups, etc.)
-        - Discussion potential and engagement
-        - Expected sentiment from Reddit users
-        - Subreddit recommendations
-        - Community concerns and questions
-        
-        Provide a simple 1-5 score and 2-3 sentence summary in plain language.
-        Focus on how Reddit communities would receive this idea.`,
-        
-        linkedin: `Analyze this startup idea for LinkedIn professional network:
-        
-        Consider:
-        - Professional relevance and business potential
-        - Networking value and B2B opportunities
-        - Target professional audience
-        - Business development potential
-        - Industry connections and partnerships
-        
-        Provide a simple 1-5 score and 2-3 sentence summary in plain language.
-        Focus on professional and business networking aspects.`
-    };
-
-    const systemInstruction = `You are analyzing a startup idea for ${platform}. ${platformPrompts[platform]}
-
-    🌍 LANGUAGE REQUIREMENT: Respond in the EXACT SAME LANGUAGE as the user's input.
-    
-    Return a JSON object with:
-    {
-        "platformName": "${platform === 'twitter' ? 'Twitter' : platform === 'reddit' ? 'Reddit' : 'LinkedIn'}",
-        "score": number (1-5),
-        "summary": "2-3 sentence summary in simple language",
-        "keyFindings": ["finding1", "finding2", "finding3"],
-        "contentSuggestion": "Platform-specific content suggestion"
-    }`;
-
-    try {
-        const aiInstance = getAI();
-        const result = await aiInstance.models.generateContent({
-            model: "gemini-2.0-flash-exp",
-            contents: `ANALYZE FOR ${platform.toUpperCase()}: "${content}"`,
-            config: {
-                systemInstruction,
-                responseMimeType: "application/json",
-                temperature: 0.3,
-                maxOutputTokens: 1024,
-            }
-        });
-
-        const responseText = result.text?.trim();
-        if (!responseText) {
-            throw new Error(`Empty response from AI for ${platform}`);
-        }
-
-        const parsedResult = JSON.parse(responseText);
-        
-        // Ensure score is within 1-5 range
-        parsedResult.score = Math.max(1, Math.min(5, parsedResult.score || 3));
-        
-        return parsedResult;
-
-    } catch (error) {
-        console.log(`❌ ${platform} analysis failed, using fallback...`, error);
-        
-        // Fallback analysis
-        return {
-            platformName: platform === 'twitter' ? 'Twitter' : platform === 'reddit' ? 'Reddit' : 'LinkedIn',
-            score: 3,
-            summary: `Analysis for ${platform} is temporarily unavailable. This idea shows moderate potential for the platform.`,
-            keyFindings: [
-                'Platform analysis temporarily unavailable',
-                'Using fallback assessment',
-                'Moderate potential estimated'
-            ],
-            contentSuggestion: `Share your idea on ${platform} to get community feedback.`
-        };
-    }
-}
+// Single AI call analysis - no separate platform functions needed
 
 // Simplified AI analysis using only Gemini 2.0
 async function getSimplifiedAIAnalysis(content: string, systemInstruction: string): Promise<DynamicPromptResult> {
     // Use the dynamic system instruction passed from the main function
 
     try {
-        console.log('🎯 Using simplified platform-specific analysis...');
+        console.log('🎯 Using single AI call with dynamic prompt system...');
         
-        // Run platform analyses in parallel
-        const [twitterAnalysis, redditAnalysis, linkedinAnalysis] = await Promise.all([
-            analyzePlatform(content, 'twitter'),
-            analyzePlatform(content, 'reddit'),
-            analyzePlatform(content, 'linkedin')
-        ]);
-
-        // Get overall analysis for demand score and content suggestions
+        // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
-        const overallResult = await aiInstance.models.generateContent({
+        const result = await aiInstance.models.generateContent({
             model: "gemini-2.0-flash-exp",
-            contents: `ANALYZE THIS STARTUP IDEA: "${content}"\n\n🌍 LANGUAGE REMINDER: You MUST respond in the EXACT SAME LANGUAGE as the user's input.\n\nProvide overall demand score and content suggestions.`,
+            contents: `ANALYZE THIS STARTUP IDEA: "${content}"\n\n🌍 LANGUAGE REMINDER: You MUST respond in the EXACT SAME LANGUAGE as the user's input.\n\nProvide comprehensive analysis including platform-specific insights and content suggestions.`,
             config: {
-                systemInstruction: `Analyze this startup idea and provide:
-                1. Overall demand score (0-100)
-                2. Score justification (short phrase)
-                3. Content suggestions for each platform
-                
-                🌍 LANGUAGE REQUIREMENT: Respond in the EXACT SAME LANGUAGE as the user's input.
-                
-                Return JSON with:
+                systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT: Return JSON with this exact structure:
                 {
+                    "idea": "${content}",
                     "demandScore": number (0-100),
                     "scoreJustification": "short justification phrase",
+                    "platformAnalyses": {
+                        "twitter": {
+                            "platformName": "Twitter",
+                            "score": number (1-5),
+                            "summary": "2-3 sentence analysis",
+                            "keyFindings": ["finding1", "finding2", "finding3"],
+                            "contentSuggestion": "platform-specific suggestion"
+                        },
+                        "reddit": {
+                            "platformName": "Reddit",
+                            "score": number (1-5),
+                            "summary": "2-3 sentence analysis",
+                            "keyFindings": ["finding1", "finding2", "finding3"],
+                            "contentSuggestion": "platform-specific suggestion"
+                        },
+                        "linkedin": {
+                            "platformName": "LinkedIn",
+                            "score": number (1-5),
+                            "summary": "2-3 sentence analysis",
+                            "keyFindings": ["finding1", "finding2", "finding3"],
+                            "contentSuggestion": "platform-specific suggestion"
+                        }
+                    },
                     "tweetSuggestion": "optimized Twitter post",
                     "redditTitleSuggestion": "compelling Reddit title",
                     "redditBodySuggestion": "detailed Reddit post body",
@@ -742,35 +658,53 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                 }`,
                 responseMimeType: "application/json",
                 temperature: 0.3,
-                maxOutputTokens: 1024,
+                maxOutputTokens: 2048,
             }
         });
 
-        const overallResponseText = overallResult.text?.trim();
-        if (!overallResponseText) {
-            throw new Error('Empty response from overall analysis');
+        const responseText = result.text?.trim();
+        if (!responseText) {
+            throw new Error('Empty response from AI analysis');
         }
 
-        const overallParsed = JSON.parse(overallResponseText);
+        const parsedResult = JSON.parse(responseText);
 
-        // Combine results
-        const result: SimplifiedValidationResult = {
-            idea: content,
-            demandScore: Math.max(0, Math.min(100, overallParsed.demandScore || 65)),
-            scoreJustification: overallParsed.scoreJustification || 'Market analysis completed',
+        // Validate and clean the result
+        const cleanResult: DynamicPromptResult = {
+            idea: parsedResult.idea || content,
+            demandScore: Math.max(0, Math.min(100, parsedResult.demandScore || 65)),
+            scoreJustification: parsedResult.scoreJustification || 'Market analysis completed',
             platformAnalyses: {
-                twitter: twitterAnalysis,
-                reddit: redditAnalysis,
-                linkedin: linkedinAnalysis
+                twitter: {
+                    platformName: 'Twitter',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.twitter?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.twitter?.summary || 'Twitter analysis shows moderate potential.',
+                    keyFindings: parsedResult.platformAnalyses?.twitter?.keyFindings || ['Analysis completed', 'Moderate engagement potential', 'Content strategy recommended'],
+                    contentSuggestion: parsedResult.platformAnalyses?.twitter?.contentSuggestion || 'Share your idea on Twitter for feedback.'
+                },
+                reddit: {
+                    platformName: 'Reddit',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.reddit?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.reddit?.summary || 'Reddit communities show moderate interest.',
+                    keyFindings: parsedResult.platformAnalyses?.reddit?.keyFindings || ['Community engagement possible', 'Discussion potential identified', 'Subreddit targeting recommended'],
+                    contentSuggestion: parsedResult.platformAnalyses?.reddit?.contentSuggestion || 'Post in relevant subreddits for detailed feedback.'
+                },
+                linkedin: {
+                    platformName: 'LinkedIn',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.linkedin?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.linkedin?.summary || 'LinkedIn shows professional networking potential.',
+                    keyFindings: parsedResult.platformAnalyses?.linkedin?.keyFindings || ['Professional audience alignment', 'B2B networking opportunities', 'Thought leadership potential'],
+                    contentSuggestion: parsedResult.platformAnalyses?.linkedin?.contentSuggestion || 'Share professionally on LinkedIn for business feedback.'
+                }
             },
-            tweetSuggestion: overallParsed.tweetSuggestion || 'Share your startup idea on Twitter!',
-            redditTitleSuggestion: overallParsed.redditTitleSuggestion || 'Looking for feedback on my startup idea',
-            redditBodySuggestion: overallParsed.redditBodySuggestion || 'I would love to get your thoughts on this concept.',
-            linkedinSuggestion: overallParsed.linkedinSuggestion || 'Excited to share this new business concept with my network.'
+            tweetSuggestion: parsedResult.tweetSuggestion || 'Share your startup idea on Twitter!',
+            redditTitleSuggestion: parsedResult.redditTitleSuggestion || 'Looking for feedback on my startup idea',
+            redditBodySuggestion: parsedResult.redditBodySuggestion || 'I would love to get your thoughts on this concept.',
+            linkedinSuggestion: parsedResult.linkedinSuggestion || 'Excited to share this new business concept with my network.'
         };
 
-        console.log('✅ Simplified platform-specific analysis completed');
-        return result;
+        console.log('✅ Single AI call analysis completed');
+        return cleanResult;
 
     } catch (error) {
         console.log('❌ Platform analysis failed, using fallback...', error);
