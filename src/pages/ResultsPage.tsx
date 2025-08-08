@@ -103,6 +103,9 @@ const ResultsPage: React.FC = () => {
             return;
         }
         window.scrollTo(0, 0);
+        
+        // Trigger animations after component mount
+        setTimeout(() => setIsVisible(true), 100);
     }, [result, navigate]);
 
     if (!result) {
@@ -523,7 +526,7 @@ const ResultsPage: React.FC = () => {
                         <div className="text-center">
                             <div className="text-sm font-medium text-gray-500 mb-3">Market Demand Score</div>
                             <div className="flex items-center justify-center gap-3 mb-4">
-                                <div className="text-3xl font-bold text-gray-800 animate-count-up">
+                                <div className="text-3xl font-bold text-gray-800 animate-count-up animate-pulse-subtle">
                                     {result.demandScore}
                                     <span className="text-lg text-gray-500 ml-1">/100</span>
                                 </div>

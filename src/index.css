@@ -26,8 +26,8 @@ body {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(50px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes bounceIn {
@@ -39,7 +39,7 @@ body {
 
 @keyframes progressFill {
   from { width: 0%; }
-  to { width: var(--progress-width); }
+  to { width: 100%; }
 }
 
 @keyframes countUp {
@@ -50,6 +50,15 @@ body {
 @keyframes cardHover {
   from { transform: translateY(0px); }
   to { transform: translateY(-5px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.animate-pulse-subtle {
+  animation: pulse 2s ease-in-out infinite;
 }
 
 .animate-fade-in {
@@ -65,7 +74,8 @@ body {
 }
 
 .animate-progress-fill {
-  animation: progressFill 1.5s ease-out 0.5s both;
+  animation: progressFill 2s ease-out 0.8s both;
+  width: 0%;
 }
 
 .animate-count-up {
@@ -81,6 +91,6 @@ body {
 }
 
 .animate-card-hover:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
