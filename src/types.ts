@@ -67,34 +67,44 @@ export interface RealTimeInsights {
   confidence: number;
 }
 
-// Simplified validation result interface for streamlined analysis
-export interface SimplifiedValidationResult {
+// Dynamic Prompt System Result - Our new clean interface
+export interface DynamicPromptResult {
   idea: string;
   content?: string;
   demandScore: number;
   scoreJustification: string;
   
-  // Simplified platform analyses
+  // Platform analyses from our dynamic prompt system
   platformAnalyses: {
-    twitter: SimplePlatformAnalysis;
-    reddit: SimplePlatformAnalysis;
-    linkedin: SimplePlatformAnalysis;
+    twitter: PlatformAnalysis;
+    reddit: PlatformAnalysis;
+    linkedin: PlatformAnalysis;
   };
   
-  // Simple content suggestions (keeping existing structure)
+  // Content suggestions
   tweetSuggestion: string;
   redditTitleSuggestion: string;
   redditBodySuggestion: string;
   linkedinSuggestion: string;
+  
+  // Metadata
+  promptMetadata?: {
+    sectorsDetected: string[];
+    analysisTypes: string[];
+    confidence: number;
+  };
 }
 
-export interface SimplePlatformAnalysis {
+export interface PlatformAnalysis {
   platformName: string;
   score: number; // 1-5 simple score
   summary: string; // 2-3 sentence simple explanation
   keyFindings: string[]; // 2-3 key findings
   contentSuggestion: string; // Platform-specific content suggestion
 }
+
+// Legacy interface for backward compatibility
+export interface SimplifiedValidationResult extends DynamicPromptResult {}
 
 // Legacy interface for backward compatibility
 export interface ValidationResult {

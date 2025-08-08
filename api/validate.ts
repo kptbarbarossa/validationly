@@ -299,28 +299,35 @@ Reference specific competitors, provide market share estimates where available, 
 
 const promptManager = new PromptManager();
 
-// Simplified validation result interface
-interface SimplifiedValidationResult {
+// Dynamic Prompt System Result
+interface DynamicPromptResult {
     idea: string;
     content?: string;
     demandScore: number;
     scoreJustification: string;
     
-    // Simplified platform analyses
+    // Platform analyses from our dynamic prompt system
     platformAnalyses: {
-        twitter: SimplePlatformAnalysis;
-        reddit: SimplePlatformAnalysis;
-        linkedin: SimplePlatformAnalysis;
+        twitter: PlatformAnalysis;
+        reddit: PlatformAnalysis;
+        linkedin: PlatformAnalysis;
     };
     
-    // Simple content suggestions
+    // Content suggestions
     tweetSuggestion: string;
     redditTitleSuggestion: string;
     redditBodySuggestion: string;
     linkedinSuggestion: string;
+    
+    // Metadata
+    promptMetadata?: {
+        sectorsDetected: string[];
+        analysisTypes: string[];
+        confidence: number;
+    };
 }
 
-interface SimplePlatformAnalysis {
+interface PlatformAnalysis {
     platformName: string;
     score: number; // 1-5 simple score
     summary: string; // 2-3 sentence simple explanation
@@ -698,7 +705,7 @@ async function analyzePlatform(content: string, platform: 'twitter' | 'reddit' |
 }
 
 // Simplified AI analysis using only Gemini 2.0
-async function getSimplifiedAIAnalysis(content: string, systemInstruction: string): Promise<SimplifiedValidationResult> {
+async function getSimplifiedAIAnalysis(content: string, systemInstruction: string): Promise<DynamicPromptResult> {
     // Use the dynamic system instruction passed from the main function
 
     try {
