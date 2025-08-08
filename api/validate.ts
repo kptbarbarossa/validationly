@@ -591,11 +591,9 @@ export default async function handler(req: any, res: any) {
         // Use simplified analysis approach with dynamic prompts
         const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction);
 
-        // Convert to legacy format for backward compatibility
-        const legacyResult = convertToLegacyFormat(result);
-
-        console.log('✅ Simplified validation completed successfully');
-        return res.status(200).json(legacyResult);
+        console.log('✅ Dynamic prompt analysis completed successfully');
+        console.log('📊 Result structure:', Object.keys(result));
+        return res.status(200).json(result);
 
     } catch (error) {
         console.error('❌ Simplified validation error:', error);
@@ -747,31 +745,5 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
     }
 }
 
-// Convert simplified result to legacy format for backward compatibility
-function convertToLegacyFormat(dynamic: DynamicPromptResult): ValidationResult {
-    return {
-        idea: dynamic.idea,
-        content: dynamic.content,
-        demandScore: dynamic.demandScore,
-        scoreJustification: dynamic.scoreJustification,
-        signalSummary: [
-            {
-                platform: 'Twitter',
-                summary: dynamic.platformAnalyses.twitter.summary
-            },
-            {
-                platform: 'Reddit', 
-                summary: dynamic.platformAnalyses.reddit.summary
-            },
-            {
-                platform: 'LinkedIn',
-                summary: dynamic.platformAnalyses.linkedin.summary
-            }
-        ],
-        tweetSuggestion: dynamic.tweetSuggestion,
-        redditTitleSuggestion: dynamic.redditTitleSuggestion,
-        redditBodySuggestion: dynamic.redditBodySuggestion,
-        linkedinSuggestion: dynamic.linkedinSuggestion
-    };
-}
+// Legacy conversion removed - using DynamicPromptResult directly
 

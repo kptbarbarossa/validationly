@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Direct API call - no service layer needed
-import type { ValidationResult, UserInput } from '../types';
+import type { DynamicPromptResult, UserInput } from '../types';
 import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import Logo from '../components/Logo';
@@ -149,7 +149,7 @@ const HomePage: React.FC = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result: ValidationResult = await response.json();
+            const result: DynamicPromptResult = await response.json();
             console.log('API call successful', result);
             
             // Track successful validation
