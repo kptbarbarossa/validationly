@@ -18,17 +18,8 @@ const sampleCategories = [
             </svg>
         ),
         description: "Business software solutions",
-        example: "SaaS platform for automated invoice processing using AI"
-    },
-    {
-        name: "Mobile Apps",
-        icon: (
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z" />
-            </svg>
-        ),
-        description: "Consumer mobile applications",
-        example: "Mobile fitness app with AI-powered workout recommendations"
+        example: "SaaS platform for automated invoice processing using AI",
+        platforms: "GitHub, Stack Overflow, Product Hunt"
     },
     {
         name: "E-commerce",
@@ -38,7 +29,8 @@ const sampleCategories = [
             </svg>
         ),
         description: "Online retail & marketplaces",
-        example: "Sustainable fashion marketplace for eco-conscious consumers"
+        example: "Sustainable fashion marketplace for eco-conscious consumers",
+        platforms: "Instagram, Pinterest, TikTok"
     },
     {
         name: "Fintech",
@@ -48,27 +40,41 @@ const sampleCategories = [
             </svg>
         ),
         description: "Financial technology solutions",
-        example: "Mobile app for real-time expense splitting with friends"
+        example: "Mobile app for real-time expense splitting with friends",
+        platforms: "AngelList, Crunchbase, LinkedIn"
     },
     {
-        name: "Health & Wellness",
+        name: "Design & Creative",
         icon: (
             <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4 4 4 0 004-4V5z" />
             </svg>
         ),
-        description: "Healthcare & fitness solutions",
-        example: "Mental health app with AI-powered mood tracking"
+        description: "Design tools & creative platforms",
+        example: "AI-powered design tool for creating social media graphics",
+        platforms: "Dribbble, Behance, Figma Community"
     },
     {
-        name: "Productivity",
+        name: "Mobile Apps",
         icon: (
             <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a1 1 0 001-1V4a1 1 0 00-1-1H8a1 1 0 00-1 1v16a1 1 0 001 1z" />
             </svg>
         ),
-        description: "Tools for better productivity",
-        example: "Web dashboard for social media content scheduling"
+        description: "Consumer mobile applications",
+        example: "Mental health app with AI-powered mood tracking",
+        platforms: "Product Hunt, GitHub, Reddit"
+    },
+    {
+        name: "Marketplace",
+        icon: (
+            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+        ),
+        description: "Two-sided marketplace platforms",
+        example: "Freelance marketplace for specialized AI consultants",
+        platforms: "AngelList, Product Hunt, LinkedIn"
     }
 ];
 
@@ -319,9 +325,12 @@ const HomePage: React.FC = () => {
                                 <h4 className="font-semibold text-gray-900 mb-1">{category.name}</h4>
                                 <div className="text-sm text-gray-500">{category.description}</div>
                             </div>
-                            <p className="text-gray-600 text-sm leading-relaxed mb-4">
+                            <p className="text-gray-600 text-sm leading-relaxed mb-3">
                                 {category.example}
                             </p>
+                            <div className="text-xs text-indigo-600 font-medium">
+                                📱 {category.platforms}
+                            </div>
 
                         </div>
                     ))}

@@ -15,17 +15,23 @@ class PromptManager {
         saas: [
             'saas', 'software', 'subscription', 'recurring', 'cloud', 'api', 'platform',
             'dashboard', 'analytics', 'crm', 'automation', 'workflow', 'integration',
-            'b2b', 'enterprise', 'tool', 'service', 'management', 'tracking'
+            'b2b', 'enterprise', 'tool', 'service', 'management', 'tracking', 'developer'
         ],
         ecommerce: [
             'ecommerce', 'e-commerce', 'marketplace', 'store', 'shop', 'selling',
             'products', 'retail', 'commerce', 'buy', 'sell', 'inventory', 'shipping',
-            'payment', 'checkout', 'cart', 'order', 'customer', 'brand', 'fashion'
+            'payment', 'checkout', 'cart', 'order', 'customer', 'brand', 'fashion',
+            'consumer', 'shopping', 'product'
         ],
         fintech: [
             'fintech', 'finance', 'financial', 'payment', 'banking', 'money', 'crypto',
             'blockchain', 'wallet', 'lending', 'investment', 'trading', 'insurance',
-            'credit', 'loan', 'transaction', 'currency', 'savings', 'budget'
+            'credit', 'loan', 'transaction', 'currency', 'savings', 'budget', 'startup'
+        ],
+        design: [
+            'design', 'ui', 'ux', 'creative', 'visual', 'graphic', 'branding',
+            'interface', 'user experience', 'prototype', 'figma', 'sketch', 'adobe',
+            'portfolio', 'designer', 'art', 'illustration', 'web design'
         ],
         marketplace: [
             'marketplace', 'platform', 'connect', 'matching', 'network', 'community',
@@ -37,6 +43,16 @@ class PromptManager {
             'gaming', 'social', 'messaging', 'photo', 'video', 'location',
             'notification', 'offline', 'camera', 'gps', 'ar', 'vr'
         ]
+    };
+
+    // Sector-specific platform mapping (Phase 2)
+    private sectorPlatforms = {
+        saas: ['github', 'stackoverflow', 'producthunt', 'hackernews'],
+        ecommerce: ['instagram', 'tiktok', 'pinterest', 'facebook'],
+        fintech: ['angellist', 'crunchbase', 'linkedin', 'medium'],
+        design: ['dribbble', 'behance', 'figma', 'instagram'],
+        marketplace: ['producthunt', 'angellist', 'crunchbase', 'linkedin'],
+        mobile: ['producthunt', 'github', 'reddit', 'hackernews']
     };
 
     private analysisKeywords = {
@@ -243,6 +259,23 @@ Reference specific competitors, provide market share estimates where available, 
         return detectedSectors.length > 0 ? detectedSectors : ['saas'];
     }
 
+    getSectorSpecificPlatforms(sectors: string[]): string[] {
+        const platforms = new Set<string>();
+        
+        // Always include core platforms
+        platforms.add('twitter');
+        platforms.add('reddit');
+        platforms.add('linkedin');
+        
+        // Add sector-specific platforms
+        for (const sector of sectors) {
+            const sectorPlatforms = this.sectorPlatforms[sector] || [];
+            sectorPlatforms.forEach(platform => platforms.add(platform));
+        }
+        
+        return Array.from(platforms);
+    }
+
     detectAnalysisNeeds(input: string): string[] {
         const inputLower = input.toLowerCase();
         const detectedAnalysis: string[] = [];
@@ -260,7 +293,7 @@ Reference specific competitors, provide market share estimates where available, 
         return detectedAnalysis.length > 0 ? detectedAnalysis : ['market', 'competitive'];
     }
 
-    async selectPrompts(input: string): Promise<PromptSelection> {
+    async selectPrompts(input: string): Promise<PromptSelection & { sectorsDetected: string[] }> {
         const sectors = this.detectSector(input);
         const analysisTypes = this.detectAnalysisNeeds(input);
 
@@ -272,7 +305,8 @@ Reference specific competitors, provide market share estimates where available, 
             basePrompt,
             sectorPrompts,
             analysisPrompts,
-            confidence: this.calculateConfidence(sectors, analysisTypes)
+            confidence: this.calculateConfidence(sectors, analysisTypes),
+            sectorsDetected: sectors
         };
     }
 
@@ -631,11 +665,18 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         const language = isTurkish ? 'Turkish' : 'English';
         const languageInstruction = `RESPOND IN ${language.toUpperCase()} ONLY. All text fields must be in ${language}.`;
 
+        // Detect sector and get relevant platforms
+        const sectors = promptManager.detectSector(content);
+        const relevantPlatforms = promptManager.getSectorSpecificPlatforms(sectors);
+        
+        console.log(`🎯 Detected sectors: ${sectors.join(', ')}`);
+        console.log(`📱 Relevant platforms: ${relevantPlatforms.join(', ')}`);
+
         // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
         const result = await aiInstance.models.generateContent({
             model: "gemini-2.0-flash-exp",
-            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\nProvide comprehensive business analysis including:
+            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide comprehensive business analysis including:
             - Market sizing (TAM/SAM/SOM) with real industry data
             - Competitive landscape with actual competitor names
             - Revenue model with realistic pricing recommendations
@@ -644,36 +685,39 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             - Go-to-market strategy with actionable phases
             - Development roadmap with realistic timelines
             - Product-market fit indicators and predictions
-            - Platform-specific social media analysis
-            - Content suggestions for validation`,
+            - SECTOR-SPECIFIC platform analysis for: ${relevantPlatforms.join(', ')}
+            - Content suggestions optimized for each relevant platform
+            
+            PLATFORM ANALYSIS PRIORITY:
+            ${sectors.includes('saas') ? '- GitHub: Developer community engagement, open source strategy' : ''}
+            ${sectors.includes('saas') ? '- Stack Overflow: Technical community validation' : ''}
+            ${sectors.includes('ecommerce') ? '- Instagram: Visual product showcase, influencer marketing' : ''}
+            ${sectors.includes('ecommerce') ? '- Pinterest: Product discovery, visual search' : ''}
+            ${sectors.includes('fintech') ? '- AngelList: Investor relations, startup ecosystem' : ''}
+            ${sectors.includes('fintech') ? '- Crunchbase: Market intelligence, competitor tracking' : ''}
+            ${sectors.includes('design') ? '- Dribbble: Design community showcase' : ''}
+            ${sectors.includes('design') ? '- Behance: Portfolio presentation' : ''}
+            ${sectors.includes('design') ? '- Figma: Design tool integration community' : ''}`,
             config: {
-                systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT: Return JSON with this exact structure:
+                systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL relevant platforms:
                 {
                     "idea": "${content}",
                     "demandScore": number (0-100),
                     "scoreJustification": "short justification phrase",
                     "platformAnalyses": {
-                        "twitter": {
-                            "platformName": "Twitter",
-                            "score": number (1-5),
-                            "summary": "2-3 sentence analysis",
-                            "keyFindings": ["finding1", "finding2", "finding3"],
-                            "contentSuggestion": "platform-specific suggestion"
-                        },
-                        "reddit": {
-                            "platformName": "Reddit",
-                            "score": number (1-5),
-                            "summary": "2-3 sentence analysis",
-                            "keyFindings": ["finding1", "finding2", "finding3"],
-                            "contentSuggestion": "platform-specific suggestion"
-                        },
-                        "linkedin": {
-                            "platformName": "LinkedIn",
-                            "score": number (1-5),
-                            "summary": "2-3 sentence analysis",
-                            "keyFindings": ["finding1", "finding2", "finding3"],
-                            "contentSuggestion": "platform-specific suggestion"
-                        }
+                        "twitter": { "platformName": "Twitter", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },
+                        "reddit": { "platformName": "Reddit", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },
+                        "linkedin": { "platformName": "LinkedIn", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },
+                        ${relevantPlatforms.includes('github') ? '"github": { "platformName": "GitHub", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('stackoverflow') ? '"stackoverflow": { "platformName": "Stack Overflow", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('instagram') ? '"instagram": { "platformName": "Instagram", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('pinterest') ? '"pinterest": { "platformName": "Pinterest", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('angellist') ? '"angellist": { "platformName": "AngelList", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('crunchbase') ? '"crunchbase": { "platformName": "Crunchbase", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('dribbble') ? '"dribbble": { "platformName": "Dribbble", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('behance') ? '"behance": { "platformName": "Behance", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        ${relevantPlatforms.includes('figma') ? '"figma": { "platformName": "Figma Community", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" },' : ''}
+                        "producthunt": { "platformName": "Product Hunt", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion" }
                     },
                     "tweetSuggestion": "optimized Twitter post",
                     "redditTitleSuggestion": "compelling Reddit title",
@@ -719,6 +763,90 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     summary: parsedResult.platformAnalyses?.linkedin?.summary || 'LinkedIn shows professional networking potential.',
                     keyFindings: parsedResult.platformAnalyses?.linkedin?.keyFindings || ['Professional audience alignment', 'B2B networking opportunities', 'Thought leadership potential'],
                     contentSuggestion: parsedResult.platformAnalyses?.linkedin?.contentSuggestion || 'Share professionally on LinkedIn for business feedback.'
+                },
+                instagram: {
+                    platformName: 'Instagram',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.instagram?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.instagram?.summary || 'Instagram shows visual content potential.',
+                    keyFindings: parsedResult.platformAnalyses?.instagram?.keyFindings || ['Visual storytelling opportunity', 'Influencer marketing potential', 'Story engagement'],
+                    contentSuggestion: parsedResult.platformAnalyses?.instagram?.contentSuggestion || 'Create visual content showcasing your idea.'
+                },
+                tiktok: {
+                    platformName: 'TikTok',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.tiktok?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.tiktok?.summary || 'TikTok shows viral content potential.',
+                    keyFindings: parsedResult.platformAnalyses?.tiktok?.keyFindings || ['Gen Z audience reach', 'Viral potential', 'Short-form content'],
+                    contentSuggestion: parsedResult.platformAnalyses?.tiktok?.contentSuggestion || 'Create engaging short videos about your concept.'
+                },
+                youtube: {
+                    platformName: 'YouTube',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.youtube?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.youtube?.summary || 'YouTube shows educational content potential.',
+                    keyFindings: parsedResult.platformAnalyses?.youtube?.keyFindings || ['Long-form content opportunity', 'Tutorial potential', 'Subscriber growth'],
+                    contentSuggestion: parsedResult.platformAnalyses?.youtube?.contentSuggestion || 'Create educational videos about your solution.'
+                },
+                facebook: {
+                    platformName: 'Facebook',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.facebook?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.facebook?.summary || 'Facebook shows community building potential.',
+                    keyFindings: parsedResult.platformAnalyses?.facebook?.keyFindings || ['Community groups', 'Event promotion', 'Older demographics'],
+                    contentSuggestion: parsedResult.platformAnalyses?.facebook?.contentSuggestion || 'Join relevant Facebook groups and communities.'
+                },
+                producthunt: {
+                    platformName: 'Product Hunt',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.producthunt?.score || 4)),
+                    summary: parsedResult.platformAnalyses?.producthunt?.summary || 'Product Hunt shows strong launch potential.',
+                    keyFindings: parsedResult.platformAnalyses?.producthunt?.keyFindings || ['Tech community focus', 'Launch platform', 'Early adopter audience'],
+                    contentSuggestion: parsedResult.platformAnalyses?.producthunt?.contentSuggestion || 'Prepare for Product Hunt launch with compelling story.'
+                },
+                hackernews: {
+                    platformName: 'Hacker News',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.hackernews?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.hackernews?.summary || 'Hacker News shows developer community interest.',
+                    keyFindings: parsedResult.platformAnalyses?.hackernews?.keyFindings || ['Developer audience', 'Technical discussion', 'Open source potential'],
+                    contentSuggestion: parsedResult.platformAnalyses?.hackernews?.contentSuggestion || 'Share technical insights and development journey.'
+                },
+                medium: {
+                    platformName: 'Medium',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.medium?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.medium?.summary || 'Medium shows thought leadership potential.',
+                    keyFindings: parsedResult.platformAnalyses?.medium?.keyFindings || ['Long-form content', 'Professional audience', 'SEO benefits'],
+                    contentSuggestion: parsedResult.platformAnalyses?.medium?.contentSuggestion || 'Write detailed articles about your industry insights.'
+                },
+                discord: {
+                    platformName: 'Discord',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.discord?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.discord?.summary || 'Discord shows community building potential.',
+                    keyFindings: parsedResult.platformAnalyses?.discord?.keyFindings || ['Real-time engagement', 'Community building', 'Niche audiences'],
+                    contentSuggestion: parsedResult.platformAnalyses?.discord?.contentSuggestion || 'Join relevant Discord servers and engage with communities.'
+                },
+                github: {
+                    platformName: 'GitHub',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.github?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.github?.summary || 'GitHub shows open source potential.',
+                    keyFindings: parsedResult.platformAnalyses?.github?.keyFindings || ['Developer community', 'Open source opportunity', 'Technical credibility'],
+                    contentSuggestion: parsedResult.platformAnalyses?.github?.contentSuggestion || 'Create open source tools or documentation.'
+                },
+                dribbble: {
+                    platformName: 'Dribbble',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.dribbble?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.dribbble?.summary || 'Dribbble shows design community potential.',
+                    keyFindings: parsedResult.platformAnalyses?.dribbble?.keyFindings || ['Design community', 'Portfolio showcase', 'Creative feedback'],
+                    contentSuggestion: parsedResult.platformAnalyses?.dribbble?.contentSuggestion || 'Share design concepts and get creative feedback.'
+                },
+                angellist: {
+                    platformName: 'AngelList',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.angellist?.score || 4)),
+                    summary: parsedResult.platformAnalyses?.angellist?.summary || 'AngelList shows investor network potential.',
+                    keyFindings: parsedResult.platformAnalyses?.angellist?.keyFindings || ['Investor network', 'Startup ecosystem', 'Funding opportunities'],
+                    contentSuggestion: parsedResult.platformAnalyses?.angellist?.contentSuggestion || 'Create compelling startup profile for investors.'
+                },
+                crunchbase: {
+                    platformName: 'Crunchbase',
+                    score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.crunchbase?.score || 3)),
+                    summary: parsedResult.platformAnalyses?.crunchbase?.summary || 'Crunchbase shows market intelligence value.',
+                    keyFindings: parsedResult.platformAnalyses?.crunchbase?.keyFindings || ['Market intelligence', 'Competitor tracking', 'Industry analysis'],
+                    contentSuggestion: parsedResult.platformAnalyses?.crunchbase?.contentSuggestion || 'Research competitors and market trends.'
                 }
             },
             tweetSuggestion: parsedResult.tweetSuggestion || 'Share your startup idea on Twitter!',
@@ -863,17 +991,86 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                         score: 3,
                         summary: 'LinkedIn analysis temporarily unavailable. Professional relevance estimated as moderate.',
                         keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                        contentSuggestion: 'Share with your professional network on LinkedIn.'
+                        contentSuggestion: parsedResult.platformAnalyses?.linkedin?.contentSuggestion || 'Share with your professional network on LinkedIn.'
                     }
                 },
+                tweetSuggestion: parsedResult.tweetSuggestion || `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
+                redditTitleSuggestion: parsedResult.redditTitleSuggestion || 'Looking for feedback on my startup idea',
+                redditBodySuggestion: parsedResult.redditBodySuggestion || `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
+                linkedinSuggestion: parsedResult.linkedinSuggestion || `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`
+            };
+
+        } catch (error) {
+            console.error('❌ AI analysis failed:', error);
+            
+            // Return fallback result with sector-specific platforms
+            const sectors = promptManager.detectSector(content);
+            const relevantPlatforms = promptManager.getSectorSpecificPlatforms(sectors);
+            
+            const fallbackPlatforms: any = {
+                twitter: {
+                    platformName: 'Twitter',
+                    score: 3,
+                    summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                    contentSuggestion: 'Share your startup idea on Twitter!'
+                },
+                reddit: {
+                    platformName: 'Reddit',
+                    score: 3,
+                    summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                    contentSuggestion: 'Post in relevant subreddits for feedback.'
+                },
+                linkedin: {
+                    platformName: 'LinkedIn',
+                    score: 3,
+                    summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                    contentSuggestion: 'Share with your professional network on LinkedIn.'
+                }
+            };
+
+            // Add sector-specific platforms to fallback
+            relevantPlatforms.forEach(platform => {
+                if (!fallbackPlatforms[platform]) {
+                    const platformNames = {
+                        github: 'GitHub',
+                        stackoverflow: 'Stack Overflow',
+                        instagram: 'Instagram',
+                        pinterest: 'Pinterest',
+                        angellist: 'AngelList',
+                        crunchbase: 'Crunchbase',
+                        dribbble: 'Dribbble',
+                        behance: 'Behance',
+                        figma: 'Figma Community',
+                        producthunt: 'Product Hunt'
+                    };
+                    
+                    fallbackPlatforms[platform] = {
+                        platformName: platformNames[platform] || platform,
+                        score: 3,
+                        summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
+                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                        contentSuggestion: `Share your idea on ${platformNames[platform] || platform}.`
+                    };
+                }
+            });
+
+            return {
+                idea: content,
+                demandScore: 50,
+                scoreJustification: 'Analysis temporarily unavailable',
+                platformAnalyses: fallbackPlatforms,
                 tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
                 redditTitleSuggestion: 'Looking for feedback on my startup idea',
                 redditBodySuggestion: `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
                 linkedinSuggestion: `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`
             };
         }
+    } catch (error) {
+        console.error('❌ Simplified AI analysis failed:', error);
+        throw error;
     }
 }
-
-// Legacy conversion removed - using DynamicPromptResult directly
 

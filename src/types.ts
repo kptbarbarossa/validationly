@@ -76,9 +76,39 @@ export interface DynamicPromptResult {
   
   // Platform analyses from our dynamic prompt system
   platformAnalyses: {
+    // Core platforms (Phase 1)
     twitter: PlatformAnalysis;
     reddit: PlatformAnalysis;
     linkedin: PlatformAnalysis;
+    
+    // General social platforms
+    instagram: PlatformAnalysis;
+    tiktok: PlatformAnalysis;
+    youtube: PlatformAnalysis;
+    facebook: PlatformAnalysis;
+    
+    // Tech & startup platforms
+    producthunt: PlatformAnalysis;
+    hackernews: PlatformAnalysis;
+    medium: PlatformAnalysis;
+    discord: PlatformAnalysis;
+    
+    // Sector-specific platforms (Phase 2)
+    // SaaS & Tech
+    github: PlatformAnalysis;
+    stackoverflow: PlatformAnalysis;
+    
+    // E-commerce & Consumer
+    pinterest: PlatformAnalysis;
+    
+    // Fintech & Business
+    angellist: PlatformAnalysis;
+    crunchbase: PlatformAnalysis;
+    
+    // Design & Creative
+    dribbble: PlatformAnalysis;
+    behance: PlatformAnalysis;
+    figma: PlatformAnalysis;
   };
   
   // Content suggestions

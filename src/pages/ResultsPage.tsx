@@ -48,6 +48,78 @@ const RedditIcon = () => (
     </svg>
 );
 
+const InstagramIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+    </svg>
+);
+
+const TikTokIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-.88-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" />
+    </svg>
+);
+
+const YouTubeIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+    </svg>
+);
+
+const FacebookIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+    </svg>
+);
+
+const ProductHuntIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M13.604 8.4h-3.405V12h3.405c.995 0 1.801-.806 1.801-1.801 0-.993-.805-1.799-1.801-1.799zM12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zm1.604 14.4h-3.405V18H7.801V6h5.803c2.319 0 4.199 1.881 4.199 4.2s-1.88 4.2-4.199 4.2z" />
+    </svg>
+);
+
+const HackerNewsIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M0 24V0h24v24H0zM6.951 5.896l4.112 7.708v5.064h1.583v-4.972l4.148-7.799h-1.749l-2.457 4.875c-.372.745-.688 1.434-.688 1.434s-.297-.708-.651-1.434L8.831 5.896h-1.88z" />
+    </svg>
+);
+
+const MediumIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M13.54 12a6.8 6.8 0 01-6.77 6.82A6.8 6.8 0 010 12a6.8 6.8 0 016.77-6.82A6.8 6.8 0 0113.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z" />
+    </svg>
+);
+
+const DiscordIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419-.0002 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9554 2.4189-2.1568 2.4189Z" />
+    </svg>
+);
+
+const GitHubIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+    </svg>
+);
+
+const DribbbleIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 24C5.385 24 0 18.615 0 12S5.385 0 12 0s12 5.385 12 12-5.385 12-12 12zm10.12-10.358c-.35-.11-3.17-.953-6.384-.438 1.34 3.684 1.887 6.684 1.992 7.308 2.3-1.555 3.936-4.02 4.395-6.87zm-6.115 7.808c-.153-.9-.75-4.032-2.19-7.77l-.066.02c-5.79 2.015-7.86 6.025-8.04 6.4 1.73 1.358 3.92 2.166 6.29 2.166 1.42 0 2.77-.29 4-.816zm-11.62-2.58c.232-.4 3.045-5.055 8.332-6.765.135-.045.27-.084.405-.12-.26-.585-.54-1.167-.832-1.74C7.17 11.775 2.206 11.71 1.756 11.7l-.004.312c0 2.633.998 5.037 2.634 6.855zm-2.42-8.955c.46.008 4.683.026 9.477-1.248-1.698-3.018-3.53-5.558-3.8-5.928-2.868 1.35-5.01 3.99-5.676 7.17zM9.6 2.052c.282.38 2.145 2.914 3.822 6 3.645-1.365 5.19-3.44 5.373-3.702-1.81-1.61-4.19-2.586-6.795-2.586-.825 0-1.63.1-2.4.285zm10.335 3.483c-.218.29-1.935 2.493-5.724 4.04.24.49.47.985.68 1.486.08.18.15.36.22.53 3.41-.43 6.8.26 7.14.33-.02-2.42-.88-4.64-2.31-6.38z" />
+    </svg>
+);
+
+const AngelListIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M16.465 9.954c.735-2.321 1.36-4.488 1.36-4.488s.256-1.457.605-2.149c.349-.693.954-1.317 1.317-1.317.363 0 .605.693.605 1.317 0 .624-.256 1.457-.256 1.457s-.625 2.167-1.36 4.488c-.735 2.321-1.36 4.488-1.36 4.488s-.256 1.457-.605 2.149c-.349.693-.954 1.317-1.317 1.317-.363 0-.605-.693-.605-1.317 0-.624.256-1.457.256-1.457s.625-2.167 1.36-4.488zm-8.93 0c.735-2.321 1.36-4.488 1.36-4.488s.256-1.457.605-2.149c.349-.693.954-1.317 1.317-1.317.363 0 .605.693.605 1.317 0 .624-.256 1.457-.256 1.457s-.625 2.167-1.36 4.488c-.735 2.321-1.36 4.488-1.36 4.488s-.256 1.457-.605 2.149c-.349.693-.954 1.317-1.317 1.317-.363 0-.605-.693-.605-1.317 0-.624.256-1.457.256-1.457s.625-2.167 1.36-4.488z" />
+    </svg>
+);
+
+const CrunchbaseIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21.6 0H2.4C1.08 0 0 1.08 0 2.4v19.2C0 22.92 1.08 24 2.4 24h19.2c1.32 0 2.4-1.08 2.4-2.4V2.4C24 1.08 22.92 0 21.6 0zM8.64 18.24c-2.4 0-4.32-1.92-4.32-4.32s1.92-4.32 4.32-4.32c1.44 0 2.64.72 3.36 1.68l-1.44 1.44c-.48-.6-1.2-.96-1.92-.96-1.32 0-2.4 1.08-2.4 2.4s1.08 2.4 2.4 2.4c.72 0 1.44-.36 1.92-.96l1.44 1.44c-.72.96-1.92 1.68-3.36 1.68zm11.04-1.2h-1.92v-1.92c0-.48-.36-.84-.84-.84s-.84.36-.84.84v1.92h-1.92c-.48 0-.84.36-.84.84s.36.84.84.84h1.92v1.92c0 .48.36.84.84.84s.84-.36.84-.84v-1.92h1.92c.48 0 .84-.36.84-.84s-.36-.84-.84-.84z" />
+    </svg>
+);
+
 const TrendUpIcon = () => (
     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
@@ -57,6 +129,31 @@ const TrendUpIcon = () => (
 const InfoIcon = () => (
     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);
+
+// New sector-specific platform icons (Phase 2)
+const StackOverflowIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M15.725 0l-1.72 1.277 6.39 8.588 1.716-1.277L15.725 0zm-3.94 3.418l-1.369 1.644 8.225 6.85 1.369-1.644-8.225-6.85zm-3.15 4.465l-.905 1.94 9.702 4.517.904-1.94-9.701-4.517zm-1.85 4.86l-.44 2.093 10.473 2.201.44-2.092L6.785 12.743zM24 22.25v-2.5H2.5v2.5H24zM6.257 19.75h11.485v-2.5H6.257v2.5z" />
+    </svg>
+);
+
+const PinterestIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.174-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.402.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.92-7.252 4.158 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.357-.629-2.75-1.378l-.748 2.853c-.271 1.043-1.002 2.35-1.492 3.146C9.57 23.812 10.763 24.009 12.017 24.009c6.624 0 11.99-5.367 11.99-11.988C24.007 5.367 18.641.001.012.001z" />
+    </svg>
+);
+
+const BehanceIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M0 7.5v9c0 .825.675 1.5 1.5 1.5h21c.825 0 1.5-.675 1.5-1.5v-9c0-.825-.675-1.5-1.5-1.5h-21C.675 6 0 6.675 0 7.5zM15.5 10.5c1.381 0 2.5 1.119 2.5 2.5s-1.119 2.5-2.5 2.5S13 14.381 13 13s1.119-2.5 2.5-2.5zm-7 0c1.381 0 2.5 1.119 2.5 2.5S9.881 15.5 8.5 15.5 6 14.381 6 13s1.119-2.5 2.5-2.5z" />
+    </svg>
+);
+
+const FigmaIcon = () => (
+    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117c1.665 0 3.019-1.355 3.019-3.019s-1.354-3.019-3.019-3.019h-3.117V7.51zm0 1.471H8.148c-2.476 0-4.49-2.015-4.49-4.491S5.672 0 8.148 0h4.588v8.981zm-4.587-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117V1.471H8.148zm4.587 15.019H8.148c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h4.588v8.98zM8.148 8.981c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019h3.117V8.981H8.148zM8.172 24c-2.489 0-4.515-2.014-4.515-4.49s2.014-4.49 4.49-4.49h4.588v4.441c0 2.503-2.047 4.539-4.563 4.539zm-.024-7.51c-1.665 0-3.019 1.355-3.019 3.019s1.354 3.019 3.019 3.019 3.019-1.355 3.019-3.019V16.49H8.148z" />
     </svg>
 );
 
@@ -103,7 +200,7 @@ const ResultsPage: React.FC = () => {
             return;
         }
         window.scrollTo(0, 0);
-        
+
         // Trigger animations after component mount
         setTimeout(() => setIsVisible(true), 100);
     }, [result, navigate]);
@@ -123,6 +220,33 @@ const ResultsPage: React.FC = () => {
     };
 
     const status = getOverallStatus(result.demandScore);
+
+    // Platform icon mapping function
+    const getPlatformIcon = (platformName: string) => {
+        const name = platformName.toLowerCase();
+        switch (name) {
+            case 'twitter': case 'x': return <XIcon />;
+            case 'reddit': return <RedditIcon />;
+            case 'linkedin': return <div className="w-4 h-4 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">in</div>;
+            case 'instagram': return <InstagramIcon />;
+            case 'tiktok': return <TikTokIcon />;
+            case 'youtube': return <YouTubeIcon />;
+            case 'facebook': return <FacebookIcon />;
+            case 'product hunt': case 'producthunt': return <ProductHuntIcon />;
+            case 'hacker news': case 'hackernews': return <HackerNewsIcon />;
+            case 'medium': return <MediumIcon />;
+            case 'discord': return <DiscordIcon />;
+            case 'github': return <GitHubIcon />;
+            case 'stack overflow': case 'stackoverflow': return <StackOverflowIcon />;
+            case 'pinterest': return <PinterestIcon />;
+            case 'angellist': return <AngelListIcon />;
+            case 'crunchbase': return <CrunchbaseIcon />;
+            case 'dribbble': return <DribbbleIcon />;
+            case 'behance': return <BehanceIcon />;
+            case 'figma community': case 'figma': return <FigmaIcon />;
+            default: return <div className="w-4 h-4 bg-gray-400 rounded"></div>;
+        }
+    };
 
     // All results are now from dynamic prompt system
 
@@ -463,7 +587,7 @@ const ResultsPage: React.FC = () => {
         };
 
         return (
-            <div 
+            <div
                 className={`bg-white rounded-xl p-6 shadow-lg border border-gray-200 ${bgColor} animate-card-hover animate-card-entrance`}
                 style={{ animationDelay: `${delay}ms` }}
             >
@@ -553,32 +677,76 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Animated Platform Analysis Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                        {/* Always use real AI analysis from dynamic prompt system */}
-                        <PlatformCard
-                            platform="X (Twitter)"
-                            analysis={(result as DynamicPromptResult).platformAnalyses?.twitter}
-                            icon={<XIcon />}
-                            bgColor="hover:bg-blue-50"
-                            delay={100}
-                        />
-                        <PlatformCard
-                            platform="Reddit"
-                            analysis={(result as DynamicPromptResult).platformAnalyses?.reddit}
-                            icon={<RedditIcon />}
-                            bgColor="hover:bg-orange-50"
-                            delay={200}
-                        />
-                        <PlatformCard
-                            platform="LinkedIn"
-                            analysis={(result as DynamicPromptResult).platformAnalyses?.linkedin}
-                            icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                            </svg>}
-                            bgColor="hover:bg-indigo-50"
-                            delay={300}
-                        />
+                    {/* Social Media Platform Analysis */}
+                    <div className="mb-4">
+                        <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">Platform Analysis</h2>
+                        <div className="text-sm text-gray-600 mb-4 text-center">
+                            Sector-specific platform recommendations based on your idea
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            {/* Always use real AI analysis from dynamic prompt system */}
+                            <PlatformCard
+                                platform="X (Twitter)"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.twitter}
+                                icon={<XIcon />}
+                                bgColor="hover:bg-blue-50"
+                                delay={100}
+                            />
+                            <PlatformCard
+                                platform="Reddit"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.reddit}
+                                icon={<RedditIcon />}
+                                bgColor="hover:bg-orange-50"
+                                delay={200}
+                            />
+                            <PlatformCard
+                                platform="LinkedIn"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.linkedin}
+                                icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                </svg>}
+                                bgColor="hover:bg-indigo-50"
+                                delay={300}
+                            />
+                            <PlatformCard
+                                platform="Instagram"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.instagram}
+                                icon={<InstagramIcon />}
+                                bgColor="hover:bg-pink-50"
+                                delay={350}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <PlatformCard
+                                platform="TikTok"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.tiktok}
+                                icon={<TikTokIcon />}
+                                bgColor="hover:bg-purple-50"
+                                delay={400}
+                            />
+                            <PlatformCard
+                                platform="YouTube"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.youtube}
+                                icon={<YouTubeIcon />}
+                                bgColor="hover:bg-red-50"
+                                delay={450}
+                            />
+                            <PlatformCard
+                                platform="Product Hunt"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.producthunt}
+                                icon={<ProductHuntIcon />}
+                                bgColor="hover:bg-orange-50"
+                                delay={500}
+                            />
+                            <PlatformCard
+                                platform="GitHub"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.github}
+                                icon={<GitHubIcon />}
+                                bgColor="hover:bg-gray-50"
+                                delay={550}
+                            />
+                        </div>
                     </div>
 
                     {/* Market Intelligence Cards - Tier 1 */}
