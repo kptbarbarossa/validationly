@@ -137,19 +137,19 @@ const ResultsPage: React.FC = () => {
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">TAM:</span> 
+                    <span className="font-medium text-gray-700">TAM:</span>
                     <span className="text-gray-600 ml-2">{data?.tam || '$2.5B Design Software Market'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">SAM:</span> 
+                    <span className="font-medium text-gray-700">SAM:</span>
                     <span className="text-gray-600 ml-2">{data?.sam || '$450M SaaS Design Tools'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">SOM:</span> 
+                    <span className="font-medium text-gray-700">SOM:</span>
                     <span className="text-gray-600 ml-2">{data?.som || '$12M Realistic 3-year target'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Growth:</span> 
+                    <span className="font-medium text-gray-700">Growth:</span>
                     <span className="text-green-600 ml-2 font-medium">{data?.growthRate || '15% YoY'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
@@ -184,15 +184,15 @@ const ResultsPage: React.FC = () => {
                     </div>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Position:</span> 
+                    <span className="font-medium text-gray-700">Position:</span>
                     <span className="text-gray-600 ml-2">{data?.marketPosition || 'Blue Ocean Opportunity'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Differentiation:</span> 
+                    <span className="font-medium text-gray-700">Differentiation:</span>
                     <span className="text-blue-600 ml-2 font-medium">{data?.differentiationScore || '8'}/10</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Moat:</span> 
+                    <span className="font-medium text-gray-700">Moat:</span>
                     <span className="text-gray-600 ml-2">{data?.competitiveMoat || 'AI-powered features'}</span>
                 </div>
             </div>
@@ -213,23 +213,23 @@ const ResultsPage: React.FC = () => {
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Model:</span> 
+                    <span className="font-medium text-gray-700">Model:</span>
                     <span className="text-gray-600 ml-2">{data?.primaryModel || 'Freemium SaaS'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Price:</span> 
+                    <span className="font-medium text-gray-700">Price:</span>
                     <span className="text-green-600 ml-2 font-medium">{data?.pricePoint || '$29/month'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Break-even:</span> 
+                    <span className="font-medium text-gray-700">Break-even:</span>
                     <span className="text-gray-600 ml-2">{data?.breakEvenTimeline || '18 months'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">LTV/CAC:</span> 
+                    <span className="font-medium text-gray-700">LTV/CAC:</span>
                     <span className="text-blue-600 ml-2 font-medium">{data?.ltvCacRatio || '4.2x'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Projected MRR:</span> 
+                    <span className="font-medium text-gray-700">Projected MRR:</span>
                     <span className="text-green-600 ml-2 font-medium">{data?.projectedMrr || '$25K by Year 1'}</span>
                 </div>
             </div>
@@ -250,11 +250,11 @@ const ResultsPage: React.FC = () => {
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Primary:</span> 
+                    <span className="font-medium text-gray-700">Primary:</span>
                     <span className="text-gray-600 ml-2">{data?.primarySegment || 'Freelance Designers (40%)'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Secondary:</span> 
+                    <span className="font-medium text-gray-700">Secondary:</span>
                     <span className="text-gray-600 ml-2">{data?.secondarySegment || 'Design Agencies (35%)'}</span>
                 </div>
                 <div className="text-sm">
@@ -264,7 +264,7 @@ const ResultsPage: React.FC = () => {
                     </div>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Willingness to Pay:</span> 
+                    <span className="font-medium text-gray-700">Willingness to Pay:</span>
                     <span className="text-green-600 ml-2 font-medium">{data?.willingnessToPay || 'High ($25-50/month)'}</span>
                 </div>
             </div>
@@ -295,25 +295,25 @@ const ResultsPage: React.FC = () => {
                 </div>
                 <div className="space-y-3">
                     <div className="text-sm">
-                        <span className="font-medium text-gray-700">Technical:</span> 
+                        <span className="font-medium text-gray-700">Technical:</span>
                         <span className={`ml-2 font-medium ${getRiskColor(data?.technicalRisk || 'Low')}`}>
                             {data?.technicalRisk || 'Low'}
                         </span>
                     </div>
                     <div className="text-sm">
-                        <span className="font-medium text-gray-700">Market:</span> 
+                        <span className="font-medium text-gray-700">Market:</span>
                         <span className={`ml-2 font-medium ${getRiskColor(data?.marketRisk || 'Medium')}`}>
                             {data?.marketRisk || 'Medium'}
                         </span>
                     </div>
                     <div className="text-sm">
-                        <span className="font-medium text-gray-700">Financial:</span> 
+                        <span className="font-medium text-gray-700">Financial:</span>
                         <span className={`ml-2 font-medium ${getRiskColor(data?.financialRisk || 'Low')}`}>
                             {data?.financialRisk || 'Low'}
                         </span>
                     </div>
                     <div className="text-sm border-t pt-2">
-                        <span className="font-medium text-gray-700">Overall:</span> 
+                        <span className="font-medium text-gray-700">Overall:</span>
                         <span className={`ml-2 font-bold ${getRiskColor(data?.overallRiskLevel || 'Medium')}`}>
                             {data?.overallRiskLevel || 'MEDIUM'}
                         </span>
@@ -337,23 +337,23 @@ const ResultsPage: React.FC = () => {
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Phase 1:</span> 
+                    <span className="font-medium text-gray-700">Phase 1:</span>
                     <span className="text-gray-600 ml-2">{data?.phase1 || 'Design Twitter + Product Hunt'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Phase 2:</span> 
+                    <span className="font-medium text-gray-700">Phase 2:</span>
                     <span className="text-gray-600 ml-2">{data?.phase2 || 'Design communities (Dribbble, Behance)'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Phase 3:</span> 
+                    <span className="font-medium text-gray-700">Phase 3:</span>
                     <span className="text-gray-600 ml-2">{data?.phase3 || 'Partnership with design schools'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Timeline:</span> 
+                    <span className="font-medium text-gray-700">Timeline:</span>
                     <span className="text-blue-600 ml-2 font-medium">{data?.timeline || '6-month rollout'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Budget:</span> 
+                    <span className="font-medium text-gray-700">Budget:</span>
                     <span className="text-green-600 ml-2 font-medium">{data?.budgetNeeded || '$50K initial'}</span>
                 </div>
             </div>
@@ -374,15 +374,15 @@ const ResultsPage: React.FC = () => {
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">MVP:</span> 
+                    <span className="font-medium text-gray-700">MVP:</span>
                     <span className="text-gray-600 ml-2">{data?.mvpTimeline || '3 months'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Beta:</span> 
+                    <span className="font-medium text-gray-700">Beta:</span>
                     <span className="text-gray-600 ml-2">{data?.betaLaunch || '5 months'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Launch:</span> 
+                    <span className="font-medium text-gray-700">Launch:</span>
                     <span className="text-blue-600 ml-2 font-medium">{data?.publicLaunch || '8 months'}</span>
                 </div>
                 <div className="text-sm">
@@ -415,23 +415,23 @@ const ResultsPage: React.FC = () => {
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Problem-Solution Fit:</span> 
+                    <span className="font-medium text-gray-700">Problem-Solution Fit:</span>
                     <span className="text-green-600 ml-2 font-medium">{data?.problemSolutionFit || '85'}%</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Solution-Market Fit:</span> 
+                    <span className="font-medium text-gray-700">Solution-Market Fit:</span>
                     <span className="text-blue-600 ml-2 font-medium">{data?.solutionMarketFit || '78'}%</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Early Adopters:</span> 
+                    <span className="font-medium text-gray-700">Early Adopters:</span>
                     <span className="text-gray-600 ml-2">{data?.earlyAdopterSignals || 'Strong signals'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Retention:</span> 
+                    <span className="font-medium text-gray-700">Retention:</span>
                     <span className="text-gray-600 ml-2">{data?.retentionPrediction || '65% (Month 1)'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Viral Coefficient:</span> 
+                    <span className="font-medium text-gray-700">Viral Coefficient:</span>
                     <span className="text-purple-600 ml-2 font-medium">{data?.viralCoefficient || '0.3'}</span>
                 </div>
             </div>
