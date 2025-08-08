@@ -689,6 +689,42 @@ export default async function handler(req: any, res: any) {
 
 // Simplified AI analysis using only Gemini 2.0
 async function getSimplifiedAIAnalysis(content: string, systemInstruction: string, forcedLang?: 'tr'|'en'): Promise<DynamicPromptResult> {
+    // Helper: robust JSON parsing with light repairs
+    const safeJsonParse = (rawText: string): any => {
+        const tryParse = (txt: string) => {
+            try { return JSON.parse(txt); } catch { return null; }
+        };
+
+        if (!rawText) return null;
+
+        // Strip common wrappers (markdown fences)
+        let text = rawText
+            .replace(/^```\s*json\s*/i, '')
+            .replace(/^```/i, '')
+            .replace(/```\s*$/i, '')
+            .replace(/```/g, '')
+            .trim();
+
+        // First naive parse
+        let parsed = tryParse(text);
+        if (parsed) return parsed;
+
+        // Extract first JSON object block
+        const first = text.indexOf('{');
+        const last = text.lastIndexOf('}');
+        if (first !== -1 && last !== -1 && last > first) {
+            text = text.substring(first, last + 1);
+        }
+
+        // Replace smart quotes and remove trailing commas
+        text = text
+            .replace(/[“”]/g, '"')
+            .replace(/[‘’]/g, "'")
+            .replace(/,(\s*[}\]])/g, '$1');
+
+        parsed = tryParse(text);
+        return parsed;
+    };
     // Use the dynamic system instruction passed from the main function
 
     try {
@@ -916,8 +952,8 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                     }
                 }`,
                 responseMimeType: "application/json",
-                temperature: 0.3,
-                maxOutputTokens: 2048,
+                temperature: 0,
+                maxOutputTokens: 4096,
             }
         });
 
@@ -926,7 +962,10 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             throw new Error('Empty response from AI analysis');
         }
 
-        const parsedResult = JSON.parse(responseText);
+        const parsedResult = safeJsonParse(responseText);
+        if (!parsedResult) {
+            throw new Error('Invalid JSON from AI');
+        }
 
         // Validate and clean the result
         const cleanResult: DynamicPromptResult = {
