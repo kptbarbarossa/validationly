@@ -519,15 +519,25 @@ export default async function handler(req: any, res: any) {
         - NO MIXING of languages - maintain 100% consistency
         - Platform names can stay as "Twitter", "Reddit", "LinkedIn" but all descriptions must match the specified language
 
-        ANALYSIS METHODOLOGY:
+        COMPREHENSIVE ANALYSIS METHODOLOGY:
         1. Demand Score (0-100): Overall market demand assessment
         2. Platform Analysis: Analyze X, Reddit, LinkedIn market signals
-        3. Content Suggestions: Create platform-optimized versions
+        3. Market Intelligence: TAM/SAM/SOM sizing with real market data
+        4. Competitive Landscape: Identify actual competitors and positioning
+        5. Revenue Model: Realistic pricing and monetization strategies
+        6. Target Audience: Specific customer segments and pain points
+        7. Risk Assessment: Technical, market, financial risk evaluation
+        8. Go-to-Market: Phased launch strategy with timelines
+        9. Development Roadmap: Technical implementation timeline
+        10. Product-Market Fit: PMF indicators and predictions
+        11. Content Suggestions: Platform-optimized versions
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
-        - Write detailed, insightful summaries that sound like real market research
-        - Make suggestions actionable and platform-appropriate
+        - Provide REAL market data, not generic examples
+        - Reference actual competitors and market conditions
+        - Give specific numbers based on industry knowledge
+        - Make all suggestions actionable and data-driven
         - All content must feel authentic and valuable to entrepreneurs
 
         Analyze the following startup idea: "${inputContent}"`;
@@ -544,11 +554,10 @@ export default async function handler(req: any, res: any) {
                     model: "gemini-2.0-flash-exp",
                     contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
                     config: {
-                        systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                        systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                         responseMimeType: "application/json",
-                        responseSchema: legacyResponseSchema,
                         temperature: 0.3,
-                        maxOutputTokens: 2048,
+                        maxOutputTokens: 4096, // Increased for comprehensive analysis
                     }
                 });
 
@@ -568,11 +577,10 @@ export default async function handler(req: any, res: any) {
                         model: "gemini-1.5-flash",
                         contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
                         config: {
-                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT RULES:\n- You MUST respond with ONLY valid JSON\n- No markdown code blocks (no \`\`\`json)\n- No explanations or text outside JSON\n- Start with { and end with }\n- Include ALL required schema fields`,
+                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                             responseMimeType: "application/json",
-                            responseSchema: legacyResponseSchema,
                             temperature: 0.3,
-                            maxOutputTokens: 2048,
+                            maxOutputTokens: 4096, // Increased for comprehensive analysis
                         }
                     });
 
@@ -630,7 +638,17 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         const aiInstance = getAI();
         const result = await aiInstance.models.generateContent({
             model: "gemini-2.0-flash-exp",
-            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\nProvide comprehensive analysis including platform-specific insights and content suggestions.`,
+            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\nProvide comprehensive business analysis including:
+            - Market sizing (TAM/SAM/SOM) with real industry data
+            - Competitive landscape with actual competitor names
+            - Revenue model with realistic pricing recommendations
+            - Target audience with specific customer segments
+            - Risk assessment across all business dimensions
+            - Go-to-market strategy with actionable phases
+            - Development roadmap with realistic timelines
+            - Product-market fit indicators and predictions
+            - Platform-specific social media analysis
+            - Content suggestions for validation`,
             config: {
                 systemInstruction: systemInstruction + `\n\nRESPONSE FORMAT: Return JSON with this exact structure:
                 {
@@ -709,7 +727,73 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             tweetSuggestion: parsedResult.tweetSuggestion || 'Share your startup idea on Twitter!',
             redditTitleSuggestion: parsedResult.redditTitleSuggestion || 'Looking for feedback on my startup idea',
             redditBodySuggestion: parsedResult.redditBodySuggestion || 'I would love to get your thoughts on this concept.',
-            linkedinSuggestion: parsedResult.linkedinSuggestion || 'Excited to share this new business concept with my network.'
+            linkedinSuggestion: parsedResult.linkedinSuggestion || 'Excited to share this new business concept with my network.',
+            
+            // Add comprehensive analysis with fallbacks
+            marketIntelligence: parsedResult.marketIntelligence || {
+                tam: "Market analysis in progress",
+                sam: "Calculating addressable market",
+                som: "Determining obtainable market",
+                growthRate: "Industry growth rate analysis",
+                marketTiming: 3,
+                keyTrends: ["Market analysis", "Industry trends", "Growth opportunities"]
+            },
+            competitiveLandscape: parsedResult.competitiveLandscape || {
+                directCompetitors: ["Analysis in progress"],
+                indirectCompetitors: ["Market research ongoing"],
+                marketPosition: "Competitive positioning analysis",
+                differentiationScore: 7,
+                competitiveMoat: "Competitive advantage assessment",
+                entryBarriers: "Market entry analysis"
+            },
+            revenueModel: parsedResult.revenueModel || {
+                primaryModel: "Business model analysis",
+                pricePoint: "Pricing strategy development",
+                revenueStreams: ["Revenue analysis", "Monetization strategy"],
+                breakEvenTimeline: "Financial projections",
+                ltvCacRatio: "Unit economics analysis",
+                projectedMrr: "Revenue projections"
+            },
+            targetAudience: parsedResult.targetAudience || {
+                primarySegment: "Customer segment analysis",
+                secondarySegment: "Market segmentation",
+                tertiarySegment: "Audience research",
+                painPoints: ["Customer research", "Pain point analysis"],
+                willingnessToPay: "Pricing sensitivity analysis",
+                customerAcquisitionChannels: ["Channel analysis", "Customer acquisition"]
+            },
+            riskAssessment: parsedResult.riskAssessment || {
+                technicalRisk: "Medium",
+                marketRisk: "Medium", 
+                financialRisk: "Medium",
+                regulatoryRisk: "Low",
+                overallRiskLevel: "Medium",
+                mitigationStrategies: ["Risk analysis", "Mitigation planning"]
+            },
+            goToMarket: parsedResult.goToMarket || {
+                phase1: "Go-to-market strategy development",
+                phase2: "Market entry planning",
+                phase3: "Scale strategy",
+                timeline: "Strategic timeline",
+                budgetNeeded: "Budget analysis",
+                keyChannels: ["Channel strategy", "Market approach"]
+            },
+            developmentRoadmap: parsedResult.developmentRoadmap || {
+                mvpTimeline: "Development planning",
+                betaLaunch: "Beta strategy",
+                publicLaunch: "Launch planning",
+                keyFeatures: ["Feature analysis", "Product roadmap"],
+                teamNeeded: ["Team planning", "Resource allocation"],
+                techStack: ["Technology assessment", "Technical planning"]
+            },
+            productMarketFit: parsedResult.productMarketFit || {
+                problemSolutionFit: 75,
+                solutionMarketFit: 70,
+                earlyAdopterSignals: "PMF analysis in progress",
+                retentionPrediction: "Retention modeling",
+                viralCoefficient: "Growth analysis",
+                pmfIndicators: ["PMF assessment", "Market validation"]
+            }
         };
 
         console.log('✅ Single AI call analysis completed');
