@@ -518,6 +518,173 @@ const legacyResponseSchema = {
     required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
 };
 
+// Strict response schema for structured output stability
+const platformAnalysisSchema = {
+    type: Type.OBJECT,
+    properties: {
+        platformName: { type: Type.STRING },
+        score: { type: Type.INTEGER },
+        summary: { type: Type.STRING },
+        keyFindings: { type: Type.ARRAY, items: { type: Type.STRING } },
+        contentSuggestion: { type: Type.STRING }
+    }
+};
+
+const validationlyResponseSchema = {
+    type: Type.OBJECT,
+    properties: {
+        idea: { type: Type.STRING },
+        demandScore: { type: Type.INTEGER },
+        scoreJustification: { type: Type.STRING },
+        language: { type: Type.STRING },
+        fallbackUsed: { type: Type.BOOLEAN },
+        platformAnalyses: {
+            type: Type.OBJECT,
+            properties: {
+                twitter: platformAnalysisSchema,
+                reddit: platformAnalysisSchema,
+                linkedin: platformAnalysisSchema,
+                instagram: platformAnalysisSchema,
+                tiktok: platformAnalysisSchema,
+                youtube: platformAnalysisSchema,
+                facebook: platformAnalysisSchema,
+                producthunt: platformAnalysisSchema,
+                hackernews: platformAnalysisSchema,
+                medium: platformAnalysisSchema,
+                discord: platformAnalysisSchema,
+                github: platformAnalysisSchema,
+                stackoverflow: platformAnalysisSchema,
+                pinterest: platformAnalysisSchema,
+                angellist: platformAnalysisSchema,
+                crunchbase: platformAnalysisSchema,
+                dribbble: platformAnalysisSchema,
+                behance: platformAnalysisSchema,
+                figma: platformAnalysisSchema,
+                slack: platformAnalysisSchema,
+                clubhouse: platformAnalysisSchema,
+                substack: platformAnalysisSchema,
+                notion: platformAnalysisSchema,
+                devto: platformAnalysisSchema,
+                hashnode: platformAnalysisSchema,
+                gitlab: platformAnalysisSchema,
+                codepen: platformAnalysisSchema,
+                indiehackers: platformAnalysisSchema,
+                awwwards: platformAnalysisSchema,
+                designs99: platformAnalysisSchema,
+                canva: platformAnalysisSchema,
+                adobe: platformAnalysisSchema,
+                unsplash: platformAnalysisSchema,
+                etsy: platformAnalysisSchema,
+                amazon: platformAnalysisSchema,
+                shopify: platformAnalysisSchema,
+                woocommerce: platformAnalysisSchema
+            }
+        },
+        tweetSuggestion: { type: Type.STRING },
+        redditTitleSuggestion: { type: Type.STRING },
+        redditBodySuggestion: { type: Type.STRING },
+        linkedinSuggestion: { type: Type.STRING },
+        marketIntelligence: {
+            type: Type.OBJECT,
+            properties: {
+                tam: { type: Type.STRING },
+                sam: { type: Type.STRING },
+                som: { type: Type.STRING },
+                growthRate: { type: Type.STRING },
+                marketTiming: { type: Type.STRING },
+                trends: { type: Type.ARRAY, items: { type: Type.STRING } }
+            }
+        },
+        competitiveLandscape: {
+            type: Type.OBJECT,
+            properties: {
+                directCompetitors: { type: Type.ARRAY, items: { type: Type.STRING } },
+                indirectCompetitors: { type: Type.ARRAY, items: { type: Type.STRING } },
+                marketPosition: { type: Type.STRING },
+                differentiationScore: { type: Type.STRING },
+                competitiveMoat: { type: Type.STRING },
+                entryBarriers: { type: Type.STRING }
+            }
+        },
+        revenueModel: {
+            type: Type.OBJECT,
+            properties: {
+                primaryModel: { type: Type.STRING },
+                pricePoint: { type: Type.STRING },
+                revenueStreams: { type: Type.ARRAY, items: { type: Type.STRING } },
+                breakEvenTimeline: { type: Type.STRING },
+                ltvToCacRatio: { type: Type.STRING },
+                projectedMrr: { type: Type.STRING }
+            }
+        },
+        targetAudience: {
+            type: Type.OBJECT,
+            properties: {
+                primarySegment: { type: Type.STRING },
+                secondarySegment: { type: Type.STRING },
+                tertiarySegment: { type: Type.STRING },
+                painPoints: { type: Type.ARRAY, items: { type: Type.STRING } },
+                willingnessToPay: { type: Type.STRING },
+                acquisitionChannels: { type: Type.ARRAY, items: { type: Type.STRING } }
+            }
+        },
+        riskAssessment: {
+            type: Type.OBJECT,
+            properties: {
+                technical: { type: Type.STRING },
+                market: { type: Type.STRING },
+                financial: { type: Type.STRING },
+                regulatory: { type: Type.STRING },
+                overall: { type: Type.STRING },
+                mitigationStrategies: { type: Type.ARRAY, items: { type: Type.STRING } }
+            }
+        },
+        goToMarket: {
+            type: Type.OBJECT,
+            properties: {
+                phase1: { type: Type.STRING },
+                phase2: { type: Type.STRING },
+                phase3: { type: Type.STRING },
+                timeline: { type: Type.STRING },
+                budget: { type: Type.STRING },
+                keyChannels: { type: Type.ARRAY, items: { type: Type.STRING } }
+            }
+        },
+        developmentRoadmap: {
+            type: Type.OBJECT,
+            properties: {
+                mvpTimeline: { type: Type.STRING },
+                betaLaunch: { type: Type.STRING },
+                publicLaunch: { type: Type.STRING },
+                keyFeatures: { type: Type.ARRAY, items: { type: Type.STRING } },
+                teamNeeded: { type: Type.ARRAY, items: { type: Type.STRING } },
+                techStack: { type: Type.ARRAY, items: { type: Type.STRING } }
+            }
+        },
+        productMarketFit: {
+            type: Type.OBJECT,
+            properties: {
+                problemSolutionFit: { type: Type.STRING },
+                solutionMarketFit: { type: Type.STRING },
+                earlyAdopterSignals: { type: Type.ARRAY, items: { type: Type.STRING } },
+                retentionPrediction: { type: Type.STRING },
+                viralCoefficient: { type: Type.STRING },
+                pmfIndicators: { type: Type.ARRAY, items: { type: Type.STRING } }
+            }
+        }
+    },
+    required: [
+        "idea",
+        "demandScore",
+        "scoreJustification",
+        "platformAnalyses",
+        "tweetSuggestion",
+        "redditTitleSuggestion",
+        "redditBodySuggestion",
+        "linkedinSuggestion"
+    ]
+};
+
 export default async function handler(req: any, res: any) {
     // CORS headers
     const headers = {
@@ -580,14 +747,13 @@ export default async function handler(req: any, res: any) {
         // Add language and format requirements
         const finalSystemInstruction = `${systemInstruction}
 
-        🌍 CRITICAL LANGUAGE REQUIREMENT: 
-        - The user's input language has been detected and specified above
-        - You MUST respond in the EXACT SAME LANGUAGE as specified
-        - If Turkish is specified → ALL fields must be in Turkish (summary, keyFindings, contentSuggestion, etc.)
-        - If English is specified → ALL fields must be in English
+        🌍 CRITICAL LANGUAGE REQUIREMENT:
+        - Detect the user's input language automatically
+        - Respond ONLY in the SAME LANGUAGE as the input
         - This applies to EVERY SINGLE text field in your JSON response
-        - NO MIXING of languages - maintain 100% consistency
-        - Platform names can stay as "Twitter", "Reddit", "LinkedIn" but all descriptions must match the specified language
+        - NO MIXING of languages — maintain 100% consistency
+        - Set the top-level field "language" to the language name (e.g., Turkish, English, French, German)
+        - Platform names can stay as proper nouns (e.g., "X", "Reddit", "LinkedIn"), but all descriptions must match the input language
 
         COMPREHENSIVE ANALYSIS METHODOLOGY:
         1. Demand Score (0-100): Overall market demand assessment
@@ -626,6 +792,7 @@ export default async function handler(req: any, res: any) {
                     config: {
                         systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                         responseMimeType: "application/json",
+                        responseSchema: validationlyResponseSchema,
                         temperature: 0.3,
                         maxOutputTokens: 4096, // Increased for comprehensive analysis
                     }
@@ -649,6 +816,7 @@ export default async function handler(req: any, res: any) {
                         config: {
                             systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                             responseMimeType: "application/json",
+                            responseSchema: validationlyResponseSchema,
                             temperature: 0.3,
                             maxOutputTokens: 4096, // Increased for comprehensive analysis
                         }
@@ -750,7 +918,7 @@ async function getSimplifiedAIAnalysis(
         // Language detection with optional override
         const isTurkishAuto = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || /\b(bir|bu|için|ile|olan|var|çok|iyi|yeni)\b/i.test(content);
         const language = forcedLang === 'tr' ? 'Turkish' : forcedLang === 'en' ? 'English' : (isTurkishAuto ? 'Turkish' : 'English');
-        const languageInstruction = `YOU MUST RESPOND IN ${language.toUpperCase()} ONLY. Do not include any words from other languages.`;
+        const languageInstruction = `LANGUAGE: Detect the input language automatically and respond ONLY in that language. Do not mix languages. Set top-level \'language\' accordingly.`;
 
         // Detect sector and get relevant platforms
         const sectors = promptManager.detectSector(content);
@@ -968,6 +1136,7 @@ async function getSimplifiedAIAnalysis(
                     }
                 }`,
                 responseMimeType: "application/json",
+                responseSchema: validationlyResponseSchema,
                 temperature: 0,
                 maxOutputTokens: 4096,
             }
@@ -989,6 +1158,7 @@ async function getSimplifiedAIAnalysis(
                         systemInstruction: systemInstruction + `\n\nLANGUAGE ENFORCEMENT: Respond ONLY in ${language}. Do not mix languages. All text fields must be in ${language}.\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL required keys (even if estimated). Use non-empty strings for all text fields. No nulls, no empty arrays. Include ALL relevant platforms as specified:
                 { ... }`,
                         responseMimeType: "application/json",
+                        responseSchema: validationlyResponseSchema,
                         temperature: 0,
                         maxOutputTokens: 4096,
                     }
