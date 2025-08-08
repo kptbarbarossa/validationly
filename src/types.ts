@@ -306,6 +306,7 @@ export interface ValidationRequest {
   content?: string;  // New primary field
   idea?: string;     // Backward compatibility
   lang?: 'tr' | 'en';
+  model?: string;    // Optional runtime model selection (whitelisted on server)
 }
 
 export interface ApiResponse<T> {

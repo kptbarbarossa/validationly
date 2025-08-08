@@ -560,7 +560,7 @@ export default async function handler(req: any, res: any) {
             });
         }
 
-        const { idea, content, lang } = req.body;
+        const { idea, content, lang, model } = req.body;
         const inputContent = idea || content;
 
         // Input validation
@@ -667,8 +667,18 @@ export default async function handler(req: any, res: any) {
             }
         }
 
+        // Optional runtime model selection (whitelist)
+        const allowedModels = [
+            'gemini-2.5-flash',
+            'gemini-2.5-pro',
+            'gemini-2.0-flash-exp',
+            'gemini-1.5-flash',
+            'gemini-1.5-pro'
+        ];
+        const preferredModel = typeof model === 'string' && allowedModels.includes(model) ? model : undefined;
+
         // Use simplified analysis approach with dynamic prompts
-        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang);
+        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang, preferredModel);
 
         console.log('✅ Dynamic prompt analysis completed successfully');
         console.log('📊 Result structure:', Object.keys(result));
@@ -688,7 +698,12 @@ export default async function handler(req: any, res: any) {
 // Single AI call analysis - no separate platform functions needed
 
 // Simplified AI analysis using only Gemini 2.0
-async function getSimplifiedAIAnalysis(content: string, systemInstruction: string, forcedLang?: 'tr'|'en'): Promise<DynamicPromptResult> {
+async function getSimplifiedAIAnalysis(
+    content: string,
+    systemInstruction: string,
+    forcedLang?: 'tr'|'en',
+    preferredModel?: string
+): Promise<DynamicPromptResult> {
     // Helper: robust JSON parsing with light repairs
     const safeJsonParse = (rawText: string): any => {
         const tryParse = (txt: string) => {
@@ -746,8 +761,9 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
 
         // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
-        const result = await aiInstance.models.generateContent({
-            model: "gemini-2.0-flash-exp",
+        const runtimeModel = preferredModel || 'gemini-2.0-flash-exp';
+        let result = await aiInstance.models.generateContent({
+            model: runtimeModel,
             contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep language strictly ${language}.:
 
             📊 MARKET INTELLIGENCE (provide specific numbers):
@@ -957,14 +973,34 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             }
         });
 
-        const responseText = result.text?.trim();
+        let responseText = result.text?.trim();
         if (!responseText) {
             throw new Error('Empty response from AI analysis');
         }
 
-        const parsedResult = safeJsonParse(responseText);
+        let parsedResult = safeJsonParse(responseText);
         if (!parsedResult) {
-            throw new Error('Invalid JSON from AI');
+            // Retry once with stable fallback model
+            try {
+                result = await aiInstance.models.generateContent({
+                    model: 'gemini-1.5-flash',
+                    contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep language strictly ${language}.:`,
+                    config: {
+                        systemInstruction: systemInstruction + `\n\nLANGUAGE ENFORCEMENT: Respond ONLY in ${language}. Do not mix languages. All text fields must be in ${language}.\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL required keys (even if estimated). Use non-empty strings for all text fields. No nulls, no empty arrays. Include ALL relevant platforms as specified:
+                { ... }`,
+                        responseMimeType: "application/json",
+                        temperature: 0,
+                        maxOutputTokens: 4096,
+                    }
+                });
+                responseText = result.text?.trim() || '';
+                parsedResult = safeJsonParse(responseText);
+            } catch (e) {
+                // fall through to outer catch
+            }
+            if (!parsedResult) {
+                throw new Error('Invalid JSON from AI');
+            }
         }
 
         // If language fields sneak in mixed-language content, enforce by simple heuristic
