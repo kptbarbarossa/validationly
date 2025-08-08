@@ -639,7 +639,11 @@ const ResultsPage: React.FC = () => {
 
                 <div className="mb-4">
                     <p className="text-sm text-gray-600 leading-relaxed">
-                        {analysis?.summary || `AI analysis shows moderate potential for ${platform.toLowerCase()} with room for improvement through targeted content strategy.`}
+                        {analysis?.summary || (
+                            (result as any)?.language === 'Turkish'
+                                ? `Yapay zeka analizi ${platform.toLowerCase()} için orta düzey potansiyel gösteriyor. Hedefli içerik stratejisi ile iyileştirme alanı mevcut.`
+                                : `AI analysis shows moderate potential for ${platform.toLowerCase()} with room for improvement through targeted content strategy.`
+                        )}
                     </p>
                 </div>
 
@@ -670,6 +674,14 @@ const ResultsPage: React.FC = () => {
 
             {/* Enhanced Background - Ana sayfa gibi */}
             <div className="min-h-screen bg-white text-gray-800">
+                {/* Fallback notice */}
+                {Boolean((result as any)?.fallbackUsed) && (
+                    <div className="max-w-3xl mx-auto mb-4 p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-sm">
+                        {(result as any)?.language === 'Turkish'
+                            ? 'Not: Analiz geçici yedek modda oluşturuldu. Daha doğru sonuçlar için tekrar deneyin.'
+                            : 'Note: Analysis used fallback mode. Please try again for more accurate results.'}
+                    </div>
+                )}
                 {/* Background gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
                 

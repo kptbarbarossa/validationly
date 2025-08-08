@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://validationly.com',
+        target: process.env.VITE_API_BASE || 'https://validationly.com',
         changeOrigin: true,
         secure: true,
       },

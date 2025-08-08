@@ -148,7 +148,7 @@ const HomePage: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: userInput.idea })
+                body: JSON.stringify({ idea: userInput.idea, lang: /[çğıöşüÇĞIİÖŞÜ]/.test(userInput.idea) || /(\b)(bir|bu|için|ile|olan|var|çok|iyi|yeni)(\b)/i.test(userInput.idea) ? 'tr' : 'en' })
             });
 
             if (!response.ok) {
@@ -319,7 +319,6 @@ const HomePage: React.FC = () => {
                             key={category.name}
                             className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                             onClick={() => handleSampleIdeaClick(category.example)}
-                            style={{ animationDelay: `${index * 100}ms` }}
                         >
                             <div className="mb-4">
                                 <h4 className="font-semibold text-gray-900 mb-1">{category.name}</h4>

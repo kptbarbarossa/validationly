@@ -239,7 +239,32 @@ POSITIONING STRATEGY:
 - Competitive pricing and value proposition
 - Go-to-market approach to avoid direct competition
 
-Reference specific competitors, provide market share estimates where available, and include actionable competitive intelligence with confidence assessments.`
+        Reference specific competitors, provide market share estimates where available, and include actionable competitive intelligence with confidence assessments.`,
+        'monetization-opportunity': `ANALYSIS FOCUS: Monetization & Pricing Strategy
+
+Develop a realistic and data-driven monetization plan for the concept.
+
+PRICING STRATEGY:
+- Recommended model (SaaS tiered, usage-based, freemium, marketplace take-rate, ads, hybrid)
+- Initial price points with currency and justification
+- Discounting and annual vs monthly considerations
+
+REVENUE STREAMS:
+- 2-4 concrete revenue streams and expected contribution share
+- Upsell/cross-sell opportunities and packaging
+
+UNIT ECONOMICS:
+- LTV/CAC ratio with rough calculation method
+- Payback period (months) and break-even timeline
+
+GO-TO-MARKET PRICING:
+- Entry offer or pilot pricing
+- Enterprise vs SMB considerations if relevant
+
+RISKS:
+- Price sensitivity, churn risks, channel costs, payment ops
+
+Provide actionable and specific numbers where possible based on market norms.`
     };
 
     detectSector(input: string): string[] {
@@ -299,7 +324,15 @@ Reference specific competitors, provide market share estimates where available, 
 
         const basePrompt = this.prompts['base-analyst'];
         const sectorPrompts = sectors.map(sector => this.prompts[`${sector}-sector`]).filter(p => p);
-        const analysisPrompts = analysisTypes.map(analysis => this.prompts[`${analysis}-opportunity`]).filter(p => p);
+        // Map analysis keywords to actual prompt keys
+        const promptKeyMap: Record<string, string> = {
+            market: 'market-opportunity',
+            competitive: 'competitive-landscape',
+            monetization: 'monetization-opportunity'
+        };
+        const analysisPrompts = analysisTypes
+            .map(analysis => this.prompts[promptKeyMap[analysis]])
+            .filter(p => p);
 
         return {
             basePrompt,
@@ -359,6 +392,9 @@ interface DynamicPromptResult {
         analysisTypes: string[];
         confidence: number;
     };
+    // Language & model behavior metadata
+    language?: string;
+    fallbackUsed?: boolean;
 }
 
 interface PlatformAnalysis {
@@ -524,7 +560,7 @@ export default async function handler(req: any, res: any) {
             });
         }
 
-        const { idea, content } = req.body;
+        const { idea, content, lang } = req.body;
         const inputContent = idea || content;
 
         // Input validation
@@ -632,7 +668,7 @@ export default async function handler(req: any, res: any) {
         }
 
         // Use simplified analysis approach with dynamic prompts
-        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction);
+        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang);
 
         console.log('✅ Dynamic prompt analysis completed successfully');
         console.log('📊 Result structure:', Object.keys(result));
@@ -652,7 +688,7 @@ export default async function handler(req: any, res: any) {
 // Single AI call analysis - no separate platform functions needed
 
 // Simplified AI analysis using only Gemini 2.0
-async function getSimplifiedAIAnalysis(content: string, systemInstruction: string): Promise<DynamicPromptResult> {
+async function getSimplifiedAIAnalysis(content: string, systemInstruction: string, forcedLang?: 'tr'|'en'): Promise<DynamicPromptResult> {
     // Use the dynamic system instruction passed from the main function
 
     try {
@@ -660,9 +696,9 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
         console.log('📝 System instruction length:', systemInstruction.length);
         console.log('🎯 Input content:', content);
 
-        // Simple language detection
-        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || /\b(bir|bu|için|ile|olan|var|çok|iyi|yeni)\b/i.test(content);
-        const language = isTurkish ? 'Turkish' : 'English';
+        // Language detection with optional override
+        const isTurkishAuto = /[çğıöşüÇĞIİÖŞÜ]/.test(content) || /\b(bir|bu|için|ile|olan|var|çok|iyi|yeni)\b/i.test(content);
+        const language = forcedLang === 'tr' ? 'Turkish' : forcedLang === 'en' ? 'English' : (isTurkishAuto ? 'Turkish' : 'English');
         const languageInstruction = `RESPOND IN ${language.toUpperCase()} ONLY. All text fields must be in ${language}.`;
 
         // Detect sector and get relevant platforms
@@ -897,13 +933,15 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             idea: parsedResult.idea || content,
             demandScore: Math.max(0, Math.min(100, parsedResult.demandScore || 65)),
             scoreJustification: parsedResult.scoreJustification || 'Market analysis completed',
+            language,
+            fallbackUsed: Boolean(parsedResult.fallbackUsed ?? false),
             platformAnalyses: {
                 twitter: {
-                    platformName: 'Twitter',
+                    platformName: 'X',
                     score: Math.max(1, Math.min(5, parsedResult.platformAnalyses?.twitter?.score || 3)),
                     summary: parsedResult.platformAnalyses?.twitter?.summary || 'Twitter analysis shows moderate potential.',
                     keyFindings: parsedResult.platformAnalyses?.twitter?.keyFindings || ['Analysis completed', 'Moderate engagement potential', 'Content strategy recommended'],
-                    contentSuggestion: parsedResult.platformAnalyses?.twitter?.contentSuggestion || 'Share your idea on Twitter for feedback.'
+                    contentSuggestion: parsedResult.platformAnalyses?.twitter?.contentSuggestion || 'Share your idea on X for feedback.'
                 },
                 reddit: {
                     platformName: 'Reddit',
@@ -1082,8 +1120,8 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
     } catch (error) {
         console.log('❌ Platform analysis failed, using fallback...', error);
 
-        // Detect language for fallback
-        const isTurkish = /[çğıöşüÇĞIİÖŞÜ]/.test(content) ||
+        // Detect language for fallback (respect forcedLang)
+        const isTurkish = forcedLang === 'tr' ? true : forcedLang === 'en' ? false : /[çğıöşüÇĞIİÖŞÜ]/.test(content) ||
             /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
 
         if (isTurkish) {
@@ -1092,13 +1130,15 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                 idea: content,
                 demandScore: 65,
                 scoreJustification: 'Sınırlı veri ile analiz tamamlandı',
+                language: 'Turkish',
+                fallbackUsed: true,
                 platformAnalyses: {
                     twitter: {
-                        platformName: 'Twitter',
+                        platformName: 'X',
                         score: 3,
                         summary: 'Twitter analizi geçici olarak kullanılamıyor. Orta düzey potansiyel tahmin ediliyor.',
                         keyFindings: ['Analiz kullanılamıyor', 'Yedek değerlendirme', 'Orta potansiyel'],
-                        contentSuggestion: 'Fikrinizi Twitter\'da paylaşarak geri bildirim alın.'
+                        contentSuggestion: 'Fikrinizi X\'te paylaşarak geri bildirim alın.'
                     },
                     reddit: {
                         platformName: 'Reddit',
@@ -1126,13 +1166,15 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                 idea: content,
                 demandScore: 65,
                 scoreJustification: 'Analysis completed with limited data',
+                language: 'English',
+                fallbackUsed: true,
                 platformAnalyses: {
                     twitter: {
-                        platformName: 'Twitter',
+                        platformName: 'X',
                         score: 3,
                         summary: 'Twitter analysis temporarily unavailable. Moderate potential estimated.',
                         keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
-                        contentSuggestion: 'Share your idea on Twitter to get feedback.'
+                        contentSuggestion: 'Share your idea on X to get feedback.'
                     },
                     reddit: {
                         platformName: 'Reddit',
@@ -1237,11 +1279,11 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
             
             const fallbackPlatforms: any = {
                 twitter: {
-                    platformName: 'Twitter',
+                    platformName: 'X',
                     score: 3,
                     summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
                     keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                    contentSuggestion: 'Share your startup idea on Twitter!'
+                        contentSuggestion: 'Share your startup idea on X!'
                 },
                 reddit: {
                     platformName: 'Reddit',
@@ -1310,6 +1352,8 @@ async function getSimplifiedAIAnalysis(content: string, systemInstruction: strin
                 idea: content,
                 demandScore: 50,
                 scoreJustification: 'Analysis temporarily unavailable',
+                language: isTurkish ? 'Turkish' : 'English',
+                fallbackUsed: true,
                 platformAnalyses: fallbackPlatforms,
                 tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
                 redditTitleSuggestion: 'Looking for feedback on my startup idea',

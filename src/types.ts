@@ -73,6 +73,9 @@ export interface DynamicPromptResult {
   content?: string;
   demandScore: number;
   scoreJustification: string;
+  // Language & model behavior metadata
+  language?: string;
+  fallbackUsed?: boolean;
   
   // Platform analyses from our dynamic prompt system
   platformAnalyses: {
@@ -302,6 +305,7 @@ export interface ApiError {
 export interface ValidationRequest {
   content?: string;  // New primary field
   idea?: string;     // Backward compatibility
+  lang?: 'tr' | 'en';
 }
 
 export interface ApiResponse<T> {
