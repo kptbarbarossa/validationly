@@ -193,8 +193,13 @@ const ResultsPage: React.FC = () => {
                 <div className="container mx-auto px-4 py-8">
                     {/* Header */}
                     <div className="text-center mb-8">
+                        <div className="flex items-center justify-center gap-3 mb-4">
+                            <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                                <span className="text-white font-bold text-lg">V</span>
+                            </div>
+                            <span className="font-bold text-gray-900 text-xl">Validationly</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                        <h1 className="text-3xl font-bold text-gray-900 mb-2">
                             Market Analysis Results
                         </h1>
                         <p className="text-gray-600">AI-powered analysis of your business idea</p>
