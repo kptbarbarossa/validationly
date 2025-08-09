@@ -27,14 +27,10 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-slate-950 text-slate-200 flex items-center justify-center">
           <div className="text-center p-8">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              Something went wrong
-            </h1>
-            <p className="text-gray-600 mb-6">
-              We're sorry, but something unexpected happened. Please try refreshing the page.
-            </p>
+            <h1 className="text-2xl font-bold text-white mb-4">Something went wrong</h1>
+            <p className="text-slate-300 mb-6">We're sorry, but something unexpected happened. Please try refreshing the page.</p>
             <button
               onClick={() => window.location.reload()}
               className="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
@@ -53,10 +49,13 @@ class ErrorBoundary extends React.Component<
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <div className="bg-white text-gray-800 min-h-screen font-sans antialiased">
+      <div className="relative min-h-screen font-sans antialiased text-slate-100 bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
+        <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-3xl animate-aurora"></div>
+        <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
         <BrowserRouter>
           <Analytics />
-          <header className="py-4 px-4 sm:px-6 lg:px-8 border-b border-gray-200/80">
+          <header className="py-4 px-4 sm:px-6 lg:px-8 border-b border-white/10 bg-white/5 backdrop-blur">
             <div className="container mx-auto flex justify-center">
               <Link 
                 to="/" 
@@ -75,7 +74,7 @@ const App: React.FC = () => {
             </Routes>
           </main>
           
-          <footer className="text-center py-8 text-gray-400 text-sm">
+          <footer className="text-center py-8 text-slate-400 text-sm border-t border-white/10">
             <p>&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
           </footer>
         </BrowserRouter>
