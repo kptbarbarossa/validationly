@@ -110,6 +110,14 @@ body {
   animation: aurora 20s ease-in-out infinite;
 }
 
+/* Even slower aurora variants for premium feel */
+.animate-aurora-slower {
+  animation: aurora 28s ease-in-out infinite;
+}
+.animate-aurora-slowest {
+  animation: aurora 36s ease-in-out infinite;
+}
+
 /* Animation delay utilities (to avoid inline styles) */
 .delay-100 { animation-delay: 100ms !important; }
 .delay-200 { animation-delay: 200ms !important; }

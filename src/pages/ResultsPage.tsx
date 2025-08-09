@@ -697,9 +697,10 @@ const ResultsPage: React.FC = () => {
                     </div>
                 )}
                 {/* Background gradient overlay */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
-                <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-3xl animate-aurora"></div>
-                <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-600/25 via-indigo-500/10 to-cyan-600/25 blur-3xl"></div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/40 to-transparent"></div>
+                <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/25 rounded-full blur-3xl animate-aurora-slower"></div>
+                <div className="pointer-events-none absolute -bottom-40 -right-40 w-[44rem] h-[44rem] bg-cyan-500/25 rounded-full blur-3xl animate-aurora-slowest"></div>
                 
                 <div className="relative z-10 container mx-auto px-4 py-8">
                     {/* Compact Animated Header */}
@@ -834,10 +835,10 @@ const ResultsPage: React.FC = () => {
                     </div>
 
                     {/* Content Suggestions */}
-                    <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-200 max-w-4xl mx-auto mb-8">
+                    <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10 max-w-4xl mx-auto mb-8">
                         <div className="text-center mb-6">
                             <h3 className="text-xl font-bold text-gray-900 mb-2">Test Your Idea</h3>
-                            <p className="text-gray-600">Copy and use these AI-generated posts to validate your idea on social platforms</p>
+                            <p className="text-slate-300">Copy and use these AI-generated posts to validate your idea on social platforms</p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -921,14 +922,14 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                        <div className="mt-6 p-4 bg-white/5 backdrop-blur-xl rounded-lg border border-white/10">
                             <div className="flex items-start gap-3">
-                                <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                    <span className="text-blue-600 text-sm">💡</span>
+                                <div className="w-6 h-6 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                    <span className="text-blue-300 text-sm">💡</span>
                                 </div>
                                 <div>
-                                    <h4 className="text-sm font-semibold text-gray-900 mb-1">Quick Validation Tips</h4>
-                                    <p className="text-xs text-gray-600 leading-relaxed">
+                                    <h4 className="text-sm font-semibold text-white mb-1">Quick Validation Tips</h4>
+                                    <p className="text-xs text-slate-300 leading-relaxed">
                                         Post these suggestions on the respective platforms and monitor engagement, comments, and direct messages.
                                         High engagement indicates strong market interest. Save positive responses as social proof for future marketing.
                                     </p>
