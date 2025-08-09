@@ -221,6 +221,21 @@ const ResultsPage: React.FC = () => {
 
     const status = getOverallStatus(result.demandScore);
 
+    // Map score to width classes (5% steps) to avoid inline styles
+    const widthClassMap: Record<number, string> = {
+        0: 'w-0', 5: 'w-[5%]', 10: 'w-[10%]', 15: 'w-[15%]', 20: 'w-[20%]',
+        25: 'w-[25%]', 30: 'w-[30%]', 35: 'w-[35%]', 40: 'w-[40%]', 45: 'w-[45%]',
+        50: 'w-[50%]', 55: 'w-[55%]', 60: 'w-[60%]', 65: 'w-[65%]', 70: 'w-[70%]',
+        75: 'w-[75%]', 80: 'w-[80%]', 85: 'w-[85%]', 90: 'w-[90%]', 95: 'w-[95%]',
+        100: 'w-[100%]'
+    };
+    // Safelist for Tailwind JIT (do not remove)
+    const TAILWIND_WIDTH_SAFELIST = 'w-0 w-[5%] w-[10%] w-[15%] w-[20%] w-[25%] w-[30%] w-[35%] w-[40%] w-[45%] w-[50%] w-[55%] w-[60%] w-[65%] w-[70%] w-[75%] w-[80%] w-[85%] w-[90%] w-[95%] w-[100%]';
+    const getProgressWidthClass = (score: number): string => {
+        const clamped = Math.max(0, Math.min(100, Math.round(score / 5) * 5));
+        return widthClassMap[clamped as keyof typeof widthClassMap] || 'w-0';
+    };
+
     // Platform icon mapping function
     const getPlatformIcon = (platformName: string) => {
         const name = platformName.toLowerCase();
@@ -286,35 +301,35 @@ const ResultsPage: React.FC = () => {
 
     // Market Intelligence Card Component
     const MarketIntelligenceCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-green-50 animate-card-hover animate-card-entrance" style={{ animationDelay: '400ms' }}>
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-green-500/10 animate-card-hover animate-card-entrance delay-400">
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
                     <TrendUpIcon />
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-900">Market Intelligence</h3>
-                    <div className="text-sm text-green-600 font-medium">Market Opportunity</div>
+                    <h3 className="font-semibold text-white">Market Intelligence</h3>
+                    <div className="text-sm text-green-300 font-medium">Market Opportunity</div>
                 </div>
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">TAM:</span>
-                    <span className="text-gray-600 ml-2">{data?.tam || '$2.5B Design Software Market'}</span>
+                    <span className="font-medium text-slate-300">TAM:</span>
+                    <span className="text-slate-300 ml-2">{data?.tam || '$2.5B Design Software Market'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">SAM:</span>
-                    <span className="text-gray-600 ml-2">{data?.sam || '$450M SaaS Design Tools'}</span>
+                    <span className="font-medium text-slate-300">SAM:</span>
+                    <span className="text-slate-300 ml-2">{data?.sam || '$450M SaaS Design Tools'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">SOM:</span>
-                    <span className="text-gray-600 ml-2">{data?.som || '$12M Realistic 3-year target'}</span>
+                    <span className="font-medium text-slate-300">SOM:</span>
+                    <span className="text-slate-300 ml-2">{data?.som || '$12M Realistic 3-year target'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Growth:</span>
-                    <span className="text-green-600 ml-2 font-medium">{data?.growthRate || '15% YoY'}</span>
+                    <span className="font-medium text-slate-300">Growth:</span>
+                    <span className="text-green-300 ml-2 font-medium">{data?.growthRate || '15% YoY'}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
-                    <span className="font-medium text-gray-700">Timing:</span>
+                    <span className="font-medium text-slate-300">Timing:</span>
                     <div className="flex">
                         {[...Array(data?.marketTiming || 4)].map((_, i) => (
                             <span key={i} className="text-yellow-400">⭐</span>
@@ -327,34 +342,34 @@ const ResultsPage: React.FC = () => {
 
     // Competitive Landscape Card Component
     const CompetitiveLandscapeCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-red-50 animate-card-hover animate-card-entrance" style={{ animationDelay: '500ms' }}>
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-red-500/10 animate-card-hover animate-card-entrance delay-500">
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
-                    <span className="text-red-600 font-bold">🥊</span>
+                <div className="w-10 h-10 bg-red-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-red-300 font-bold">🥊</span>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-900">Competition Analysis</h3>
-                    <div className="text-sm text-red-600 font-medium">Competitive Landscape</div>
+                    <h3 className="font-semibold text-white">Competition Analysis</h3>
+                    <div className="text-sm text-red-300 font-medium">Competitive Landscape</div>
                 </div>
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Direct Competitors:</span>
-                    <div className="text-gray-600 mt-1">
+                    <span className="font-medium text-slate-300">Direct Competitors:</span>
+                    <div className="text-slate-300 mt-1">
                         {data?.directCompetitors?.join(', ') || 'Figma, Sketch, Adobe XD'}
                     </div>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Position:</span>
-                    <span className="text-gray-600 ml-2">{data?.marketPosition || 'Blue Ocean Opportunity'}</span>
+                    <span className="font-medium text-slate-300">Position:</span>
+                    <span className="text-slate-300 ml-2">{data?.marketPosition || 'Blue Ocean Opportunity'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Differentiation:</span>
-                    <span className="text-blue-600 ml-2 font-medium">{data?.differentiationScore || '8'}/10</span>
+                    <span className="font-medium text-slate-300">Differentiation:</span>
+                    <span className="text-blue-300 ml-2 font-medium">{data?.differentiationScore || '8'}/10</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Moat:</span>
-                    <span className="text-gray-600 ml-2">{data?.competitiveMoat || 'AI-powered features'}</span>
+                    <span className="font-medium text-slate-300">Moat:</span>
+                    <span className="text-slate-300 ml-2">{data?.competitiveMoat || 'AI-powered features'}</span>
                 </div>
             </div>
         </div>
@@ -362,36 +377,36 @@ const ResultsPage: React.FC = () => {
 
     // Revenue Model Card Component
     const RevenueModelCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-yellow-50 animate-card-hover animate-card-entrance" style={{ animationDelay: '600ms' }}>
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-yellow-500/10 animate-card-hover animate-card-entrance delay-600">
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-yellow-100 rounded-lg flex items-center justify-center">
-                    <span className="text-yellow-600 font-bold">💰</span>
+                <div className="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-yellow-300 font-bold">💰</span>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-900">Revenue Model</h3>
-                    <div className="text-sm text-yellow-600 font-medium">Monetization Strategy</div>
+                    <h3 className="font-semibold text-white">Revenue Model</h3>
+                    <div className="text-sm text-yellow-300 font-medium">Monetization Strategy</div>
                 </div>
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Model:</span>
-                    <span className="text-gray-600 ml-2">{data?.primaryModel || 'Freemium SaaS'}</span>
+                    <span className="font-medium text-slate-300">Model:</span>
+                    <span className="text-slate-300 ml-2">{data?.primaryModel || 'Freemium SaaS'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Price:</span>
-                    <span className="text-green-600 ml-2 font-medium">{data?.pricePoint || '$29/month'}</span>
+                    <span className="font-medium text-slate-300">Price:</span>
+                    <span className="text-green-300 ml-2 font-medium">{data?.pricePoint || '$29/month'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Break-even:</span>
-                    <span className="text-gray-600 ml-2">{data?.breakEvenTimeline || '18 months'}</span>
+                    <span className="font-medium text-slate-300">Break-even:</span>
+                    <span className="text-slate-300 ml-2">{data?.breakEvenTimeline || '18 months'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">LTV/CAC:</span>
-                    <span className="text-blue-600 ml-2 font-medium">{data?.ltvCacRatio || '4.2x'}</span>
+                    <span className="font-medium text-slate-300">LTV/CAC:</span>
+                    <span className="text-blue-300 ml-2 font-medium">{data?.ltvCacRatio || '4.2x'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Projected MRR:</span>
-                    <span className="text-green-600 ml-2 font-medium">{data?.projectedMrr || '$25K by Year 1'}</span>
+                    <span className="font-medium text-slate-300">Projected MRR:</span>
+                    <span className="text-green-300 ml-2 font-medium">{data?.projectedMrr || '$25K by Year 1'}</span>
                 </div>
             </div>
         </div>
@@ -399,34 +414,34 @@ const ResultsPage: React.FC = () => {
 
     // Target Audience Card Component
     const TargetAudienceCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-purple-50">
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-purple-500/10">
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <span className="text-purple-600 font-bold">👥</span>
+                <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-purple-300 font-bold">👥</span>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-900">Target Audience</h3>
-                    <div className="text-sm text-purple-600 font-medium">Customer Segments</div>
+                    <h3 className="font-semibold text-white">Target Audience</h3>
+                    <div className="text-sm text-purple-300 font-medium">Customer Segments</div>
                 </div>
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Primary:</span>
-                    <span className="text-gray-600 ml-2">{data?.primarySegment || 'Freelance Designers (40%)'}</span>
+                    <span className="font-medium text-slate-300">Primary:</span>
+                    <span className="text-slate-300 ml-2">{data?.primarySegment || 'Freelance Designers (40%)'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Secondary:</span>
-                    <span className="text-gray-600 ml-2">{data?.secondarySegment || 'Design Agencies (35%)'}</span>
+                    <span className="font-medium text-slate-300">Secondary:</span>
+                    <span className="text-slate-300 ml-2">{data?.secondarySegment || 'Design Agencies (35%)'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Pain Points:</span>
-                    <div className="text-gray-600 mt-1">
+                    <span className="font-medium text-slate-300">Pain Points:</span>
+                    <div className="text-slate-300 mt-1">
                         {data?.painPoints?.join(', ') || 'Project chaos, client communication'}
                     </div>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Willingness to Pay:</span>
-                    <span className="text-green-600 ml-2 font-medium">{data?.willingnessToPay || 'High ($25-50/month)'}</span>
+                    <span className="font-medium text-slate-300">Willingness to Pay:</span>
+                    <span className="text-green-300 ml-2 font-medium">{data?.willingnessToPay || 'High ($25-50/month)'}</span>
                 </div>
             </div>
         </div>
@@ -444,37 +459,37 @@ const ResultsPage: React.FC = () => {
         };
 
         return (
-            <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-orange-50">
+            <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-orange-500/10">
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <span className="text-orange-600 font-bold">⚠️</span>
+                    <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                        <span className="text-orange-300 font-bold">⚠️</span>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">Risk Assessment</h3>
-                        <div className="text-sm text-orange-600 font-medium">Risk Matrix</div>
+                        <h3 className="font-semibold text-white">Risk Assessment</h3>
+                        <div className="text-sm text-orange-300 font-medium">Risk Matrix</div>
                     </div>
                 </div>
                 <div className="space-y-3">
                     <div className="text-sm">
-                        <span className="font-medium text-gray-700">Technical:</span>
+                        <span className="font-medium text-slate-300">Technical:</span>
                         <span className={`ml-2 font-medium ${getRiskColor(data?.technicalRisk || 'Low')}`}>
                             {data?.technicalRisk || 'Low'}
                         </span>
                     </div>
                     <div className="text-sm">
-                        <span className="font-medium text-gray-700">Market:</span>
+                        <span className="font-medium text-slate-300">Market:</span>
                         <span className={`ml-2 font-medium ${getRiskColor(data?.marketRisk || 'Medium')}`}>
                             {data?.marketRisk || 'Medium'}
                         </span>
                     </div>
                     <div className="text-sm">
-                        <span className="font-medium text-gray-700">Financial:</span>
+                        <span className="font-medium text-slate-300">Financial:</span>
                         <span className={`ml-2 font-medium ${getRiskColor(data?.financialRisk || 'Low')}`}>
                             {data?.financialRisk || 'Low'}
                         </span>
                     </div>
                     <div className="text-sm border-t pt-2">
-                        <span className="font-medium text-gray-700">Overall:</span>
+                        <span className="font-medium text-slate-300">Overall:</span>
                         <span className={`ml-2 font-bold ${getRiskColor(data?.overallRiskLevel || 'Medium')}`}>
                             {data?.overallRiskLevel || 'MEDIUM'}
                         </span>
@@ -486,36 +501,36 @@ const ResultsPage: React.FC = () => {
 
     // Go-to-Market Card Component
     const GoToMarketCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-indigo-50">
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-indigo-500/10">
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <span className="text-indigo-600 font-bold">🚀</span>
+                <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-indigo-300 font-bold">🚀</span>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-900">Go-to-Market</h3>
-                    <div className="text-sm text-indigo-600 font-medium">Launch Strategy</div>
+                    <h3 className="font-semibold text-white">Go-to-Market</h3>
+                    <div className="text-sm text-indigo-300 font-medium">Launch Strategy</div>
                 </div>
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Phase 1:</span>
-                    <span className="text-gray-600 ml-2">{data?.phase1 || 'Design Twitter + Product Hunt'}</span>
+                    <span className="font-medium text-slate-300">Phase 1:</span>
+                    <span className="text-slate-300 ml-2">{data?.phase1 || 'Design Twitter + Product Hunt'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Phase 2:</span>
-                    <span className="text-gray-600 ml-2">{data?.phase2 || 'Design communities (Dribbble, Behance)'}</span>
+                    <span className="font-medium text-slate-300">Phase 2:</span>
+                    <span className="text-slate-300 ml-2">{data?.phase2 || 'Design communities (Dribbble, Behance)'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Phase 3:</span>
-                    <span className="text-gray-600 ml-2">{data?.phase3 || 'Partnership with design schools'}</span>
+                    <span className="font-medium text-slate-300">Phase 3:</span>
+                    <span className="text-slate-300 ml-2">{data?.phase3 || 'Partnership with design schools'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Timeline:</span>
-                    <span className="text-blue-600 ml-2 font-medium">{data?.timeline || '6-month rollout'}</span>
+                    <span className="font-medium text-slate-300">Timeline:</span>
+                    <span className="text-blue-300 ml-2 font-medium">{data?.timeline || '6-month rollout'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Budget:</span>
-                    <span className="text-green-600 ml-2 font-medium">{data?.budgetNeeded || '$50K initial'}</span>
+                    <span className="font-medium text-slate-300">Budget:</span>
+                    <span className="text-green-300 ml-2 font-medium">{data?.budgetNeeded || '$50K initial'}</span>
                 </div>
             </div>
         </div>
@@ -523,38 +538,38 @@ const ResultsPage: React.FC = () => {
 
     // Development Roadmap Card Component
     const DevelopmentRoadmapCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-teal-50">
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-teal-500/10">
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
-                    <span className="text-teal-600 font-bold">🛠️</span>
+                <div className="w-10 h-10 bg-teal-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-teal-300 font-bold">🛠️</span>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-900">Development Roadmap</h3>
-                    <div className="text-sm text-teal-600 font-medium">Build Timeline</div>
+                    <h3 className="font-semibold text-white">Development Roadmap</h3>
+                    <div className="text-sm text-teal-300 font-medium">Build Timeline</div>
                 </div>
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">MVP:</span>
-                    <span className="text-gray-600 ml-2">{data?.mvpTimeline || '3 months'}</span>
+                    <span className="font-medium text-slate-300">MVP:</span>
+                    <span className="text-slate-300 ml-2">{data?.mvpTimeline || '3 months'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Beta:</span>
-                    <span className="text-gray-600 ml-2">{data?.betaLaunch || '5 months'}</span>
+                    <span className="font-medium text-slate-300">Beta:</span>
+                    <span className="text-slate-300 ml-2">{data?.betaLaunch || '5 months'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Launch:</span>
-                    <span className="text-blue-600 ml-2 font-medium">{data?.publicLaunch || '8 months'}</span>
+                    <span className="font-medium text-slate-300">Launch:</span>
+                    <span className="text-blue-300 ml-2 font-medium">{data?.publicLaunch || '8 months'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Team:</span>
-                    <div className="text-gray-600 mt-1">
+                    <span className="font-medium text-slate-300">Team:</span>
+                    <div className="text-slate-300 mt-1">
                         {data?.teamNeeded?.join(', ') || '2 developers, 1 designer'}
                     </div>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Tech Stack:</span>
-                    <div className="text-gray-600 mt-1">
+                    <span className="font-medium text-slate-300">Tech Stack:</span>
+                    <div className="text-slate-300 mt-1">
                         {data?.techStack?.join(', ') || 'React, Node.js, PostgreSQL'}
                     </div>
                 </div>
@@ -564,36 +579,36 @@ const ResultsPage: React.FC = () => {
 
     // Product-Market Fit Card Component
     const ProductMarketFitCard: React.FC<{ data?: any }> = ({ data }) => (
-        <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 hover:bg-pink-50">
+        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-pink-500/10">
             <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center">
-                    <span className="text-pink-600 font-bold">🎯</span>
+                <div className="w-10 h-10 bg-pink-500/20 rounded-lg flex items-center justify-center">
+                    <span className="text-pink-300 font-bold">🎯</span>
                 </div>
                 <div>
-                    <h3 className="font-semibold text-gray-900">Product-Market Fit</h3>
-                    <div className="text-sm text-pink-600 font-medium">PMF Indicators</div>
+                    <h3 className="font-semibold text-white">Product-Market Fit</h3>
+                    <div className="text-sm text-pink-300 font-medium">PMF Indicators</div>
                 </div>
             </div>
             <div className="space-y-3">
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Problem-Solution Fit:</span>
-                    <span className="text-green-600 ml-2 font-medium">{data?.problemSolutionFit || '85'}%</span>
+                    <span className="font-medium text-slate-300">Problem-Solution Fit:</span>
+                    <span className="text-green-300 ml-2 font-medium">{data?.problemSolutionFit || '85'}%</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Solution-Market Fit:</span>
-                    <span className="text-blue-600 ml-2 font-medium">{data?.solutionMarketFit || '78'}%</span>
+                    <span className="font-medium text-slate-300">Solution-Market Fit:</span>
+                    <span className="text-blue-300 ml-2 font-medium">{data?.solutionMarketFit || '78'}%</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Early Adopters:</span>
-                    <span className="text-gray-600 ml-2">{data?.earlyAdopterSignals || 'Strong signals'}</span>
+                    <span className="font-medium text-slate-300">Early Adopters:</span>
+                    <span className="text-slate-300 ml-2">{data?.earlyAdopterSignals || 'Strong signals'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Retention:</span>
-                    <span className="text-gray-600 ml-2">{data?.retentionPrediction || '65% (Month 1)'}</span>
+                    <span className="font-medium text-slate-300">Retention:</span>
+                    <span className="text-slate-300 ml-2">{data?.retentionPrediction || '65% (Month 1)'}</span>
                 </div>
                 <div className="text-sm">
-                    <span className="font-medium text-gray-700">Viral Coefficient:</span>
-                    <span className="text-purple-600 ml-2 font-medium">{data?.viralCoefficient || '0.3'}</span>
+                    <span className="font-medium text-slate-300">Viral Coefficient:</span>
+                    <span className="text-purple-300 ml-2 font-medium">{data?.viralCoefficient || '0.3'}</span>
                 </div>
             </div>
         </div>
@@ -622,15 +637,14 @@ const ResultsPage: React.FC = () => {
 
         return (
             <div
-                className={`bg-white rounded-xl p-6 shadow-lg border border-gray-200 ${bgColor} animate-card-hover animate-card-entrance`}
-                style={{ animationDelay: `${delay}ms` }}
+                className={`bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 ${bgColor} animate-card-hover animate-card-entrance ${delay === 100 ? 'delay-100' : ''} ${delay === 200 ? 'delay-200' : ''} ${delay === 300 ? 'delay-300' : ''} ${delay === 350 ? 'delay-350' : ''} ${delay === 400 ? 'delay-400' : ''} ${delay === 450 ? 'delay-450' : ''} ${delay === 500 ? 'delay-500' : ''} ${delay === 550 ? 'delay-550' : ''}`}
             >
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
                         {icon}
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">{platform}</h3>
+                        <h3 className="font-semibold text-slate-100">{platform}</h3>
                         <div className={`text-sm font-medium ${getScoreColor(analysis?.score || 3)}`}>
                             {analysis?.score || 3}/5 - {getScoreText(analysis?.score || 3)}
                         </div>
@@ -638,7 +652,7 @@ const ResultsPage: React.FC = () => {
                 </div>
 
                 <div className="mb-4">
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                    <p className="text-sm text-slate-300 leading-relaxed">
                         {analysis?.summary || (
                             (result as any)?.language === 'Turkish'
                                 ? `Yapay zeka analizi ${platform.toLowerCase()} için orta düzey potansiyel gösteriyor. Hedefli içerik stratejisi ile iyileştirme alanı mevcut.`
@@ -649,11 +663,11 @@ const ResultsPage: React.FC = () => {
 
                 {analysis?.keyFindings && analysis.keyFindings.length > 0 && (
                     <div className="space-y-2">
-                        <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide">Key Findings</h4>
+                        <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Key Findings</h4>
                         <ul className="space-y-1">
                             {analysis.keyFindings.slice(0, 3).map((finding: string, index: number) => (
-                                <li key={index} className="text-xs text-gray-600 flex items-start gap-2">
-                                    <span className="text-blue-500 mt-1">•</span>
+                                <li key={index} className="text-xs text-slate-300 flex items-start gap-2">
+                                    <span className="text-blue-300 mt-1">•</span>
                                     {finding}
                                 </li>
                             ))}
@@ -672,36 +686,38 @@ const ResultsPage: React.FC = () => {
                 keywords="startup validation results, market demand analysis, AI validation report, business idea score"
             />
 
-            {/* Enhanced Background - Ana sayfa gibi */}
-            <div className="min-h-screen bg-white text-gray-800">
+            {/* Enhanced Background - Dark + Glassmorphism */}
+            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden">
                 {/* Fallback notice */}
                 {Boolean((result as any)?.fallbackUsed) && (
-                    <div className="max-w-3xl mx-auto mb-4 p-3 rounded-lg border border-amber-200 bg-amber-50 text-amber-800 text-sm">
+                    <div className="max-w-3xl mx-auto mb-4 p-3 rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm">
                         {(result as any)?.language === 'Turkish'
                             ? 'Not: Analiz geçici yedek modda oluşturuldu. Daha doğru sonuçlar için tekrar deneyin.'
                             : 'Note: Analysis used fallback mode. Please try again for more accurate results.'}
                     </div>
                 )}
                 {/* Background gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
+                <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-3xl animate-aurora"></div>
+                <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
                 
                 <div className="relative z-10 container mx-auto px-4 py-8">
                     {/* Compact Animated Header */}
                     <div className="text-center mb-6 animate-fade-in">
-                        <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                        <h1 className="text-2xl font-bold text-white mb-1">
                             Market Analysis Results
                         </h1>
-                        <p className="text-sm text-gray-500">AI-powered analysis of your business idea</p>
+                        <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
                     </div>
 
                     {/* Compact Animated Score Card */}
-                    <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200 max-w-2xl mx-auto mb-6 animate-slide-up">
+                    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-2xl mx-auto mb-6 animate-slide-up">
                         <div className="text-center">
-                            <div className="text-sm font-medium text-gray-500 mb-3">Market Demand Score</div>
+                            <div className="text-sm font-medium text-slate-300 mb-3">Market Demand Score</div>
                             <div className="flex items-center justify-center gap-3 mb-4">
-                                <div className="text-3xl font-bold text-gray-800 animate-count-up animate-pulse-subtle">
+                                <div className="text-3xl font-bold text-white animate-count-up animate-pulse-subtle">
                                     {result.demandScore}
-                                    <span className="text-lg text-gray-500 ml-1">/100</span>
+                                    <span className="text-lg text-slate-300 ml-1">/100</span>
                                 </div>
                                 <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200 animate-bounce-in`}>
                                     <span className="text-sm">{status.icon}</span>
@@ -710,17 +726,16 @@ const ResultsPage: React.FC = () => {
                             </div>
 
                             {/* Animated Progress Bar */}
-                            <div className="w-full bg-gray-200 rounded-full h-2 mb-4 overflow-hidden">
+                            <div className="w-full bg-white/10 rounded-full h-2 mb-4 overflow-hidden">
                                 <div
-                                    className={`h-full rounded-full bg-gradient-to-r transition-all duration-1000 ease-out ${result.demandScore >= 70 ? 'from-emerald-400 to-emerald-600' :
-                                        result.demandScore >= 50 ? 'from-amber-400 to-amber-600' :
-                                            'from-red-400 to-red-600'
+                                    className={`h-full rounded-full bg-gradient-to-r transition-all duration-1000 ease-out ${getProgressWidthClass(result.demandScore)} ${result.demandScore >= 70 ? 'from-emerald-400/80 to-emerald-600/80' :
+                                        result.demandScore >= 50 ? 'from-amber-400/80 to-amber-600/80' :
+                                            'from-red-400/80 to-red-600/80'
                                         } animate-progress-fill`}
-                                    style={{ width: `${result.demandScore}%` }}
                                 ></div>
                             </div>
 
-                            <div className="text-sm text-gray-600 max-w-xl mx-auto leading-relaxed">
+                            <div className="text-sm text-slate-200 max-w-xl mx-auto leading-relaxed">
                                 "{result.content || result.idea}"
                             </div>
                         </div>
@@ -728,8 +743,8 @@ const ResultsPage: React.FC = () => {
 
                     {/* Social Media Platform Analysis */}
                     <div className="mb-4">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-3 text-center">Platform Analysis</h2>
-                        <div className="text-sm text-gray-600 mb-4 text-center">
+                        <h2 className="text-lg font-semibold text-white mb-3 text-center">Platform Analysis</h2>
+                        <div className="text-sm text-slate-300 mb-4 text-center">
                             Sector-specific platform recommendations based on your idea
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
@@ -738,14 +753,14 @@ const ResultsPage: React.FC = () => {
                                 platform="X (Twitter)"
                                 analysis={(result as DynamicPromptResult).platformAnalyses?.twitter}
                                 icon={<XIcon />}
-                                bgColor="hover:bg-blue-50"
+                                bgColor="hover:bg-blue-500/10"
                                 delay={100}
                             />
                             <PlatformCard
                                 platform="Reddit"
                                 analysis={(result as DynamicPromptResult).platformAnalyses?.reddit}
                                 icon={<RedditIcon />}
-                                bgColor="hover:bg-orange-50"
+                                bgColor="hover:bg-orange-500/10"
                                 delay={200}
                             />
                             <PlatformCard
@@ -754,14 +769,14 @@ const ResultsPage: React.FC = () => {
                                 icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                 </svg>}
-                                bgColor="hover:bg-indigo-50"
+                                bgColor="hover:bg-indigo-500/10"
                                 delay={300}
                             />
                             <PlatformCard
                                 platform="Instagram"
                                 analysis={(result as DynamicPromptResult).platformAnalyses?.instagram}
                                 icon={<InstagramIcon />}
-                                bgColor="hover:bg-pink-50"
+                                bgColor="hover:bg-pink-500/10"
                                 delay={350}
                             />
                         </div>
@@ -771,28 +786,28 @@ const ResultsPage: React.FC = () => {
                                 platform="TikTok"
                                 analysis={(result as DynamicPromptResult).platformAnalyses?.tiktok}
                                 icon={<TikTokIcon />}
-                                bgColor="hover:bg-purple-50"
+                                bgColor="hover:bg-purple-500/10"
                                 delay={400}
                             />
                             <PlatformCard
                                 platform="YouTube"
                                 analysis={(result as DynamicPromptResult).platformAnalyses?.youtube}
                                 icon={<YouTubeIcon />}
-                                bgColor="hover:bg-red-50"
+                                bgColor="hover:bg-red-500/10"
                                 delay={450}
                             />
                             <PlatformCard
                                 platform="Product Hunt"
                                 analysis={(result as DynamicPromptResult).platformAnalyses?.producthunt}
                                 icon={<ProductHuntIcon />}
-                                bgColor="hover:bg-orange-50"
+                                bgColor="hover:bg-orange-500/10"
                                 delay={500}
                             />
                             <PlatformCard
                                 platform="GitHub"
                                 analysis={(result as DynamicPromptResult).platformAnalyses?.github}
                                 icon={<GitHubIcon />}
-                                bgColor="hover:bg-gray-50"
+                                bgColor="hover:bg-slate-500/10"
                                 delay={550}
                             />
                         </div>
@@ -827,80 +842,80 @@ const ResultsPage: React.FC = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Twitter Suggestion */}
-                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-600/30">
                                             <XIcon />
                                         </div>
-                                        <span className="font-semibold text-gray-900">X (Twitter)</span>
+                                        <span className="font-semibold text-slate-100">X (Twitter)</span>
                                     </div>
                                     <button
                                         onClick={() => handleCopyToClipboard(result.tweetSuggestion, 'tweet')}
-                                        className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                                        className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg shadow-blue-600/30"
                                     >
                                         {copiedId === 'tweet' ? '✓ Copied!' : 'Copy'}
                                     </button>
                                 </div>
-                                <div className="text-sm text-gray-700 leading-relaxed bg-white rounded-lg p-4 border border-blue-200">
+                                <div className="text-sm text-slate-200 leading-relaxed bg-white/5 backdrop-blur-xl rounded-lg p-4 border border-white/10">
                                     {result.tweetSuggestion}
                                 </div>
-                                <div className="mt-3 text-xs text-blue-700 font-medium">
+                                <div className="mt-3 text-xs text-blue-300 font-medium">
                                     💡 Best for: Quick validation & viral potential
                                 </div>
                             </div>
 
                             {/* Reddit Suggestion */}
-                            <div className="bg-gradient-to-br from-orange-50 to-red-100 rounded-xl p-6 border border-orange-200">
+                            <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-orange-600 rounded-lg flex items-center justify-center shadow-lg shadow-orange-600/30">
                                             <RedditIcon />
                                         </div>
-                                        <span className="font-semibold text-gray-900">Reddit</span>
+                                        <span className="font-semibold text-slate-100">Reddit</span>
                                     </div>
                                     <button
                                         onClick={() => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit')}
-                                        className="text-xs bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 transition-colors font-medium"
+                                        className="text-xs bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 transition-colors font-medium shadow-lg shadow-orange-600/30"
                                     >
                                         {copiedId === 'reddit' ? '✓ Copied!' : 'Copy'}
                                     </button>
                                 </div>
-                                <div className="bg-white rounded-lg p-4 border border-orange-200">
-                                    <div className="text-sm font-semibold text-gray-900 mb-2">
+                                <div className="bg-white/5 backdrop-blur-xl rounded-lg p-4 border border-white/10">
+                                    <div className="text-sm font-semibold text-slate-100 mb-2">
                                         {result.redditTitleSuggestion}
                                     </div>
-                                    <div className="text-sm text-gray-700 leading-relaxed">
+                                    <div className="text-sm text-slate-200 leading-relaxed">
                                         {result.redditBodySuggestion}
                                     </div>
                                 </div>
-                                <div className="mt-3 text-xs text-orange-700 font-medium">
+                                <div className="mt-3 text-xs text-orange-300 font-medium">
                                     💡 Best for: Detailed feedback & community insights
                                 </div>
                             </div>
 
                             {/* LinkedIn Suggestion */}
-                            <div className="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 border border-indigo-200">
+                            <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
                                 <div className="flex items-center justify-between mb-4">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                                        <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center shadow-lg shadow-indigo-600/30">
                                             <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
                                             </svg>
                                         </div>
-                                        <span className="font-semibold text-gray-900">LinkedIn</span>
+                                        <span className="font-semibold text-slate-100">LinkedIn</span>
                                     </div>
                                     <button
                                         onClick={() => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin')}
-                                        className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                                        className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-lg shadow-indigo-600/30"
                                     >
                                         {copiedId === 'linkedin' ? '✓ Copied!' : 'Copy'}
                                     </button>
                                 </div>
-                                <div className="text-sm text-gray-700 leading-relaxed bg-white rounded-lg p-4 border border-indigo-200">
+                                <div className="text-sm text-slate-200 leading-relaxed bg-white/5 backdrop-blur-xl rounded-lg p-4 border border-white/10">
                                     {result.linkedinSuggestion}
                                 </div>
-                                <div className="mt-3 text-xs text-indigo-700 font-medium">
+                                <div className="mt-3 text-xs text-indigo-300 font-medium">
                                     💡 Best for: Professional validation & B2B feedback
                                 </div>
                             </div>
@@ -951,14 +966,14 @@ const ResultsPage: React.FC = () => {
 
                     {/* Bottom CTA */}
                     <div className="text-center">
-                        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white shadow-lg max-w-2xl mx-auto">
+                        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 text-white shadow-2xl border border-white/10 max-w-2xl mx-auto">
                             <h3 className="text-2xl font-bold mb-4">Ready to Build Your Idea?</h3>
-                            <p className="text-blue-100 mb-6 text-lg">
+                            <p className="text-slate-200 mb-6 text-lg">
                                 {status.desc} {status.action}.
                             </p>
                             <button
                                 onClick={() => navigate('/')}
-                                className="bg-white text-blue-600 px-8 py-4 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-300 shadow-lg"
+                                className="bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold hover:bg-slate-100 transition-all duration-300 shadow-lg"
                             >
                                 Analyze Another Idea
                             </button>
