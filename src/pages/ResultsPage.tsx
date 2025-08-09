@@ -686,8 +686,8 @@ const ResultsPage: React.FC = () => {
                 keywords="startup validation results, market demand analysis, AI validation report, business idea score"
             />
 
-            {/* Enhanced Background - Dark + Glassmorphism */}
-            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden">
+            {/* Enhanced Background - Dark + Glassmorphism + Spotlight */}
+            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden" onMouseMove={(e)=>{ const r = (e.currentTarget as HTMLDivElement).style; r.setProperty('--sx', e.clientX+'px'); r.setProperty('--sy', e.clientY+'px'); }}>
                 {/* Fallback notice */}
                 {Boolean((result as any)?.fallbackUsed) && (
                     <div className="max-w-3xl mx-auto mb-4 p-3 rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm">
@@ -701,6 +701,7 @@ const ResultsPage: React.FC = () => {
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/40 to-transparent"></div>
                 <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/25 rounded-full blur-3xl animate-aurora-slower"></div>
                 <div className="pointer-events-none absolute -bottom-40 -right-40 w-[44rem] h-[44rem] bg-cyan-500/25 rounded-full blur-3xl animate-aurora-slowest"></div>
+                <div className="pointer-events-none absolute inset-0 cursor-spotlight"></div>
                 
                 <div className="relative z-10 container mx-auto px-4 py-8">
                     {/* Compact Animated Header */}
@@ -711,29 +712,24 @@ const ResultsPage: React.FC = () => {
                         <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
                     </div>
 
-                    {/* Compact Animated Score Card */}
+                    {/* Premium Score Card: Circular Gauge */}
                     <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-2xl mx-auto mb-6 animate-slide-up">
                         <div className="text-center">
-                            <div className="text-sm font-medium text-slate-300 mb-3">Market Demand Score</div>
-                            <div className="flex items-center justify-center gap-3 mb-4">
-                                <div className="text-3xl font-bold text-white animate-count-up animate-pulse-subtle">
+                            <div className="text-sm font-medium text-slate-300 mb-5">Market Demand Score</div>
+                            <div className="flex items-center justify-center gap-6 mb-4">
+                                <div className="relative w-40 h-40">
+                                    <div className={`absolute inset-0 gauge-ring ${result.demandScore>=70? 'gauge-green' : result.demandScore>=50? 'gauge-amber' : 'gauge-red'}`} data-progress={result.demandScore} />
+                                    <div className="absolute inset-3 gauge-inner flex items-center justify-center">
+                                        <div className="text-4xl font-bold text-white leading-none">
                                     {result.demandScore}
-                                    <span className="text-lg text-slate-300 ml-1">/100</span>
+                                            <span className="block text-xs text-slate-300 mt-1">/100</span>
                                 </div>
-                                <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200 animate-bounce-in`}>
-                                    <span className="text-sm">{status.icon}</span>
+                                    </div>
+                                </div>
+                                <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold shadow-sm bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200 animate-bounce-in`}>
+                                    <span className="text-base">{status.icon}</span>
                                     {status.text}
                                 </div>
-                            </div>
-
-                            {/* Animated Progress Bar */}
-                            <div className="w-full bg-white/10 rounded-full h-2 mb-4 overflow-hidden">
-                                <div
-                                    className={`h-full rounded-full bg-gradient-to-r transition-all duration-1000 ease-out ${getProgressWidthClass(result.demandScore)} ${result.demandScore >= 70 ? 'from-emerald-400/80 to-emerald-600/80' :
-                                        result.demandScore >= 50 ? 'from-amber-400/80 to-amber-600/80' :
-                                            'from-red-400/80 to-red-600/80'
-                                        } animate-progress-fill`}
-                                ></div>
                             </div>
 
                             <div className="text-sm text-slate-200 max-w-xl mx-auto leading-relaxed">
