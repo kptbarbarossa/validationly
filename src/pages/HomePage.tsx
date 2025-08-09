@@ -230,10 +230,10 @@ const HomePage: React.FC = () => {
                 description="Get AI-driven market validation for your startup idea in seconds. Analyze demand across X, Reddit, and LinkedIn with actionable insights and social media suggestions."
                 keywords="startup validation, idea validation, market research, AI analysis, startup tools, entrepreneur, indie hacker, business validation, market demand"
             />
-            <div className="text-center max-w-4xl mx-auto">
+            <div className="text-center max-w-4xl mx-auto text-slate-100">
             {/* Enhanced Hero Section - Reduced spacing */}
             <div className="relative mb-0">
-                <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl blur-3xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
 
                 <div className="relative z-10 py-8">
                     {/* Logo */}
@@ -242,14 +242,14 @@ const HomePage: React.FC = () => {
                     </div>
 
                     <h1 className="text-4xl sm:text-5xl font-bold mb-4">
-                        <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
                             Validate your idea
                         </span>
                         <br />
                         <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
                     </h1>
 
-                    <p className="text-xl text-gray-600 mb-6 max-w-2xl mx-auto">
+                    <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto">
                         Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
                     </p>
                 </div>
@@ -260,21 +260,21 @@ const HomePage: React.FC = () => {
                     <div className="relative group">
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
-                        <div className="relative bg-white rounded-2xl border-2 border-gray-100 hover:border-indigo-200 transition-colors">
+                        <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-colors">
                             <textarea
                                 ref={textareaRef}
                                 value={userInput.idea}
                                 onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
                                 placeholder="Describe your startup idea... (e.g., AI-powered fitness app for busy professionals)"
-                                className="w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px]"
+                                className="w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
                                 rows={4}
                                 disabled={isLoading}
                                 aria-describedby={userInput.errorMessage ? "error-message" : undefined}
                             />
 
                             {/* Character counter */}
-                            <div className="absolute bottom-3 left-6 text-sm text-gray-400">
+                            <div className="absolute bottom-3 left-6 text-sm text-slate-400">
                                 {userInput.idea.length}/1000
                             </div>
 
@@ -298,7 +298,7 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     {userInput.errorMessage && (
-                        <div id="error-message" className="text-red-500 text-sm mt-2 text-left">
+                        <div id="error-message" className="text-red-400 text-sm mt-2 text-left">
                             {userInput.errorMessage}
                         </div>
                     )}
@@ -309,7 +309,7 @@ const HomePage: React.FC = () => {
             </form>
 
             <div className="mt-12">
-                <h3 className="text-lg font-semibold text-gray-800 mb-6">
+                <h3 className="text-lg font-semibold text-white mb-6">
                     Not sure where to start? Try these examples:
                 </h3>
 
@@ -317,20 +317,20 @@ const HomePage: React.FC = () => {
                     {sampleCategories.map((category, index) => (
                         <div
                             key={category.name}
-                            className="group bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg hover:border-indigo-200 transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                            className="group bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:border-white/20 transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
                             onClick={() => handleSampleIdeaClick(category.example)}
                         >
                             <div className="mb-4">
-                                <h4 className="font-semibold text-gray-900 mb-1">{category.name}</h4>
-                                <div className="text-sm text-gray-500">{category.description}</div>
+                                <h4 className="font-semibold text-white mb-1">{category.name}</h4>
+                                <div className="text-sm text-slate-300">{category.description}</div>
                             </div>
-                            <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                            <p className="text-slate-300 text-sm leading-relaxed mb-3">
                                 {category.example}
                             </p>
-                            <div className="text-xs text-indigo-600 font-medium">
+                            <div className="text-xs text-indigo-300 font-medium">
                                 📱 {category.platforms}
                             </div>
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-xs text-slate-400 mt-1">
                                 Phase 3: Enhanced platform coverage
                             </div>
 
