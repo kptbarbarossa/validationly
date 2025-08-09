@@ -837,7 +837,7 @@ const ResultsPage: React.FC = () => {
                     {/* Content Suggestions */}
                     <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10 max-w-4xl mx-auto mb-8">
                         <div className="text-center mb-6">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">Test Your Idea</h3>
+                            <h3 className="text-xl font-bold text-white mb-2">Test Your Idea</h3>
                             <p className="text-slate-300">Copy and use these AI-generated posts to validate your idea on social platforms</p>
                         </div>
 
