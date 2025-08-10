@@ -220,6 +220,7 @@ const ResultsPage: React.FC = () => {
     };
 
     const status = getOverallStatus(result.demandScore);
+    const isTR = ((result as any)?.language || '').toLowerCase().includes('turk');
 
     // Map score to width classes (5% steps) to avoid inline styles
     const widthClassMap: Record<number, string> = {
@@ -688,18 +689,18 @@ const ResultsPage: React.FC = () => {
         };
 
         const getScoreText = (score: number) => {
-            if (score >= 4) return 'Excellent';
-            if (score >= 3) return 'Good';
-            if (score >= 2) return 'Fair';
-            return 'Poor';
+            if (score >= 4) return isTR ? 'Mükemmel' : 'Excellent';
+            if (score >= 3) return isTR ? 'İyi' : 'Good';
+            if (score >= 2) return isTR ? 'Orta' : 'Fair';
+            return isTR ? 'Zayıf' : 'Poor';
         };
 
         return (
             <div
-                className={`bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 ${bgColor} animate-card-hover animate-card-entrance ${delay === 100 ? 'delay-100' : ''} ${delay === 200 ? 'delay-200' : ''} ${delay === 300 ? 'delay-300' : ''} ${delay === 350 ? 'delay-350' : ''} ${delay === 400 ? 'delay-400' : ''} ${delay === 450 ? 'delay-450' : ''} ${delay === 500 ? 'delay-500' : ''} ${delay === 550 ? 'delay-550' : ''}`}
+                className={`rounded-2xl glass glass-border p-6 border border-white/10 ${bgColor} animate-card-hover animate-card-entrance ${delay === 100 ? 'delay-100' : ''} ${delay === 200 ? 'delay-200' : ''} ${delay === 300 ? 'delay-300' : ''} ${delay === 350 ? 'delay-350' : ''} ${delay === 400 ? 'delay-400' : ''} ${delay === 450 ? 'delay-450' : ''} ${delay === 500 ? 'delay-500' : ''} ${delay === 550 ? 'delay-550' : ''}`}
             >
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-white/10 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center border border-white/10">
                         {icon}
                     </div>
                     <div>
@@ -722,7 +723,7 @@ const ResultsPage: React.FC = () => {
 
                 {analysis?.keyFindings && analysis.keyFindings.length > 0 && (
                     <div className="space-y-2">
-                        <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">Key Findings</h4>
+                        <h4 className="text-xs font-semibold text-slate-300 uppercase tracking-wide">{isTR ? 'Önemli Bulgular' : 'Key Findings'}</h4>
                         <ul className="space-y-1">
                             {analysis.keyFindings.slice(0, 3).map((finding: string, index: number) => (
                                 <li key={index} className="text-xs text-slate-300 flex items-start gap-2">
