@@ -682,7 +682,7 @@ export default async function handler(req: any, res: any) {
             });
         }
 
-        const { idea, content, lang, model, evidence, weightsVariant } = req.body;
+        const { idea, content, lang, model, evidence, weightsVariant, enhance } = req.body;
         const inputContent = idea || content;
 
         // Input validation
@@ -692,6 +692,29 @@ export default async function handler(req: any, res: any) {
             });
         }
         validateInput(inputContent);
+
+        // Lightweight enhance mode: return enriched prompt text in same language
+        if (enhance === true) {
+            const aiInstance = getAI();
+            const baseText = (inputContent || '').toString().slice(0, 2000);
+            const enhanceSystem = `You are a prompt enhancer. Rewrite the user's idea into a richer, structured brief in the SAME LANGUAGE as the input. Keep it concise, actionable, and specific. Avoid generic claims. Output PLAIN TEXT only (no markdown, no JSON).`;
+            try {
+                const r = await aiInstance.models.generateContent({
+                    model: 'gemini-1.5-flash',
+                    contents: `INPUT:\n${baseText}\n\nENHANCE THIS PROMPT: Provide a more specific and structured version with bullet-like clarity (max ~1200 characters). Include: market angle, target user, key value prop, 1-2 success metrics, channels. Same language as input.`,
+                    config: {
+                        systemInstruction: enhanceSystem,
+                        responseMimeType: 'text/plain',
+                        temperature: 0.3,
+                        maxOutputTokens: 512,
+                    }
+                });
+                const enhancedPrompt = (r.text || '').trim();
+                return res.status(200).json({ enhancedPrompt });
+            } catch (e) {
+                return res.status(500).json({ message: 'Enhance failed' });
+            }
+        }
 
         // Dynamic prompt selection based on input
         const promptSelection = await promptManager.selectPrompts(inputContent);
