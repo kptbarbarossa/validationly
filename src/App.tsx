@@ -9,7 +9,7 @@ import BlogPostPage from './pages/BlogPostPage';
 import UseCaseSaaSPage from './pages/UseCaseSaaSPage';
 import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
 import UseCasesIndexPage from './pages/UseCasesIndexPage';
-import Header from './components/Header';
+import PremiumNavBar from './components/PremiumNavBar';
 import Analytics from './components/Analytics';
 
 // Error Boundary Component
@@ -61,17 +61,7 @@ const App: React.FC = () => {
         <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
         <BrowserRouter>
           <Analytics />
-          <header className="py-4 px-4 sm:px-6 lg:px-8 border-b border-white/10 bg-white/5 backdrop-blur">
-            <div className="container mx-auto flex justify-center">
-              <Link 
-                to="/" 
-                className="text-3xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-cyan-500 hover:opacity-80 transition-opacity"
-                aria-label="Go to homepage"
-              >
-                validationly
-              </Link>
-            </div>
-          </header>
+          <PremiumNavBar />
           
           <main className="container mx-auto px-0 py-0 sm:py-0">
             <Routes>
