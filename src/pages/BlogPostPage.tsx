@@ -4,31 +4,31 @@ import SEOHead from '../components/SEOHead';
 
 const posts: Record<string, { title: string; description: string; date: string; body: React.ReactNode }> = {
   'saas-fikri-nasil-validate-edilir': {
-    title: 'SaaS fikri nasıl valide edilir? (adım adım)',
-    description: 'SaaS fikirleri için pratik validasyon yöntemi ve metrikler.',
+    title: 'How to validate a SaaS idea (step by step)',
+    description: 'A practical validation workflow and metrics for SaaS.',
     date: '2025-08-01',
     body: (
       <>
-        <p className="mb-3">Bu yazıda SaaS fikirleri için hızlı validasyon akışını, metrikleri ve örnek adımları paylaşıyoruz.</p>
+        <p className="mb-3">In this post, we share a fast validation flow for SaaS ideas, key metrics, and example steps.</p>
         <ul className="list-disc pl-5 space-y-2 text-slate-300">
-          <li>Problem → çözüm uyumu ve ICP tanımı</li>
-          <li>TAM/SAM/SOM, LTV/CAC, basit fiyat testi</li>
-          <li>Platform validasyon kanalları: X, Reddit, Product Hunt</li>
+          <li>Problem → solution fit and ICP definition</li>
+          <li>TAM/SAM/SOM, LTV/CAC, simple price test</li>
+          <li>Platform validation channels: X, Reddit, Product Hunt</li>
         </ul>
       </>
     ),
   },
   '24-saatte-idea-validation': {
-    title: '24 saatte idea validation — mini case study',
-    description: 'Gerçek bir fikri 24 saat içinde nasıl test ettik?',
+    title: 'Idea validation in 24 hours — mini case study',
+    description: 'How we tested a real idea in 24 hours.',
     date: '2025-08-02',
     body: (
       <>
-        <p className="mb-3">Kısıtlı sürede iteratif testler: prompt iyileştirme, platformlarda küçük deneyler.</p>
+        <p className="mb-3">Iterative tests in a tight timeframe: prompt refinement and small experiments across platforms.</p>
         <ul className="list-disc pl-5 space-y-2 text-slate-300">
-          <li>Reddit başlık/gövde A/B</li>
-          <li>X’te kanca (hook) + görsel</li>
-          <li>LinkedIn’de problem anlatımı</li>
+          <li>Reddit title/body A/B</li>
+          <li>Hook + visual on X</li>
+          <li>Problem narrative on LinkedIn</li>
         </ul>
       </>
     ),
@@ -42,7 +42,7 @@ const BlogPostPage: React.FC = () => {
   if (!post) {
     return (
       <div className="container mx-auto px-4 py-10 text-slate-100">
-        <h1 className="text-2xl font-bold">Yazı bulunamadı</h1>
+        <h1 className="text-2xl font-bold">Post not found</h1>
       </div>
     );
   }
