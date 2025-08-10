@@ -87,6 +87,7 @@ const HomePage: React.FC = () => {
         errorMessage: undefined
     });
     const [isLoading, setIsLoading] = useState(false);
+    const [enhancedPrompt, setEnhancedPrompt] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { trackEvent, trackValidation } = useAnalytics();
@@ -121,6 +122,11 @@ const HomePage: React.FC = () => {
         setUserInput(validation);
     };
 
+    const buildEnhancedIdea = (raw: string) => {
+        const trimmed = (raw || '').trim();
+        return `ENHANCED BRIEF\n\nIdea:\n${trimmed}\n\nFocus Areas:\n- Market Intelligence (TAM/SAM/SOM) with numbers\n- Competitive Landscape with real competitors\n- Go-to-Market phases (budget & timeline)\n- Platform analyses for most relevant channels\n\nConstraints:\n- Concise, actionable, data-backed\n- JSON only (no extra prose)`;
+    };
+
     const triggerValidation = async () => {
         console.log('triggerValidation called', { isValid: userInput.isValid, idea: userInput.idea });
 
@@ -143,12 +149,13 @@ const HomePage: React.FC = () => {
 
         try {
             // Direct API call to our dynamic prompt system
+            const ideaPayload = enhancedPrompt ? buildEnhancedIdea(userInput.idea) : userInput.idea;
             const response = await fetch('/api/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: userInput.idea, lang: /[çğıöşüÇĞIİÖŞÜ]/.test(userInput.idea) || /(\b)(bir|bu|için|ile|olan|var|çok|iyi|yeni)(\b)/i.test(userInput.idea) ? 'tr' : 'en' })
+                body: JSON.stringify({ idea: ideaPayload })
             });
 
             if (!response.ok) {
@@ -261,12 +268,22 @@ const HomePage: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
                         <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-colors">
+                            <div className="absolute top-3 right-3 z-10">
+                                <button
+                                    type="button"
+                                    onClick={() => setEnhancedPrompt(v => !v)}
+                                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${enhancedPrompt ? 'bg-indigo-600/20 text-indigo-300 border-indigo-500/30' : 'bg-white/5 text-slate-300 border-white/10 hover:border-white/20'}`}
+                                    aria-label="Toggle enhanced prompt"
+                                >
+                                    {enhancedPrompt ? 'Enhanced Prompt: ON' : 'Enhanced Prompt'}
+                                </button>
+                            </div>
                             <textarea
                                 ref={textareaRef}
                                 value={userInput.idea}
                                 onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
-                                placeholder="Describe your startup idea... (e.g., AI-powered fitness app for busy professionals)"
+                                placeholder={enhancedPrompt ? 'Enhanced: Describe your idea. We will auto-structure the brief (market numbers, competitors, GTM, platforms).' : 'Describe your startup idea... (e.g., AI-powered fitness app for busy professionals)'}
                                 className="w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
                                 rows={4}
                                 disabled={isLoading}

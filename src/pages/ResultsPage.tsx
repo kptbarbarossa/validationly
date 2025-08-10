@@ -341,10 +341,16 @@ const ResultsPage: React.FC = () => {
     ];
 
     const platformAnalysesObj = (result as DynamicPromptResult).platformAnalyses as any;
+    const [showAllPlatforms, setShowAllPlatforms] = useState(false);
     const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
         const a = platformAnalysesObj?.[def.key];
         return Boolean(a && (typeof a.summary === 'string' ? a.summary.trim().length > 0 : true));
     });
+    const sortedPlatformDefs = availablePlatformDefs
+        .map(def => ({ def, score: Math.max(1, Math.min(5, Number(platformAnalysesObj?.[def.key]?.score || 0))) }))
+        .sort((a, b) => b.score - a.score)
+        .map(x => x.def);
+    const visiblePlatformDefs = showAllPlatforms ? sortedPlatformDefs : sortedPlatformDefs.slice(0, 8);
 
     const chunk = <T,>(arr: T[], size: number): T[][] => {
         const out: T[][] = [];
@@ -797,7 +803,37 @@ const ResultsPage: React.FC = () => {
                         <div className="text-sm text-slate-300 mb-4 text-center">
                             Sector-specific platform recommendations based on your idea
                         </div>
-                        {chunk(availablePlatformDefs, 4).map((row, rowIdx) => (
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="text-sm text-slate-300">
+                                Platform cards sorted by score {showAllPlatforms ? '' : '(Top 8)'}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowAllPlatforms(v => !v)}
+                                    className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                >
+                                    {showAllPlatforms ? 'Show Top 8' : 'Show All'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(result, null, 2));
+                                        const dl = document.createElement('a');
+                                        dl.setAttribute('href', dataStr);
+                                        dl.setAttribute('download', 'validationly-result.json');
+                                        document.body.appendChild(dl);
+                                        dl.click();
+                                        dl.remove();
+                                    }}
+                                    className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                >
+                                    Download JSON
+                                </button>
+                            </div>
+                        </div>
+
+                        {chunk(visiblePlatformDefs, 4).map((row, rowIdx) => (
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" key={rowIdx}>
                                 {row.map((def, idx) => {
                                     const analysis = platformAnalysesObj?.[def.key];
