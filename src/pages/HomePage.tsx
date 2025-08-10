@@ -318,8 +318,8 @@ const HomePage: React.FC = () => {
                                 type="button"
                                 onClick={triggerValidation}
                                 disabled={!userInput.isValid || isLoading}
-                                className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-white/10 backdrop-blur-sm transition-all duration-200 ${userInput.isValid && !isLoading
-                                    ? 'hover:scale-110 hover:bg-white/15 cursor-pointer opacity-100'
+                                className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
+                                    ? 'hover:scale-110 cursor-pointer opacity-100'
                                     : 'cursor-not-allowed opacity-50'
                                     }`}
                                 aria-label="Submit idea for validation"
