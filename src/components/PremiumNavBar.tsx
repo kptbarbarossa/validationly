@@ -35,9 +35,7 @@ const PremiumNavBar: React.FC = () => {
             className="group flex items-center gap-3 pl-4 pr-2 py-2"
             aria-label="Go to homepage"
           >
-            <div className="rounded-xl bg-white/5 border border-white/10 p-1.5 shadow-sm">
-              <Logo size="sm" showText={false} />
-            </div>
+            <Logo size="sm" showText={false} className="opacity-95" />
             <span className="hidden sm:block text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400 group-hover:opacity-90">
               validationly
             </span>
