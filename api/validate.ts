@@ -907,7 +907,7 @@ async function getSimplifiedAIAnalysis(
 
         // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
-        const runtimeModel = preferredModel || 'gemini-2.0-flash-exp';
+        const runtimeModel = preferredModel || 'gemini-2.5-flash';
         let result = await aiInstance.models.generateContent({
             model: runtimeModel,
             contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input.:
@@ -1120,27 +1120,41 @@ async function getSimplifiedAIAnalysis(
         });
 
         let responseText = result.text?.trim();
+        console.log('🧪 AI raw length:', responseText ? responseText.length : 0);
         if (!responseText) {
             throw new Error('Empty response from AI analysis');
         }
+
+        // Pre-clean: normalize BOM/nbsp and stray fences/utf quotes before parse
+        const preClean = (txt: string) => txt
+            .replace(/^\uFEFF/, '')
+            .replace(/[\u00A0\u200B\u200C\u200D]/g, ' ')
+            .replace(/^```\s*json\s*/i, '')
+            .replace(/^```/i, '')
+            .replace(/```\s*$/i, '')
+            .replace(/```/g, '')
+            .replace(/[“”]/g, '"')
+            .replace(/[‘’]/g, "'");
+        responseText = preClean(responseText);
 
         let parsedResult = safeJsonParse(responseText);
         if (!parsedResult) {
             // Retry once with stable fallback model
             try {
                 result = await aiInstance.models.generateContent({
-                    model: 'gemini-1.5-flash',
+                    model: 'gemini-2.5-flash',
                     contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input.:`,
                     config: {
                         systemInstruction: systemInstruction + `\n\nLANGUAGE ENFORCEMENT: Respond ONLY in the SAME LANGUAGE as the user input. Do not mix languages.\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL required keys (even if estimated). Use non-empty strings for all text fields. No nulls, no empty arrays. Include ALL relevant platforms as specified:
                 { ... }`,
                         responseMimeType: "application/json",
                         temperature: 0,
-                        maxOutputTokens: 4096,
+                        maxOutputTokens: 3072,
                     }
                 });
-                responseText = result.text?.trim() || '';
+                responseText = preClean(result.text?.trim() || '');
                 parsedResult = safeJsonParse(responseText);
+                console.log('🧪 Retry raw length:', responseText ? responseText.length : 0);
             } catch (e) {
                 // fall through to outer catch
             }
@@ -1406,6 +1420,7 @@ async function getSimplifiedAIAnalysis(
                     }
                 });
                 const repaired = safeJsonParse(repair.text?.trim() || '');
+                console.log('🩹 Repair length:', repair.text ? repair.text.length : 0);
                 if (repaired && typeof repaired === 'object') {
                     // shallow merge of text fields if compatible; otherwise keep original
                     cleanResult.scoreJustification = repaired.scoreJustification || cleanResult.scoreJustification;
