@@ -8,6 +8,7 @@ import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
 import UseCaseSaaSPage from './pages/UseCaseSaaSPage';
 import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
+import UseCasesIndexPage from './pages/UseCasesIndexPage';
 import Header from './components/Header';
 import Analytics from './components/Analytics';
 
@@ -79,6 +80,7 @@ const App: React.FC = () => {
               <Route path="/faq" element={<FAQPage />} />
               <Route path="/blog" element={<BlogIndexPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/use-cases" element={<UseCasesIndexPage />} />
               <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
               <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
             </Routes>

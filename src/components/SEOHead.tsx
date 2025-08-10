@@ -89,6 +89,25 @@ const SEOHead: React.FC<SEOHeadProps> = ({
         }
       });
     }
+
+    // Organization JSON-LD injection (once per page)
+    const orgScript = document.getElementById('org-jsonld');
+    if (!orgScript) {
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'org-jsonld';
+      script.text = JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Validationly',
+        url: 'https://validationly.com',
+        sameAs: [
+          'https://x.com/kptbarbarossa'
+        ],
+        logo: 'https://validationly.com/og-image.png'
+      });
+      document.head.appendChild(script);
+    }
   }, [title, description, keywords, ogImage, canonicalUrl, currentUrl]);
 
   return null; // This component doesn't render anything
