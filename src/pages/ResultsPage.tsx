@@ -711,7 +711,7 @@ const ResultsPage: React.FC = () => {
                 </div>
 
                 <div className="mb-4">
-                    <p className="text-sm text-slate-300 leading-relaxed">
+                    <p className="text-sm text-slate-300 leading-relaxed glass-scroll">
                         {analysis?.summary || (
                             (result as any)?.language === 'Turkish'
                                 ? `Yapay zeka analizi ${platform.toLowerCase()} için orta düzey potansiyel gösteriyor. Hedefli içerik stratejisi ile iyileştirme alanı mevcut.`
@@ -814,21 +814,6 @@ const ResultsPage: React.FC = () => {
                                     className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
                                 >
                                     {showAllPlatforms ? 'Show Top 8' : 'Show All'}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => {
-                                        const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(result, null, 2));
-                                        const dl = document.createElement('a');
-                                        dl.setAttribute('href', dataStr);
-                                        dl.setAttribute('download', 'validationly-result.json');
-                                        document.body.appendChild(dl);
-                                        dl.click();
-                                        dl.remove();
-                                    }}
-                                    className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
-                                >
-                                    Download JSON
                                 </button>
                             </div>
                         </div>
