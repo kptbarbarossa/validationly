@@ -27,7 +27,7 @@ const PremiumNavBar: React.FC = () => {
         aria-label="Primary Navigation"
       >
         <div
-          className="mt-3 mb-3 flex items-center justify-between rounded-2xl bg-white/5 backdrop-blur-xl border border-white/15 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] ring-1 ring-white/10"
+          className="mt-3 mb-3 flex items-center justify-between rounded-full bg-white/5 backdrop-blur-xl border border-white/15 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.08)] ring-1 ring-white/10 px-3 py-2 min-h-14"
         >
           {/* Left: Logo */}
           <button
