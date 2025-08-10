@@ -3,6 +3,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
+import FAQPage from './pages/FAQPage';
+import BlogIndexPage from './pages/BlogIndexPage';
+import BlogPostPage from './pages/BlogPostPage';
+import UseCaseSaaSPage from './pages/UseCaseSaaSPage';
+import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
 import Header from './components/Header';
 import Analytics from './components/Analytics';
 
@@ -71,6 +76,11 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/results" element={<ResultsPage />} />
+              <Route path="/faq" element={<FAQPage />} />
+              <Route path="/blog" element={<BlogIndexPage />} />
+              <Route path="/blog/:slug" element={<BlogPostPage />} />
+              <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
+              <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
             </Routes>
           </main>
           
