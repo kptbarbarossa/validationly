@@ -342,7 +342,7 @@ const ResultsPage: React.FC = () => {
     ];
 
     const platformAnalysesObj = (result as DynamicPromptResult).platformAnalyses as any;
-    const [showAllPlatforms, setShowAllPlatforms] = useState(false);
+    const [showAllPlatforms, setShowAllPlatforms] = useState(true);
     const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
         const a = platformAnalysesObj?.[def.key];
         return Boolean(a && (typeof a.summary === 'string' ? a.summary.trim().length > 0 : true));
