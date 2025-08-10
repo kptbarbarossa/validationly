@@ -298,6 +298,59 @@ const ResultsPage: React.FC = () => {
     };
 
     // All results are now from dynamic prompt system
+    type PlatformKey = keyof DynamicPromptResult['platformAnalyses'];
+
+    const PLATFORM_DEFS: Array<{ key: PlatformKey; label: string; icon: React.ReactNode; bg: string }> = [
+        { key: 'twitter', label: 'X (Twitter)', icon: <XIcon />, bg: 'hover:bg-blue-500/10' },
+        { key: 'reddit', label: 'Reddit', icon: <RedditIcon />, bg: 'hover:bg-orange-500/10' },
+        { key: 'linkedin', label: 'LinkedIn', icon: <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" /></svg>, bg: 'hover:bg-indigo-500/10' },
+        { key: 'instagram', label: 'Instagram', icon: <InstagramIcon />, bg: 'hover:bg-pink-500/10' },
+        { key: 'tiktok', label: 'TikTok', icon: <TikTokIcon />, bg: 'hover:bg-purple-500/10' },
+        { key: 'youtube', label: 'YouTube', icon: <YouTubeIcon />, bg: 'hover:bg-red-500/10' },
+        { key: 'facebook', label: 'Facebook', icon: <FacebookIcon />, bg: 'hover:bg-blue-500/10' },
+        { key: 'producthunt', label: 'Product Hunt', icon: <ProductHuntIcon />, bg: 'hover:bg-orange-500/10' },
+        { key: 'hackernews', label: 'Hacker News', icon: <HackerNewsIcon />, bg: 'hover:bg-orange-500/10' },
+        { key: 'medium', label: 'Medium', icon: <MediumIcon />, bg: 'hover:bg-slate-500/10' },
+        { key: 'discord', label: 'Discord', icon: <DiscordIcon />, bg: 'hover:bg-indigo-500/10' },
+        { key: 'github', label: 'GitHub', icon: <GitHubIcon />, bg: 'hover:bg-slate-500/10' },
+        { key: 'stackoverflow', label: 'Stack Overflow', icon: <StackOverflowIcon />, bg: 'hover:bg-amber-500/10' },
+        { key: 'pinterest', label: 'Pinterest', icon: <PinterestIcon />, bg: 'hover:bg-rose-500/10' },
+        { key: 'angellist', label: 'AngelList', icon: <AngelListIcon />, bg: 'hover:bg-emerald-500/10' },
+        { key: 'crunchbase', label: 'Crunchbase', icon: <CrunchbaseIcon />, bg: 'hover:bg-cyan-500/10' },
+        { key: 'dribbble', label: 'Dribbble', icon: <DribbbleIcon />, bg: 'hover:bg-pink-500/10' },
+        { key: 'behance', label: 'Behance', icon: <BehanceIcon />, bg: 'hover:bg-blue-500/10' },
+        { key: 'figma', label: 'Figma Community', icon: <FigmaIcon />, bg: 'hover:bg-green-500/10' },
+        { key: 'slack', label: 'Slack Communities', icon: <SlackIcon />, bg: 'hover:bg-fuchsia-500/10' },
+        { key: 'clubhouse', label: 'Clubhouse', icon: <ClubhouseIcon />, bg: 'hover:bg-amber-500/10' },
+        { key: 'substack', label: 'Substack', icon: <SubstackIcon />, bg: 'hover:bg-orange-500/10' },
+        { key: 'notion', label: 'Notion Community', icon: <NotionIcon />, bg: 'hover:bg-slate-500/10' },
+        { key: 'devto', label: 'Dev.to', icon: <DevToIcon />, bg: 'hover:bg-slate-500/10' },
+        { key: 'hashnode', label: 'Hashnode', icon: <HashnodeIcon />, bg: 'hover:bg-blue-500/10' },
+        { key: 'gitlab', label: 'GitLab', icon: <GitLabIcon />, bg: 'hover:bg-orange-500/10' },
+        { key: 'codepen', label: 'CodePen', icon: <CodePenIcon />, bg: 'hover:bg-teal-500/10' },
+        { key: 'indiehackers', label: 'Indie Hackers', icon: <IndieHackersIcon />, bg: 'hover:bg-indigo-500/10' },
+        { key: 'awwwards', label: 'Awwwards', icon: <AwwwardsIcon />, bg: 'hover:bg-emerald-500/10' },
+        { key: 'designs99', label: '99designs', icon: <Designs99Icon />, bg: 'hover:bg-purple-500/10' },
+        { key: 'canva', label: 'Canva Community', icon: <CanvaIcon />, bg: 'hover:bg-cyan-500/10' },
+        { key: 'adobe', label: 'Adobe Community', icon: <AdobeIcon />, bg: 'hover:bg-red-500/10' },
+        { key: 'unsplash', label: 'Unsplash', icon: <UnsplashIcon />, bg: 'hover:bg-slate-500/10' },
+        { key: 'etsy', label: 'Etsy', icon: <EtsyIcon />, bg: 'hover:bg-orange-500/10' },
+        { key: 'amazon', label: 'Amazon Seller Central', icon: <AmazonIcon />, bg: 'hover:bg-yellow-500/10' },
+        { key: 'shopify', label: 'Shopify Community', icon: <ShopifyIcon />, bg: 'hover:bg-green-500/10' },
+        { key: 'woocommerce', label: 'WooCommerce', icon: <WooCommerceIcon />, bg: 'hover:bg-fuchsia-500/10' },
+    ];
+
+    const platformAnalysesObj = (result as DynamicPromptResult).platformAnalyses as any;
+    const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
+        const a = platformAnalysesObj?.[def.key];
+        return Boolean(a && (typeof a.summary === 'string' ? a.summary.trim().length > 0 : true));
+    });
+
+    const chunk = <T,>(arr: T[], size: number): T[][] => {
+        const out: T[][] = [];
+        for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+        return out;
+    };
 
     // Market Intelligence Card Component
     const MarketIntelligenceCard: React.FC<{ data?: any }> = ({ data }) => (
@@ -744,68 +797,250 @@ const ResultsPage: React.FC = () => {
                         <div className="text-sm text-slate-300 mb-4 text-center">
                             Sector-specific platform recommendations based on your idea
                         </div>
+                        {chunk(availablePlatformDefs, 4).map((row, rowIdx) => (
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" key={rowIdx}>
+                                {row.map((def, idx) => {
+                                    const analysis = platformAnalysesObj?.[def.key];
+                                    const delay = 100 + (rowIdx * 4 + idx) * 50;
+                                    return (
+                                        <PlatformCard
+                                            key={def.key}
+                                            platform={def.label}
+                                            analysis={analysis}
+                                            icon={def.icon}
+                                            bgColor={def.bg}
+                                            delay={delay}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        ))}
+
+                        {/* Additional Platform Cards */}
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                            {/* Always use real AI analysis from dynamic prompt system */}
                             <PlatformCard
-                                platform="X (Twitter)"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.twitter}
-                                icon={<XIcon />}
+                                platform="Facebook"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.facebook}
+                                icon={<FacebookIcon />}
                                 bgColor="hover:bg-blue-500/10"
                                 delay={100}
                             />
                             <PlatformCard
-                                platform="Reddit"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.reddit}
-                                icon={<RedditIcon />}
-                                bgColor="hover:bg-orange-500/10"
+                                platform="Pinterest"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.pinterest}
+                                icon={<PinterestIcon />}
+                                bgColor="hover:bg-rose-500/10"
+                                delay={150}
+                            />
+                            <PlatformCard
+                                platform="Stack Overflow"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.stackoverflow}
+                                icon={<StackOverflowIcon />}
+                                bgColor="hover:bg-amber-500/10"
                                 delay={200}
                             />
                             <PlatformCard
-                                platform="LinkedIn"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.linkedin}
-                                icon={<svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                                </svg>}
-                                bgColor="hover:bg-indigo-500/10"
-                                delay={300}
-                            />
-                            <PlatformCard
-                                platform="Instagram"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.instagram}
-                                icon={<InstagramIcon />}
-                                bgColor="hover:bg-pink-500/10"
-                                delay={350}
+                                platform="Hacker News"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.hackernews}
+                                icon={<HackerNewsIcon />}
+                                bgColor="hover:bg-orange-500/10"
+                                delay={250}
                             />
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                             <PlatformCard
-                                platform="TikTok"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.tiktok}
-                                icon={<TikTokIcon />}
-                                bgColor="hover:bg-purple-500/10"
+                                platform="Medium"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.medium}
+                                icon={<MediumIcon />}
+                                bgColor="hover:bg-slate-500/10"
+                                delay={300}
+                            />
+                            <PlatformCard
+                                platform="Discord"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.discord}
+                                icon={<DiscordIcon />}
+                                bgColor="hover:bg-indigo-500/10"
+                                delay={350}
+                            />
+                            <PlatformCard
+                                platform="AngelList"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.angellist}
+                                icon={<AngelListIcon />}
+                                bgColor="hover:bg-emerald-500/10"
                                 delay={400}
                             />
                             <PlatformCard
-                                platform="YouTube"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.youtube}
-                                icon={<YouTubeIcon />}
+                                platform="Crunchbase"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.crunchbase}
+                                icon={<CrunchbaseIcon />}
+                                bgColor="hover:bg-cyan-500/10"
+                                delay={450}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <PlatformCard
+                                platform="Dribbble"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.dribbble}
+                                icon={<DribbbleIcon />}
+                                bgColor="hover:bg-pink-500/10"
+                                delay={100}
+                            />
+                            <PlatformCard
+                                platform="Behance"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.behance}
+                                icon={<BehanceIcon />}
+                                bgColor="hover:bg-blue-500/10"
+                                delay={150}
+                            />
+                            <PlatformCard
+                                platform="Figma Community"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.figma}
+                                icon={<FigmaIcon />}
+                                bgColor="hover:bg-green-500/10"
+                                delay={200}
+                            />
+                            <PlatformCard
+                                platform="Slack Communities"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.slack}
+                                icon={<SlackIcon />}
+                                bgColor="hover:bg-fuchsia-500/10"
+                                delay={250}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <PlatformCard
+                                platform="Clubhouse"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.clubhouse}
+                                icon={<ClubhouseIcon />}
+                                bgColor="hover:bg-amber-500/10"
+                                delay={300}
+                            />
+                            <PlatformCard
+                                platform="Substack"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.substack}
+                                icon={<SubstackIcon />}
+                                bgColor="hover:bg-orange-500/10"
+                                delay={350}
+                            />
+                            <PlatformCard
+                                platform="Notion Community"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.notion}
+                                icon={<NotionIcon />}
+                                bgColor="hover:bg-slate-500/10"
+                                delay={400}
+                            />
+                            <PlatformCard
+                                platform="Dev.to"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.devto}
+                                icon={<DevToIcon />}
+                                bgColor="hover:bg-slate-500/10"
+                                delay={450}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <PlatformCard
+                                platform="Hashnode"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.hashnode}
+                                icon={<HashnodeIcon />}
+                                bgColor="hover:bg-blue-500/10"
+                                delay={100}
+                            />
+                            <PlatformCard
+                                platform="GitLab"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.gitlab}
+                                icon={<GitLabIcon />}
+                                bgColor="hover:bg-orange-500/10"
+                                delay={150}
+                            />
+                            <PlatformCard
+                                platform="CodePen"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.codepen}
+                                icon={<CodePenIcon />}
+                                bgColor="hover:bg-teal-500/10"
+                                delay={200}
+                            />
+                            <PlatformCard
+                                platform="Indie Hackers"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.indiehackers}
+                                icon={<IndieHackersIcon />}
+                                bgColor="hover:bg-indigo-500/10"
+                                delay={250}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <PlatformCard
+                                platform="Awwwards"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.awwwards}
+                                icon={<AwwwardsIcon />}
+                                bgColor="hover:bg-emerald-500/10"
+                                delay={300}
+                            />
+                            <PlatformCard
+                                platform="99designs"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.designs99}
+                                icon={<Designs99Icon />}
+                                bgColor="hover:bg-purple-500/10"
+                                delay={350}
+                            />
+                            <PlatformCard
+                                platform="Canva Community"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.canva}
+                                icon={<CanvaIcon />}
+                                bgColor="hover:bg-cyan-500/10"
+                                delay={400}
+                            />
+                            <PlatformCard
+                                platform="Adobe Community"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.adobe}
+                                icon={<AdobeIcon />}
                                 bgColor="hover:bg-red-500/10"
                                 delay={450}
                             />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
                             <PlatformCard
-                                platform="Product Hunt"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.producthunt}
-                                icon={<ProductHuntIcon />}
-                                bgColor="hover:bg-orange-500/10"
-                                delay={500}
+                                platform="Unsplash"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.unsplash}
+                                icon={<UnsplashIcon />}
+                                bgColor="hover:bg-slate-500/10"
+                                delay={100}
                             />
                             <PlatformCard
-                                platform="GitHub"
-                                analysis={(result as DynamicPromptResult).platformAnalyses?.github}
-                                icon={<GitHubIcon />}
-                                bgColor="hover:bg-slate-500/10"
-                                delay={550}
+                                platform="Etsy"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.etsy}
+                                icon={<EtsyIcon />}
+                                bgColor="hover:bg-orange-500/10"
+                                delay={150}
+                            />
+                            <PlatformCard
+                                platform="Amazon Seller Central"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.amazon}
+                                icon={<AmazonIcon />}
+                                bgColor="hover:bg-yellow-500/10"
+                                delay={200}
+                            />
+                            <PlatformCard
+                                platform="Shopify Community"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.shopify}
+                                icon={<ShopifyIcon />}
+                                bgColor="hover:bg-green-500/10"
+                                delay={250}
+                            />
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                            <PlatformCard
+                                platform="WooCommerce"
+                                analysis={(result as DynamicPromptResult).platformAnalyses?.woocommerce}
+                                icon={<WooCommerceIcon />}
+                                bgColor="hover:bg-fuchsia-500/10"
+                                delay={300}
                             />
                         </div>
                     </div>
