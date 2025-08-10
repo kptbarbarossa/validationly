@@ -70,7 +70,7 @@ const PremiumNavBar: React.FC = () => {
               href="https://x.com/kptbarbarossa"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 px-3 py-2 rounded-xl text-slate-200/90 hover:text-white hover:bg-white/10 border border-white/10 transition-colors"
+              className="hidden sm:inline-flex items-center gap-2 px-1 py-1 text-slate-200/90 hover:text-white transition-colors"
               aria-label="Give Feedback on X/Twitter"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="opacity-90">
@@ -83,7 +83,7 @@ const PremiumNavBar: React.FC = () => {
               href="https://buymeacoffee.com/kptbarbarossa"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border border-amber-300/30 bg-amber-300/15 px-3 py-2 text-amber-200 hover:bg-amber-300/20 hover:border-amber-300/40 transition-colors shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)]"
+              className="inline-flex items-center gap-2 px-1 py-1 text-amber-200 hover:text-amber-100 transition-colors"
             >
               <span className="text-lg">☕</span>
               <span className="hidden sm:inline font-medium">Support</span>
@@ -144,7 +144,7 @@ const PremiumNavBar: React.FC = () => {
                 href="https://x.com/kptbarbarossa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1 px-3 py-3 rounded-lg text-slate-100/90 hover:text-white hover:bg-white/10 border border-white/10"
+                className="mt-1 px-3 py-3 text-slate-100/90 hover:text-white"
                 onClick={() => setIsOpen(false)}
               >
                 Feedback
@@ -153,7 +153,7 @@ const PremiumNavBar: React.FC = () => {
                 href="https://buymeacoffee.com/kptbarbarossa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 mb-2 inline-flex items-center justify-center gap-2 rounded-xl border border-amber-300/30 bg-amber-300/15 px-3 py-3 text-amber-200 hover:bg-amber-300/20 hover:border-amber-300/40"
+                className="mt-2 mb-2 inline-flex items-center justify-center gap-2 px-3 py-3 text-amber-200 hover:text-amber-100"
                 onClick={() => setIsOpen(false)}
               >
                 <span className="text-lg">☕</span>
