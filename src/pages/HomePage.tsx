@@ -277,9 +277,9 @@ const HomePage: React.FC = () => {
                     <div className="relative group">
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
-                        <div className="relative bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 hover:border-white/20 transition-colors">
+                        <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
                             <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-                                <button
+                            <button
                                     type="button"
                                     onClick={async () => {
                                         const enhanced = await enhancePromptRemotely(userInput.idea);
@@ -289,7 +289,7 @@ const HomePage: React.FC = () => {
                                             setUserInput(validation);
                                         }
                                     }}
-                                    className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20"
+                                className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
                                     aria-label="Enhance prompt"
                                     title="Enhance prompt"
                                 >
@@ -318,8 +318,8 @@ const HomePage: React.FC = () => {
                                 type="button"
                                 onClick={triggerValidation}
                                 disabled={!userInput.isValid || isLoading}
-                                className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
-                                    ? 'hover:scale-125 cursor-pointer opacity-100'
+                                className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-white/10 backdrop-blur-sm transition-all duration-200 ${userInput.isValid && !isLoading
+                                    ? 'hover:scale-110 hover:bg-white/15 cursor-pointer opacity-100'
                                     : 'cursor-not-allowed opacity-50'
                                     }`}
                                 aria-label="Submit idea for validation"
@@ -352,7 +352,7 @@ const HomePage: React.FC = () => {
                     {sampleCategories.map((category, index) => (
                         <div
                             key={category.name}
-                            className="group bg-white/5 backdrop-blur-xl rounded-2xl border border-white/10 p-6 hover:border-white/20 transition-all duration-300 cursor-pointer transform hover:-translate-y-1"
+                            className="group rounded-2xl glass glass-border p-6 hover:border-white/15 transition-all duration-300 cursor-pointer transform hover:-translate-y-1 hover:shadow-xl"
                             onClick={() => handleSampleIdeaClick(category.example)}
                         >
                             <div className="mb-4">
