@@ -782,7 +782,7 @@ export default async function handler(req: any, res: any) {
                         systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                         responseMimeType: "application/json",
                         temperature: 0.3,
-                        maxOutputTokens: 4096, // Increased for comprehensive analysis
+                        maxOutputTokens: 1536,
                     }
                 });
 
@@ -805,7 +805,7 @@ export default async function handler(req: any, res: any) {
                             systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                             responseMimeType: "application/json",
                             temperature: 0.3,
-                            maxOutputTokens: 4096, // Increased for comprehensive analysis
+                            maxOutputTokens: 1536,
                         }
                     });
 
@@ -910,6 +910,19 @@ async function getSimplifiedAIAnalysis(
         const sectors = promptManager.detectSector(content);
         const relevantPlatforms = promptManager.getSectorSpecificPlatforms(sectors);
         const focusPlatforms = relevantPlatforms.slice(0, 6);
+        // Build compact platform schema for ONLY focus platforms to keep prompt small
+        const platformNameLabel: Record<string, string> = {
+            twitter: 'X', reddit: 'Reddit', linkedin: 'LinkedIn', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube',
+            facebook: 'Facebook', producthunt: 'Product Hunt', pinterest: 'Pinterest', github: 'GitHub', stackoverflow: 'Stack Overflow',
+            angellist: 'AngelList', crunchbase: 'Crunchbase', dribbble: 'Dribbble', behance: 'Behance', figma: 'Figma Community',
+            slack: 'Slack Communities', clubhouse: 'Clubhouse', substack: 'Substack', notion: 'Notion Community', devto: 'Dev.to',
+            hashnode: 'Hashnode', gitlab: 'GitLab', codepen: 'CodePen', indiehackers: 'Indie Hackers', awwwards: 'Awwwards',
+            designs99: '99designs', canva: 'Canva Community', adobe: 'Adobe Community', unsplash: 'Unsplash', etsy: 'Etsy',
+            amazon: 'Amazon Seller Central', shopify: 'Shopify Community', woocommerce: 'WooCommerce'
+        };
+        const schemaLines = focusPlatforms
+            .map(p => `"${p}": { "platformName": "${platformNameLabel[p] || p}", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2", "finding3"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } }`)
+            .join(',\n                        ');
         
         console.log(`🎯 Detected sectors: ${sectors.join(', ')}`);
         console.log(`📱 Relevant platforms: ${relevantPlatforms.join(', ')}`);
@@ -985,27 +998,7 @@ async function getSimplifiedAIAnalysis(
             - Viral Coefficient: Growth multiplier potential
             - PMF Indicators: 3 metrics to track success
 
-            - SECTOR-SPECIFIC platform analysis for: ${relevantPlatforms.join(', ')}
-            - Content suggestions optimized for each relevant platform
-            
-            PLATFORM ANALYSIS PRIORITY:
-            ${sectors.includes('saas') ? '- GitHub: Developer community engagement, open source strategy' : ''}
-            ${sectors.includes('saas') ? '- Stack Overflow: Technical community validation' : ''}
-            ${sectors.includes('saas') ? '- Slack Communities: B2B networking and customer support' : ''}
-            ${sectors.includes('saas') ? '- Dev.to: Developer content marketing' : ''}
-            ${sectors.includes('saas') ? '- Indie Hackers: Startup community validation' : ''}
-            ${sectors.includes('ecommerce') ? '- Instagram: Visual product showcase, influencer marketing' : ''}
-            ${sectors.includes('ecommerce') ? '- Pinterest: Product discovery, visual search' : ''}
-            ${sectors.includes('ecommerce') ? '- Etsy: Handmade/creative product validation' : ''}
-            ${sectors.includes('ecommerce') ? '- Shopify Community: E-commerce entrepreneur network' : ''}
-            ${sectors.includes('fintech') ? '- AngelList: Investor relations, startup ecosystem' : ''}
-            ${sectors.includes('fintech') ? '- Crunchbase: Market intelligence, competitor tracking' : ''}
-            ${sectors.includes('fintech') ? '- Substack: Financial newsletter and thought leadership' : ''}
-            ${sectors.includes('design') ? '- Dribbble: Design community showcase' : ''}
-            ${sectors.includes('design') ? '- Behance: Portfolio presentation' : ''}
-            ${sectors.includes('design') ? '- Figma Community: Design tool integration community' : ''}
-            ${sectors.includes('design') ? '- Awwwards: Web design excellence showcase' : ''}
-            ${sectors.includes('design') ? '- Canva Community: Design tool ecosystem' : ''}`,
+            - Analyze ONLY these focus platforms: ${focusPlatforms.join(', ')}`,
             config: {
                         systemInstruction: systemInstruction + `\n\nLANGUAGE ENFORCEMENT: Respond ONLY in the SAME LANGUAGE as the user input. Do not mix languages. All text fields must use the same language as input.\n\nRUBRIC REQUIREMENT: For EVERY platform under platformAnalyses, include a 'rubric' object with integer scores (1-5) for: reach, nicheFit, contentFit, competitiveSignal.\n\nCITATIONS (OPTIONAL): If EVIDENCE is provided above, include a 'citations' array per relevant section with { source, evidence } drawn strictly from the EVIDENCE. If evidence is insufficient, set citations to an empty array and state \"insufficient evidence\" in the relevant summaries.\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL required keys (even if estimated). Use non-empty strings for all text fields. No nulls, no empty arrays. Include ALL relevant platforms as specified:
                 {
@@ -1013,37 +1006,7 @@ async function getSimplifiedAIAnalysis(
                     "demandScore": number (0-100),
                     "scoreJustification": "short justification phrase",
                     "platformAnalyses": {
-                        "twitter": { "platformName": "Twitter", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },
-                        "reddit": { "platformName": "Reddit", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },
-                        "linkedin": { "platformName": "LinkedIn", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },
-                        ${relevantPlatforms.includes('github') ? '"github": { "platformName": "GitHub", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('stackoverflow') ? '"stackoverflow": { "platformName": "Stack Overflow", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('instagram') ? '"instagram": { "platformName": "Instagram", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('pinterest') ? '"pinterest": { "platformName": "Pinterest", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('angellist') ? '"angellist": { "platformName": "AngelList", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('crunchbase') ? '"crunchbase": { "platformName": "Crunchbase", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('dribbble') ? '"dribbble": { "platformName": "Dribbble", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('behance') ? '"behance": { "platformName": "Behance", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('figma') ? '"figma": { "platformName": "Figma Community", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('slack') ? '"slack": { "platformName": "Slack Communities", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('clubhouse') ? '"clubhouse": { "platformName": "Clubhouse", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('substack') ? '"substack": { "platformName": "Substack", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('notion') ? '"notion": { "platformName": "Notion Community", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('devto') ? '"devto": { "platformName": "Dev.to", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('hashnode') ? '"hashnode": { "platformName": "Hashnode", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('gitlab') ? '"gitlab": { "platformName": "GitLab", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('codepen') ? '"codepen": { "platformName": "CodePen", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('indiehackers') ? '"indiehackers": { "platformName": "Indie Hackers", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('awwwards') ? '"awwwards": { "platformName": "Awwwards", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('designs99') ? '"designs99": { "platformName": "99designs", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('canva') ? '"canva": { "platformName": "Canva Community", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('adobe') ? '"adobe": { "platformName": "Adobe Community", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('unsplash') ? '"unsplash": { "platformName": "Unsplash", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('etsy') ? '"etsy": { "platformName": "Etsy", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('amazon') ? '"amazon": { "platformName": "Amazon Seller Central", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('shopify') ? '"shopify": { "platformName": "Shopify Community", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        ${relevantPlatforms.includes('woocommerce') ? '"woocommerce": { "platformName": "WooCommerce", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } },' : ''}
-                        "producthunt": { "platformName": "Product Hunt", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } }
+                        ${schemaLines}
                     },
                     "tweetSuggestion": "optimized Twitter post",
                     "redditTitleSuggestion": "compelling Reddit title",
