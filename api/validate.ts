@@ -55,7 +55,16 @@ class PromptManager {
     };
 
     // Sector-specific platform mapping (Phase 2 + Phase 3)
-    private sectorPlatforms = {
+    private sectorPlatforms: {
+        saas: string[];
+        ecommerce: string[];
+        fintech: string[];
+        design: string[];
+        marketplace: string[];
+        mobile: string[];
+        hardware: string[];
+        offline: string[];
+    } = {
         saas: ['github', 'stackoverflow', 'producthunt', 'hackernews', 'slack', 'devto', 'hashnode', 'gitlab', 'indiehackers'],
         ecommerce: ['instagram', 'tiktok', 'pinterest', 'facebook', 'etsy', 'amazon', 'shopify', 'woocommerce'],
         fintech: ['angellist', 'crunchbase', 'linkedin', 'medium', 'substack', 'clubhouse'],
@@ -404,8 +413,8 @@ Provide actionable and specific numbers where possible based on market norms.`
         
         // Add sector-specific platforms
         for (const sector of sectors) {
-            const sectorPlatforms = this.sectorPlatforms[sector] || [];
-            sectorPlatforms.forEach(platform => platforms.add(platform));
+            const sectorPlatforms = this.sectorPlatforms[sector as keyof typeof this.sectorPlatforms] || [];
+            sectorPlatforms.forEach((platform: string) => platforms.add(platform));
         }
         
         return Array.from(platforms);
@@ -433,17 +442,21 @@ Provide actionable and specific numbers where possible based on market norms.`
         const analysisTypes = this.detectAnalysisNeeds(input);
 
         const basePrompt = this.prompts['base-analyst'];
-        const sectorPrompts = sectors.map(sector => this.prompts[`${sector}-sector`]).filter(p => p);
-        const examplePrompts = sectors.map(sector => this.prompts[`${sector}-examples`]).filter(p => p);
+        const sectorPrompts = sectors
+            .map(sector => (this.prompts as any)[`${sector}-sector`] as string | undefined)
+            .filter((p): p is string => Boolean(p));
+        const examplePrompts = sectors
+            .map(sector => (this.prompts as any)[`${sector}-examples`] as string | undefined)
+            .filter((p): p is string => Boolean(p));
         // Map analysis keywords to actual prompt keys
         const promptKeyMap: Record<string, string> = {
             market: 'market-opportunity',
             competitive: 'competitive-landscape',
             monetization: 'monetization-opportunity'
         };
-        const analysisPrompts = analysisTypes
-            .map(analysis => this.prompts[promptKeyMap[analysis]])
-            .filter(p => p);
+        const analysisPrompts = (analysisTypes as Array<keyof typeof promptKeyMap>)
+            .map(analysis => this.prompts[promptKeyMap[analysis]] as string | undefined)
+            .filter((p): p is string => Boolean(p));
 
         return {
             basePrompt,
@@ -528,6 +541,7 @@ interface PlatformAnalysis {
 }
 
 // Legacy interface for backward compatibility
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface ValidationResult {
     idea: string;
     content?: string;
@@ -574,6 +588,7 @@ function checkRateLimit(ip: string): boolean {
 }
 
 // API key güvenlik kontrolü
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
 function validateApiKey(): string {
     const apiKey = process.env.API_KEY;
     if (!apiKey) {
@@ -616,6 +631,7 @@ function getAI(): GoogleGenAI {
 
 
 // Legacy response schema for backward compatibility
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const legacyResponseSchema = {
     type: Type.OBJECT,
     properties: {
@@ -770,6 +786,7 @@ export default async function handler(req: any, res: any) {
         console.log('🚀 Starting dynamic prompt analysis...');
 
         // Simplified AI Analysis - use only Gemini 2.0 for now
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         async function getAIAnalysis(content: string, systemPrompt: string): Promise<any> {
             console.log('🎯 Using Gemini 2.0 Flash Experimental...');
 
@@ -1254,7 +1271,7 @@ ${responseText.slice(0, 6000)}`,
             return { score, rubric };
         };
 
-        const enforceLanguageOnObjectStrings = (obj: any, expected: 'English'|'Turkish'|undefined): { ok: boolean; offending?: string } => {
+        const enforceLanguageOnObjectStrings = (obj: any, expected: 'English'|'Turkish'|undefined): { ok: boolean; offending: string | undefined } => {
             const traverse = (o: any): string | null => {
                 if (o == null) return null;
                 if (typeof o === 'string') {
@@ -1269,14 +1286,14 @@ ${responseText.slice(0, 6000)}`,
                 }
                 return null;
             };
-            const off = traverse(obj);
-            return { ok: !off, offending: off || undefined };
+            const off = traverse(obj) || undefined;
+            return { ok: !off, offending: off };
         };
         const cleanResult: DynamicPromptResult = {
             idea: parsedResult.idea || content,
             demandScore: Math.max(0, Math.min(100, parsedResult.demandScore || 65)),
             scoreJustification: parsedResult.scoreJustification || 'Market analysis completed',
-            language,
+            language: undefined,
             fallbackUsed: Boolean(parsedResult.fallbackUsed ?? false),
             platformAnalyses: {
                 twitter: (()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.twitter, sectors); return {
@@ -1695,7 +1712,7 @@ ${responseText.slice(0, 6000)}`,
                 }
             };
 
-        } catch (error) {
+        } catch (error: any) {
             console.error('❌ AI analysis failed:', error);
             
             // Return fallback result with sector-specific platforms
@@ -1729,7 +1746,7 @@ ${responseText.slice(0, 6000)}`,
             // Add sector-specific platforms to fallback
             relevantPlatforms.forEach(platform => {
                 if (!fallbackPlatforms[platform]) {
-                    const platformNames = {
+            const platformNames: Record<string, string> = {
                         // Phase 2 platforms
                         github: 'GitHub',
                         stackoverflow: 'Stack Overflow',
