@@ -1188,8 +1188,46 @@ ${responseText.slice(0, 6000)}`,
                 // fall through to outer catch
             }
             if (!parsedResult) {
+                // Final attempt: request a minimal core JSON (small schema) to avoid truncation
+                try {
+                    const minimal = await aiInstance.models.generateContent({
+                        model: 'gemini-2.5-flash',
+                        contents: `${languageInstruction}\n\nProduce ONLY the following minimal JSON for the idea: "${content}". Keep strings concise. JSON shape:\n{
+  "idea": string,
+  "demandScore": number, // 0-100
+  "scoreJustification": string, // <= 140 chars
+  "platformAnalyses": {
+    "twitter"?: {"platformName":"X","score":1-5,"summary":string,"keyFindings":[string,string,string],"contentSuggestion":string},
+    "reddit"?: {...},
+    "linkedin"?: {...},
+    "instagram"?: {...},
+    "tiktok"?: {...},
+    "youtube"?: {...},
+    "facebook"?: {...},
+    "producthunt"?: {...}
+  },
+  "tweetSuggestion": string,
+  "redditTitleSuggestion": string,
+  "redditBodySuggestion": string,
+  "linkedinSuggestion": string
+}\nReturn JSON only.`,
+                        config: {
+                            systemInstruction: 'Output minimal, valid JSON only. Keep per-field text short. Language must mirror input.',
+                            responseMimeType: 'application/json',
+                            temperature: 0,
+                            maxOutputTokens: 1536,
+                        }
+                    });
+                    const mText = preClean(minimal.text?.trim() || '');
+                    const mParsed = safeJsonParse(mText);
+                    if (mParsed) {
+                        parsedResult = mParsed;
+                    }
+                } catch {}
+            if (!parsedResult) {
                 throw new Error('Invalid JSON from AI');
             }
+        }
             }
         }
 
