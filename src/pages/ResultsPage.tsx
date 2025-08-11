@@ -343,6 +343,7 @@ const ResultsPage: React.FC = () => {
 
     const platformAnalysesObj = (result as DynamicPromptResult).platformAnalyses as any;
     const [showAllPlatforms, setShowAllPlatforms] = useState(true);
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
     const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
         const a = platformAnalysesObj?.[def.key];
         return Boolean(a && (typeof a.summary === 'string' ? a.summary.trim().length > 0 : true));
@@ -815,6 +816,33 @@ const ResultsPage: React.FC = () => {
                                     className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
                                 >
                                     {showAllPlatforms ? 'Show Top 8' : 'Show All'}
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled={isLoadingMore}
+                                    onClick={async () => {
+                                        try {
+                                            setIsLoadingMore(true);
+                                            const idea = result.idea || result.content;
+                                            const resp = await fetch('/api/validate', {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                                body: JSON.stringify({ idea, morePlatforms: true })
+                                            });
+                                            if (resp.ok) {
+                                                const data = await resp.json();
+                                                const extra = (data?.platformAnalyses) || {};
+                                                // merge
+                                                (result as any).platformAnalyses = { ...(result as any).platformAnalyses, ...extra };
+                                                setIsVisible(x => !x); setIsVisible(x => !x); // trigger re-render
+                                            }
+                                        } finally {
+                                            setIsLoadingMore(false);
+                                        }
+                                    }}
+                                    className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200 disabled:opacity-50"
+                                >
+                                    {isLoadingMore ? 'Loading…' : 'More platforms'}
                                 </button>
                             </div>
                         </div>
