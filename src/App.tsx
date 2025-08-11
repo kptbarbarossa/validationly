@@ -73,6 +73,7 @@ const App: React.FC = () => {
               <Route path="/use-cases" element={<UseCasesIndexPage />} />
               <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
               <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
+              <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center text-slate-300">Page not found</div>} />
             </Routes>
           </main>
           
