@@ -750,11 +750,11 @@ export default async function handler(req: any, res: any) {
         11. Content Suggestions: Platform-optimized versions
 
         OUTPUT CONSTRAINTS (STRICT):
-        - Platform list: include ONLY the TOP 6–8 most relevant platforms overall (choose fewer when input/evidence is long). Do NOT include beyond this cap.
+        - Platform list: include ONLY the TOP 6 most relevant platforms overall. Do NOT include more than 6.
         - For each platform object:
-          • summary: max 200–240 characters (keep concise)
+          • summary: max 180 characters
           • keyFindings: EXACTLY 3 bullet items (strings)
-          • contentSuggestion: max 160–200 characters
+          • contentSuggestion: max 140 characters
         - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit): keep sentences concise; avoid verbose paragraphs.
 
         CRITICAL RULES:
@@ -782,7 +782,7 @@ export default async function handler(req: any, res: any) {
                         systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                         responseMimeType: "application/json",
                         temperature: 0.3,
-                        maxOutputTokens: 1536,
+                        maxOutputTokens: 1792,
                     }
                 });
 
@@ -805,7 +805,7 @@ export default async function handler(req: any, res: any) {
                             systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
                             responseMimeType: "application/json",
                             temperature: 0.3,
-                            maxOutputTokens: 1536,
+                            maxOutputTokens: 1792,
                         }
                     });
 
@@ -1087,7 +1087,7 @@ async function getSimplifiedAIAnalysis(
                 }`,
                 responseMimeType: "application/json",
                 temperature: 0,
-                maxOutputTokens: 1536,
+                maxOutputTokens: 1792,
                 // Note: safetySettings categories vary by SDK version; omit to avoid INVALID_ARGUMENT
             }
         });
@@ -1106,15 +1106,15 @@ async function getSimplifiedAIAnalysis(
                         systemInstruction: systemInstruction,
                         responseMimeType: 'application/json',
                         temperature: 0,
-                        maxOutputTokens: 1536,
+                        maxOutputTokens: 1792,
                     }
                 });
                 responseText = result.text?.trim() || '';
                 try { console.log('🧪 Pro finishReason:', (result as any)?.response?.candidates?.[0]?.finishReason || (result as any)?.candidates?.[0]?.finishReason || 'n/a'); } catch {}
                 console.log('🧪 Pro retry raw length:', responseText.length);
             } catch {}
-            if (!responseText) {
-                throw new Error('Empty response from AI analysis');
+        if (!responseText) {
+            throw new Error('Empty response from AI analysis');
             }
         }
 
@@ -1200,7 +1200,7 @@ ${responseText.slice(0, 6000)}`,
                             systemInstruction: 'Output minimal, valid JSON only. Keep per-field text short. Language must mirror input.',
                             responseMimeType: 'application/json',
                             temperature: 0,
-                            maxOutputTokens: 1536,
+                            maxOutputTokens: 1792,
                         }
                     });
                     const mText = preClean(minimal.text?.trim() || '');
