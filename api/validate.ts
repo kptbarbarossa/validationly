@@ -1087,14 +1087,44 @@ async function getSimplifiedAIAnalysis(
                 }`,
                 responseMimeType: "application/json",
                 temperature: 0,
-                maxOutputTokens: 2048,
+                maxOutputTokens: 1536,
+                // Reduce the chance of empty responses due to safety filters
+                safetySettings: [
+                    { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+                    { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+                    { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+                    { category: 'HARM_CATEGORY_SEXUAL_CONTENT', threshold: 'BLOCK_NONE' }
+                ],
             }
         });
 
         let responseText = result.text?.trim();
         console.log('🧪 AI raw length:', responseText ? responseText.length : 0);
         if (!responseText) {
-            throw new Error('Empty response from AI analysis');
+            // Immediate retry with pro model and permissive safety settings
+            try {
+                result = await aiInstance.models.generateContent({
+                    model: 'gemini-2.5-pro',
+                    contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input. KEEP OUTPUT CONCISE. RETURN ONLY JSON.`,
+                    config: {
+                        systemInstruction: systemInstruction,
+                        responseMimeType: 'application/json',
+                        temperature: 0,
+                        maxOutputTokens: 1536,
+                        safetySettings: [
+                            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+                            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+                            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+                            { category: 'HARM_CATEGORY_SEXUAL_CONTENT', threshold: 'BLOCK_NONE' }
+                        ],
+                    }
+                });
+                responseText = result.text?.trim() || '';
+                console.log('🧪 Pro retry raw length:', responseText.length);
+            } catch {}
+            if (!responseText) {
+                throw new Error('Empty response from AI analysis');
+            }
         }
 
         // Pre-clean: normalize BOM/nbsp and stray fences/utf quotes before parse
