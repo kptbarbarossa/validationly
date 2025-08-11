@@ -749,6 +749,14 @@ export default async function handler(req: any, res: any) {
         10. Product-Market Fit: PMF indicators and predictions
         11. Content Suggestions: Platform-optimized versions
 
+        OUTPUT CONSTRAINTS (STRICT):
+        - Platform list: include ONLY the TOP 8 most relevant platforms overall. Do NOT include additional platforms beyond 8.
+        - For each platform object:
+          • summary: max 240 characters
+          • keyFindings: EXACTLY 3 bullet items (strings)
+          • contentSuggestion: max 200 characters
+        - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit): keep sentences concise; avoid verbose paragraphs.
+
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
         - Provide REAL market data, not generic examples
@@ -1139,7 +1147,28 @@ async function getSimplifiedAIAnalysis(
 
         let parsedResult = safeJsonParse(responseText);
         if (!parsedResult) {
-            // Retry once with stable fallback model
+            // Attempt a quick JSON repair before retrying model
+            try {
+                const aiRepair = getAI();
+                const repairTry = await aiRepair.models.generateContent({
+                    model: 'gemini-2.5-flash',
+                    contents: `CLEAN THIS TO VALID JSON. Return ONLY valid JSON with no extra text. If input has markdown fences or trailing text, remove them and output just a valid JSON:
+${responseText.slice(0, 6000)}`,
+                    config: {
+                        systemInstruction: 'You strictly convert malformed JSON-like text into valid JSON. Output JSON only.',
+                        responseMimeType: 'application/json',
+                        temperature: 0,
+                        maxOutputTokens: 1024,
+                    }
+                });
+                const repaired1 = safeJsonParse(repairTry.text?.trim() || '');
+                if (repaired1) {
+                    parsedResult = repaired1;
+                }
+            } catch {}
+
+            if (!parsedResult) {
+                // Retry once with stable model
             try {
                 result = await aiInstance.models.generateContent({
                     model: 'gemini-2.5-flash',
@@ -1160,6 +1189,7 @@ async function getSimplifiedAIAnalysis(
             }
             if (!parsedResult) {
                 throw new Error('Invalid JSON from AI');
+            }
             }
         }
 
