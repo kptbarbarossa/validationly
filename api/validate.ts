@@ -909,6 +909,7 @@ async function getSimplifiedAIAnalysis(
         // Detect sector and get relevant platforms
         const sectors = promptManager.detectSector(content);
         const relevantPlatforms = promptManager.getSectorSpecificPlatforms(sectors);
+        const focusPlatforms = relevantPlatforms.slice(0, 6);
         
         console.log(`🎯 Detected sectors: ${sectors.join(', ')}`);
         console.log(`📱 Relevant platforms: ${relevantPlatforms.join(', ')}`);
@@ -918,7 +919,7 @@ async function getSimplifiedAIAnalysis(
         const runtimeModel = preferredModel || 'gemini-2.5-flash';
         let result = await aiInstance.models.generateContent({
             model: runtimeModel,
-            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input.:
+            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input. KEEP OUTPUT CONCISE: one short sentence per field or 2-3 short bullets; numbers where applicable. RETURN ONLY JSON. NO EXTRA TEXT.:
 
             📊 MARKET INTELLIGENCE (provide specific numbers):
             - TAM: Research actual market size with $ amounts
@@ -1123,7 +1124,7 @@ async function getSimplifiedAIAnalysis(
                 }`,
                 responseMimeType: "application/json",
                 temperature: 0,
-                maxOutputTokens: 4096,
+                maxOutputTokens: 2048,
             }
         });
 
