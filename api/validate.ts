@@ -750,11 +750,11 @@ export default async function handler(req: any, res: any) {
         11. Content Suggestions: Platform-optimized versions
 
         OUTPUT CONSTRAINTS (STRICT):
-        - Platform list: include ONLY the TOP 8 most relevant platforms overall. Do NOT include additional platforms beyond 8.
+        - Platform list: include ONLY the TOP 6–8 most relevant platforms overall (choose fewer when input/evidence is long). Do NOT include beyond this cap.
         - For each platform object:
-          • summary: max 240 characters
+          • summary: max 200–240 characters (keep concise)
           • keyFindings: EXACTLY 3 bullet items (strings)
-          • contentSuggestion: max 200 characters
+          • contentSuggestion: max 160–200 characters
         - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit): keep sentences concise; avoid verbose paragraphs.
 
         CRITICAL RULES:
