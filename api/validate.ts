@@ -929,7 +929,7 @@ async function getSimplifiedAIAnalysis(
 
         // Single comprehensive AI analysis using our dynamic prompt system
         const aiInstance = getAI();
-        const runtimeModel = preferredModel || 'gemini-2.5-flash';
+        const runtimeModel = preferredModel || process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash';
         let result = await aiInstance.models.generateContent({
             model: runtimeModel,
             contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input. KEEP OUTPUT CONCISE: one short sentence per field or 2-3 short bullets; numbers where applicable. RETURN ONLY JSON. NO EXTRA TEXT.:
@@ -1093,22 +1093,24 @@ async function getSimplifiedAIAnalysis(
         });
 
         let responseText = result.text?.trim();
+        // Debug finish reason if available
+        try { console.log('🧪 finishReason:', (result as any)?.response?.candidates?.[0]?.finishReason || (result as any)?.candidates?.[0]?.finishReason || 'n/a'); } catch {}
         console.log('🧪 AI raw length:', responseText ? responseText.length : 0);
         if (!responseText) {
             // Immediate retry with pro model and permissive safety settings
             try {
                 result = await aiInstance.models.generateContent({
-                    model: 'gemini-2.5-pro',
+                    model: process.env.GEMINI_MODEL_RETRY || 'gemini-1.5-pro',
                     contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input. KEEP OUTPUT CONCISE. RETURN ONLY JSON.`,
                     config: {
                         systemInstruction: systemInstruction,
                         responseMimeType: 'application/json',
                         temperature: 0,
                         maxOutputTokens: 1536,
-                        // safetySettings omitted for compatibility
                     }
                 });
                 responseText = result.text?.trim() || '';
+                try { console.log('🧪 Pro finishReason:', (result as any)?.response?.candidates?.[0]?.finishReason || (result as any)?.candidates?.[0]?.finishReason || 'n/a'); } catch {}
                 console.log('🧪 Pro retry raw length:', responseText.length);
             } catch {}
             if (!responseText) {
