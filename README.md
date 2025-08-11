@@ -1,3 +1,42 @@
+# Validationly – Dev Notes
+
+## Environment setup
+
+Create a `.env` in project root and add your Google API key:
+
+```
+GOOGLE_API_KEY=your_google_api_key
+```
+
+The system also accepts `API_KEY` for backward compatibility, but `GOOGLE_API_KEY` is preferred.
+
+Optional:
+
+```
+GROQ_API_KEY=your_groq_api_key
+```
+
+## Local development
+
+Run with Vercel functions to see API logs:
+
+```
+npx vercel dev
+```
+
+You will see server logs like:
+
+```
+🧪 AI raw length: 1234
+🧪 Pro retry raw length: 1100
+```
+
+## Notes
+
+- The analysis pipeline uses Gemini 2.5 (Flash/Pro). When the first call returns empty due to safety or truncation, a short Pro retry runs automatically.
+- Focus platforms are capped to 6 to control output length.
+- A GROQ bridge is available as a last resort if enabled via `GROQ_API_KEY`.
+
 # Validationly 🚀
 *Validate your startup idea before you build it — in seconds.*
 

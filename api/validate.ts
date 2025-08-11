@@ -604,9 +604,9 @@ let ai: GoogleGenAI | null = null;
 
 function getAI(): GoogleGenAI {
     if (!ai) {
-        const apiKey = process.env.API_KEY;
+        const apiKey = process.env.API_KEY || process.env.GOOGLE_API_KEY;
         if (!apiKey) {
-            throw new Error("API_KEY environment variable is not set");
+            throw new Error("Google API key is not set. Please define GOOGLE_API_KEY or API_KEY in environment.");
         }
         ai = new GoogleGenAI({ apiKey });
     }
