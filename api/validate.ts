@@ -503,17 +503,79 @@ interface DynamicPromptResult {
     scoreJustification: string;
 
     // Platform analyses from our dynamic prompt system
-    platformAnalyses: {
-        twitter: PlatformAnalysis;
-        reddit: PlatformAnalysis;
-        linkedin: PlatformAnalysis;
-    };
+    platformAnalyses: Record<string, PlatformAnalysis>;
 
     // Content suggestions
     tweetSuggestion: string;
     redditTitleSuggestion: string;
     redditBodySuggestion: string;
     linkedinSuggestion: string;
+
+    // Extended analysis sections
+    marketIntelligence?: {
+        tam: string;
+        sam: string;
+        som: string;
+        growthRate: string;
+        marketTiming: number;
+        keyTrends: string[];
+    };
+    competitiveLandscape?: {
+        directCompetitors: string[];
+        indirectCompetitors: string[];
+        marketPosition: string;
+        differentiationScore: number;
+        competitiveMoat: string;
+        entryBarriers: string;
+    };
+    revenueModel?: {
+        primaryModel: string;
+        pricePoint: string;
+        revenueStreams: string[];
+        breakEvenTimeline: string;
+        ltvCacRatio: string;
+        projectedMrr: string;
+    };
+    targetAudience?: {
+        primarySegment: string;
+        secondarySegment: string;
+        tertiarySegment: string;
+        painPoints: string[];
+        willingnessToPay: string;
+        customerAcquisitionChannels: string[];
+    };
+    riskAssessment?: {
+        technicalRisk: string;
+        marketRisk: string;
+        financialRisk: string;
+        regulatoryRisk: string;
+        overallRiskLevel: string;
+        mitigationStrategies: string[];
+    };
+    goToMarket?: {
+        phase1: string;
+        phase2: string;
+        phase3: string;
+        timeline: string;
+        budgetNeeded: string;
+        keyChannels: string[];
+    };
+    developmentRoadmap?: {
+        mvpTimeline: string;
+        betaLaunch: string;
+        publicLaunch: string;
+        keyFeatures: string[];
+        teamNeeded: string[];
+        techStack: string[];
+    };
+    productMarketFit?: {
+        problemSolutionFit: number;
+        solutionMarketFit: number;
+        earlyAdopterSignals: string;
+        retentionPrediction: string;
+        viralCoefficient: string;
+        pmfIndicators: string[];
+    };
 
     // Metadata
     promptMetadata?: {
@@ -921,8 +983,10 @@ async function getSimplifiedAIAnalysis(
         console.log('📝 System instruction length:', systemInstruction.length);
         console.log('🎯 Input content:', content);
 
-        // Language: always mirror the user's input language (any language)
-        const languageInstruction = `YOU MUST RESPOND STRICTLY IN THE SAME LANGUAGE AS THE USER INPUT. Detect the language yourself and keep 100% consistency across ALL text fields. Do not include words from any other language.`;
+        // Language: mirror the user's input language (heuristic detection)
+        const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content);
+        const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
+        const languageInstruction = `Respond ONLY in ${expectedLanguage}. Keep 100% consistency across ALL text fields. Do not include words from any other language.`;
 
         // Detect sector and get relevant platforms
         const sectors = promptManager.detectSector(content);
@@ -950,7 +1014,7 @@ async function getSimplifiedAIAnalysis(
         const runtimeModel = preferredModel || process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash';
         let result = await aiInstance.models.generateContent({
             model: runtimeModel,
-            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input. KEEP OUTPUT CONCISE: one short sentence per field or 2-3 short bullets; numbers where applicable. RETURN ONLY JSON. NO EXTRA TEXT.:
+            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. KEEP OUTPUT CONCISE: one short sentence per field or 2-3 short bullets; numbers where applicable. RETURN ONLY JSON. NO EXTRA TEXT.:
 
             📊 MARKET INTELLIGENCE (provide specific numbers):
             - TAM: Research actual market size with $ amounts
@@ -1293,7 +1357,7 @@ ${responseText.slice(0, 6000)}`,
             idea: parsedResult.idea || content,
             demandScore: Math.max(0, Math.min(100, parsedResult.demandScore || 65)),
             scoreJustification: parsedResult.scoreJustification || 'Market analysis completed',
-            language: undefined,
+            language: expectedLanguage,
             fallbackUsed: Boolean(parsedResult.fallbackUsed ?? false),
             platformAnalyses: {
                 twitter: (()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.twitter, sectors); return {
