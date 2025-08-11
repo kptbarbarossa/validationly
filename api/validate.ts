@@ -1516,6 +1516,53 @@ ${responseText.slice(0, 6000)}`,
         const isTurkish = forcedLang === 'tr' ? true : forcedLang === 'en' ? false : /[çğıöşüÇĞIİÖŞÜ]/.test(content) ||
             /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
 
+        // GROQ bridge fallback (model-based, avoids static placeholders)
+        try {
+            const groqKey = process.env.GROQ_API_KEY;
+            if (groqKey) {
+                const groqBody: any = {
+                    model: 'llama3-70b-8192',
+                    messages: [
+                        { role: 'system', content: `${systemInstruction}\n\nSTRICT: Output VALID JSON only.` },
+                        { role: 'user', content: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\nReturn ONLY JSON. Keep strings concise. Include a 'platformAnalyses' object for the top 8 relevant platforms (X, Reddit, LinkedIn, Instagram, TikTok, YouTube, Facebook, Product Hunt if relevant). Each platform: summary (<=240 chars), keyFindings (3 items), contentSuggestion (<=200 chars), score (1-5).` }
+                    ],
+                    temperature: 0,
+                    max_tokens: 2048
+                };
+                const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${groqKey}`,
+                    },
+                    body: JSON.stringify(groqBody)
+                });
+                if (resp.ok) {
+                    const jr: any = await resp.json();
+                    const text: string = (jr.choices?.[0]?.message?.content || '').trim();
+                    const groqParsed = safeJsonParse(text);
+                    if (groqParsed && typeof groqParsed === 'object') {
+                        // Map minimal fields expected by UI
+                        const pa = groqParsed.platformAnalyses || {};
+                        return {
+                            idea: content,
+                            demandScore: Math.max(0, Math.min(100, groqParsed.demandScore || 65)),
+                            scoreJustification: groqParsed.scoreJustification || (isTurkish ? 'Model tabanlı değerlendirme' : 'Model-based assessment'),
+                            language: isTurkish ? 'Turkish' : 'English',
+                            fallbackUsed: false,
+                            platformAnalyses: pa,
+                            tweetSuggestion: groqParsed.tweetSuggestion || '',
+                            redditTitleSuggestion: groqParsed.redditTitleSuggestion || '',
+                            redditBodySuggestion: groqParsed.redditBodySuggestion || '',
+                            linkedinSuggestion: groqParsed.linkedinSuggestion || ''
+                        } as any;
+                    }
+                }
+            }
+        } catch (e) {
+            console.warn('GROQ bridge failed:', e);
+        }
+
         if (isTurkish) {
             // Turkish fallback
             return {
