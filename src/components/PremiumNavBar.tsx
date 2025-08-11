@@ -67,6 +67,18 @@ const PremiumNavBar: React.FC = () => {
           {/* Right: CTAs */}
           <div className="flex items-center gap-2 pr-2">
             <a
+              href="https://apps.shopify.com/shhhh-pricing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-emerald-200 hover:text-emerald-100 hover:bg-white/10 transition-colors"
+              aria-label="Shhhh Pricing – Shopify App"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="opacity-90">
+                <path d="M6 7l1.2-2.4A2 2 0 0 1 9 3h6a2 2 0 0 1 1.8 1.2L18 7h2a1 1 0 1 1 0 2h-1l-1.2 9.6A2 2 0 0 1 15.82 21H8.18a2 2 0 0 1-1.98-2.4L5 9H4a1 1 0 1 1 0-2h2zm3-2l-.5 1h7l-.5-1H9z" fill="currentColor"/>
+              </svg>
+              <span className="hidden lg:inline">Shhhh Pricing</span>
+            </a>
+            <a
               href="https://x.com/kptbarbarossa"
               target="_blank"
               rel="noopener noreferrer"
@@ -140,6 +152,15 @@ const PremiumNavBar: React.FC = () => {
                   {item.label}
                 </Link>
               ))}
+              <a
+                href="https://apps.shopify.com/shhhh-pricing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 px-3 py-3 rounded-full text-emerald-200 hover:text-emerald-100 hover:bg-white/10"
+                onClick={() => setIsOpen(false)}
+              >
+                Shhhh Pricing
+              </a>
               <a
                 href="https://x.com/kptbarbarossa"
                 target="_blank"
