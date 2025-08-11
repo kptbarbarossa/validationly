@@ -1088,13 +1088,7 @@ async function getSimplifiedAIAnalysis(
                 responseMimeType: "application/json",
                 temperature: 0,
                 maxOutputTokens: 1536,
-                // Reduce the chance of empty responses due to safety filters
-                safetySettings: [
-                    { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
-                    { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-                    { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-                    { category: 'HARM_CATEGORY_SEXUAL_CONTENT', threshold: 'BLOCK_NONE' }
-                ],
+                // Note: safetySettings categories vary by SDK version; omit to avoid INVALID_ARGUMENT
             }
         });
 
@@ -1111,12 +1105,7 @@ async function getSimplifiedAIAnalysis(
                         responseMimeType: 'application/json',
                         temperature: 0,
                         maxOutputTokens: 1536,
-                        safetySettings: [
-                            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
-                            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
-                            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
-                            { category: 'HARM_CATEGORY_SEXUAL_CONTENT', threshold: 'BLOCK_NONE' }
-                        ],
+                        // safetySettings omitted for compatibility
                     }
                 });
                 responseText = result.text?.trim() || '';
