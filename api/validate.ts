@@ -1488,7 +1488,7 @@ ${responseText.slice(0, 6000)}`,
                     model: 'llama3-70b-8192',
                     messages: [
                         { role: 'system', content: `${systemInstruction}\n\nSTRICT: Output VALID JSON only.` },
-                        { role: 'user', content: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\nReturn ONLY JSON. Keep strings concise. Include a 'platformAnalyses' object for the top 8 relevant platforms (X, Reddit, LinkedIn, Instagram, TikTok, YouTube, Facebook, Product Hunt if relevant). Each platform: summary (<=240 chars), keyFindings (3 items), contentSuggestion (<=200 chars), score (1-5).` }
+                        { role: 'user', content: `ANALYZE THIS STARTUP IDEA: "${content}"\n\nReturn ONLY JSON. Keep strings concise. Include a 'platformAnalyses' object for up to 6 relevant platforms (X, Reddit, LinkedIn, etc). Each platform: summary (<=200 chars), keyFindings (3 items), contentSuggestion (<=160 chars), score (1-5).` }
                     ],
                     temperature: 0,
                     max_tokens: 2048
