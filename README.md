@@ -2,18 +2,21 @@
 
 ## Environment setup
 
-Create a `.env` in project root and add your Google API key:
+Create a `.env` in project root and add your keys:
 
 ```
+# Google Gemini (primary)
 GOOGLE_API_KEY=your_google_api_key
-```
+# Optional: backward compatibility
+API_KEY=your_google_api_key
 
-The system also accepts `API_KEY` for backward compatibility, but `GOOGLE_API_KEY` is preferred.
+# Model selection (defaults)
+GEMINI_MODEL_PRIMARY=gemini-1.5-flash
+GEMINI_MODEL_RETRY=gemini-1.5-pro
 
-Optional:
-
-```
+# Optional providers for multi-system fallback
 GROQ_API_KEY=your_groq_api_key
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 ## Local development
@@ -36,6 +39,7 @@ You will see server logs like:
 - The analysis pipeline uses Gemini 2.5 (Flash/Pro). When the first call returns empty due to safety or truncation, a short Pro retry runs automatically.
 - Focus platforms are capped to 6 to control output length.
 - A GROQ bridge is available as a last resort if enabled via `GROQ_API_KEY`.
+- OpenAI can be enabled in the future by adding `OPENAI_API_KEY` (not required).
 
 # Validationly 🚀
 *Validate your startup idea before you build it — in seconds.*

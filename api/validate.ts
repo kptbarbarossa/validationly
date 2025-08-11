@@ -604,7 +604,7 @@ let ai: GoogleGenAI | null = null;
 
 function getAI(): GoogleGenAI {
     if (!ai) {
-        const apiKey = process.env.API_KEY || process.env.GOOGLE_API_KEY;
+        const apiKey = process.env.GOOGLE_API_KEY || process.env.API_KEY;
         if (!apiKey) {
             throw new Error("Google API key is not set. Please define GOOGLE_API_KEY or API_KEY in environment.");
         }
@@ -833,7 +833,7 @@ export default async function handler(req: any, res: any) {
         const preferredModel = typeof model === 'string' && allowedModels.includes(model) ? model : undefined;
 
         // Use simplified analysis approach with dynamic prompts
-        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang, preferredModel, weightsVariant);
+        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang, preferredModel, weightsVariant, { morePlatforms: Boolean(req.body?.morePlatforms) });
 
         console.log('✅ Dynamic prompt analysis completed successfully');
         console.log('📊 Result structure:', Object.keys(result));
@@ -858,7 +858,8 @@ async function getSimplifiedAIAnalysis(
     systemInstruction: string,
     forcedLang?: 'tr'|'en',
     preferredModel?: string,
-    weightsVariant?: string
+    weightsVariant?: string,
+    options?: { morePlatforms?: boolean }
 ): Promise<DynamicPromptResult> {
     // Helper: robust JSON parsing with light repairs
     const safeJsonParse = (rawText: string): any => {
