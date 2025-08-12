@@ -71,12 +71,9 @@ const PremiumNavBar: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-emerald-200 hover:text-emerald-100 hover:bg-white/10 transition-colors"
-              aria-label="Shhhh Pricing – Shopify App"
+              aria-label="B2B App – Shopify"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="opacity-90">
-                <path d="M6 7l1.2-2.4A2 2 0 0 1 9 3h6a2 2 0 0 1 1.8 1.2L18 7h2a1 1 0 1 1 0 2h-1l-1.2 9.6A2 2 0 0 1 15.82 21H8.18a2 2 0 0 1-1.98-2.4L5 9H4a1 1 0 1 1 0-2h2zm3-2l-.5 1h7l-.5-1H9z" fill="currentColor"/>
-              </svg>
-              <span className="hidden lg:inline">Shhhh Pricing</span>
+              <span className="hidden lg:inline">B2B App</span>
             </a>
             <a
               href="https://x.com/kptbarbarossa"
@@ -98,7 +95,7 @@ const PremiumNavBar: React.FC = () => {
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
             >
               <span className="text-lg">☕</span>
-              <span className="hidden sm:inline font-medium">Support</span>
+              <span className="hidden sm:inline font-medium">Buy Me A Coffee</span>
             </a>
 
             {/* Mobile menu button */}
@@ -159,7 +156,7 @@ const PremiumNavBar: React.FC = () => {
                 className="mt-1 px-3 py-3 rounded-full text-emerald-200 hover:text-emerald-100 hover:bg-white/10"
                 onClick={() => setIsOpen(false)}
               >
-                Shhhh Pricing
+                B2B App
               </a>
               <a
                 href="https://x.com/kptbarbarossa"
@@ -177,8 +174,8 @@ const PremiumNavBar: React.FC = () => {
                 className="mt-2 mb-2 inline-flex items-center justify-center gap-2 px-3 py-3 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10"
                 onClick={() => setIsOpen(false)}
               >
-                <span className="text-lg">☕</span>
-                <span className="font-medium">Support</span>
+              <span className="text-lg">☕</span>
+              <span className="font-medium">Buy Me A Coffee</span>
               </a>
             </nav>
           </div>
