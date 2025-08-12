@@ -275,6 +275,77 @@ const ResultsPage: React.FC = () => {
         .map(x => x.def);
     const visiblePlatformDefs = showAllPlatforms ? sortedPlatformDefs : sortedPlatformDefs.slice(0, 8);
 
+    // Build concise bullet summary for quick scan
+    const buildSummaryBullets = (): string[] => {
+        const bullets: string[] = [];
+        const topPlatforms = sortedPlatformDefs.slice(0, 3).map(p => p.label).join(', ');
+        const mi = result.marketIntelligence as any;
+        const cl = result.competitiveLandscape as any;
+        const rm = result.revenueModel as any;
+        const ra = result.riskAssessment as any;
+        const gtm = result.goToMarket as any;
+
+        bullets.push(
+            isTR
+                ? `Talep skoru: ${result.demandScore}/100 — ${status.text}`
+                : `Demand score: ${result.demandScore}/100 — ${status.text}`
+        );
+
+        if (sortedPlatformDefs.length > 0) {
+            bullets.push(
+                isTR
+                    ? `En uygun platformlar: ${topPlatforms}`
+                    : `Best-fit platforms: ${topPlatforms}`
+            );
+        }
+
+        if (mi?.tam || mi?.sam) {
+            const sized = [mi?.tam, mi?.sam].filter(Boolean).join(' | ');
+            bullets.push(
+                isTR ? `Pazar boyutu: ${sized}` : `Market size: ${sized}`
+            );
+        }
+
+        if (cl?.marketPosition) {
+            bullets.push(
+                isTR ? `Konumlandırma: ${cl.marketPosition}` : `Positioning: ${cl.marketPosition}`
+            );
+        }
+
+        if (rm?.primaryModel || rm?.pricePoint) {
+            const monet = [rm?.primaryModel, rm?.pricePoint].filter(Boolean).join(' • ');
+            bullets.push(
+                isTR ? `Monetizasyon: ${monet}` : `Monetization: ${monet}`
+            );
+        }
+
+        if (ra) {
+            const riskItems: string[] = [];
+            const addIf = (label: string, val?: string) => {
+                if (!val) return;
+                const v = String(val).toLowerCase();
+                if (v.includes('high') || v.includes('yüksek') || v === 'medium' || v === 'orta') riskItems.push(label);
+            };
+            addIf(isTR ? 'Teknik' : 'Technical', ra.technicalRisk);
+            addIf(isTR ? 'Pazar' : 'Market', ra.marketRisk);
+            addIf(isTR ? 'Finansal' : 'Financial', ra.financialRisk);
+            addIf(isTR ? 'Regülasyon' : 'Regulatory', ra.regulatoryRisk);
+            if (riskItems.length > 0) {
+                bullets.push(
+                    isTR ? `Öne çıkan riskler: ${riskItems.join(', ')}` : `Key risks: ${riskItems.join(', ')}`
+                );
+            }
+        }
+
+        if (gtm?.phase1) {
+            bullets.push(
+                isTR ? `Sonraki adım: ${gtm.phase1}` : `Next step: ${gtm.phase1}`
+            );
+        }
+
+        return bullets.filter(Boolean);
+    };
+
     const chunk = <T,>(arr: T[], size: number): T[][] => {
         const out: T[][] = [];
         for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
@@ -718,6 +789,19 @@ const ResultsPage: React.FC = () => {
                                 "{result.content || result.idea}"
                             </div>
                         </div>
+                    </div>
+
+                    {/* Summary Bullets */}
+                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10 max-w-3xl mx-auto mb-6 animate-slide-up">
+                        <h2 className="text-lg font-semibold text-white mb-3 text-center">{isTR ? 'Özet Analiz' : 'Summary Analysis'}</h2>
+                        <ul className="space-y-2 text-sm text-slate-200">
+                            {buildSummaryBullets().map((line, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                    <span className="text-indigo-300 mt-0.5">•</span>
+                                    <span>{line}</span>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
 
                     {/* Social Media Platform Analysis */}
