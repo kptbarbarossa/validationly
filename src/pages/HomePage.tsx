@@ -282,18 +282,21 @@ const HomePage: React.FC = () => {
                             <button
                                     type="button"
                                     onClick={async () => {
+                                        if (isLoading) return;
+                                        setIsLoading(true);
                                         const enhanced = await enhancePromptRemotely(userInput.idea);
                                         if (enhanced) {
                                             // Fill enhanced prompt into textarea (placeholder-like behavior)
                                             const validation = validateInput(enhanced);
                                             setUserInput(validation);
                                         }
+                                        setIsLoading(false);
                                     }}
-                                className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
+                                className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isLoading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} animate-[pulse_1.8s_ease-in-out_infinite]`}
                                     aria-label="Enhance prompt"
                                     title="Enhance prompt"
                                 >
-                                    ✨ Enhance
+                                    {isLoading ? 'Enhancing…' : '✨ Enhance'}
                                 </button>
                             </div>
                             <textarea

@@ -42,7 +42,7 @@ const PremiumNavBar: React.FC = () => {
           </button>
 
           {/* Center: Nav items (desktop) */}
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="hidden md:flex flex-1 items-center justify-center gap-2">
             {navItems.map((item) => (
               <Link
                 key={item.to}
@@ -73,7 +73,7 @@ const PremiumNavBar: React.FC = () => {
               className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-emerald-200 hover:text-emerald-100 hover:bg-white/10 transition-colors"
               aria-label="B2B App – Shopify"
             >
-              <span className="hidden lg:inline">B2B App</span>
+              <span className="hidden lg:inline text-xs sm:text-sm">B2B App</span>
             </a>
             <a
               href="https://x.com/kptbarbarossa"
@@ -85,7 +85,7 @@ const PremiumNavBar: React.FC = () => {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="opacity-90">
                 <path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
-              <span className="hidden lg:inline">Feedback</span>
+              <span className="hidden lg:inline text-xs sm:text-sm">Feedback</span>
             </a>
 
             <a
@@ -94,8 +94,8 @@ const PremiumNavBar: React.FC = () => {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
             >
-              <span className="text-lg">☕</span>
-              <span className="hidden sm:inline font-medium">Buy me a coffee</span>
+              <span className="text-base">☕</span>
+              <span className="hidden sm:inline font-medium text-xs sm:text-sm">Buy me a coffee</span>
             </a>
 
             {/* Mobile menu button */}

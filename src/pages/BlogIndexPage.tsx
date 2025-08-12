@@ -10,7 +10,19 @@ const posts = [
 const BlogIndexPage: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-10 text-slate-100">
-      <SEOHead title="Blog - Validationly" description="Notes on validation, growth, and prompting tips." />
+      <SEOHead
+        title="Blog - Validationly | Startup Idea Validation, Go-to-Market, Prompting"
+        description="Actionable articles on startup idea validation, demand testing, go-to-market strategies, platform signal analysis (X/Reddit/LinkedIn), and AI prompting patterns."
+        keywords="startup blog, idea validation blog, go-to-market strategy, product-market-fit, demand testing, platform signals, AI prompting, growth loops"
+      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Blog',
+        name: 'Validationly Blog',
+        url: 'https://validationly.com/blog',
+        description: 'Articles on startup validation, demand testing, and GTM.',
+        inLanguage: 'en'
+      }) }} />
       <h1 className="text-3xl font-bold mb-6">Blog</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {posts.map(p => (
