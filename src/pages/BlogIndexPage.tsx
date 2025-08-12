@@ -3,8 +3,18 @@ import { Link } from 'react-router-dom';
 import SEOHead from '../components/SEOHead';
 
 const posts = [
-  { slug: 'saas-fikri-nasil-validate-edilir', title: 'How to validate a SaaS idea (step by step)', desc: 'A practical validation workflow and metrics for SaaS.', date: '2025-08-01' },
-  { slug: '24-saatte-idea-validation', title: 'Idea validation in 24 hours — mini case study', desc: 'How we tested a real idea in 24 hours.', date: '2025-08-02' },
+  { slug: 'saas-idea-validation-guide', title: 'SaaS Idea Validation: A Step‑by‑Step Guide', desc: 'Fast market signals, ICP, hypothesis → experiment.', date: '2025-08-03' },
+  { slug: 'validate-idea-in-24-hours', title: 'Validate an Idea in 24 Hours: Workflow and Metrics', desc: 'A 1‑day practical process with measurable KPIs.', date: '2025-08-03' },
+  { slug: 'read-demand-signals-social-platforms', title: 'Reading Demand Signals on X, Reddit, and LinkedIn', desc: 'How to read platform‑specific signals with examples.', date: '2025-08-03' },
+  { slug: 'gtm-first-90-days', title: 'Go‑to‑Market Playbook: First 90 Days (B2B/B2C)', desc: 'Channels, messaging, experiment matrix, KPIs.', date: '2025-08-03' },
+  { slug: 'product-market-fit-metrics', title: 'Product‑Market Fit: Measurable Indicators That Matter', desc: 'PMF surveys, retention proxies, NPS/WAU/MAU.', date: '2025-08-03' },
+  { slug: 'micro-landing-validation', title: 'Validation with a Micro‑Landing Page + Form', desc: 'One‑pager offer hierarchy and A/B messaging.', date: '2025-08-03' },
+  { slug: 'pricing-validation-fast-tests', title: 'Pricing Validation: Fast, Value‑Based Tests', desc: 'Van Westendorp quick guide, light surveys, paywalls.', date: '2025-08-03' },
+  { slug: 'two-week-content-sprint', title: 'Content‑Led Validation: A 2‑Week Content Sprint', desc: 'Topic clusters, intent mapping, CTA‑driven articles.', date: '2025-08-03' },
+  { slug: 'b2b-discovery-templates', title: 'B2B Pre‑Sales Validation: Discovery Call Templates', desc: 'Discovery question sets, note templates, signal reading.', date: '2025-08-03' },
+  { slug: 'nocode-validation-without-mvp', title: 'No‑Code Validation Without an MVP', desc: 'No‑code tool stacks and demo flows to test demand.', date: '2025-08-03' },
+  { slug: '60-minute-competitor-analysis', title: '60‑Minute Competitor Analysis Framework', desc: 'Alternatives matrix and a positioning sentence.', date: '2025-08-03' },
+  { slug: 'community-first-users', title: 'First Users with Zero Budget: Community Strategies', desc: 'Niche community mapping and value‑add posting playbook.', date: '2025-08-03' },
 ];
 
 const BlogIndexPage: React.FC = () => {
