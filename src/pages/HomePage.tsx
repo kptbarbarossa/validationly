@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Direct API call - no service layer needed
 import type { DynamicPromptResult, UserInput } from '../types';
-import LoadingSpinner from '../components/LoadingSpinner';
+// import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
@@ -84,10 +84,10 @@ const HomePage: React.FC = () => {
     const [userInput, setUserInput] = useState<UserInput>({
         idea: '',
         isValid: false,
-        errorMessage: undefined
+        errorMessage: '' as unknown as string // exactOptionalPropertyTypes workaround
     });
     const [isLoading, setIsLoading] = useState(false);
-    const [enhancedPrompt, setEnhancedPrompt] = useState(false);
+    // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { trackEvent, trackValidation } = useAnalytics();
@@ -159,7 +159,7 @@ const HomePage: React.FC = () => {
 
         try {
             // Direct API call to our dynamic prompt system
-            const ideaPayload = enhancedPrompt ? buildEnhancedIdea(userInput.idea) : userInput.idea;
+            const ideaPayload = userInput.idea;
             const response = await fetch('/api/validate', {
                 method: 'POST',
                 headers: {
@@ -349,7 +349,7 @@ const HomePage: React.FC = () => {
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {sampleCategories.map((category, index) => (
+                    {sampleCategories.map((category) => (
                         <div
                             key={category.name}
                             className="group rounded-2xl glass glass-border p-6 hover:border-white/15 transition-all duration-300 cursor-pointer transform hover:-translate-y-1 hover:shadow-xl"

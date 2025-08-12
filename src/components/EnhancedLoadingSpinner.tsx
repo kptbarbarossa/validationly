@@ -20,10 +20,11 @@ const EnhancedLoadingSpinner: React.FC = () => {
         if (currentStepIndex < analysisSteps.length - 1) {
             const timer = setTimeout(() => {
                 setCurrentStepIndex(prev => prev + 1);
-            }, analysisSteps[currentStepIndex].duration);
+            }, analysisSteps[currentStepIndex]?.duration ?? 2000);
 
             return () => clearTimeout(timer);
         }
+        return undefined;
     }, [currentStepIndex]);
 
     const currentStep = analysisSteps[currentStepIndex];
@@ -40,10 +41,10 @@ const EnhancedLoadingSpinner: React.FC = () => {
                         />
                     </div>
                     <h3 className="text-lg font-semibold text-white mb-2">
-                        {currentStep.title}
+                        {currentStep?.title ?? ''}
                     </h3>
                     <p className="text-slate-300 text-sm">
-                        {currentStep.description}
+                        {currentStep?.description ?? ''}
                     </p>
                 </div>
 

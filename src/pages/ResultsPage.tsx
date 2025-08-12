@@ -3,37 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import type { DynamicPromptResult } from '../types';
 import SEOHead from '../components/SEOHead';
 
-// Minimalist Premium Icons
-const HomeIcon = () => (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-    </svg>
-);
-
-const ChartIcon = () => (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-    </svg>
-);
-
-const BookmarkIcon = () => (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-    </svg>
-);
-
-const SettingsIcon = () => (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-    </svg>
-);
-
-const HelpIcon = () => (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-);
+// Minimalist Premium Icons - removed unused variants to satisfy TS
 
 // Platform Icons
 const XIcon = () => (
@@ -126,11 +96,12 @@ const TrendUpIcon = () => (
     </svg>
 );
 
-const InfoIcon = () => (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+// const InfoIcon = () => (
+//     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+//     </svg>
+// );
 
 // New sector-specific platform icons (Phase 2)
 const StackOverflowIcon = () => (
@@ -162,12 +133,12 @@ const ResultsPage: React.FC = () => {
     const navigate = useNavigate();
     const result = location.state?.result as DynamicPromptResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
-    const [isVisible, setIsVisible] = useState(false);
+    const [, forceRerender] = useState(0);
 
     // Animation trigger
     useEffect(() => {
-        const timer = setTimeout(() => setIsVisible(true), 100);
-        return () => clearTimeout(timer);
+        // initial animations were removed; no-op
+        return undefined;
     }, []);
 
     const getOverallStatus = (score: number) => {
@@ -201,8 +172,7 @@ const ResultsPage: React.FC = () => {
         }
         window.scrollTo(0, 0);
 
-        // Trigger animations after component mount
-        setTimeout(() => setIsVisible(true), 100);
+        // Trigger re-render no longer needed
     }, [result, navigate]);
 
     if (!result) {
@@ -223,80 +193,22 @@ const ResultsPage: React.FC = () => {
     const isTR = ((result as any)?.language || '').toLowerCase().includes('turk');
 
     // Map score to width classes (5% steps) to avoid inline styles
-    const widthClassMap: Record<number, string> = {
-        0: 'w-0', 5: 'w-[5%]', 10: 'w-[10%]', 15: 'w-[15%]', 20: 'w-[20%]',
-        25: 'w-[25%]', 30: 'w-[30%]', 35: 'w-[35%]', 40: 'w-[40%]', 45: 'w-[45%]',
-        50: 'w-[50%]', 55: 'w-[55%]', 60: 'w-[60%]', 65: 'w-[65%]', 70: 'w-[70%]',
-        75: 'w-[75%]', 80: 'w-[80%]', 85: 'w-[85%]', 90: 'w-[90%]', 95: 'w-[95%]',
-        100: 'w-[100%]'
-    };
+    // Width class map kept for potential future progress UI
+    // const widthClassMap: Record<number, string> = {
+    //     0: 'w-0', 5: 'w-[5%]', 10: 'w-[10%]', 15: 'w-[15%]', 20: 'w-[20%]',
+    //     25: 'w-[25%]', 30: 'w-[30%]', 35: 'w-[35%]', 40: 'w-[40%]', 45: 'w-[45%]',
+    //     50: 'w-[50%]', 55: 'w-[55%]', 60: 'w-[60%]', 65: 'w-[65%]', 70: 'w-[70%]',
+    //     75: 'w-[75%]', 80: 'w-[80%]', 85: 'w-[85%]', 90: 'w-[90%]', 95: 'w-[95%]',
+    //     100: 'w-[100%]'
+    // };
     // Safelist for Tailwind JIT (do not remove)
-    const TAILWIND_WIDTH_SAFELIST = 'w-0 w-[5%] w-[10%] w-[15%] w-[20%] w-[25%] w-[30%] w-[35%] w-[40%] w-[45%] w-[50%] w-[55%] w-[60%] w-[65%] w-[70%] w-[75%] w-[80%] w-[85%] w-[90%] w-[95%] w-[100%]';
-    const getProgressWidthClass = (score: number): string => {
-        const clamped = Math.max(0, Math.min(100, Math.round(score / 5) * 5));
-        return widthClassMap[clamped as keyof typeof widthClassMap] || 'w-0';
-    };
+    // const TAILWIND_WIDTH_SAFELIST = 'w-0 w-[5%] w-[10%] w-[15%] w-[20%] w-[25%] w-[30%] w-[35%] w-[40%] w-[45%] w-[50%] w-[55%] w-[60%] w-[65%] w-[70%] w-[75%] w-[80%] w-[85%] w-[90%] w-[95%] w-[100%]';
+    // const getProgressWidthClass = (score: number): string => {
+    //     const clamped = Math.max(0, Math.min(100, Math.round(score / 5) * 5));
+    //     return widthClassMap[clamped as keyof typeof widthClassMap] || 'w-0';
+    // };
 
-    // Platform icon mapping function
-    const getPlatformIcon = (platformName: string) => {
-        const name = platformName.toLowerCase();
-        switch (name) {
-            // Core platforms
-            case 'twitter': case 'x': return <XIcon />;
-            case 'reddit': return <RedditIcon />;
-            case 'linkedin': return <div className="w-4 h-4 bg-blue-600 rounded text-white text-xs flex items-center justify-center font-bold">in</div>;
-            
-            // Social platforms
-            case 'instagram': return <InstagramIcon />;
-            case 'tiktok': return <TikTokIcon />;
-            case 'youtube': return <YouTubeIcon />;
-            case 'facebook': return <FacebookIcon />;
-            
-            // Tech & startup platforms
-            case 'product hunt': case 'producthunt': return <ProductHuntIcon />;
-            case 'hacker news': case 'hackernews': return <HackerNewsIcon />;
-            case 'medium': return <MediumIcon />;
-            case 'discord': return <DiscordIcon />;
-            case 'github': return <GitHubIcon />;
-            case 'stack overflow': case 'stackoverflow': return <StackOverflowIcon />;
-            
-            // Phase 2 platforms
-            case 'pinterest': return <PinterestIcon />;
-            case 'angellist': return <AngelListIcon />;
-            case 'crunchbase': return <CrunchbaseIcon />;
-            case 'dribbble': return <DribbbleIcon />;
-            case 'behance': return <BehanceIcon />;
-            case 'figma community': case 'figma': return <FigmaIcon />;
-            
-            // Phase 3 - Professional & Business
-            case 'slack communities': case 'slack': return <SlackIcon />;
-            case 'clubhouse': return <ClubhouseIcon />;
-            case 'substack': return <SubstackIcon />;
-            case 'notion community': case 'notion': return <NotionIcon />;
-            
-            // Phase 3 - Developer & Tech
-            case 'dev.to': case 'devto': return <DevToIcon />;
-            case 'hashnode': return <HashnodeIcon />;
-            case 'gitlab': return <GitLabIcon />;
-            case 'codepen': return <CodePenIcon />;
-            case 'indie hackers': case 'indiehackers': return <IndieHackersIcon />;
-            
-            // Phase 3 - Creative & Design
-            case 'awwwards': return <AwwwardsIcon />;
-            case '99designs': case 'designs99': return <Designs99Icon />;
-            case 'canva community': case 'canva': return <CanvaIcon />;
-            case 'adobe community': case 'adobe': return <AdobeIcon />;
-            case 'unsplash': return <UnsplashIcon />;
-            
-            // Phase 3 - E-commerce & Retail
-            case 'etsy': return <EtsyIcon />;
-            case 'amazon seller central': case 'amazon': return <AmazonIcon />;
-            case 'shopify community': case 'shopify': return <ShopifyIcon />;
-            case 'woocommerce': return <WooCommerceIcon />;
-            
-            default: return <div className="w-4 h-4 bg-gray-400 rounded"></div>;
-        }
-    };
+    // Platform icon mapping function removed (icons assigned inline in PLATFORM_DEFS)
 
     // All results are now from dynamic prompt system
     type PlatformKey = keyof DynamicPromptResult['platformAnalyses'];
@@ -834,7 +746,7 @@ const ResultsPage: React.FC = () => {
                                                 const extra = (data?.platformAnalyses) || {};
                                                 // merge
                                                 (result as any).platformAnalyses = { ...(result as any).platformAnalyses, ...extra };
-                                                setIsVisible(x => !x); setIsVisible(x => !x); // trigger re-render
+                                                forceRerender(v => v + 1);
                                             }
                                         } finally {
                                             setIsLoadingMore(false);

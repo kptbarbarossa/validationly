@@ -54,7 +54,7 @@ export const useAnalytics = () => {
     });
   };
 
-  const trackSocialShare = (platform: string, content: string) => {
+  const trackSocialShare = (platform: string, _content: string) => {
     trackEvent('social_share', {
       event_category: 'social',
       event_label: platform,

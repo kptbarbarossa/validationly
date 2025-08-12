@@ -342,7 +342,7 @@ export enum IndustryCategory {
 }
 
 // Risk Assessment Types
-export type RiskLevel = 'Low' | 'Medium' | 'High';
+// Duplicate definition removed; use the unified RiskLevel above
 
 export interface RiskAssessment {
   level: RiskLevel;
