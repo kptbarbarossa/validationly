@@ -8,6 +8,7 @@ import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import SEOHead from '../components/SEOHead';
+import ShhhhPricingBlock from '../components/ShhhhPricingBlock';
 
 const sampleCategories = [
     {
@@ -296,7 +297,7 @@ const HomePage: React.FC = () => {
                                 className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isEnhancing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${!isEnhancing ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`}
                                     aria-label="Enhance prompt"
                                     title="Enhance prompt"
-                                    aria-busy={isEnhancing}
+                                    
                                     disabled={isEnhancing || isLoading}
                                 >
                                     {isEnhancing ? (
@@ -389,6 +390,7 @@ const HomePage: React.FC = () => {
                     ))}
                 </div>
             </div>
+            <ShhhhPricingBlock />
         </div>
         </>
     );
