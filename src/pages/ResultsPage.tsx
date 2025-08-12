@@ -258,7 +258,16 @@ const ResultsPage: React.FC = () => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
         const a = platformAnalysesObj?.[def.key];
-        return Boolean(a && (typeof a.summary === 'string' ? a.summary.trim().length > 0 : true));
+        const hasNonEmptyString = (s: unknown) => typeof s === 'string' && s.trim().length > 0;
+        const hasData = Boolean(
+            a && (
+                hasNonEmptyString(a.summary) ||
+                (Array.isArray(a.keyFindings) && a.keyFindings.length > 0) ||
+                hasNonEmptyString(a.contentSuggestion) ||
+                (typeof a.score === 'number' && a.score > 0)
+            )
+        );
+        return hasData;
     });
     const sortedPlatformDefs = availablePlatformDefs
         .map(def => ({ def, score: Math.max(1, Math.min(5, Number(platformAnalysesObj?.[def.key]?.score || 0))) }))
