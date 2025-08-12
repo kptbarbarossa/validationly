@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    { "source": "/((?!api|_next|.*\\.).*)", "destination": "/index.html" }
+  ],
+  "redirects": [
+    { "source": "/www.validationly.com/(.*)", "destination": "https://validationly.com/$1", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -7,62 +13,8 @@
         { "key": "X-Frame-Options", "value": "DENY" },
         { "key": "X-XSS-Protection", "value": "1; mode=block" },
         { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Strict-Transport-Security", "value": "max-age=31536000; includeSubDomains" },
         { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'" }
-      ]
-    }
-  ],
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
-}
-{
-  "rewrites": [
-    {
-      "source": "/((?!api|_next|.*\\.).*)$",
-      "destination": "/index.html"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/www.validationly.com/(.*)",
-      "destination": "https://validationly.com/$1",
-      "permanent": true
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)\\.(css)$",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "text/css"
-        }
-      ]
-    },
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        },
-        {
-          "key": "X-Frame-Options",
-          "value": "DENY"
-        },
-        {
-          "key": "X-XSS-Protection",
-          "value": "1; mode=block"
-        },
-        {
-          "key": "Referrer-Policy",
-          "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains"
-        }
       ]
     }
   ]
