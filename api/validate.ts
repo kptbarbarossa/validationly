@@ -51,6 +51,30 @@ class PromptManager {
         offline: [
             'retail', 'store', 'brick and mortar', 'restaurant', 'cafe', 'gym', 'clinic', 'salon', 'venue',
             'foot traffic', 'lease', 'inventory', 'supplier', 'logistics', 'delivery', 'warehouse', 'operations'
+        ],
+        health: [
+            'health', 'medical', 'clinic', 'hospital', 'telemedicine', 'wellness', 'mental health', 'fitness', 'hipaa', 'patient', 'doctor', 'pharma'
+        ],
+        education: [
+            'education', 'edtech', 'course', 'learning', 'lms', 'teacher', 'student', 'tutor', 'curriculum', 'exam', 'assessment'
+        ],
+        content: [
+            'content', 'media', 'creator', 'newsletter', 'video', 'podcast', 'publishing', 'ugc', 'influencer', 'subscriptions'
+        ],
+        b2b: [
+            'b2b services', 'consulting', 'agency', 'outsourcing', 'lead gen', 'crm implementation', 'support desk', 'professional services'
+        ],
+        travel: [
+            'travel', 'hotel', 'hospitality', 'booking', 'tourism', 'airline', 'rental', 'itinerary'
+        ],
+        food: [
+            'restaurant', 'food delivery', 'grocery', 'catering', 'recipe', 'kitchen', 'menu', 'franchise'
+        ],
+        realestate: [
+            'real estate', 'property', 'broker', 'mortgage', 'rental', 'listing', 'zillow', 'airbnb'
+        ],
+        energy_iot: [
+            'iot', 'sensor', 'smart home', 'energy', 'solar', 'ev', 'battery', 'grid', 'meter'
         ]
     };
 
@@ -64,6 +88,14 @@ class PromptManager {
         mobile: string[];
         hardware: string[];
         offline: string[];
+        health: string[];
+        education: string[];
+        content: string[];
+        b2b: string[];
+        travel: string[];
+        food: string[];
+        realestate: string[];
+        energy_iot: string[];
     } = {
         saas: ['github', 'stackoverflow', 'producthunt', 'hackernews', 'slack', 'devto', 'hashnode', 'gitlab', 'indiehackers'],
         ecommerce: ['instagram', 'tiktok', 'pinterest', 'facebook', 'etsy', 'amazon', 'shopify', 'woocommerce'],
@@ -72,7 +104,15 @@ class PromptManager {
         marketplace: ['producthunt', 'angellist', 'crunchbase', 'linkedin', 'indiehackers', 'etsy'],
         mobile: ['producthunt', 'github', 'reddit', 'hackernews', 'devto', 'indiehackers'],
         hardware: ['youtube', 'reddit', 'producthunt', 'github', 'hackernews', 'instagram'],
-        offline: ['instagram', 'tiktok', 'facebook', 'youtube', 'pinterest', 'reddit']
+        offline: ['instagram', 'tiktok', 'facebook', 'youtube', 'pinterest', 'reddit'],
+        health: ['linkedin', 'reddit', 'youtube', 'substack'],
+        education: ['youtube', 'linkedin', 'substack', 'reddit'],
+        content: ['youtube', 'tiktok', 'instagram', 'substack'],
+        b2b: ['linkedin', 'slack', 'notion', 'producthunt'],
+        travel: ['instagram', 'youtube', 'reddit'],
+        food: ['instagram', 'tiktok', 'youtube'],
+        realestate: ['instagram', 'youtube', 'facebook', 'reddit'],
+        energy_iot: ['github', 'reddit', 'linkedin', 'producthunt']
     };
 
     private analysisKeywords = {
@@ -87,6 +127,27 @@ class PromptManager {
         monetization: [
             'revenue', 'monetize', 'pricing', 'business model', 'subscription',
             'freemium', 'ads', 'commission', 'fee', 'profit', 'income', 'earn'
+        ],
+        regulation: [
+            'license', 'licensing', 'compliance', 'gdpr', 'ccpa', 'hipaa', 'pci', 'regulation', 'policy', 'legal'
+        ],
+        operations: [
+            'operations', 'ops', 'fulfillment', 'support', 'onboarding', 'sla', 'staffing', 'process', 'qa', 'qc'
+        ],
+        distribution: [
+            'channel', 'distribution', 'partnership', 'affiliate', 'reseller', 'marketplace', 'seo', 'sem', 'paid ads'
+        ],
+        unit_economics: [
+            'margin', 'cogs', 'gross margin', 'capex', 'opex', 'unit economics', 'cac', 'ltv', 'payback'
+        ],
+        supply_chain: [
+            'supply chain', 'vendor', 'moq', 'lead time', 'logistics', 'warehouse', 'inventory', 'freight'
+        ],
+        virality: [
+            'virality', 'k-factor', 'word of mouth', 'referral', 'ugc', 'creator', 'influencer'
+        ],
+        network_effects: [
+            'network effects', 'two-sided', 'liquidity', 'match rate', 'winner-take-all', 'platform dynamics'
         ]
     };
 
@@ -388,19 +449,15 @@ Provide actionable and specific numbers where possible based on market norms.`
 
     detectSector(input: string): string[] {
         const inputLower = input.toLowerCase();
-        const detectedSectors: string[] = [];
+        const scored: Array<{ sector: string; score: number }> = [];
 
         for (const [sector, keywords] of Object.entries(this.sectorKeywords)) {
-            const matchCount = keywords.filter(keyword =>
-                inputLower.includes(keyword)
-            ).length;
-
-            if (matchCount > 0) {
-                detectedSectors.push(sector);
-            }
+            const score = keywords.reduce((acc, k) => acc + (inputLower.includes(k) ? 1 : 0), 0);
+            if (score > 0) scored.push({ sector, score });
         }
 
-        return detectedSectors.length > 0 ? detectedSectors : ['saas'];
+        if (scored.length === 0) return ['saas'];
+        return scored.sort((a, b) => b.score - a.score).slice(0, 3).map(s => s.sector);
     }
 
     getSectorSpecificPlatforms(sectors: string[]): string[] {
@@ -422,19 +479,15 @@ Provide actionable and specific numbers where possible based on market norms.`
 
     detectAnalysisNeeds(input: string): string[] {
         const inputLower = input.toLowerCase();
-        const detectedAnalysis: string[] = [];
+        const scored: Array<{ key: string; score: number }> = [];
 
         for (const [analysis, keywords] of Object.entries(this.analysisKeywords)) {
-            const matchCount = keywords.filter(keyword =>
-                inputLower.includes(keyword)
-            ).length;
-
-            if (matchCount > 0) {
-                detectedAnalysis.push(analysis);
-            }
+            const score = keywords.reduce((acc, k) => acc + (inputLower.includes(k) ? 1 : 0), 0);
+            if (score > 0) scored.push({ key: analysis, score });
         }
 
-        return detectedAnalysis.length > 0 ? detectedAnalysis : ['market', 'competitive'];
+        if (scored.length === 0) return ['market', 'competitive', 'monetization'];
+        return scored.sort((a, b) => b.score - a.score).slice(0, 4).map(s => s.key);
     }
 
     async selectPrompts(input: string): Promise<PromptSelection & { sectorsDetected: string[] }> {
@@ -452,7 +505,14 @@ Provide actionable and specific numbers where possible based on market norms.`
         const promptKeyMap: Record<string, string> = {
             market: 'market-opportunity',
             competitive: 'competitive-landscape',
-            monetization: 'monetization-opportunity'
+            monetization: 'monetization-opportunity',
+            regulation: 'regulation-compliance',
+            operations: 'operations-readiness',
+            distribution: 'channel-distribution',
+            unit_economics: 'unit-economics-depth',
+            supply_chain: 'supply-chain',
+            virality: 'virality-growth',
+            network_effects: 'network-effects'
         };
         const analysisPrompts = (analysisTypes as Array<keyof typeof promptKeyMap>)
             .map(analysis => this.prompts[promptKeyMap[analysis]] as string | undefined)
@@ -673,8 +733,6 @@ function validateInput(content: string): void {
         throw new Error("Content must be less than 2000 characters");
     }
 }
-
-
 
 // AI instance
 let ai: GoogleGenAI | null = null;
@@ -1775,174 +1833,6 @@ ${responseText.slice(0, 6000)}`,
                     pmfIndicators: ['User engagement', 'Retention rates', 'Referral growth']
                 }
             };
-
-        } catch (error: any) {
-            console.error('❌ AI analysis failed:', error);
-            
-            // Return fallback result with sector-specific platforms
-            const sectors = promptManager.detectSector(content);
-            const relevantPlatforms = promptManager.getSectorSpecificPlatforms(sectors);
-            
-            const fallbackPlatforms: any = {
-                twitter: {
-                    platformName: 'X',
-                    score: 3,
-                    summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                        contentSuggestion: 'Share your startup idea on X!'
-                },
-                reddit: {
-                    platformName: 'Reddit',
-                    score: 3,
-                    summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                    contentSuggestion: 'Post in relevant subreddits for feedback.'
-                },
-                linkedin: {
-                    platformName: 'LinkedIn',
-                    score: 3,
-                    summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                    contentSuggestion: 'Share with your professional network on LinkedIn.'
-                }
-            };
-
-            // Add sector-specific platforms to fallback
-            relevantPlatforms.forEach(platform => {
-                if (!fallbackPlatforms[platform]) {
-            const platformNames: Record<string, string> = {
-                        // Phase 2 platforms
-                        github: 'GitHub',
-                        stackoverflow: 'Stack Overflow',
-                        instagram: 'Instagram',
-                        pinterest: 'Pinterest',
-                        angellist: 'AngelList',
-                        crunchbase: 'Crunchbase',
-                        dribbble: 'Dribbble',
-                        behance: 'Behance',
-                        figma: 'Figma Community',
-                        producthunt: 'Product Hunt',
-                        
-                        // Phase 3 platforms
-                        slack: 'Slack Communities',
-                        clubhouse: 'Clubhouse',
-                        substack: 'Substack',
-                        notion: 'Notion Community',
-                        devto: 'Dev.to',
-                        hashnode: 'Hashnode',
-                        gitlab: 'GitLab',
-                        codepen: 'CodePen',
-                        indiehackers: 'Indie Hackers',
-                        awwwards: 'Awwwards',
-                        designs99: '99designs',
-                        canva: 'Canva Community',
-                        adobe: 'Adobe Community',
-                        unsplash: 'Unsplash',
-                        etsy: 'Etsy',
-                        amazon: 'Amazon Seller Central',
-                        shopify: 'Shopify Community',
-                        woocommerce: 'WooCommerce'
-                    };
-                    
-                    fallbackPlatforms[platform] = {
-                        platformName: platformNames[platform] || platform,
-                        score: 3,
-                        summary: 'Analysis unavailable. Fallback assessment shows moderate potential.',
-                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                        contentSuggestion: `Share your idea on ${platformNames[platform] || platform}.`
-                    };
-                }
-            });
-
-            return {
-                idea: content,
-                demandScore: 50,
-                scoreJustification: 'Analysis temporarily unavailable',
-                language: isTurkish ? 'Turkish' : 'English',
-                fallbackUsed: true,
-                platformAnalyses: fallbackPlatforms,
-                tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
-                redditTitleSuggestion: 'Looking for feedback on my startup idea',
-                redditBodySuggestion: `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
-                linkedinSuggestion: `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`,
-                
-                // Fallback analysis components
-                marketIntelligence: {
-                    tam: '$1.5B Market Size',
-                    sam: '$300M Addressable',
-                    som: '$8M Obtainable',
-                    growthRate: '12% YoY',
-                    marketTiming: 3,
-                    keyTrends: ['Market growth', 'Technology adoption', 'User demand']
-                },
-                
-                competitiveLandscape: {
-                    directCompetitors: ['Market Leader', 'Emerging Player', 'Niche Solution'],
-                    indirectCompetitors: ['Alternative A', 'Alternative B'],
-                    marketPosition: 'Competitive Market',
-                    differentiationScore: 6,
-                    competitiveMoat: 'Unique value proposition',
-                    entryBarriers: 'Market competition'
-                },
-                
-                revenueModel: {
-                    primaryModel: 'Subscription Model',
-                    pricePoint: '$19/month',
-                    revenueStreams: ['Monthly subscriptions', 'Annual plans', 'Add-ons'],
-                    breakEvenTimeline: '24 months',
-                    ltvCacRatio: '3.5x',
-                    projectedMrr: '$15K by Year 1'
-                },
-                
-                targetAudience: {
-                    primarySegment: 'Target users (50%)',
-                    secondarySegment: 'Secondary market (30%)',
-                    tertiarySegment: 'Niche segment (20%)',
-                    painPoints: ['Common problem', 'User frustration', 'Market gap'],
-                    willingnessToPay: 'Moderate ($15-30/month)',
-                    customerAcquisitionChannels: ['Online marketing', 'Word of mouth', 'Partnerships']
-                },
-                
-                riskAssessment: {
-                    technicalRisk: 'Medium',
-                    marketRisk: 'Medium',
-                    financialRisk: 'Medium',
-                    regulatoryRisk: 'Low',
-                    overallRiskLevel: 'Medium',
-                    mitigationStrategies: ['Risk planning', 'Market validation', 'Financial management']
-                },
-                
-                goToMarket: {
-                    phase1: 'Initial launch strategy',
-                    phase2: 'Growth and scaling',
-                    phase3: 'Market expansion',
-                    timeline: '18-month plan',
-                    budgetNeeded: '$75K initial',
-                    keyChannels: ['Digital channels', 'Content marketing', 'User acquisition']
-                },
-                
-                developmentRoadmap: {
-                    mvpTimeline: '4 months',
-                    betaLaunch: '6 months',
-                    publicLaunch: '10 months',
-                    keyFeatures: ['Basic features', 'User interface', 'Core functionality'],
-                    teamNeeded: ['Technical lead', 'Product manager', 'Marketing specialist'],
-                    techStack: ['Modern framework', 'Cloud infrastructure', 'Database']
-                },
-                
-                productMarketFit: {
-                    problemSolutionFit: 65,
-                    solutionMarketFit: 60,
-                    earlyAdopterSignals: 'Moderate user interest',
-                    retentionPrediction: '60% retention rate',
-                    viralCoefficient: '1.1x growth factor',
-                    pmfIndicators: ['User feedback', 'Market response', 'Growth metrics']
-                }
-            };
-        }
-    } catch (error) {
-        console.error('❌ Simplified AI analysis failed:', error);
-        throw error;
     }
 }
 
