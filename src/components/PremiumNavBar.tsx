@@ -27,12 +27,12 @@ const PremiumNavBar: React.FC = () => {
         aria-label="Primary Navigation"
       >
         <div
-          className="mt-3 mb-3 flex items-center justify-between rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] px-4 py-1.5 min-h-12"
+          className="mt-3 mb-3 grid grid-cols-3 items-center rounded-full bg-white/5 backdrop-blur-xl border border-white/10 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.06)] px-4 py-1.5 min-h-12"
         >
           {/* Left: Logo */}
           <button
             onClick={() => navigate('/')}
-            className="group flex items-center gap-3 pl-4 pr-2 py-1.5"
+            className="group flex items-center gap-3 pl-4 pr-2 py-1.5 justify-self-start"
             aria-label="Go to homepage"
           >
             <Logo size="sm" showText={false} className="opacity-95" />
@@ -42,7 +42,7 @@ const PremiumNavBar: React.FC = () => {
           </button>
 
           {/* Center: Nav items (desktop) */}
-          <nav className="hidden md:flex flex-1 items-center justify-center gap-2">
+          <nav className="hidden md:flex items-center justify-center gap-2 justify-self-center">
             {navItems.map((item) => (
               <Link
                 key={item.to}
@@ -65,7 +65,7 @@ const PremiumNavBar: React.FC = () => {
           </nav>
 
           {/* Right: CTAs */}
-          <div className="flex items-center gap-2 pr-2">
+          <div className="flex items-center gap-2 pr-2 justify-self-end">
             <a
               href="https://apps.shopify.com/shhhh-pricing"
               target="_blank"
