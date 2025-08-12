@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SEOHead from '../components/SEOHead';
+import ShhhhPricingBlock from '../components/ShhhhPricingBlock';
 
 const posts = [
   { slug: 'saas-idea-validation-guide', title: 'SaaS Idea Validation: A Step‑by‑Step Guide', desc: 'Fast market signals, ICP, hypothesis → experiment.', date: '2025-08-03' },
@@ -43,6 +44,7 @@ const BlogIndexPage: React.FC = () => {
           </Link>
         ))}
       </div>
+      <ShhhhPricingBlock />
     </div>
   );
 };

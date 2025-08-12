@@ -8,7 +8,6 @@ import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import SEOHead from '../components/SEOHead';
-import ShhhhPricingBlock from '../components/ShhhhPricingBlock';
 
 const sampleCategories = [
     {
@@ -390,7 +389,6 @@ const HomePage: React.FC = () => {
                     ))}
                 </div>
             </div>
-            <ShhhhPricingBlock />
         </div>
         </>
     );
