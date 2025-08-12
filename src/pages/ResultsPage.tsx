@@ -905,32 +905,7 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Feedback and Support Buttons */}
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-                        {/* Feedback on X Button */}
-                        <a
-                            href="https://x.com/kptbarbarossa"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-all duration-300 shadow-lg"
-                        >
-                            <XIcon />
-                            <span>Share Feedback on X</span>
-                        </a>
-
-                        {/* Buy Me a Coffee Button */}
-                        <a
-                            href="https://buymeacoffee.com/kptbarbarossa"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 bg-yellow-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-yellow-600 transition-all duration-300 shadow-lg"
-                        >
-                            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20.216 6.415l-.132-.666c-.119-.598-.388-1.163-.766-1.613a4.44 4.44 0 0 0-1.364-1.04c-.354-.25-.773-.426-1.214-.518a9.909 9.909 0 0 0-1.85-.104c-.26.003-.52.021-.778.053a27.158 27.158 0 0 0-3.583.641c-.5.15-.988.35-1.444.598-.456.247-.882.543-1.267.888a6.404 6.404 0 0 0-1.048 1.137 6.893 6.893 0 0 0-.68 1.329c-.17.484-.295.996-.37 1.514L6.34 8.803c-.24.029-.477.096-.704.198a3.814 3.814 0 0 0-.657.466c-.195.195-.356.426-.477.68-.121.254-.196.532-.218.812-.02.257.014.514.101.756.087.243.218.47.388.67.17.2.383.364.624.482.241.118.513.187.786.203.346.02.693-.039 1.008-.172.315-.133.596-.34.82-.598.224-.259.384-.569.467-.896.083-.327.087-.67.011-.999a3.649 3.649 0 0 0-.236-.784 3.58 3.58 0 0 0-.49-.69 3.49 3.49 0 0 0-.793-.525c-.307-.138-.65-.2-.991-.182-.297.016-.588.108-.848.267-.26.16-.48.384-.639.651-.159.267-.25.575-.265.888-.015.313.055.625.203.905.148.28.37.518.644.691.274.173.594.274.925.293.331.019.663-.041.962-.174.299-.133.563-.34.766-.598.203-.259.34-.569.398-.896.058-.327.045-.67-.038-.999a3.649 3.649 0 0 0-.236-.784z" />
-                            </svg>
-                            <span>Buy me a coffee</span>
-                        </a>
-                    </div>
+                    {/* Feedback and support buttons intentionally removed */}
 
                     {/* Bottom CTA */}
                     <div className="text-center">
