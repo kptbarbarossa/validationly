@@ -86,7 +86,8 @@ const HomePage: React.FC = () => {
         isValid: false,
         errorMessage: '' as unknown as string // exactOptionalPropertyTypes workaround
     });
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false); // analysis submit loading
+    const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -282,21 +283,33 @@ const HomePage: React.FC = () => {
                             <button
                                     type="button"
                                     onClick={async () => {
-                                        if (isLoading) return;
-                                        setIsLoading(true);
+                                        if (isLoading || isEnhancing) return;
+                                        setIsEnhancing(true);
                                         const enhanced = await enhancePromptRemotely(userInput.idea);
                                         if (enhanced) {
                                             // Fill enhanced prompt into textarea (placeholder-like behavior)
                                             const validation = validateInput(enhanced);
                                             setUserInput(validation);
                                         }
-                                        setIsLoading(false);
+                                        setIsEnhancing(false);
                                     }}
-                                className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isLoading ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} animate-[pulse_1.8s_ease-in-out_infinite]`}
+                                className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isEnhancing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${!isEnhancing ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`}
                                     aria-label="Enhance prompt"
                                     title="Enhance prompt"
+                                    aria-busy={isEnhancing}
+                                    disabled={isEnhancing || isLoading}
                                 >
-                                    {isLoading ? 'Enhancing…' : '✨ Enhance'}
+                                    {isEnhancing ? (
+                                        <span className="inline-flex items-center gap-1">
+                                            <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
+                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
+                                            </svg>
+                                            Enhancing…
+                                        </span>
+                                    ) : (
+                                        '✨ Enhance'
+                                    )}
                                 </button>
                             </div>
                             <textarea
