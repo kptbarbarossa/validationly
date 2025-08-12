@@ -7,7 +7,7 @@ const navItems: Array<{ to: string; label: string; external?: boolean }> = [
   { to: '/', label: 'New Analysis' },
   { to: '/faq', label: 'FAQ' },
   { to: '/blog', label: 'Blog' },
-  { to: '/use-cases', label: 'Use Cases' },
+  // { to: '/use-cases', label: 'Use Cases' }, // hidden from nav for SEO-only exposure
 ];
 
 const PremiumNavBar: React.FC = () => {
@@ -95,7 +95,7 @@ const PremiumNavBar: React.FC = () => {
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
             >
               <span className="text-lg">☕</span>
-              <span className="hidden sm:inline font-medium">Buy Me A Coffee</span>
+              <span className="hidden sm:inline font-medium">Buy me a coffee</span>
             </a>
 
             {/* Mobile menu button */}
@@ -175,7 +175,7 @@ const PremiumNavBar: React.FC = () => {
                 onClick={() => setIsOpen(false)}
               >
               <span className="text-lg">☕</span>
-              <span className="font-medium">Buy Me A Coffee</span>
+              <span className="font-medium">Buy me a coffee</span>
               </a>
             </nav>
           </div>
