@@ -988,6 +988,33 @@ const ResultsPage: React.FC = () => {
                                                 </span>
                                             )}
                                         </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const sx: any = (result as any)?.socialSuggestions?.x || {};
+                                                    const text = Array.isArray(sx?.variants) && sx.variants.length
+                                                        ? sx.variants.map((v: any) => v?.text).filter(Boolean).join('\n\n')
+                                                        : (Array.isArray(sx?.thread) ? sx.thread.join('\n') : '');
+                                                    handleCopyToClipboard(text, 'x_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'x_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const sx: any = (result as any)?.socialSuggestions?.x || {};
+                                                    const text = Array.isArray(sx?.variants) && sx.variants.length
+                                                        ? sx.variants[0]?.text || ''
+                                                        : (Array.isArray(sx?.thread) ? sx.thread.join('\n') : '');
+                                                    const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
+                                                    window.open(url, '_blank');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-600/30 text-blue-200 hover:bg-blue-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
                                         {Array.isArray((result as any)?.socialSuggestions?.x?.variants) && (
                                             <div className="space-y-2 mb-3">
                                                 {((result as any).socialSuggestions.x.variants as any[]).map((v, i) => (
@@ -1021,6 +1048,31 @@ const ResultsPage: React.FC = () => {
                                                 </span>
                                             )}
                                         </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const sr: any = (result as any)?.socialSuggestions?.reddit || {};
+                                                    const title = (sr?.titleVariants && sr.titleVariants[0]) || '';
+                                                    const body = sr?.body || '';
+                                                    handleCopyToClipboard(`${title}\n\n${body}`, 'reddit_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'reddit_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    const sr: any = (result as any)?.socialSuggestions?.reddit || {};
+                                                    const title = (sr?.titleVariants && sr.titleVariants[0]) || '';
+                                                    const body = sr?.body || '';
+                                                    const url = `https://www.reddit.com/submit?title=${encodeURIComponent(title)}&text=${encodeURIComponent(body)}`;
+                                                    window.open(url, '_blank');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-orange-600/20 border border-orange-600/30 text-orange-200 hover:bg-orange-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
                                         <div className="text-sm text-slate-200 mb-2">
                                             <span className="text-slate-300">Subreddits:</span> {((result as any)?.socialSuggestions?.reddit?.subreddits || []).join(', ')}
                                         </div>
@@ -1053,6 +1105,24 @@ const ResultsPage: React.FC = () => {
                                                 </span>
                                             )}
                                         </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const sl: any = (result as any)?.socialSuggestions?.linkedin || {};
+                                                    const txt = `${sl?.post || ''}\n\n${(sl?.hashtags || []).join(' ')}`.trim();
+                                                    handleCopyToClipboard(txt, 'linkedin_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'linkedin_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://www.linkedin.com/feed/', '_blank')}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-600/30 text-indigo-200 hover:bg-indigo-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
                                         {Boolean((result as any)?.socialSuggestions?.linkedin?.post) && (
                                             <div className="text-sm text-slate-200 bg-white/5 rounded p-3 border border-white/10 mb-2">
                                                 {(result as any)?.socialSuggestions?.linkedin?.post}
@@ -1072,6 +1142,24 @@ const ResultsPage: React.FC = () => {
                                                     {(result as any)?.socialSuggestions?.instagram?.goal}
                                                 </span>
                                             )}
+                                        </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const si: any = (result as any)?.socialSuggestions?.instagram || {};
+                                                    const txt = `${(si?.caption || '')}\n\n${(si?.hashtags || []).join(' ')}`.trim();
+                                                    handleCopyToClipboard(txt, 'instagram_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'instagram_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://www.instagram.com/', '_blank')}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-pink-600/20 border border-pink-600/30 text-pink-200 hover:bg-pink-600/25"
+                                            >
+                                                Post
+                                            </button>
                                         </div>
                                         {Array.isArray((result as any)?.socialSuggestions?.instagram?.hooks) && (
                                             <div className="mb-2">
