@@ -7,19 +7,7 @@ export interface FeedbackItem {
 	timestamp: string;
 }
 
-const STORAGE_KEY = 'validationly_feedback_items';
-
-export const saveFeedbackLocal = (item: FeedbackItem) => {
-	try {
-		const arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as FeedbackItem[];
-		arr.unshift(item);
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(arr.slice(0, 50)));
-	} catch {}
-};
-
-export const loadFeedbackLocal = (): FeedbackItem[] => {
-	try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]') as FeedbackItem[]; } catch { return []; }
-};
+// Local persistence removed: feedback is only stored on the server
 
 const FeedbackCard: React.FC<{ f: FeedbackItem } > = ({ f }) => (
     <div className="rounded-2xl p-4 bg-gradient-to-br from-white/10 to-white/5 border border-white/15 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-transform duration-500 hover:-translate-y-1">
@@ -53,7 +41,7 @@ const FeedbackWall: React.FC = () => {
                     return;
                 }
             } catch {}
-            setItems(loadFeedbackLocal());
+            setItems([]);
         })();
     }, []);
 
