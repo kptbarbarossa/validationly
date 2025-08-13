@@ -256,11 +256,11 @@ const HomePage: React.FC = () => {
 
                 <div className="relative z-10 py-8">
                     {/* Logo */}
-                    <div className="flex justify-center mb-6">
+					<div className="flex justify-center mb-6 animate-bounce-in">
                         <Logo size="lg" showText={false} />
                     </div>
 
-                    <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+					<h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up delay-100">
                         <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
                             Validate your idea
                         </span>
@@ -268,7 +268,7 @@ const HomePage: React.FC = () => {
                         <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
                     </h1>
 
-                    <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto">
+					<p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
                         Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
                     </p>
                 </div>
