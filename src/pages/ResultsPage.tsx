@@ -774,19 +774,24 @@ const ResultsPage: React.FC = () => {
                 <div className="relative z-10 container mx-auto px-4 py-8">
 
                     {/* Premium Score Card: Circular Gauge */}
-                    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-3xl mx-auto mb-6 animate-slide-up">
-                        <div className="text-center">
+                    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-4xl mx-auto mb-6 animate-slide-up">
+                        <div className="text-center mb-4">
                             <h1 className="text-2xl font-bold text-white mb-1">Market Analysis Results</h1>
-                            <p className="text-sm text-slate-300 mb-4">AI-powered analysis of your business idea</p>
-                            <div className="text-sm font-medium text-slate-300 mb-5">Market Demand Score</div>
-                            <div className="flex items-center justify-center gap-6 mb-4">
-                                <div className="relative w-40 h-40">
-                                    <div className={`absolute inset-0 gauge-ring ${result.demandScore>=70? 'gauge-green' : result.demandScore>=50? 'gauge-amber' : 'gauge-red'}`} data-progress={result.demandScore} />
-                                    <div className="absolute inset-3 gauge-inner flex items-center justify-center">
-                                        <div className="text-4xl font-bold text-white leading-none">
-                                    {result.demandScore}
-                                            <span className="block text-xs text-slate-300 mt-1">/100</span>
-                                </div>
+                            <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                            {/* Left: Gauge + status */}
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="text-sm font-medium text-slate-300 mb-3">Market Demand Score</div>
+                                <div className="flex items-center justify-center gap-6 mb-2">
+                                    <div className="relative w-40 h-40">
+                                        <div className={`absolute inset-0 gauge-ring ${result.demandScore>=70? 'gauge-green' : result.demandScore>=50? 'gauge-amber' : 'gauge-red'}`} data-progress={result.demandScore} />
+                                        <div className="absolute inset-3 gauge-inner flex items-center justify-center">
+                                            <div className="text-4xl font-bold text-white leading-none">
+                                                {result.demandScore}
+                                                <span className="block text-xs text-slate-300 mt-1">/100</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold shadow-sm bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200 animate-bounce-in`}>
@@ -794,13 +799,9 @@ const ResultsPage: React.FC = () => {
                                     {status.text}
                                 </div>
                             </div>
-
-                            <div className="text-sm text-slate-200 max-w-xl mx-auto leading-relaxed">
-                                "{result.content || result.idea}"
-                            </div>
-
-                            {/* Inline summary bullets */}
-                            <div className="mt-5 text-left max-w-2xl mx-auto">
+                            {/* Right: Summary */}
+                            <div className="text-left">
+                                <div className="text-sm text-slate-200 leading-relaxed mb-3">"{result.content || result.idea}"</div>
                                 <h2 className="text-sm font-semibold text-slate-300 mb-2">{isTR ? 'Özet Analiz' : 'Summary Analysis'}</h2>
                                 <ul className="space-y-1 text-sm text-slate-200">
                                     {buildSummaryBullets().map((line, idx) => (
