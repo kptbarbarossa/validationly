@@ -61,6 +61,10 @@ const ShhhhPricingBlock: React.FC = () => {
 
   return (
     <section className="mt-16 glass glass-border rounded-3xl p-8 text-left">
+      <div className="flex items-center gap-3 mb-3">
+        <img src="/logo-b2b.png" alt="B2B" className="w-6 h-6 rounded" />
+        <span className="text-sm text-slate-300">B2B Pricing Utility</span>
+      </div>
       <h2 className="text-2xl font-bold text-white mb-4">
         Hide Prices from Guests, Drive More Account Signups
       </h2>
