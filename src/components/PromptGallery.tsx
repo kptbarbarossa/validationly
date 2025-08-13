@@ -60,6 +60,69 @@ const TEMPLATES: PromptTemplate[] = [
 		content:
 			"Supply: {who}\nDemand: {who}\nCold start: {how}\nUnique value: {for both sides}\nTake rate: {x%}\nChannels: {supply ch., demand ch.}\nSuccess metric (24h): {supply signups OR demand CTR}",
 		tags: ['marketplace']
+	},
+	{
+		id: 'ai-agent',
+		category: 'AI & Agents',
+		title: 'AI agent validation brief',
+		description: 'Agent task, context window, tools, success metric.',
+		content:
+			"Agent task: {what it automates}\nUser: {who benefits}\nContext: {data sources}\nTools: {apis, browser, docs}\nGuardrails: {limits}\nPricing: {per task / monthly}\nSuccess metric (24h): {task completions OR leads}",
+		tags: ['ai', 'agent']
+	},
+	{
+		id: 'content-creator',
+		category: 'Creator & Media',
+		title: 'Content product brief',
+		description: 'Audience, problem, offer, funnel, KPI.',
+		content:
+			"Audience: {who}\nProblem: {what they lack}\nOffer: {format}\nDistribution: {channels}\nCTA: {soft vs hard}\nMonetization: {sponsorship/course}\nSuccess metric (24h): {email signups OR CTR}",
+		tags: ['content', 'media']
+	},
+	{
+		id: 'open-source-dev',
+		category: 'Developer Tools',
+		title: 'Dev tool validation brief',
+		description: 'Problem, workflow, integration, DX, KPI.',
+		content:
+			"Problem: {dev pain}\nWorkflow: {where it fits}\nIntegration: {IDE/CI/CD}\nDX: {api, cli}\nOSS hook: {stars, templates}\nCommunity: {Dev.to, GitHub, X}\nSuccess metric (24h): {stars OR signups}",
+		tags: ['developer', 'oss']
+	},
+	{
+		id: 'health-wellness',
+		category: 'Health & Wellness',
+		title: 'Wellness app brief',
+		description: 'Habit loop, motivation, safety, KPI.',
+		content:
+			"User: {who}\nGoal: {what outcome}\nHabit loop: {trigger/action/reward}\nSafety: {medical disclaimer}\nChannels: {TikTok, Instagram}\nMonetization: {subscription}\nSuccess metric (24h): {waitlist OR CTR}",
+		tags: ['health', 'wellness']
+	},
+	{
+		id: 'education',
+		category: 'Education',
+		title: 'Edu course brief',
+		description: 'Outcome-based curriculum, social proof, pre-sale.',
+		content:
+			"Learner: {who}\nOutcome: {job-to-be-done}\nCurriculum: {modules}\nProof: {case/results}\nPre-sale: {pilot cohort}\nChannels: {LinkedIn, Reddit}\nSuccess metric (24h): {email waitlist}",
+		tags: ['education']
+	},
+	{
+		id: 'local-service',
+		category: 'Local Service',
+		title: 'Local service brief',
+		description: 'Niche, geo, offer, proof, channel, KPI.',
+		content:
+			"Niche: {what service}\nGeo: {city/area}\nOffer: {bundle}\nProof: {before/after}\nChannel: {shorts + local groups}\nPricing: {package}\nSuccess metric (24h): {inquiries}",
+		tags: ['local', 'service']
+	},
+	{
+		id: 'b2b-outbound',
+		category: 'B2B Outbound',
+		title: 'Outbound brief',
+		description: 'ICP, trigger event, opener, CTA, KPI.',
+		content:
+			"ICP: {role, size, vertical}\nTrigger: {event}\nOpener: {personalized}\nProof: {numbers}\nCTA: {calendar vs reply}\nChannel: {LinkedIn/X}\nSuccess metric (24h): {reply rate}",
+		tags: ['b2b', 'outbound']
 	}
 ];
 
