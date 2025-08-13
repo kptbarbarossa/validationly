@@ -760,12 +760,9 @@ const ResultsPage: React.FC = () => {
                             : 'Note: Analysis used fallback mode. Please try again for more accurate results.'}
                     </div>
                 )}
-                {/* Background gradient overlay */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-600/25 via-indigo-500/10 to-cyan-600/25 blur-3xl"></div>
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/40 to-transparent"></div>
-                <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/25 rounded-full blur-3xl animate-aurora-slower"></div>
-                <div className="pointer-events-none absolute -bottom-40 -right-40 w-[44rem] h-[44rem] bg-cyan-500/25 rounded-full blur-3xl animate-aurora-slowest"></div>
-                <div className="pointer-events-none absolute inset-0 cursor-spotlight"></div>
+                {/* Simplified background to avoid banding */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
+                <div className="pointer-events-none absolute inset-0 noise-overlay"></div>
                 
                 <div className="relative z-10 container mx-auto px-4 py-8">
 

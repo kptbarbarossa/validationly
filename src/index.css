@@ -205,4 +205,16 @@ body {
 .delay-550 { animation-delay: 550ms !important; }
 .delay-600 { animation-delay: 600ms !important; }
 
+/* Subtle noise to reduce gradient banding */
+.noise-overlay {
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: overlay;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+    radial-gradient(rgba(0,0,0,0.5) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 1px 1px;
+}
+
 /* (removed floating particles and magnetic helper) */
