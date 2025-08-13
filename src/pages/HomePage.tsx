@@ -139,7 +139,11 @@ const HomePage: React.FC = () => {
         }
     };
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const triggerValidation = async () => {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
         console.log('triggerValidation called', { isValid: userInput.isValid, idea: userInput.idea });
 
         if (!userInput.isValid || !userInput.idea?.trim()) {
@@ -206,6 +210,7 @@ const HomePage: React.FC = () => {
             }
         } finally {
             setIsLoading(false);
+            setIsSubmitting(false);
         }
     };
 
