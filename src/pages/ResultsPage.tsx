@@ -134,7 +134,6 @@ const ResultsPage: React.FC = () => {
     const result = location.state?.result as DynamicPromptResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [, forceRerender] = useState(0);
-    // Concise mode removed per request
 
     // Animation trigger
     useEffect(() => {
@@ -255,17 +254,13 @@ const ResultsPage: React.FC = () => {
     ];
 
     const platformAnalysesObj = (result as DynamicPromptResult).platformAnalyses as any;
-    const [showAllPlatforms, setShowAllPlatforms] = useState(false);
-    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    // Removed show-all/more-platforms controls
     const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
         const a = platformAnalysesObj?.[def.key];
         const hasNonEmptyString = (s: unknown) => typeof s === 'string' && s.trim().length > 0;
         const hasData = Boolean(
             a && (
-                hasNonEmptyString(a.summary) ||
-                (Array.isArray(a.keyFindings) && a.keyFindings.length > 0) ||
-                hasNonEmptyString(a.contentSuggestion) ||
-                (typeof a.score === 'number' && a.score > 0)
+                hasNonEmptyString(a.summary) && (Array.isArray(a.keyFindings) ? a.keyFindings.length > 0 : true)
             )
         );
         return hasData;
@@ -274,7 +269,7 @@ const ResultsPage: React.FC = () => {
         .map(def => ({ def, score: Math.max(1, Math.min(5, Number(platformAnalysesObj?.[def.key]?.score || 0))) }))
         .sort((a, b) => b.score - a.score)
         .map(x => x.def);
-    const visiblePlatformDefs = showAllPlatforms ? sortedPlatformDefs : sortedPlatformDefs.slice(0, 3);
+    const visiblePlatformDefs = sortedPlatformDefs;
 
     // Build concise bullet summary for quick scan
     const buildSummaryBullets = (): string[] => {
@@ -777,22 +772,12 @@ const ResultsPage: React.FC = () => {
                 <div className="pointer-events-none absolute inset-0 cursor-spotlight"></div>
                 
                 <div className="relative z-10 container mx-auto px-4 py-8">
-                    {/* Compact Animated Header */}
-                    <div className="text-center mb-6 animate-fade-in">
-                        <h1 className="text-2xl font-bold text-white mb-1">
-                            Market Analysis Results
-                        </h1>
-                        <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
-                    </div>
-
-                    {/* Controls */}
-                    <div className="flex items-center justify-end gap-2 max-w-5xl mx-auto mb-3">
-                        <button onClick={()=>window.print()} className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20">Print/PDF</button>
-                    </div>
 
                     {/* Premium Score Card: Circular Gauge */}
-                    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-2xl mx-auto mb-6 animate-slide-up">
+                    <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-3xl mx-auto mb-6 animate-slide-up">
                         <div className="text-center">
+                            <h1 className="text-2xl font-bold text-white mb-1">Market Analysis Results</h1>
+                            <p className="text-sm text-slate-300 mb-4">AI-powered analysis of your business idea</p>
                             <div className="text-sm font-medium text-slate-300 mb-5">Market Demand Score</div>
                             <div className="flex items-center justify-center gap-6 mb-4">
                                 <div className="relative w-40 h-40">
@@ -813,20 +798,20 @@ const ResultsPage: React.FC = () => {
                             <div className="text-sm text-slate-200 max-w-xl mx-auto leading-relaxed">
                                 "{result.content || result.idea}"
                             </div>
-                        </div>
-                    </div>
 
-                    {/* Summary Bullets */}
-                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10 max-w-3xl mx-auto mb-6 animate-slide-up">
-                        <h2 className="text-lg font-semibold text-white mb-3 text-center">{isTR ? 'Özet Analiz' : 'Summary Analysis'}</h2>
-                        <ul className="space-y-2 text-sm text-slate-200">
-                            {buildSummaryBullets().map((line, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                    <span className="text-indigo-300 mt-0.5">•</span>
-                                    <span>{line}</span>
-                                </li>
-                            ))}
-                        </ul>
+                            {/* Inline summary bullets */}
+                            <div className="mt-5 text-left max-w-2xl mx-auto">
+                                <h2 className="text-sm font-semibold text-slate-300 mb-2">{isTR ? 'Özet Analiz' : 'Summary Analysis'}</h2>
+                                <ul className="space-y-1 text-sm text-slate-200">
+                                    {buildSummaryBullets().map((line, idx) => (
+                                        <li key={idx} className="flex items-start gap-2">
+                                            <span className="text-indigo-300 mt-0.5">•</span>
+                                            <span>{line}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Social Media Platform Analysis */}
@@ -835,47 +820,7 @@ const ResultsPage: React.FC = () => {
                         <div className="text-sm text-slate-300 mb-4 text-center">
                             Sector-specific platform recommendations based on your idea
                         </div>
-                        <div className="flex items-center justify-between mb-4">
-                            <div className="text-sm text-slate-300">
-                                Platform cards sorted by score {showAllPlatforms ? '' : '(Top 3)'}
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowAllPlatforms(v => !v)}
-                                    className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
-                                >
-                                    {showAllPlatforms ? 'Show Top 3' : 'Show All'}
-                                </button>
-                                <button
-                                    type="button"
-                                    disabled={isLoadingMore}
-                                    onClick={async () => {
-                                        try {
-                                            setIsLoadingMore(true);
-                                            const idea = result.idea || result.content;
-                                            const resp = await fetch('/api/validate', {
-                                                method: 'POST',
-                                                headers: { 'Content-Type': 'application/json' },
-                                                body: JSON.stringify({ idea, morePlatforms: true })
-                                            });
-                                            if (resp.ok) {
-                                                const data = await resp.json();
-                                                const extra = (data?.platformAnalyses) || {};
-                                                // merge
-                                                (result as any).platformAnalyses = { ...(result as any).platformAnalyses, ...extra };
-                                                forceRerender(v => v + 1);
-                                            }
-                                        } finally {
-                                            setIsLoadingMore(false);
-                                        }
-                                    }}
-                                    className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200 disabled:opacity-50"
-                                >
-                                    {isLoadingMore ? 'Loading…' : 'More platforms'}
-                                </button>
-                            </div>
-                        </div>
+                        {/* Controls removed (Show All / More platforms) */}
 
                         {chunk(visiblePlatformDefs, 4).map((row, rowIdx) => (
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" key={rowIdx}>
