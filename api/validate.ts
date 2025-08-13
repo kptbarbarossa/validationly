@@ -914,6 +914,12 @@ export default async function handler(req: any, res: any) {
             { post, hashtags: ["#tag1","#tag2"], goal }
           Instagram:
             { hooks: ["hook1","hook2"], caption, hashtags: ["#"], shots: ["idea1","idea2"], goal }
+          TikTok:
+            { hooks: ["hook1","hook2"], script, hashtags: ["#"], shots: ["cut1","cut2"], goal }
+          YouTube:
+            { title, outline: ["bullet1","bullet2"], description, tags: ["tag1","tag2"], goal }
+          Facebook:
+            { post, groups: ["group1","group2"], hashtags: ["#"], goal }
 
         Analyze the following startup idea: "${inputContent}"${evidenceText}`;
 

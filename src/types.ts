@@ -196,6 +196,26 @@ export interface SocialSuggestions {
     shots?: string[]; // short shot ideas for reels
     goal?: string;
   };
+  tiktok?: {
+    hooks?: string[];
+    script?: string; // short script for a 15-30s video
+    hashtags?: string[];
+    shots?: string[]; // quick cut ideas
+    goal?: string;
+  };
+  youtube?: {
+    title?: string;
+    outline?: string[]; // bullet outline
+    description?: string;
+    tags?: string[];
+    goal?: string;
+  };
+  facebook?: {
+    post?: string;
+    groups?: string[]; // suggested groups or audiences
+    hashtags?: string[];
+    goal?: string;
+  };
 }
 
 // New analysis interfaces

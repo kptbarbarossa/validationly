@@ -965,7 +965,7 @@ const ResultsPage: React.FC = () => {
                                 <h3 className="text-xl font-bold text-white mb-2">Enriched Social Suggestions</h3>
                                 <p className="text-slate-300">Platform-specific templates with clear goals</p>
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {/* X / Twitter */}
                                 {Boolean((result as any)?.socialSuggestions?.x) && (
                                     <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
@@ -1168,6 +1168,128 @@ const ResultsPage: React.FC = () => {
                                         <div className="text-xs text-slate-300 mb-2">{((result as any)?.socialSuggestions?.instagram?.hashtags || []).join(' ')}</div>
                                         {Array.isArray((result as any)?.socialSuggestions?.instagram?.shots) && (
                                             <div className="text-xs text-slate-300">Shots: {((result as any).socialSuggestions.instagram.shots as any[]).join(' • ')}</div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* TikTok */}
+                                {Boolean((result as any)?.socialSuggestions?.tiktok) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">TikTok</div>
+                                            {Boolean((result as any)?.socialSuggestions?.tiktok?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-purple-600/20 text-purple-300 border border-purple-600/30">
+                                                    {(result as any)?.socialSuggestions?.tiktok?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const st: any = (result as any)?.socialSuggestions?.tiktok || {};
+                                                    const txt = `${(st?.script || '')}\n\n${(st?.hashtags || []).join(' ')}`.trim();
+                                                    handleCopyToClipboard(txt, 'tiktok_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'tiktok_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://www.tiktok.com/upload?lang=en', '_blank')}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-purple-600/20 border border-purple-600/30 text-purple-200 hover:bg-purple-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
+                                        {Array.isArray((result as any)?.socialSuggestions?.tiktok?.hooks) && (
+                                            <div className="mb-2">
+                                                <div className="text-xs font-semibold text-slate-300 mb-1">Hooks</div>
+                                                <ul className="space-y-1 text-sm text-slate-200">
+                                                    {((result as any).socialSuggestions.tiktok.hooks as any[]).map((h, i) => (
+                                                        <li key={i}>• {h}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* YouTube */}
+                                {Boolean((result as any)?.socialSuggestions?.youtube) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">YouTube</div>
+                                            {Boolean((result as any)?.socialSuggestions?.youtube?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-red-600/20 text-red-300 border border-red-600/30">
+                                                    {(result as any)?.socialSuggestions?.youtube?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const sy: any = (result as any)?.socialSuggestions?.youtube || {};
+                                                    const title = sy?.title || '';
+                                                    const desc = sy?.description || '';
+                                                    handleCopyToClipboard(`${title}\n\n${desc}`, 'youtube_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'youtube_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://studio.youtube.com/', '_blank')}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-red-600/20 border border-red-600/30 text-red-200 hover:bg-red-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
+                                        {Array.isArray((result as any)?.socialSuggestions?.youtube?.outline) && (
+                                            <div className="mb-2">
+                                                <div className="text-xs font-semibold text-slate-300 mb-1">Outline</div>
+                                                <ul className="space-y-1 text-sm text-slate-200">
+                                                    {((result as any).socialSuggestions.youtube.outline as any[]).map((h, i) => (
+                                                        <li key={i}>• {h}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Facebook */}
+                                {Boolean((result as any)?.socialSuggestions?.facebook) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">Facebook</div>
+                                            {Boolean((result as any)?.socialSuggestions?.facebook?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-blue-600/20 text-blue-300 border border-blue-600/30">
+                                                    {(result as any)?.socialSuggestions?.facebook?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const sf: any = (result as any)?.socialSuggestions?.facebook || {};
+                                                    const txt = `${(sf?.post || '')}\n\n${(sf?.hashtags || []).join(' ')}`.trim();
+                                                    handleCopyToClipboard(txt, 'facebook_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'facebook_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://www.facebook.com/', '_blank')}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-600/30 text-blue-200 hover:bg-blue-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
+                                        {Array.isArray((result as any)?.socialSuggestions?.facebook?.groups) && (
+                                            <div className="text-sm text-slate-200">
+                                                <span className="text-slate-300">Suggested Groups:</span> {((result as any)?.socialSuggestions?.facebook?.groups || []).join(', ')}
+                                            </div>
                                         )}
                                     </div>
                                 )}
