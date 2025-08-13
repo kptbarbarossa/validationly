@@ -269,7 +269,7 @@ const HomePage: React.FC = () => {
                             Validate your idea
                         </span>
                         <br />
-                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent shine-text">before you build it</span>
+                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
                     </h1>
 
 					<p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">

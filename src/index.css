@@ -166,28 +166,7 @@ body {
   background: radial-gradient(600px at var(--sx, 50%) var(--sy, 30%), rgba(99,102,241,0.08), transparent 60%);
 }
 
-/* Shiny text effect (gradient stays the same) */
-.shine-text {
-  position: relative;
-  display: inline-block;
-  overflow: hidden;
-}
-.shine-text::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -150%;
-  width: 50%;
-  height: 100%;
-  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.35) 50%, transparent 100%);
-  transform: skewX(-20deg);
-  animation: shine-sweep 2.2s ease-in-out infinite;
-}
-@keyframes shine-sweep {
-  0% { left: -150%; }
-  60% { left: 120%; }
-  100% { left: 120%; }
-}
+/* removed shiny text effect */
 
 /* Premium: gauge ring (donut) */
 .gauge-ring {
