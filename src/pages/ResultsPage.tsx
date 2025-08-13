@@ -969,6 +969,135 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Enriched Social Suggestions */}
+                    {Boolean((result as any)?.socialSuggestions) && (
+                        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10 max-w-5xl mx-auto mb-8">
+                            <div className="text-center mb-6">
+                                <h3 className="text-xl font-bold text-white mb-2">Enriched Social Suggestions</h3>
+                                <p className="text-slate-300">Platform-specific templates with clear goals</p>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* X / Twitter */}
+                                {Boolean((result as any)?.socialSuggestions?.x) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">X (Twitter)</div>
+                                            {Boolean((result as any)?.socialSuggestions?.x?.variants?.[0]?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-indigo-600/20 text-indigo-300 border border-indigo-600/30">
+                                                    {(result as any)?.socialSuggestions?.x?.variants?.[0]?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {Array.isArray((result as any)?.socialSuggestions?.x?.variants) && (
+                                            <div className="space-y-2 mb-3">
+                                                {((result as any).socialSuggestions.x.variants as any[]).map((v, i) => (
+                                                    <div key={i} className="text-sm text-slate-200 bg-white/5 rounded p-3 border border-white/10">
+                                                        {v.text}
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        {Array.isArray((result as any)?.socialSuggestions?.x?.thread) && (
+                                            <div>
+                                                <div className="text-xs font-semibold text-slate-300 mb-1">Thread Outline</div>
+                                                <ol className="list-decimal list-inside space-y-1 text-sm text-slate-200">
+                                                    {((result as any).socialSuggestions.x.thread as any[]).map((t, i) => (
+                                                        <li key={i}>{t}</li>
+                                                    ))}
+                                                </ol>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Reddit */}
+                                {Boolean((result as any)?.socialSuggestions?.reddit) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">Reddit</div>
+                                            {Boolean((result as any)?.socialSuggestions?.reddit?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-orange-600/20 text-orange-300 border border-orange-600/30">
+                                                    {(result as any)?.socialSuggestions?.reddit?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="text-sm text-slate-200 mb-2">
+                                            <span className="text-slate-300">Subreddits:</span> {((result as any)?.socialSuggestions?.reddit?.subreddits || []).join(', ')}
+                                        </div>
+                                        {Array.isArray((result as any)?.socialSuggestions?.reddit?.titleVariants) && (
+                                            <div className="mb-2">
+                                                <div className="text-xs font-semibold text-slate-300 mb-1">Title A/B</div>
+                                                <ul className="space-y-1 text-sm text-slate-200">
+                                                    {((result as any).socialSuggestions.reddit.titleVariants as any[]).map((t, i) => (
+                                                        <li key={i}>• {t}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {Boolean((result as any)?.socialSuggestions?.reddit?.body) && (
+                                            <div className="text-sm text-slate-200 bg-white/5 rounded p-3 border border-white/10">
+                                                {(result as any)?.socialSuggestions?.reddit?.body}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* LinkedIn */}
+                                {Boolean((result as any)?.socialSuggestions?.linkedin) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">LinkedIn</div>
+                                            {Boolean((result as any)?.socialSuggestions?.linkedin?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-indigo-600/20 text-indigo-300 border border-indigo-600/30">
+                                                    {(result as any)?.socialSuggestions?.linkedin?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {Boolean((result as any)?.socialSuggestions?.linkedin?.post) && (
+                                            <div className="text-sm text-slate-200 bg-white/5 rounded p-3 border border-white/10 mb-2">
+                                                {(result as any)?.socialSuggestions?.linkedin?.post}
+                                            </div>
+                                        )}
+                                        <div className="text-xs text-slate-300">{((result as any)?.socialSuggestions?.linkedin?.hashtags || []).join(' ')}</div>
+                                    </div>
+                                )}
+
+                                {/* Instagram */}
+                                {Boolean((result as any)?.socialSuggestions?.instagram) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">Instagram</div>
+                                            {Boolean((result as any)?.socialSuggestions?.instagram?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-pink-600/20 text-pink-300 border border-pink-600/30">
+                                                    {(result as any)?.socialSuggestions?.instagram?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        {Array.isArray((result as any)?.socialSuggestions?.instagram?.hooks) && (
+                                            <div className="mb-2">
+                                                <div className="text-xs font-semibold text-slate-300 mb-1">Hooks</div>
+                                                <ul className="space-y-1 text-sm text-slate-200">
+                                                    {((result as any).socialSuggestions.instagram.hooks as any[]).map((h, i) => (
+                                                        <li key={i}>• {h}</li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
+                                        {Boolean((result as any)?.socialSuggestions?.instagram?.caption) && (
+                                            <div className="text-sm text-slate-200 bg-white/5 rounded p-3 border border-white/10 mb-2">
+                                                {(result as any)?.socialSuggestions?.instagram?.caption}
+                                            </div>
+                                        )}
+                                        <div className="text-xs text-slate-300 mb-2">{((result as any)?.socialSuggestions?.instagram?.hashtags || []).join(' ')}</div>
+                                        {Array.isArray((result as any)?.socialSuggestions?.instagram?.shots) && (
+                                            <div className="text-xs text-slate-300">Shots: {((result as any).socialSuggestions.instagram.shots as any[]).join(' • ')}</div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Feedback and support buttons intentionally removed */}
 
                     {/* Bottom CTA */}
