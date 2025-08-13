@@ -132,6 +132,10 @@ const ResultsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const result = location.state?.result as DynamicPromptResult;
+    const [isLoading, setIsLoading] = React.useState(false);
+    const [refining, setRefining] = React.useState<string | null>(null);
+    const [refineText, setRefineText] = React.useState('');
+    const [forceLang, setForceLang] = React.useState<'' | 'en' | 'tr'>('');
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [, forceRerender] = useState(0);
 
@@ -353,6 +357,7 @@ const ResultsPage: React.FC = () => {
                     <div className="text-sm text-green-300 font-medium">Market Opportunity</div>
                 </div>
             </div>
+            <div className="text-xs text-slate-400 mb-2">What this means: market size and timing context to calibrate demand.</div>
             <div className="space-y-3">
                 <div className="text-sm">
                     <span className="font-medium text-slate-300">TAM:</span>
@@ -394,6 +399,7 @@ const ResultsPage: React.FC = () => {
                     <div className="text-sm text-red-300 font-medium">Competitive Landscape</div>
                 </div>
             </div>
+            <div className="text-xs text-slate-400 mb-2">What this means: positioning and differentiation to test in social.</div>
             <div className="space-y-3">
                 <div className="text-sm">
                     <span className="font-medium text-slate-300">Direct Competitors:</span>
@@ -429,6 +435,7 @@ const ResultsPage: React.FC = () => {
                     <div className="text-sm text-yellow-300 font-medium">Monetization Strategy</div>
                 </div>
             </div>
+            <div className="text-xs text-slate-400 mb-2">What this means: pricing and monetization levers to A/B.</div>
             <div className="space-y-3">
                 <div className="text-sm">
                     <span className="font-medium text-slate-300">Model:</span>
@@ -466,6 +473,7 @@ const ResultsPage: React.FC = () => {
                     <div className="text-sm text-purple-300 font-medium">Customer Segments</div>
                 </div>
             </div>
+            <div className="text-xs text-slate-400 mb-2">What this means: ICP clarity to improve message fit.</div>
             <div className="space-y-3">
                 <div className="text-sm">
                     <span className="font-medium text-slate-300">Primary:</span>
@@ -511,6 +519,7 @@ const ResultsPage: React.FC = () => {
                         <div className="text-sm text-orange-300 font-medium">Risk Matrix</div>
                     </div>
                 </div>
+                <div className="text-xs text-slate-400 mb-2">What this means: highlight blockers and mitigation.</div>
                 <div className="space-y-3">
                     <div className="text-sm">
                         <span className="font-medium text-slate-300">Technical:</span>
@@ -564,6 +573,7 @@ const ResultsPage: React.FC = () => {
                     <div className="text-sm text-indigo-300 font-medium">Launch Strategy</div>
                 </div>
             </div>
+            <div className="text-xs text-slate-400 mb-2">What this means: near‑term channels and timings to test.</div>
             <div className="space-y-3">
                 <div className="text-sm">
                     <span className="font-medium text-slate-300">Phase 1:</span>
@@ -760,10 +770,16 @@ const ResultsPage: React.FC = () => {
 
                     {/* Premium Score Card: Circular Gauge */}
                     <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-4xl mx-auto mb-6 animate-slide-up">
-                        <div className="text-center mb-4">
-                            <h1 className="text-2xl font-bold text-white mb-1">Market Analysis Results</h1>
-                            <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
+                    <div className="text-center mb-4">
+                        <h1 className="text-2xl font-bold text-white mb-1">Market Analysis Results</h1>
+                        <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
+                        <div className="mt-3 flex items-center justify-center gap-2 text-xs">
+                            <span className="text-slate-400">Language:</span>
+                            <button onClick={()=>setForceLang('en')} className={`px-2 py-1 rounded border ${forceLang==='en'?'border-white/40 text-white':'border-white/10 text-slate-300'} bg-white/5`}>EN</button>
+                            <button onClick={()=>setForceLang('tr')} className={`px-2 py-1 rounded border ${forceLang==='tr'?'border-white/40 text-white':'border-white/10 text-slate-300'} bg-white/5`}>TR</button>
+                            <button onClick={()=>setForceLang('')} className={`px-2 py-1 rounded border ${forceLang===''?'border-white/40 text-white':'border-white/10 text-slate-300'} bg-white/5`}>Auto</button>
                         </div>
+                    </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                             {/* Left: Gauge + status */}
                             <div className="flex flex-col items-center justify-center">
@@ -796,6 +812,7 @@ const ResultsPage: React.FC = () => {
                                 </li>
                             ))}
                         </ul>
+                                <div className="mt-3 text-xs text-slate-400">What this means: use the top bullets to guide quick A/B tests.</div>
                             </div>
                         </div>
                     </div>

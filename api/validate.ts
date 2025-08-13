@@ -861,7 +861,13 @@ export default async function handler(req: any, res: any) {
         // Add language and format requirements
         const evidenceText = Array.isArray(evidence) && evidence.length ? `\n\nEVIDENCE (STRICT) — Use ONLY these facts. If insufficient, state \"insufficient evidence\":\n${evidence.map((e:any)=> typeof e === 'string' ? `- ${e}` : `- [${e.source}] "${e.quote}"`).join('\n')}` : '';
 
-        const finalSystemInstruction = `${systemInstruction}
+        // Optional refine directive
+        const refine = (req.body as any)?.refine as { section?: string; feedback?: string } | undefined;
+        const refineInstruction = (refine && (refine.section || refine.feedback))
+            ? `\n\nREFINEMENT DIRECTIVE: Improve ONLY the section "${(refine.section||'').toString()}" according to: "${(refine.feedback||'').toString()}". Still return the FULL JSON with ALL sections present. Keep other sections consistent.`
+            : '';
+
+        const finalSystemInstruction = `${systemInstruction}${refineInstruction}
 
         🌍 CRITICAL LANGUAGE REQUIREMENT: 
         - The user's input language has been detected and specified above
