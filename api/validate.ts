@@ -901,6 +901,11 @@ export default async function handler(req: any, res: any) {
         - Make all suggestions actionable and data-driven
         - All content must feel authentic and valuable to entrepreneurs
 
+        Additionally, include:
+        - assumptions: 3-5 short assumptions that your analysis relies on
+        - confidence: integer 0-100 overall confidence in your analysis quality
+        - nextTests: 3 actionable experiments (each with hypothesis, channel, metric)
+
         Analyze the following startup idea: "${inputContent}"${evidenceText}`;
 
         console.log('🚀 Starting dynamic prompt analysis...');
@@ -1216,14 +1221,21 @@ async function getSimplifiedAIAnalysis(
                         "techStack": ["tech1", "tech2", "tech3"]
                     },
                     
-                     "productMarketFit": {
+                    "productMarketFit": {
                         "problemSolutionFit": number (0-100),
                         "solutionMarketFit": number (0-100),
                         "earlyAdopterSignals": "early adopter indicators",
                         "retentionPrediction": "retention prediction",
                         "viralCoefficient": "viral growth potential",
                         "pmfIndicators": ["indicator1", "indicator2", "indicator3"]
-                     }
+                    },
+                    "assumptions": ["assumption1","assumption2","assumption3"],
+                    "confidence": number (0-100),
+                    "nextTests": [
+                      { "hypothesis": "...", "channel": "...", "metric": "..." },
+                      { "hypothesis": "...", "channel": "...", "metric": "..." },
+                      { "hypothesis": "...", "channel": "...", "metric": "..." }
+                    ]
                 }`,
                 responseMimeType: "application/json",
                 temperature: 0,

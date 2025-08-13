@@ -73,6 +73,10 @@ export interface DynamicPromptResult {
   content?: string;
   demandScore: number;
   scoreJustification: string;
+  // Optional meta for clarity and actionability
+  assumptions?: string[];
+  confidence?: number; // 0-100
+  nextTests?: Array<{ hypothesis: string; channel: string; metric: string }>;
   // Language & model behavior metadata
   language?: string;
   fallbackUsed?: boolean;
