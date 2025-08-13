@@ -258,11 +258,7 @@ const ResultsPage: React.FC = () => {
     const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
         const a = platformAnalysesObj?.[def.key];
         const hasNonEmptyString = (s: unknown) => typeof s === 'string' && s.trim().length > 0;
-        const hasData = Boolean(
-            a && (
-                hasNonEmptyString(a.summary) && (Array.isArray(a.keyFindings) ? a.keyFindings.length > 0 : true)
-            )
-        );
+        const hasData = Boolean(a && hasNonEmptyString(a.summary));
         return hasData;
     });
     const sortedPlatformDefs = availablePlatformDefs
@@ -816,6 +812,7 @@ const ResultsPage: React.FC = () => {
                     </div>
 
                     {/* Social Media Platform Analysis */}
+                    {visiblePlatformDefs.length > 0 && (
                     <div className="mb-4">
                         <h2 className="text-lg font-semibold text-white mb-3 text-center">Platform Analysis</h2>
                         <div className="text-sm text-slate-300 mb-4 text-center">
@@ -844,6 +841,7 @@ const ResultsPage: React.FC = () => {
 
                         {/* Removed legacy static groups; platform cards now rendered only from dynamic list above */}
                     </div>
+                    )}
 
                     {/* Market Intelligence Cards - Tier 1 */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
