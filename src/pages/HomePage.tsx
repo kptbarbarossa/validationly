@@ -291,24 +291,57 @@ const HomePage: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
                         <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
-                            <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
-                            <button
+                            
+                            <textarea
+                                ref={textareaRef}
+                                value={userInput.idea}
+                                onChange={handleInputChange}
+                                onKeyDown={handleKeyDown}
+                                placeholder={'Describe your startup idea...'}
+                                className="glass-scroll w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
+                                rows={4}
+                                disabled={isLoading}
+                                aria-describedby={userInput.errorMessage ? "error-message" : undefined}
+                            />
+
+                            {/* Character counter */}
+                            <div className="absolute bottom-3 left-6 text-sm text-slate-400">
+                                {userInput.idea.length}/1000
+                            </div>
+
+                            {/* Enhanced action bar: Submit + Enhance + Gallery */}
+                            <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={triggerValidation}
+                                    disabled={!userInput.isValid || isLoading}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 ${userInput.isValid && !isLoading
+                                        ? 'hover:scale-110 cursor-pointer opacity-100'
+                                        : 'cursor-not-allowed opacity-50'
+                                        }`}
+                                    aria-label="Submit idea for validation"
+                                >
+                                    <img
+                                        src="/logo.png"
+                                        alt="Submit"
+                                        className="w-6 h-6 object-contain"
+                                    />
+                                </button>
+                                <button
                                     type="button"
                                     onClick={async () => {
                                         if (isLoading || isEnhancing) return;
                                         setIsEnhancing(true);
                                         const enhanced = await enhancePromptRemotely(userInput.idea);
                                         if (enhanced) {
-                                            // Fill enhanced prompt into textarea (placeholder-like behavior)
                                             const validation = validateInput(enhanced);
                                             setUserInput(validation);
                                         }
                                         setIsEnhancing(false);
                                     }}
-                                className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isEnhancing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${!isEnhancing ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`}
+                                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isEnhancing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
                                     aria-label="Enhance prompt"
                                     title="Enhance prompt"
-                                    
                                     disabled={isEnhancing || isLoading}
                                 >
                                     {isEnhancing ? (
@@ -333,41 +366,6 @@ const HomePage: React.FC = () => {
                                     Prompt Gallery
                                 </button>
                             </div>
-                            <textarea
-                                ref={textareaRef}
-                                value={userInput.idea}
-                                onChange={handleInputChange}
-                                onKeyDown={handleKeyDown}
-                                placeholder={'Describe your startup idea... (AI-powered fitness app for busy professionals)'}
-                                className="glass-scroll w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
-                                rows={4}
-                                disabled={isLoading}
-                                aria-describedby={userInput.errorMessage ? "error-message" : undefined}
-                            />
-
-                            {/* Character counter */}
-                            <div className="absolute bottom-3 left-6 text-sm text-slate-400">
-                                {userInput.idea.length}/1000
-                            </div>
-
-                            {/* Enhanced submit button */}
-                            <button
-                                type="button"
-                                onClick={triggerValidation}
-                                disabled={!userInput.isValid || isLoading}
-                                className={`absolute bottom-3 right-3 w-10 h-10 flex items-center justify-center transition-all duration-200 ${userInput.isValid && !isLoading
-                                    ? 'hover:scale-110 cursor-pointer opacity-100'
-                                    : 'cursor-not-allowed opacity-50'
-                                    }`}
-                                aria-label="Submit idea for validation"
-                            >
-                                <img
-                                    src="/logo.png"
-                                    alt="Submit"
-                                    className="w-6 h-6 object-contain"
-                                
-                                />
-                            </button>
                         </div>
                     </div>
                     {userInput.errorMessage && (
