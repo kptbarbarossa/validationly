@@ -974,8 +974,15 @@ export default async function handler(req: any, res: any) {
         ];
         const preferredModel = typeof model === 'string' && allowedModels.includes(model) ? model : undefined;
 
-        // Use simplified analysis approach with dynamic prompts
-        const result = await getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang, preferredModel, weightsVariant, { morePlatforms: Boolean(req.body?.morePlatforms) });
+        // Use simplified analysis approach with dynamic prompts (optional ensemble)
+        const baseRun = () => getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang, preferredModel, weightsVariant, { morePlatforms: Boolean(req.body?.morePlatforms) });
+        let result = await baseRun();
+        if (req.body?.ensemble === true) {
+            try {
+                const extra = await Promise.all([baseRun(), baseRun()]);
+                result = fuseResults([result, ...extra]);
+            } catch {}
+        }
 
         console.log('✅ Dynamic prompt analysis completed successfully');
         console.log('📊 Result structure:', Object.keys(result));
@@ -1847,5 +1854,60 @@ ${responseText.slice(0, 6000)}`,
                 }
             };
     }
+}
+
+// === Simple fusion of multiple results (majority/most-informative) ===
+function fuseResults(results: any[]): any {
+    if (!Array.isArray(results) || results.length === 0) return results?.[0];
+    const first = results[0] || {};
+    const avg = (nums: number[]) => Math.round(nums.reduce((s, n) => s + (Number.isFinite(n) ? n : 0), 0) / Math.max(1, nums.length));
+    const demandScore = avg(results.map(r => Number(r?.demandScore || 0)));
+    const scoreJustification = results.map(r => r?.scoreJustification || '').sort((a, b) => b.length - a.length)[0] || first.scoreJustification;
+
+    const platformKeys = Array.from(new Set(results.flatMap(r => Object.keys(r?.platformAnalyses || {}))));
+    const platformAnalyses: any = {};
+    for (const k of platformKeys) {
+        const candidates = results.map(r => r?.platformAnalyses?.[k]).filter(Boolean);
+        if (candidates.length === 0) continue;
+        const best = candidates.reduce((best: any, cur: any) => {
+            if (!best) return cur;
+            const bs = Number(best.score || 0), cs = Number(cur.score || 0);
+            const bl = (best.summary || '').length, cl = (cur.summary || '').length;
+            if (cs > bs) return cur;
+            if (cs === bs && cl > bl) return cur;
+            return best;
+        }, null);
+        platformAnalyses[k] = best;
+    }
+
+    const pickLongest = (key: string) => results.map(r => r?.[key]).filter(Boolean).sort((a: any, b: any) => JSON.stringify(b).length - JSON.stringify(a).length)[0] || first[key];
+    const assumptions = Array.from(new Set(results.flatMap(r => r?.assumptions || []))).slice(0, 5);
+    const confidence = Math.max(0, Math.min(100, avg(results.map(r => Number(r?.confidence || 0)))));
+    const nextTestsRaw = results.flatMap(r => r?.nextTests || []);
+    const seen = new Set<string>();
+    const nextTests: any[] = [];
+    for (const t of nextTestsRaw) {
+        const key = `${t?.hypothesis || ''}|${t?.channel || ''}|${t?.metric || ''}`;
+        if (!seen.has(key)) { seen.add(key); nextTests.push(t); }
+        if (nextTests.length >= 3) break;
+    }
+
+    return {
+        ...first,
+        demandScore,
+        scoreJustification,
+        platformAnalyses,
+        marketIntelligence: pickLongest('marketIntelligence'),
+        competitiveLandscape: pickLongest('competitiveLandscape'),
+        revenueModel: pickLongest('revenueModel'),
+        targetAudience: pickLongest('targetAudience'),
+        riskAssessment: pickLongest('riskAssessment'),
+        goToMarket: pickLongest('goToMarket'),
+        developmentRoadmap: pickLongest('developmentRoadmap'),
+        productMarketFit: pickLongest('productMarketFit'),
+        assumptions: assumptions.length ? assumptions : first.assumptions,
+        confidence: confidence || first.confidence,
+        nextTests: nextTests.length ? nextTests : first.nextTests
+    };
 }
 
