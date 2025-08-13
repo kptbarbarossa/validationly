@@ -751,7 +751,7 @@ const ResultsPage: React.FC = () => {
             />
 
             {/* Enhanced Background - Dark + Glassmorphism + Spotlight */}
-            <div className="relative min-h-screen bg-slate-950 text-slate-100 overflow-hidden" onMouseMove={(e)=>{ const r = (e.currentTarget as HTMLDivElement).style; r.setProperty('--sx', e.clientX+'px'); r.setProperty('--sy', e.clientY+'px'); }}>
+            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden" onMouseMove={(e)=>{ const r = (e.currentTarget as HTMLDivElement).style; r.setProperty('--sx', e.clientX+'px'); r.setProperty('--sy', e.clientY+'px'); }}>
                 {/* Fallback notice */}
                 {Boolean((result as any)?.fallbackUsed) && (
                     <div className="max-w-3xl mx-auto mb-4 p-3 rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm">
@@ -760,9 +760,12 @@ const ResultsPage: React.FC = () => {
                             : 'Note: Analysis used fallback mode. Please try again for more accurate results.'}
                     </div>
                 )}
-                {/* Simplified background to avoid banding */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"></div>
-                <div className="pointer-events-none absolute inset-0 noise-overlay"></div>
+                {/* Background gradient overlay */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-600/25 via-indigo-500/10 to-cyan-600/25 blur-3xl"></div>
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/40 to-transparent"></div>
+                <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/25 rounded-full blur-3xl animate-aurora-slower"></div>
+                <div className="pointer-events-none absolute -bottom-40 -right-40 w-[44rem] h-[44rem] bg-cyan-500/25 rounded-full blur-3xl animate-aurora-slowest"></div>
+                <div className="pointer-events-none absolute inset-0 cursor-spotlight"></div>
                 
                 <div className="relative z-10 container mx-auto px-4 py-8">
 
@@ -777,14 +780,14 @@ const ResultsPage: React.FC = () => {
                             <div className="flex flex-col items-center justify-center">
                                 <div className="text-sm font-medium text-slate-300 mb-3">Market Demand Score</div>
                                 <div className="flex items-center justify-center gap-6 mb-2">
-                                    <div className="relative w-40 h-40">
-                                        <div className={`absolute inset-0 gauge-ring ${result.demandScore>=70? 'gauge-green' : result.demandScore>=50? 'gauge-amber' : 'gauge-red'}`} data-progress={result.demandScore} />
-                                        <div className="absolute inset-3 gauge-inner flex items-center justify-center">
-                                            <div className="text-4xl font-bold text-white leading-none">
-                                                {result.demandScore}
-                                                <span className="block text-xs text-slate-300 mt-1">/100</span>
+                                <div className="relative w-40 h-40">
+                                    <div className={`absolute inset-0 gauge-ring ${result.demandScore>=70? 'gauge-green' : result.demandScore>=50? 'gauge-amber' : 'gauge-red'}`} data-progress={result.demandScore} />
+                                    <div className="absolute inset-3 gauge-inner flex items-center justify-center">
+                                        <div className="text-4xl font-bold text-white leading-none">
+                                    {result.demandScore}
+                                            <span className="block text-xs text-slate-300 mt-1">/100</span>
                                             </div>
-                                        </div>
+                                </div>
                                     </div>
                                 </div>
                                 <div className={`inline-flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold shadow-sm bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200 animate-bounce-in`}>
@@ -797,13 +800,13 @@ const ResultsPage: React.FC = () => {
                                 <div className="text-sm text-slate-200 leading-relaxed mb-3">"{result.content || result.idea}"</div>
                                 <h2 className="text-sm font-semibold text-slate-300 mb-2">{isTR ? 'Özet Analiz' : 'Summary Analysis'}</h2>
                                 <ul className="space-y-1 text-sm text-slate-200">
-                                    {buildSummaryBullets().map((line, idx) => (
-                                        <li key={idx} className="flex items-start gap-2">
-                                            <span className="text-indigo-300 mt-0.5">•</span>
-                                            <span>{line}</span>
-                                        </li>
-                                    ))}
-                                </ul>
+                            {buildSummaryBullets().map((line, idx) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                    <span className="text-indigo-300 mt-0.5">•</span>
+                                    <span>{line}</span>
+                                </li>
+                            ))}
+                        </ul>
                             </div>
                         </div>
                     </div>
