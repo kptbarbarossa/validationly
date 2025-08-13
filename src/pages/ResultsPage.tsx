@@ -844,8 +844,8 @@ const ResultsPage: React.FC = () => {
                     </div>
                     )}
 
-                    {/* Test Your Idea (content suggestions) already above; place feedback right below */}
-                    <div className="max-w-3xl mx-auto mb-6">
+                    {/* Move feedback below this block per request */}
+                    <div className="max-w-3xl mx-auto mb-12">
                         <div className="rounded-xl glass glass-border p-4 border border-white/10 bg-white/5">
                             <h3 className="text-white font-semibold mb-2">Leave quick feedback</h3>
                             <p className="text-sm text-slate-300 mb-3">Help us improve the analysis quality.</p>
@@ -1404,22 +1404,14 @@ const ResultsPage: React.FC = () => {
                         </div>
                     )}
 
-                    {/* Feedback and support buttons intentionally removed */}
-
-                    {/* Feedback card moved above; Bottom CTA */}
-                    <div className="text-center">
-                        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 text-white shadow-2xl border border-white/10 max-w-2xl mx-auto">
-                            <h3 className="text-2xl font-bold mb-4">Ready to Build Your Idea?</h3>
-                            <p className="text-slate-200 mb-6 text-lg">
-                                {status.desc} {status.action}.
-                            </p>
-                            <button
-                                onClick={() => navigate('/')}
-                                className="bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold hover:bg-slate-100 transition-all duration-300 shadow-lg"
-                            >
-                                Analyze Another Idea
-                            </button>
-                        </div>
+                    {/* Bottom CTA simplified */}
+                    <div className="text-center mt-10">
+                        <button
+                            onClick={() => navigate('/')}
+                            className="bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold hover:bg-slate-100 transition-all duration-300 shadow-lg"
+                        >
+                            Analyze Another Idea
+                        </button>
                     </div>
                 </div>
             </div>
