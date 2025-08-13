@@ -338,7 +338,7 @@ const HomePage: React.FC = () => {
                                 value={userInput.idea}
                                 onChange={handleInputChange}
                                 onKeyDown={handleKeyDown}
-                                placeholder={'Describe your startup idea... (e.g., AI-powered fitness app for busy professionals)'}
+                                placeholder={'Describe your startup idea... (AI-powered fitness app for busy professionals)'}
                                 className="glass-scroll w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
                                 rows={4}
                                 disabled={isLoading}
