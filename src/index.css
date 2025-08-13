@@ -205,30 +205,39 @@ body {
 .delay-550 { animation-delay: 550ms !important; }
 .delay-600 { animation-delay: 600ms !important; }
 
-/* Premium hero effects */
-@keyframes shine {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+/* Floating particles */
+@keyframes floatParticle {
+  0% { transform: translateY(0) translateX(0) scale(0.9); opacity: 0; }
+  10% { opacity: 0.35; }
+  50% { opacity: 0.5; }
+  100% { transform: translateY(-140px) translateX(30px) scale(1.1); opacity: 0; }
 }
-.shine-text {
-  background-image: linear-gradient(90deg, rgba(255,255,255,0.25), rgba(255,255,255,0.95), rgba(255,255,255,0.25));
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: shine 2.5s ease-in-out infinite;
+.particles { pointer-events: none; }
+.particles span {
+  position: absolute;
+  bottom: -20px;
+  width: 6px; height: 6px;
+  background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+  border-radius: 9999px;
+  filter: blur(0.6px);
+  opacity: 0.35;
+  animation: floatParticle linear infinite;
 }
+.particles span:nth-child(odd) { filter: blur(1px); width: 5px; height: 5px; }
+.particles span:nth-child(3n) { width: 7px; height: 7px; }
+/* positions & timings */
+.particles span:nth-child(1) { left: 10%; animation-duration: 8s; animation-delay: 0s; }
+.particles span:nth-child(2) { left: 25%; animation-duration: 10s; animation-delay: 1s; }
+.particles span:nth-child(3) { left: 40%; animation-duration: 9s; animation-delay: 0.5s; }
+.particles span:nth-child(4) { left: 55%; animation-duration: 11s; animation-delay: 1.2s; }
+.particles span:nth-child(5) { left: 70%; animation-duration: 8.5s; animation-delay: 0.3s; }
+.particles span:nth-child(6) { left: 85%; animation-duration: 10.5s; animation-delay: 0.8s; }
+.particles span:nth-child(7) { left: 15%; animation-duration: 12s; animation-delay: 1.4s; }
+.particles span:nth-child(8) { left: 32%; animation-duration: 9.5s; animation-delay: 0.2s; }
+.particles span:nth-child(9) { left: 48%; animation-duration: 11.5s; animation-delay: 1.1s; }
+.particles span:nth-child(10){ left: 62%; animation-duration: 10s; animation-delay: 0.6s; }
+.particles span:nth-child(11){ left: 78%; animation-duration: 12.5s; animation-delay: 1.6s; }
+.particles span:nth-child(12){ left: 92%; animation-duration: 9s; animation-delay: 0.9s; }
 
-.tilt-wrap { perspective: 1200px; }
-.tilt { transform: rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); transition: transform 180ms ease; will-change: transform; }
-
-@keyframes borderSweep {
-  0%   { border-image-source: linear-gradient(90deg,#6366f1,transparent); }
-  50%  { border-image-source: linear-gradient(90deg,#22d3ee,#6366f1); }
-  100% { border-image-source: linear-gradient(90deg,transparent,#22d3ee); }
-}
-.glow {
-  border: 1px solid transparent;
-  border-image: linear-gradient(90deg,#6366f1,#22d3ee) 1;
-  animation: borderSweep 3s ease-in-out infinite;
-}
+/* Magnetic button helper */
+.magnetic { transform: translate(var(--tx,0px), var(--ty,0px)); transition: transform 120ms ease; will-change: transform; }
