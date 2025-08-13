@@ -82,7 +82,7 @@ const App: React.FC = () => {
           <footer className="text-center py-8 text-slate-400 text-sm border-t border-white/10">
             <p className="mb-2">&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
             <p>
-              <a href="/privacy" className="underline hover:text-slate-300">Gizlilik Politikası</a>
+              <a href="/privacy" className="underline hover:text-slate-300">Privacy Policy</a>
             </p>
           </footer>
         </BrowserRouter>
