@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import type { DynamicPromptResult, UserInput } from '../types';
 // import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
+import PromptGallery from '../components/PromptGallery';
 import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import SEOHead from '../components/SEOHead';
@@ -88,6 +89,7 @@ const HomePage: React.FC = () => {
         errorMessage: '' as unknown as string // exactOptionalPropertyTypes workaround
     });
     const [isLoading, setIsLoading] = useState(false); // analysis submit loading
+    const [galleryOpen, setGalleryOpen] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
@@ -321,6 +323,15 @@ const HomePage: React.FC = () => {
                                         '✨ Enhance'
                                     )}
                                 </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setGalleryOpen(true)}
+                                    className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
+                                    aria-label="Open prompt gallery"
+                                    title="Open prompt gallery"
+                                >
+                                    Prompt Gallery
+                                </button>
                             </div>
                             <textarea
                                 ref={textareaRef}
@@ -333,6 +344,21 @@ const HomePage: React.FC = () => {
                                 disabled={isLoading}
                                 aria-describedby={userInput.errorMessage ? "error-message" : undefined}
                             />
+
+                            {/* Placeholder overlay action when empty */}
+                            {(!userInput.idea || userInput.idea.trim().length === 0) && (
+                                <div className="pointer-events-none absolute inset-0 flex items-end justify-start">
+                                    <div className="m-6">
+                                        <button
+                                            type="button"
+                                            onClick={() => setGalleryOpen(true)}
+                                            className="pointer-events-auto text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
+                                        >
+                                            Open Prompt Gallery
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Character counter */}
                             <div className="absolute bottom-3 left-6 text-sm text-slate-400">
@@ -369,6 +395,19 @@ const HomePage: React.FC = () => {
 
 
             </form>
+
+            {/* Prompt Gallery Modal */}
+            <PromptGallery
+                open={galleryOpen}
+                onClose={() => setGalleryOpen(false)}
+                onUse={(text) => {
+                    const validation = validateInput(text);
+                    setUserInput(validation);
+                    setGalleryOpen(false);
+                    textareaRef.current?.focus();
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+            />
 
             <div className="mt-12">
                 <h3 className="text-lg font-semibold text-white mb-6">
