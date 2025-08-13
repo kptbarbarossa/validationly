@@ -8,7 +8,7 @@ import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import SEOHead from '../components/SEOHead';
-import RelatedStartups from '../components/RelatedStartups';
+// import RelatedStartups from '../components/RelatedStartups';
 
 const sampleCategories = [
     {
@@ -395,7 +395,7 @@ const HomePage: React.FC = () => {
                 </div>
             </div>
 
-            <RelatedStartups />
+				{/* RelatedStartups section removed by request */}
         </div>
         </>
     );
