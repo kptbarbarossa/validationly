@@ -876,6 +876,16 @@ const ResultsPage: React.FC = () => {
                             <h3 className="text-xl font-bold text-white mb-2">Test Your Idea</h3>
                             <p className="text-slate-300">Copy and use these AI-generated posts to validate your idea on social platforms</p>
                         </div>
+                        {/* Screen reader live region for copy feedback */}
+                        <div className="sr-only" aria-live="polite" role="status">
+                            {copiedId === 'tweet'
+                                ? (isTR ? 'X paylaşımı panoya kopyalandı' : 'X post copied to clipboard')
+                                : copiedId === 'reddit'
+                                    ? (isTR ? 'Reddit içeriği panoya kopyalandı' : 'Reddit content copied to clipboard')
+                                    : copiedId === 'linkedin'
+                                        ? (isTR ? 'LinkedIn paylaşımı panoya kopyalandı' : 'LinkedIn post copied to clipboard')
+                                        : ''}
+                        </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Twitter Suggestion */}
@@ -887,12 +897,22 @@ const ResultsPage: React.FC = () => {
                                         </div>
                                         <span className="font-semibold text-slate-100">X (Twitter)</span>
                                     </div>
-                                    <button
-                                        onClick={() => handleCopyToClipboard(result.tweetSuggestion, 'tweet')}
-                                        className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg shadow-blue-600/30"
-                                    >
-                                        {copiedId === 'tweet' ? '✓ Copied!' : 'Copy'}
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleCopyToClipboard(result.tweetSuggestion, 'tweet')}
+                                            className="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition-colors font-medium shadow-lg shadow-blue-600/30"
+                                            aria-label={isTR ? 'X paylaşımını panoya kopyala' : 'Copy X post to clipboard'}
+                                        >
+                                            {copiedId === 'tweet' ? '✓ Copied!' : 'Copy'}
+                                        </button>
+                                        <button
+                                            onClick={() => window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(result.tweetSuggestion)}`, '_blank')}
+                                            className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-600/40 text-blue-200 hover:bg-blue-600/25 transition-colors font-medium"
+                                            aria-label={isTR ? 'X üzerinde paylaş' : 'Share on X'}
+                                        >
+                                            Share
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="text-sm text-slate-200 leading-relaxed bg-white/5 backdrop-blur-xl rounded-lg p-4 border border-white/10">
                                     {result.tweetSuggestion}
@@ -911,12 +931,22 @@ const ResultsPage: React.FC = () => {
                                         </div>
                                         <span className="font-semibold text-slate-100">Reddit</span>
                                     </div>
-                                    <button
-                                        onClick={() => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit')}
-                                        className="text-xs bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 transition-colors font-medium shadow-lg shadow-orange-600/30"
-                                    >
-                                        {copiedId === 'reddit' ? '✓ Copied!' : 'Copy'}
-                                    </button>
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => handleCopyToClipboard(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 'reddit')}
+                                            className="text-xs bg-orange-600 text-white px-3 py-1.5 rounded-lg hover:bg-orange-700 transition-colors font-medium shadow-lg shadow-orange-600/30"
+                                            aria-label={isTR ? 'Reddit başlık ve gövdesini panoya kopyala' : 'Copy Reddit title and body to clipboard'}
+                                        >
+                                            {copiedId === 'reddit' ? '✓ Copied!' : 'Copy'}
+                                        </button>
+                                        <button
+                                            onClick={() => window.open(`https://www.reddit.com/submit?title=${encodeURIComponent(result.redditTitleSuggestion)}&text=${encodeURIComponent(result.redditBodySuggestion)}`, '_blank')}
+                                            className="text-xs px-3 py-1.5 rounded-lg bg-orange-600/20 border border-orange-600/40 text-orange-200 hover:bg-orange-600/25 transition-colors font-medium"
+                                            aria-label={isTR ? 'Reddit üzerinde paylaş' : 'Share on Reddit'}
+                                        >
+                                            Share
+                                        </button>
+                                    </div>
                                 </div>
                                 <div className="bg-white/5 backdrop-blur-xl rounded-lg p-4 border border-white/10">
                                     <div className="text-sm font-semibold text-slate-100 mb-2">
@@ -945,6 +975,7 @@ const ResultsPage: React.FC = () => {
                                     <button
                                         onClick={() => handleCopyToClipboard(result.linkedinSuggestion, 'linkedin')}
                                         className="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-lg shadow-indigo-600/30"
+                                        aria-label={isTR ? 'LinkedIn paylaşımını panoya kopyala' : 'Copy LinkedIn post to clipboard'}
                                     >
                                         {copiedId === 'linkedin' ? '✓ Copied!' : 'Copy'}
                                     </button>
