@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { DynamicPromptResult } from '../types';
 import SEOHead from '../components/SEOHead';
+import ShareableSnippet from '../components/ShareableSnippet';
 
 // Minimalist Premium Icons - removed unused variants to satisfy TS
 
@@ -710,6 +711,14 @@ const ResultsPage: React.FC = () => {
                         <div className={`text-sm font-medium ${getScoreColor(analysis?.score || 3)}`}>
                             {analysis?.score || 3}/5 - {getScoreText(analysis?.score || 3)}
                         </div>
+                        {/* Shareable snippet */}
+                        <ShareableSnippet
+                            ideaTitle={(result as any).idea || (result as any).content || 'Your startup idea'}
+                            score={Number((result as any).demandScore || 0)}
+                            platforms={sortedPlatformDefs.slice(0,3).map(p=>p.label)}
+                            dateISO={new Date().toISOString()}
+                            siteUrl={window.location.origin}
+                        />
                     </div>
                 </div>
 
