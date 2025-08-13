@@ -276,9 +276,9 @@ const HomePage: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
                 {/* Privacy notice */}
-                <div className="mb-3 text-xs text-left text-slate-400">
-                    Henüz hiçbir bilgi depolanmamaktadır. Girdiğiniz metin yalnızca anlık analiz için kullanılır ve ardından atılır.
-                </div>
+				<div className="mb-3 text-xs text-left text-slate-400">
+					No information is stored yet. Your input is used only for on-the-fly analysis and then discarded.
+				</div>
                 <div className="mb-4">
                     <div className="relative group">
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
