@@ -77,6 +77,8 @@ export interface DynamicPromptResult {
   assumptions?: string[];
   confidence?: number; // 0-100
   nextTests?: Array<{ hypothesis: string; channel: string; metric: string }>;
+  // Enriched social suggestions (optional)
+  socialSuggestions?: SocialSuggestions;
   // Language & model behavior metadata
   language?: string;
   fallbackUsed?: boolean;
@@ -167,6 +169,32 @@ export interface DynamicPromptResult {
     sectorsDetected: string[];
     analysisTypes: string[];
     confidence: number;
+  };
+}
+
+// ---- Social suggestions enriched schema ----
+export interface SocialSuggestions {
+  x?: {
+    variants?: Array<{ text: string; goal: string; variables: string[] }>;
+    thread?: string[]; // optional step-by-step thread outline
+  };
+  reddit?: {
+    subreddits?: string[];
+    titleVariants?: string[];
+    body?: string;
+    goal?: string;
+  };
+  linkedin?: {
+    post?: string;
+    hashtags?: string[];
+    goal?: string;
+  };
+  instagram?: {
+    hooks?: string[];
+    caption?: string;
+    hashtags?: string[];
+    shots?: string[]; // short shot ideas for reels
+    goal?: string;
   };
 }
 

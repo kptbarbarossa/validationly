@@ -905,6 +905,15 @@ export default async function handler(req: any, res: any) {
         - assumptions: 3-5 short assumptions that your analysis relies on
         - confidence: integer 0-100 overall confidence in your analysis quality
         - nextTests: 3 actionable experiments (each with hypothesis, channel, metric)
+        - socialSuggestions: platform-specific suggestions with goals and variables as described below
+          X:
+            { variants: [ { text, goal, variables[] } ], thread: [step1, step2, step3] }
+          Reddit:
+            { subreddits: ["sub1","sub2"], titleVariants: ["A","B"], body, goal }
+          LinkedIn:
+            { post, hashtags: ["#tag1","#tag2"], goal }
+          Instagram:
+            { hooks: ["hook1","hook2"], caption, hashtags: ["#"], shots: ["idea1","idea2"], goal }
 
         Analyze the following startup idea: "${inputContent}"${evidenceText}`;
 
@@ -1242,7 +1251,31 @@ async function getSimplifiedAIAnalysis(
                       { "hypothesis": "...", "channel": "...", "metric": "..." },
                       { "hypothesis": "...", "channel": "...", "metric": "..." },
                       { "hypothesis": "...", "channel": "...", "metric": "..." }
-                    ]
+                    ],
+                    "socialSuggestions": {
+                      "x": {
+                        "variants": [ { "text": "...", "goal": "e.g., 1.5%+ engagement", "variables": ["emoji","number","question"] } ],
+                        "thread": ["intro","problem","solution","CTA"]
+                      },
+                      "reddit": {
+                        "subreddits": ["sub1","sub2"],
+                        "titleVariants": ["title A","title B"],
+                        "body": "...",
+                        "goal": "10+ comments"
+                      },
+                      "linkedin": {
+                        "post": "...",
+                        "hashtags": ["#...","#..."],
+                        "goal": "5+ comments"
+                      },
+                      "instagram": {
+                        "hooks": ["...","..."],
+                        "caption": "...",
+                        "hashtags": ["#...","#..."],
+                        "shots": ["...","..."],
+                        "goal": "saves/shares > baseline"
+                      }
+                    }
                 }`,
                 responseMimeType: "application/json",
                 temperature: 0,
