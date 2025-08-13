@@ -6,7 +6,7 @@ import type { DynamicPromptResult, UserInput } from '../types';
 // import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import PromptGallery from '../components/PromptGallery';
-import Logo from '../components/Logo';
+// import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import SEOHead from '../components/SEOHead';
 // import RelatedStartups from '../components/RelatedStartups';
@@ -262,17 +262,14 @@ const HomePage: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
 
                 <div className="relative z-10 py-8">
-                    {/* Logo */}
-					<div className="flex justify-center mb-6 animate-bounce-in">
-                        <Logo size="lg" showText={false} />
-                    </div>
+                    {/* Logo removed by request */}
 
 					<h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up delay-100">
                         <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
                             Validate your idea
                         </span>
                         <br />
-                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
+                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent shine-text">before you build it</span>
                     </h1>
 
 					<p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
@@ -282,10 +279,6 @@ const HomePage: React.FC = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-                {/* Privacy notice */}
-				<div className="mb-3 text-xs text-left text-slate-400">
-					No information is stored yet. Your input is used only for on-the-fly analysis and then discarded.
-				</div>
                 <div className="mb-4">
                     <div className="relative group">
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
