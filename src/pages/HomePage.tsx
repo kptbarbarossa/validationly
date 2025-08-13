@@ -251,10 +251,21 @@ const HomePage: React.FC = () => {
             />
             <div className="text-center max-w-4xl mx-auto text-slate-100">
             {/* Enhanced Hero Section - Reduced spacing */}
-            <div className="relative mb-0">
+            <div className="relative mb-0 tilt-wrap" onMouseMove={(e) => {
+                const b = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+                const mx = (e.clientX - b.left) / b.width - 0.5;
+                const my = (e.clientY - b.top) / b.height - 0.5;
+                const rx = (-my * 4).toFixed(2) + 'deg';
+                const ry = (mx * 6).toFixed(2) + 'deg';
+                (e.currentTarget.firstElementChild as HTMLElement)?.style.setProperty('--rx', rx);
+                (e.currentTarget.firstElementChild as HTMLElement)?.style.setProperty('--ry', ry);
+            }} onMouseLeave={(e)=>{
+                (e.currentTarget.firstElementChild as HTMLElement)?.style.setProperty('--rx','0deg');
+                (e.currentTarget.firstElementChild as HTMLElement)?.style.setProperty('--ry','0deg');
+            }}>
                 <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
 
-                <div className="relative z-10 py-8">
+                <div className="relative z-10 py-8 tilt">
                     {/* Logo */}
 					<div className="flex justify-center mb-6 animate-bounce-in">
                         <Logo size="lg" showText={false} />
@@ -265,7 +276,7 @@ const HomePage: React.FC = () => {
                             Validate your idea
                         </span>
                         <br />
-                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
+                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent shine-text">before you build it</span>
                     </h1>
 
 					<p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
@@ -283,7 +294,7 @@ const HomePage: React.FC = () => {
                     <div className="relative group">
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
-                        <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
+                        <div className="relative rounded-3xl glass glass-border glow hover:border-white/15 hover:shadow-xl transition-all">
                             <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
                             <button
                                     type="button"

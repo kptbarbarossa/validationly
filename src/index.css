@@ -204,3 +204,31 @@ body {
 .delay-500 { animation-delay: 500ms !important; }
 .delay-550 { animation-delay: 550ms !important; }
 .delay-600 { animation-delay: 600ms !important; }
+
+/* Premium hero effects */
+@keyframes shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shine-text {
+  background-image: linear-gradient(90deg, rgba(255,255,255,0.25), rgba(255,255,255,0.95), rgba(255,255,255,0.25));
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shine 2.5s ease-in-out infinite;
+}
+
+.tilt-wrap { perspective: 1200px; }
+.tilt { transform: rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)); transition: transform 180ms ease; will-change: transform; }
+
+@keyframes borderSweep {
+  0%   { border-image-source: linear-gradient(90deg,#6366f1,transparent); }
+  50%  { border-image-source: linear-gradient(90deg,#22d3ee,#6366f1); }
+  100% { border-image-source: linear-gradient(90deg,transparent,#22d3ee); }
+}
+.glow {
+  border: 1px solid transparent;
+  border-image: linear-gradient(90deg,#6366f1,#22d3ee) 1;
+  animation: borderSweep 3s ease-in-out infinite;
+}
