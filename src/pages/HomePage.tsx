@@ -284,12 +284,6 @@ const HomePage: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
                         <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
-                            {/* Floating particles */}
-                            <div className="particles pointer-events-none absolute inset-x-0 bottom-0 h-32">
-                                {Array.from({length:12}).map((_,i)=> (
-                                    <span key={i}></span>
-                                ))}
-                            </div>
                             <div className="absolute top-3 right-3 z-10 flex items-center gap-2">
                             <button
                                     type="button"
@@ -304,7 +298,7 @@ const HomePage: React.FC = () => {
                                         }
                                         setIsEnhancing(false);
                                     }}
-                                className={`magnetic text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isEnhancing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${!isEnhancing ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`}
+                                className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isEnhancing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'} ${!isEnhancing ? 'animate-[pulse_2s_ease-in-out_infinite]' : ''}`}
                                     aria-label="Enhance prompt"
                                     title="Enhance prompt"
                                     
@@ -355,21 +349,7 @@ const HomePage: React.FC = () => {
                                     src="/logo.png"
                                     alt="Submit"
                                     className="w-6 h-6 object-contain"
-                                onMouseMove={(e)=>{
-                                    const b = (e.currentTarget as HTMLTextAreaElement).getBoundingClientRect();
-                                    const mx = (e.clientX - b.left) / b.width - 0.5;
-                                    const my = (e.clientY - b.top) / b.height - 0.5;
-                                    const tx = (mx * 6).toFixed(1) + 'px';
-                                    const ty = (my * 6).toFixed(1) + 'px';
-                                    const btn = (e.currentTarget.parentElement?.querySelector('.magnetic') as HTMLElement);
-                                    btn?.style.setProperty('--tx', tx);
-                                    btn?.style.setProperty('--ty', ty);
-                                }}
-                                onMouseLeave={(e)=>{
-                                    const btn = (e.currentTarget.parentElement?.querySelector('.magnetic') as HTMLElement);
-                                    btn?.style.setProperty('--tx','0px');
-                                    btn?.style.setProperty('--ty','0px');
-                                }}
+                                
                                 />
                             </button>
                         </div>
