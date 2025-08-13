@@ -183,6 +183,111 @@ const posts: Record<string, { title: string; description: string; date: string; 
       </>
     ),
   },
+  'ai-agent-validation-brief': {
+    title: 'AI Agent Validation Brief: Task, Tools, Guardrails',
+    description: 'Define agent task, tools, guardrails, and success metric for rapid validation.',
+    date: '2025-08-03',
+    body: (
+      <>
+        <p className="mb-3">A focused outline to validate AI agent ideas quickly.</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+          <li>Agent task, user, context (data), and tools (APIs/browse/docs).</li>
+          <li>Guardrails and monetization; define a clear 24h success metric.</li>
+          <li>Run micro‑tests on X/Reddit to measure task completions/leads.</li>
+        </ul>
+      </>
+    ),
+  },
+  'creator-content-product-brief': {
+    title: 'Creator Content Product Brief: Offer and Funnel',
+    description: 'Audience, problem, offer, distribution, CTA, monetization, and KPI.',
+    date: '2025-08-03',
+    body: (
+      <>
+        <p className="mb-3">Package content into a product and test funnel fit.</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+          <li>Audience/problem fit and offer format (course, templates, etc.).</li>
+          <li>Distribution channels, CTA strategy, monetization options.</li>
+          <li>Measure interest via CTR, email signups or waitlist joins.</li>
+        </ul>
+      </>
+    ),
+  },
+  'developer-tool-validation-brief': {
+    title: 'Developer Tool Validation Brief: DX and Community',
+    description: 'Dev pain, workflow, integrations, DX, OSS hook, community, and KPI.',
+    date: '2025-08-03',
+    body: (
+      <>
+        <p className="mb-3">Design a dev‑first brief to earn adoption signals.</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+          <li>Start from a concrete dev pain and where your tool fits.</li>
+          <li>DX matters: API/CLI clarity, integration into IDE/CI/CD.</li>
+          <li>Leverage OSS hooks and community (GitHub, Dev.to, X) for traction.</li>
+        </ul>
+      </>
+    ),
+  },
+  'wellness-app-validation-brief': {
+    title: 'Wellness App Validation Brief: Habit Loop and Safety',
+    description: 'User goal, habit loop, safety, channels, monetization, and KPI.',
+    date: '2025-08-03',
+    body: (
+      <>
+        <p className="mb-3">Align user outcomes with a simple habit loop experiment.</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+          <li>User goal and a clear trigger‑action‑reward loop.</li>
+          <li>Safety/medical disclaimers; monetization via subscription.</li>
+          <li>Use TikTok/Instagram hooks; track CTR or waitlist signups.</li>
+        </ul>
+      </>
+    ),
+  },
+  'education-course-validation-brief': {
+    title: 'Education Course Validation Brief: Outcome and Proof',
+    description: 'Learner outcome, curriculum, social proof, pre‑sale, channels, and KPI.',
+    date: '2025-08-03',
+    body: (
+      <>
+        <p className="mb-3">Outcome‑based design to pre‑sell an education product.</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+          <li>Define job‑to‑be‑done and convert to modules.</li>
+          <li>Add proof (cases/results) and run a small pre‑sale (pilot cohort).</li>
+          <li>Use LinkedIn/Reddit to source intent; track email waitlist.</li>
+        </ul>
+      </>
+    ),
+  },
+  'local-service-validation-brief': {
+    title: 'Local Service Validation Brief: Geo Offer and Proof',
+    description: 'Niche, geo, bundled offer, proof, channels, pricing, and KPI.',
+    date: '2025-08-03',
+    body: (
+      <>
+        <p className="mb-3">Frame a local offer with clear proof and channels.</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+          <li>Define niche + city/area and bundle the offer.</li>
+          <li>Show proof (before/after); pick short‑form + local groups.</li>
+          <li>Track inquiries as the 24h signal.</li>
+        </ul>
+      </>
+    ),
+  },
+  'b2b-outbound-validation-brief': {
+    title: 'B2B Outbound Validation Brief: ICP and Trigger',
+    description: 'ICP, trigger event, opener, proof, CTA, channel, and KPI.',
+    date: '2025-08-03',
+    body: (
+      <>
+        <p className="mb-3">Run a minimal, evidence‑first outbound test.</p>
+        <ul className="list-disc pl-5 space-y-2 text-slate-300">
+          <li>Define ICP + trigger events for precise targeting.</li>
+          <li>Craft a personalized opener and add quantitative proof.</li>
+          <li>Use LinkedIn/X; measure replies within 24 hours.</li>
+        </ul>
+      </>
+    ),
+  },
 };
 
 const BlogPostPage: React.FC = () => {

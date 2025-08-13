@@ -16,6 +16,13 @@ const posts = [
   { slug: 'nocode-validation-without-mvp', title: 'No‑Code Validation Without an MVP', desc: 'No‑code tool stacks and demo flows to test demand.', date: '2025-08-03' },
   { slug: '60-minute-competitor-analysis', title: '60‑Minute Competitor Analysis Framework', desc: 'Alternatives matrix and a positioning sentence.', date: '2025-08-03' },
   { slug: 'community-first-users', title: 'First Users with Zero Budget: Community Strategies', desc: 'Niche community mapping and value‑add posting playbook.', date: '2025-08-03' },
+  { slug: 'ai-agent-validation-brief', title: 'AI Agent Validation Brief: Task, Tools, Guardrails', desc: 'Define agent task, tools, guardrails, and success metric for rapid validation.', date: '2025-08-03' },
+  { slug: 'creator-content-product-brief', title: 'Creator Content Product Brief: Offer and Funnel', desc: 'Audience, problem, offer, distribution, CTA, monetization, and KPI.', date: '2025-08-03' },
+  { slug: 'developer-tool-validation-brief', title: 'Developer Tool Validation Brief: DX and Community', desc: 'Dev pain, workflow, integrations, DX, OSS hook, community, and KPI.', date: '2025-08-03' },
+  { slug: 'wellness-app-validation-brief', title: 'Wellness App Validation Brief: Habit Loop and Safety', desc: 'User goal, habit loop, safety, channels, monetization, and KPI.', date: '2025-08-03' },
+  { slug: 'education-course-validation-brief', title: 'Education Course Validation Brief: Outcome and Proof', desc: 'Learner outcome, curriculum, social proof, pre‑sale, channels, and KPI.', date: '2025-08-03' },
+  { slug: 'local-service-validation-brief', title: 'Local Service Validation Brief: Geo Offer and Proof', desc: 'Niche, geo, bundled offer, proof, channels, pricing, and KPI.', date: '2025-08-03' },
+  { slug: 'b2b-outbound-validation-brief', title: 'B2B Outbound Validation Brief: ICP and Trigger', desc: 'ICP, trigger event, opener, proof, CTA, channel, and KPI.', date: '2025-08-03' },
 ];
 
 const BlogIndexPage: React.FC = () => {
