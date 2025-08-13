@@ -2,10 +2,11 @@ import React from 'react';
 import SEOHead from '../components/SEOHead';
 
 const faqs = [
+  { q: 'Do you store the information I enter?', a: 'No. No information you enter is stored. Inputs are processed transiently to generate results and then discarded.' },
   { q: 'What is Validationly?', a: 'It provides fast, AI‑assisted market validation for your idea via social platforms.' },
   { q: 'How fast are the results?', a: 'Typically within 15–30 seconds.' },
   { q: 'Which languages are supported?', a: 'We mirror your input language for outputs (Turkish, English, and others).' },
-  { q: 'How is my data used?', a: 'It is used only for analysis and not stored permanently. We care about privacy.' },
+  { q: 'How is my data used?', a: 'No information entered is stored. Inputs are used only for analysis and then discarded. We care about privacy.' },
   { q: 'Is it paid?', a: 'The core version is free for now; advanced features may arrive later.' },
 ];
 
