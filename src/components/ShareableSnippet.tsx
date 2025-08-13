@@ -39,7 +39,7 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, x: number, y: num
   return lines;
 }
 
-async function renderPngCard(opts: { ideaTitle: string; score: number; platforms: string[]; dateStr: string; siteUrl: string }): Promise<string> {
+async function renderPngCard(opts: { ideaTitle: string; score: number; platforms: string[]; dateStr: string; siteUrl: string; bullets?: string[] }): Promise<string> {
   const width = 1200; // OG-friendly
   const height = 630;
   const canvas = document.createElement('canvas');
@@ -93,6 +93,19 @@ async function renderPngCard(opts: { ideaTitle: string; score: number; platforms
   const pf = `Top platforms: ${opts.platforms.slice(0, 3).join(', ') || 'X, Reddit, LinkedIn'}`;
   ctx.fillText(pf, 80, 300);
 
+  // Bullets (up to 3)
+  const bulletLines = (opts.bullets || []).slice(0, 3);
+  if (bulletLines.length > 0) {
+    ctx.font = '24px Inter, ui-sans-serif';
+    ctx.fillStyle = '#cbd5e1';
+    let y = 350;
+    bulletLines.forEach(b => {
+      const lines = wrapText(ctx, `• ${b}`, 80, y, 960, 34);
+      lines.forEach(l => ctx.fillText(l.text, l.x, l.y));
+      y += Math.max(34, lines.length * 34);
+    });
+  }
+
   // Footer
   ctx.font = '22px Inter, ui-sans-serif';
   ctx.fillStyle = '#cbd5e1';
@@ -128,12 +141,19 @@ const ShareableSnippet: React.FC<ShareableSnippetProps> = ({ ideaTitle, score, p
 
   const handleDownloadPng = async () => {
     try {
-      const dataUrl = await renderPngCard({ ideaTitle, score, platforms, dateStr, siteUrl });
+      const dataUrl = await renderPngCard({ ideaTitle, score, platforms, dateStr, siteUrl, bullets });
       const a = document.createElement('a');
       a.href = dataUrl;
       a.download = 'validationly-snippet.png';
       a.click();
     } catch (e) { console.error(e); }
+  };
+
+  const handleReddit = () => {
+    const title = `Validated idea: ${ideaTitle} (Score ${Math.round(score)}/100)`;
+    const body = text;
+    const url = `https://www.reddit.com/submit?title=${encodeURIComponent(title)}&text=${encodeURIComponent(body)}`;
+    window.open(url, '_blank');
   };
 
   return (
@@ -150,6 +170,7 @@ const ShareableSnippet: React.FC<ShareableSnippetProps> = ({ ideaTitle, score, p
         <button onClick={handleCopy} className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-200 hover:border-white/20">Copy Text</button>
         <button onClick={handleTweet} className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-600/30 text-blue-200 hover:bg-blue-600/25">Tweet</button>
         <button onClick={handleLinkedIn} className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-600/30 text-indigo-200 hover:bg-indigo-600/25">LinkedIn</button>
+        <button onClick={handleReddit} className="text-xs px-3 py-1.5 rounded-lg bg-orange-600/20 border border-orange-600/30 text-orange-200 hover:bg-orange-600/25">Reddit</button>
       </div>
     </div>
   );
