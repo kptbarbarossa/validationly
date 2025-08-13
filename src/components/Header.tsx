@@ -31,22 +31,16 @@ const Header: React.FC = () => {
                             </button>
                         )}
 
-                        {/* B2B App link with icon (configurable via env) */}
-                        {(() => {
-                            const b2bUrl = (import.meta as any).env?.VITE_B2B_APP_URL || '#';
-                            const b2bIcon = (import.meta as any).env?.VITE_B2B_APP_ICON || '/favicon.svg';
-                            return (
-                                <a
-                                    href={b2bUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
-                                >
-                                    <img src={b2bIcon} alt="B2B" className="w-4 h-4 rounded" />
-                                    B2B App
-                                </a>
-                            );
-                        })()}
+                        {/* B2B App link with icon from public */}
+                        <a
+                            href={(import.meta as any).env?.VITE_B2B_APP_URL || '/b2b'}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                        >
+                            <img src="/logo b2b.png" alt="B2B" className="w-4 h-4 rounded" />
+                            B2B App
+                        </a>
 
                         <a
                             href="https://x.com/kptbarbarossa"
