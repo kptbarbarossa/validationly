@@ -22,7 +22,7 @@ export const loadFeedbackLocal = (): FeedbackItem[] => {
 };
 
 const FeedbackCard: React.FC<{ f: FeedbackItem } > = ({ f }) => (
-	<div className="rounded-2xl p-4 bg-gradient-to-br from-white/10 to-white/5 border border-white/15 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-xl">
+    <div className="rounded-2xl p-4 bg-gradient-to-br from-white/10 to-white/5 border border-white/15 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.6)] backdrop-blur-xl transition-transform duration-500 hover:-translate-y-1">
 		<div className="text-sm text-slate-100">{f.message}</div>
 		<div className="mt-2 text-xs text-slate-400 flex items-center gap-3">
 			{typeof f.score === 'number' && <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/20">{f.score}/10</span>}
@@ -40,7 +40,8 @@ function chunk<T>(arr: T[], size: number): T[][] {
 
 const FeedbackWall: React.FC = () => {
 	const [items, setItems] = useState<FeedbackItem[]>([]);
-	const [idx, setIdx] = useState(0);
+    const [idx, setIdx] = useState(0);
+    const [paused, setPaused] = useState(false);
 	useEffect(() => { setItems(loadFeedbackLocal()); }, []);
 
 	const slides = useMemo(() => {
@@ -49,11 +50,12 @@ const FeedbackWall: React.FC = () => {
 		return groups.length > 0 ? groups : [[]];
 	}, [items]);
 
-	useEffect(() => {
-		if (slides.length <= 1) return;
-		const t = setInterval(() => setIdx(i => (i + 1) % slides.length), 4500);
-		return () => clearInterval(t);
-	}, [slides.length]);
+    useEffect(() => {
+        if (slides.length <= 1) return;
+        if (paused) return;
+        const t = setInterval(() => setIdx(i => (i + 1) % slides.length), 5000);
+        return () => clearInterval(t);
+    }, [slides.length, paused]);
 
 	return (
 		<div className="mt-12">
@@ -65,10 +67,10 @@ const FeedbackWall: React.FC = () => {
 					))}
 				</div>
 			</div>
-			<div className="relative overflow-hidden">
+            <div className="relative overflow-hidden" onMouseEnter={()=>setPaused(true)} onMouseLeave={()=>setPaused(false)}>
 				<div className="h-full min-h-[170px]">
 					{slides.map((group, i) => (
-						<div key={i} className={`absolute inset-0 transition-all duration-700 ease-out ${i===idx ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
+                        <div key={i} className={`absolute inset-0 transition-all duration-700 ease-out ${i===idx ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
 							<div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 								{group.map((f, k) => (
 									<FeedbackCard key={f.timestamp + k} f={f} />
@@ -77,7 +79,13 @@ const FeedbackWall: React.FC = () => {
 									<div className="text-slate-400 text-sm">No feedback yet. Be the first to leave one!</div>
 								)}
 							</div>
-						</div>
+                            {/* Progress bar */}
+                            {i===idx && (
+                                <div className="absolute left-0 right-0 -bottom-2 h-1 bg-white/10 rounded">
+                                    <div className={`h-full bg-gradient-to-r from-indigo-500 to-cyan-400 rounded ${paused? '' : 'animate-[progressBar_5s_linear_forwards]'}`}></div>
+                                </div>
+                            )}
+                        </div>
 					))}
 				</div>
 			</div>
