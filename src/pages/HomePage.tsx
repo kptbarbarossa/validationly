@@ -306,19 +306,12 @@ const HomePage: React.FC = () => {
                             <div className="absolute bottom-3 right-3 flex items-center gap-2">
                                 <button
                                     type="button"
-                                    onClick={triggerValidation}
-                                    disabled={!userInput.isValid || isLoading}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 ${userInput.isValid && !isLoading
-                                        ? 'hover:scale-110 cursor-pointer opacity-100'
-                                        : 'cursor-not-allowed opacity-50'
-                                        }`}
-                                    aria-label="Submit idea for validation"
+                                    onClick={() => setGalleryOpen(true)}
+                                    className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
+                                    aria-label="Open prompt gallery"
+                                    title="Open prompt gallery"
                                 >
-                                    <img
-                                        src="/logo.png"
-                                        alt="Submit"
-                                        className="w-6 h-6 object-contain"
-                                    />
+                                    Prompt Gallery
                                 </button>
                                 <button
                                     type="button"
@@ -351,12 +344,19 @@ const HomePage: React.FC = () => {
                                 </button>
                                 <button
                                     type="button"
-                                    onClick={() => setGalleryOpen(true)}
-                                    className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
-                                    aria-label="Open prompt gallery"
-                                    title="Open prompt gallery"
+                                    onClick={triggerValidation}
+                                    disabled={!userInput.isValid || isLoading}
+                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 ${userInput.isValid && !isLoading
+                                        ? 'hover:scale-110 cursor-pointer opacity-100'
+                                        : 'cursor-not-allowed opacity-50'
+                                        }`}
+                                    aria-label="Submit idea for validation"
                                 >
-                                    Prompt Gallery
+                                    <img
+                                        src="/logo.png"
+                                        alt="Submit"
+                                        className="w-6 h-6 object-contain"
+                                    />
                                 </button>
                             </div>
                         </div>
