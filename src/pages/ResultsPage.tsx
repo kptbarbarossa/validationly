@@ -1429,25 +1429,7 @@ const ResultsPage: React.FC = () => {
                         siteUrl={window.location.origin}
                     />
 
-                    {/* Feedback card just above the bottom button */}
-                    <div className="max-w-3xl mx-auto mb-6">
-                        <div className="rounded-xl glass glass-border p-4 border border-white/10 bg-white/5">
-                            <h3 className="text-white font-semibold mb-2">Leave quick feedback</h3>
-                            <p className="text-sm text-slate-300 mb-3">Help us improve the analysis quality. Note: Feedback may be shown publicly on the home page.</p>
-                            <form onSubmit={async (e)=>{ e.preventDefault(); const form = e.currentTarget as HTMLFormElement; const fd = new FormData(form); const message = String(fd.get('message')||'').trim(); const contact = String(fd.get('contact')||'').trim(); const score = Number(fd.get('score')||''); if(!message) return; try{ await fetch('/api/feedback',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ message, contact: contact||undefined, score: isNaN(score)? undefined: score }) }); }catch{}; (form.querySelector('[name=message]') as HTMLTextAreaElement).value=''; (form.querySelector('[name=contact]') as HTMLInputElement).value=''; (form.querySelector('[name=score]') as HTMLInputElement).value=''; }}>
-                                <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
-                                    <div className="md:col-span-4">
-                                        <textarea name="message" placeholder="Your feedback..." className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-200 placeholder-slate-400 min-h-[60px]" />
-                                    </div>
-                                    <div className="md:col-span-2 space-y-2">
-                                        <input name="contact" placeholder="(Optional) contact" className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-200 placeholder-slate-400" />
-                                        <input name="score" type="number" min={0} max={10} placeholder="Score /10" className="w-full px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-slate-200 placeholder-slate-400" />
-                                        <button type="submit" className="w-full text-sm px-3 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    {/* Feedback card removed by request */}
 
                     {/* Bottom CTA simplified */}
                     <div className="text-center mt-10">
