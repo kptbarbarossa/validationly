@@ -134,6 +134,7 @@ const ResultsPage: React.FC = () => {
     const result = location.state?.result as DynamicPromptResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [, forceRerender] = useState(0);
+    const [conciseMode, setConciseMode] = useState(true);
 
     // Animation trigger
     useEffect(() => {
@@ -254,7 +255,7 @@ const ResultsPage: React.FC = () => {
     ];
 
     const platformAnalysesObj = (result as DynamicPromptResult).platformAnalyses as any;
-    const [showAllPlatforms, setShowAllPlatforms] = useState(true);
+    const [showAllPlatforms, setShowAllPlatforms] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const availablePlatformDefs = PLATFORM_DEFS.filter(def => {
         const a = platformAnalysesObj?.[def.key];
@@ -273,7 +274,7 @@ const ResultsPage: React.FC = () => {
         .map(def => ({ def, score: Math.max(1, Math.min(5, Number(platformAnalysesObj?.[def.key]?.score || 0))) }))
         .sort((a, b) => b.score - a.score)
         .map(x => x.def);
-    const visiblePlatformDefs = showAllPlatforms ? sortedPlatformDefs : sortedPlatformDefs.slice(0, 8);
+    const visiblePlatformDefs = showAllPlatforms ? sortedPlatformDefs : sortedPlatformDefs.slice(0, 3);
 
     // Build concise bullet summary for quick scan
     const buildSummaryBullets = (): string[] => {
@@ -353,6 +354,14 @@ const ResultsPage: React.FC = () => {
     };
 
     // Market Intelligence Card Component
+    const EvidenceBadge: React.FC<{ citations?: any[] }> = ({ citations }) => (
+        <>
+            {Array.isArray(citations) && citations.length > 0 && (
+                <span className="ml-2 inline-flex items-center text-[10px] px-2 py-0.5 rounded bg-blue-500/15 text-blue-300 border border-blue-500/20">Evidence</span>
+            )}
+        </>
+    );
+
     const MarketIntelligenceCard: React.FC<{ data?: any }> = ({ data }) => (
         <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 shadow-2xl border border-white/10 hover:bg-green-500/10 animate-card-hover animate-card-entrance delay-400">
             <div className="flex items-center gap-3 mb-4">
@@ -360,7 +369,7 @@ const ResultsPage: React.FC = () => {
                     <TrendUpIcon />
                 </div>
                 <div>
-                    <h3 className="font-semibold text-white">Market Intelligence</h3>
+                    <h3 className="font-semibold text-white">Market Intelligence<EvidenceBadge citations={data?.citations} /></h3>
                     <div className="text-sm text-green-300 font-medium">Market Opportunity</div>
                 </div>
             </div>
@@ -518,7 +527,7 @@ const ResultsPage: React.FC = () => {
                         <span className="text-orange-300 font-bold">⚠️</span>
                     </div>
                     <div>
-                        <h3 className="font-semibold text-white">Risk Assessment</h3>
+                        <h3 className="font-semibold text-white">Risk Assessment<EvidenceBadge citations={data?.citations} /></h3>
                         <div className="text-sm text-orange-300 font-medium">Risk Matrix</div>
                     </div>
                 </div>
@@ -547,6 +556,17 @@ const ResultsPage: React.FC = () => {
                             {data?.overallRiskLevel || 'MEDIUM'}
                         </span>
                     </div>
+                </div>
+                {/* Heatmap */}
+                <div className="mt-3 grid grid-cols-4 gap-2 text-center">
+                    {['technicalRisk','marketRisk','financialRisk','regulatoryRisk'].map((k) => {
+                        const v = (data?.[k] || '').toString().toLowerCase();
+                        const color = v.includes('high') ? 'bg-red-500/30 border-red-500/30' : v.includes('medium') ? 'bg-yellow-500/30 border-yellow-500/30' : 'bg-green-500/30 border-green-500/30';
+                        const label = k.replace('Risk','');
+                        return (
+                            <div key={k} className={`rounded-md px-2 py-2 text-xs border ${color}`}>{label}</div>
+                        );
+                    })}
                 </div>
             </div>
         );
@@ -765,6 +785,19 @@ const ResultsPage: React.FC = () => {
                         <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
                     </div>
 
+                    {/* Controls + Export */}
+                    <div className="flex items-center justify-end gap-2 max-w-5xl mx-auto mb-3">
+                        <label className="text-xs text-slate-300 inline-flex items-center gap-2">
+                            <input type="checkbox" className="accent-indigo-500" checked={conciseMode} onChange={(e)=>setConciseMode(e.target.checked)} />
+                            Concise mode
+                        </label>
+                        <button
+                            onClick={()=>{ try { const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'validationly_result.json'; a.click(); URL.revokeObjectURL(url);} catch {} }}
+                            className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20"
+                        >Download JSON</button>
+                        <button onClick={()=>window.print()} className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20">Print/PDF</button>
+                    </div>
+
                     {/* Premium Score Card: Circular Gauge */}
                     <div className="bg-white/10 backdrop-blur-xl rounded-xl p-6 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.6)] border border-white/10 max-w-2xl mx-auto mb-6 animate-slide-up">
                         <div className="text-center">
@@ -812,7 +845,7 @@ const ResultsPage: React.FC = () => {
                         </div>
                         <div className="flex items-center justify-between mb-4">
                             <div className="text-sm text-slate-300">
-                                Platform cards sorted by score {showAllPlatforms ? '' : '(Top 8)'}
+                                Platform cards sorted by score {showAllPlatforms ? '' : '(Top 3)'}
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
@@ -820,7 +853,7 @@ const ResultsPage: React.FC = () => {
                                     onClick={() => setShowAllPlatforms(v => !v)}
                                     className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
                                 >
-                                    {showAllPlatforms ? 'Show Top 8' : 'Show All'}
+                                    {showAllPlatforms ? 'Show Top 3' : 'Show All'}
                                 </button>
                                 <button
                                     type="button"
