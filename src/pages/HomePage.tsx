@@ -345,21 +345,6 @@ const HomePage: React.FC = () => {
                                 aria-describedby={userInput.errorMessage ? "error-message" : undefined}
                             />
 
-                            {/* Placeholder overlay action when empty */}
-                            {(!userInput.idea || userInput.idea.trim().length === 0) && (
-                                <div className="pointer-events-none absolute inset-0 flex items-end justify-start">
-                                    <div className="m-6">
-                                        <button
-                                            type="button"
-                                            onClick={() => setGalleryOpen(true)}
-                                            className="pointer-events-auto text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
-                                        >
-                                            Open Prompt Gallery
-                                        </button>
-                                    </div>
-                                </div>
-                            )}
-
                             {/* Character counter */}
                             <div className="absolute bottom-3 left-6 text-sm text-slate-400">
                                 {userInput.idea.length}/1000
