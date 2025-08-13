@@ -216,6 +216,18 @@ export interface SocialSuggestions {
     hashtags?: string[];
     goal?: string;
   };
+  threads?: {
+    post?: string;
+    hashtags?: string[];
+    goal?: string;
+  };
+  pinterest?: {
+    title?: string;
+    description?: string;
+    board?: string;
+    hashtags?: string[];
+    goal?: string;
+  };
 }
 
 // New analysis interfaces

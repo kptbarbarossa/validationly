@@ -1293,6 +1293,81 @@ const ResultsPage: React.FC = () => {
                                         )}
                                     </div>
                                 )}
+
+                                {/* Threads */}
+                                {Boolean((result as any)?.socialSuggestions?.threads) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">Threads</div>
+                                            {Boolean((result as any)?.socialSuggestions?.threads?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-slate-600/20 text-slate-300 border border-slate-600/30">
+                                                    {(result as any)?.socialSuggestions?.threads?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const st: any = (result as any)?.socialSuggestions?.threads || {};
+                                                    const txt = `${(st?.post || '')}\n\n${(st?.hashtags || []).join(' ')}`.trim();
+                                                    handleCopyToClipboard(txt, 'threads_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'threads_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://www.threads.net/', '_blank')}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-slate-600/20 border border-slate-600/30 text-slate-200 hover:bg-slate-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
+                                        {Boolean((result as any)?.socialSuggestions?.threads?.post) && (
+                                            <div className="text-sm text-slate-200 bg-white/5 rounded p-3 border border-white/10">
+                                                {(result as any)?.socialSuggestions?.threads?.post}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Pinterest */}
+                                {Boolean((result as any)?.socialSuggestions?.pinterest) && (
+                                    <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="font-semibold text-slate-100">Pinterest</div>
+                                            {Boolean((result as any)?.socialSuggestions?.pinterest?.goal) && (
+                                                <span className="text-xs px-2 py-1 rounded bg-rose-600/20 text-rose-300 border border-rose-600/30">
+                                                    {(result as any)?.socialSuggestions?.pinterest?.goal}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <button
+                                                onClick={() => {
+                                                    const sp: any = (result as any)?.socialSuggestions?.pinterest || {};
+                                                    const title = sp?.title || '';
+                                                    const desc = sp?.description || '';
+                                                    handleCopyToClipboard(`${title}\n\n${desc}`, 'pinterest_enriched');
+                                                }}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                                            >
+                                                {copiedId === 'pinterest_enriched' ? '✓ Copied!' : 'Copy'}
+                                            </button>
+                                            <button
+                                                onClick={() => window.open('https://www.pinterest.com/pin-builder/', '_blank')}
+                                                className="text-xs px-3 py-1.5 rounded-lg bg-rose-600/20 border border-rose-600/30 text-rose-200 hover:bg-rose-600/25"
+                                            >
+                                                Post
+                                            </button>
+                                        </div>
+                                        {Boolean((result as any)?.socialSuggestions?.pinterest?.board) && (
+                                            <div className="text-sm text-slate-200">
+                                                <span className="text-slate-300">Board:</span> {(result as any)?.socialSuggestions?.pinterest?.board}
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     )}

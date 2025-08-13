@@ -920,6 +920,10 @@ export default async function handler(req: any, res: any) {
             { title, outline: ["bullet1","bullet2"], description, tags: ["tag1","tag2"], goal }
           Facebook:
             { post, groups: ["group1","group2"], hashtags: ["#"], goal }
+          Threads:
+            { post, hashtags: ["#"], goal }
+          Pinterest:
+            { title, description, board, hashtags: ["#"], goal }
 
         Analyze the following startup idea: "${inputContent}"${evidenceText}`;
 
