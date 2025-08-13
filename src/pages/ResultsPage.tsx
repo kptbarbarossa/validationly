@@ -894,6 +894,45 @@ const ResultsPage: React.FC = () => {
                         <ProductMarketFitCard data={result.productMarketFit} />
                     </div>
 
+                    {/* VC Review - if available */}
+                    {Boolean((result as any)?.vcReview) && (
+                        <div className="bg-white/5 backdrop-blur-xl rounded-xl p-6 border border-white/10 max-w-4xl mx-auto mb-8">
+                            <h2 className="text-lg font-semibold text-white mb-3 text-center">VC Review</h2>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <h3 className="text-sm font-semibold text-red-300 mb-2">Negatives</h3>
+                                    {["market","competition","distribution","productTech","finance","regulation","defensibility"].map((k) => (
+                                        <div key={`neg-${k}`} className="mb-2">
+                                            <div className="text-xs text-slate-400 uppercase tracking-wide">{k}</div>
+                                            <ul className="list-disc list-inside text-sm text-slate-200 space-y-1">
+                                                {(((result as any).vcReview?.negatives?.[k]) || []).map((it: string, i: number) => (<li key={i}>{it}</li>))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-semibold text-emerald-300 mb-2">Positives</h3>
+                                    {["market","competition","distribution","productTech","finance","regulation","defensibility"].map((k) => (
+                                        <div key={`pos-${k}`} className="mb-2">
+                                            <div className="text-xs text-slate-400 uppercase tracking-wide">{k}</div>
+                                            <ul className="list-disc list-inside text-sm text-slate-200 space-y-1">
+                                                {(((result as any).vcReview?.positives?.[k]) || []).map((it: string, i: number) => (<li key={i}>{it}</li>))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            {Boolean((result as any).vcReview?.suggestions?.length) && (
+                                <div className="mt-4">
+                                    <h3 className="text-sm font-semibold text-indigo-300 mb-2">Suggestions (pivots/experiments)</h3>
+                                    <ul className="list-disc list-inside text-sm text-slate-200 space-y-1">
+                                        {((result as any).vcReview.suggestions || []).map((s: string, i: number) => (<li key={i}>{s}</li>))}
+                                    </ul>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {/* Content Suggestions */}
                     <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10 max-w-4xl mx-auto mb-8">
                         <div className="text-center mb-6">
