@@ -93,7 +93,6 @@ const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { trackEvent, trackValidation } = useAnalytics();
-    const [vcMode, setVcMode] = useState(false);
 
     useEffect(() => {
         textareaRef.current?.focus();
@@ -168,7 +167,7 @@ const HomePage: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: ideaPayload, vcReview: vcMode })
+                body: JSON.stringify({ idea: ideaPayload })
             });
 
             if (!response.ok) {
@@ -276,13 +275,6 @@ const HomePage: React.FC = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-                {/* VC Review toggle */}
-                <div className="mb-3 text-xs text-left text-slate-300 flex items-center gap-2">
-                    <label className="inline-flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" className="accent-indigo-500" checked={vcMode} onChange={(e) => setVcMode(e.target.checked)} />
-                        <span>VC Review mode (harsh critique)</span>
-                    </label>
-                </div>
                 {/* Privacy notice */}
 				<div className="mb-3 text-xs text-left text-slate-400">
 					No information is stored yet. Your input is used only for on-the-fly analysis and then discarded.

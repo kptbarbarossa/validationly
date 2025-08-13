@@ -861,17 +861,6 @@ export default async function handler(req: any, res: any) {
         // Add language and format requirements
         const evidenceText = Array.isArray(evidence) && evidence.length ? `\n\nEVIDENCE (STRICT) — Use ONLY these facts. If insufficient, state \"insufficient evidence\":\n${evidence.map((e:any)=> typeof e === 'string' ? `- ${e}` : `- [${e.source}] "${e.quote}"`).join('\n')}` : '';
 
-        const vcPersonaBlock = vcReview === true ? `
-        VC REVIEW MODE:
-        - Adopt a brutally honest VC persona; direct, critical, evidence-seeking.
-        - MUST include 'vcReview' in the JSON with:
-          {
-            "negatives": { "market":[], "competition":[], "distribution":[], "productTech":[], "finance":[], "regulation":[], "defensibility":[] },
-            "positives": { "market":[], "competition":[], "distribution":[], "productTech":[], "finance":[], "regulation":[], "defensibility":[] },
-            "suggestions": ["3 concrete pivots/experiments to reduce risks"]
-          }
-        ` : '';
-
         const finalSystemInstruction = `${systemInstruction}
 
         🌍 CRITICAL LANGUAGE REQUIREMENT: 
@@ -911,7 +900,6 @@ export default async function handler(req: any, res: any) {
         - Give specific numbers based on industry knowledge
         - Make all suggestions actionable and data-driven
         - All content must feel authentic and valuable to entrepreneurs
-        ${vcPersonaBlock}
 
         Analyze the following startup idea: "${inputContent}"${evidenceText}`;
 
@@ -1228,14 +1216,14 @@ async function getSimplifiedAIAnalysis(
                         "techStack": ["tech1", "tech2", "tech3"]
                     },
                     
-                    "productMarketFit": {
+                     "productMarketFit": {
                         "problemSolutionFit": number (0-100),
                         "solutionMarketFit": number (0-100),
                         "earlyAdopterSignals": "early adopter indicators",
                         "retentionPrediction": "retention prediction",
                         "viralCoefficient": "viral growth potential",
                         "pmfIndicators": ["indicator1", "indicator2", "indicator3"]
-                    }${vcReview === true ? ",\n                    \"vcReview\": {\n                        \"negatives\": { \"market\":[], \"competition\":[], \"distribution\":[], \"productTech\":[], \"finance\":[], \"regulation\":[], \"defensibility\":[] },\n                        \"positives\": { \"market\":[], \"competition\":[], \"distribution\":[], \"productTech\":[], \"finance\":[], \"regulation\":[], \"defensibility\":[] },\n                        \"suggestions\": [\"pivot or experiment 1\", \"pivot or experiment 2\", \"pivot or experiment 3\"]\n                    }" : ''}
+                     }
                 }`,
                 responseMimeType: "application/json",
                 temperature: 0,

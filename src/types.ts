@@ -155,8 +155,8 @@ export interface DynamicPromptResult {
   goToMarket: GoToMarket;
   developmentRoadmap: DevelopmentRoadmap;
   productMarketFit: ProductMarketFit;
-  // VC Review (optional)
-  vcReview?: VCReview;
+  // VC Review (optional) - disabled
+  vcReview?: never;
   
   // Metadata
   promptMetadata?: {
@@ -239,22 +239,7 @@ export interface ProductMarketFit {
   pmfIndicators: string[];
 }
 
-// VC Review types
-export interface VCReviewCategory {
-  market: string[];
-  competition: string[];
-  distribution: string[];
-  productTech: string[];
-  finance: string[];
-  regulation: string[];
-  defensibility: string[];
-}
-
-export interface VCReview {
-  negatives: VCReviewCategory;
-  positives: VCReviewCategory;
-  suggestions: string[]; // riskleri azaltacak pivot/denemeler
-}
+// VC Review types removed from active usage
 
 export type RiskLevel = 'Very Low' | 'Low' | 'Medium' | 'High' | 'Very High';
 
