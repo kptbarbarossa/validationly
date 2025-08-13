@@ -9,6 +9,7 @@ import BlogPostPage from './pages/BlogPostPage';
 import UseCaseSaaSPage from './pages/UseCaseSaaSPage';
 import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
 import UseCasesIndexPage from './pages/UseCasesIndexPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import PremiumNavBar from './components/PremiumNavBar';
 import Analytics from './components/Analytics';
 
@@ -73,12 +74,16 @@ const App: React.FC = () => {
               <Route path="/use-cases" element={<UseCasesIndexPage />} />
               <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
               <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center text-slate-300">Page not found</div>} />
             </Routes>
           </main>
           
           <footer className="text-center py-8 text-slate-400 text-sm border-t border-white/10">
-            <p>&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
+            <p className="mb-2">&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
+            <p>
+              <a href="/privacy" className="underline hover:text-slate-300">Gizlilik Politikası</a>
+            </p>
           </footer>
         </BrowserRouter>
       </div>
