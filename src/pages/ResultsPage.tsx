@@ -134,7 +134,7 @@ const ResultsPage: React.FC = () => {
     const result = location.state?.result as DynamicPromptResult;
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [, forceRerender] = useState(0);
-    const [conciseMode, setConciseMode] = useState(true);
+    // Concise mode removed per request
 
     // Animation trigger
     useEffect(() => {
@@ -785,16 +785,8 @@ const ResultsPage: React.FC = () => {
                         <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
                     </div>
 
-                    {/* Controls + Export */}
+                    {/* Controls */}
                     <div className="flex items-center justify-end gap-2 max-w-5xl mx-auto mb-3">
-                        <label className="text-xs text-slate-300 inline-flex items-center gap-2">
-                            <input type="checkbox" className="accent-indigo-500" checked={conciseMode} onChange={(e)=>setConciseMode(e.target.checked)} />
-                            Concise mode
-                        </label>
-                        <button
-                            onClick={()=>{ try { const blob = new Blob([JSON.stringify(result, null, 2)], { type: 'application/json' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'validationly_result.json'; a.click(); URL.revokeObjectURL(url);} catch {} }}
-                            className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20"
-                        >Download JSON</button>
                         <button onClick={()=>window.print()} className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20">Print/PDF</button>
                     </div>
 
