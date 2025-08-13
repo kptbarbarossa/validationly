@@ -811,7 +811,7 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Feedback card */}
+                    {/* Feedback card (moved above bottom CTA) */}
                     <div className="max-w-3xl mx-auto mb-6">
                         <div className="rounded-xl glass glass-border p-4 border border-white/10 bg-white/5">
                             <h3 className="text-white font-semibold mb-2">Leave quick feedback</h3>
@@ -1405,7 +1405,7 @@ const ResultsPage: React.FC = () => {
 
                     {/* Feedback and support buttons intentionally removed */}
 
-                    {/* Bottom CTA */}
+                    {/* Feedback card moved above; Bottom CTA */}
                     <div className="text-center">
                         <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 text-white shadow-2xl border border-white/10 max-w-2xl mx-auto">
                             <h3 className="text-2xl font-bold mb-4">Ready to Build Your Idea?</h3>
