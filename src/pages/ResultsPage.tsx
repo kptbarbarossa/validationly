@@ -1402,7 +1402,7 @@ const ResultsPage: React.FC = () => {
                     <div className="max-w-3xl mx-auto mb-6">
                         <div className="rounded-xl glass glass-border p-4 border border-white/10 bg-white/5">
                             <h3 className="text-white font-semibold mb-2">Leave quick feedback</h3>
-                            <p className="text-sm text-slate-300 mb-3">Help us improve the analysis quality.</p>
+                            <p className="text-sm text-slate-300 mb-3">Help us improve the analysis quality. Note: Feedback may be shown publicly on the home page.</p>
                             <form onSubmit={async (e)=>{ e.preventDefault(); const form = e.currentTarget as HTMLFormElement; const fd = new FormData(form); const message = String(fd.get('message')||'').trim(); const contact = String(fd.get('contact')||'').trim(); const score = Number(fd.get('score')||''); if(!message) return; try{ await fetch('/api/feedback',{ method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ message, contact: contact||undefined, score: isNaN(score)? undefined: score }) }); }catch{}; try{ const { saveFeedbackLocal } = await import('../components/FeedbackWall'); saveFeedbackLocal({ message, contact: contact||undefined, score: isNaN(score)? undefined: score, timestamp: new Date().toISOString() }); }catch{}; (form.querySelector('[name=message]') as HTMLTextAreaElement).value=''; (form.querySelector('[name=contact]') as HTMLInputElement).value=''; (form.querySelector('[name=score]') as HTMLInputElement).value=''; }}>
                                 <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
                                     <div className="md:col-span-4">
@@ -1420,12 +1420,12 @@ const ResultsPage: React.FC = () => {
 
                     {/* Bottom CTA simplified */}
                     <div className="text-center mt-10">
-                        <button
-                            onClick={() => navigate('/')}
-                            className="bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold hover:bg-slate-100 transition-all duration-300 shadow-lg"
-                        >
-                            Analyze Another Idea
-                        </button>
+                            <button
+                                onClick={() => navigate('/')}
+                                className="bg-white text-slate-900 px-8 py-4 rounded-xl font-semibold hover:bg-slate-100 transition-all duration-300 shadow-lg"
+                            >
+                                Analyze Another Idea
+                            </button>
                     </div>
                 </div>
             </div>

@@ -42,7 +42,20 @@ const FeedbackWall: React.FC = () => {
 	const [items, setItems] = useState<FeedbackItem[]>([]);
     const [idx, setIdx] = useState(0);
     const [paused, setPaused] = useState(false);
-	useEffect(() => { setItems(loadFeedbackLocal()); }, []);
+    useEffect(() => {
+        // Try server first
+        (async () => {
+            try {
+                const r = await fetch('/api/feedback');
+                const j = await r.json();
+                if (j?.ok && Array.isArray(j.items)) {
+                    setItems(j.items as FeedbackItem[]);
+                    return;
+                }
+            } catch {}
+            setItems(loadFeedbackLocal());
+        })();
+    }, []);
 
 	const slides = useMemo(() => {
 		const a = items.slice(0, 12);
