@@ -135,7 +135,6 @@ const ResultsPage: React.FC = () => {
     const [isLoading, setIsLoading] = React.useState(false);
     const [refining, setRefining] = React.useState<string | null>(null);
     const [refineText, setRefineText] = React.useState('');
-    const [forceLang, setForceLang] = React.useState<'' | 'en' | 'tr'>('');
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [, forceRerender] = useState(0);
 
@@ -773,12 +772,7 @@ const ResultsPage: React.FC = () => {
                     <div className="text-center mb-4">
                         <h1 className="text-2xl font-bold text-white mb-1">Market Analysis Results</h1>
                         <p className="text-sm text-slate-300">AI-powered analysis of your business idea</p>
-                        <div className="mt-3 flex items-center justify-center gap-2 text-xs">
-                            <span className="text-slate-400">Language:</span>
-                            <button onClick={()=>setForceLang('en')} className={`px-2 py-1 rounded border ${forceLang==='en'?'border-white/40 text-white':'border-white/10 text-slate-300'} bg-white/5`}>EN</button>
-                            <button onClick={()=>setForceLang('tr')} className={`px-2 py-1 rounded border ${forceLang==='tr'?'border-white/40 text-white':'border-white/10 text-slate-300'} bg-white/5`}>TR</button>
-                            <button onClick={()=>setForceLang('')} className={`px-2 py-1 rounded border ${forceLang===''?'border-white/40 text-white':'border-white/10 text-slate-300'} bg-white/5`}>Auto</button>
-                        </div>
+                        {/* Language toggle removed: language mirrors input automatically */}
                     </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
                             {/* Left: Gauge + status */}
