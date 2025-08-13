@@ -208,7 +208,7 @@ body {
 /* Subtle noise to reduce gradient banding */
 .noise-overlay {
   pointer-events: none;
-  opacity: 0.06;
+  opacity: 0.08;
   mix-blend-mode: overlay;
   background-image:
     radial-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),

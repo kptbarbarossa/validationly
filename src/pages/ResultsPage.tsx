@@ -751,7 +751,7 @@ const ResultsPage: React.FC = () => {
             />
 
             {/* Enhanced Background - Dark + Glassmorphism + Spotlight */}
-            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100 overflow-hidden" onMouseMove={(e)=>{ const r = (e.currentTarget as HTMLDivElement).style; r.setProperty('--sx', e.clientX+'px'); r.setProperty('--sy', e.clientY+'px'); }}>
+            <div className="relative min-h-screen bg-slate-950 text-slate-100 overflow-hidden" onMouseMove={(e)=>{ const r = (e.currentTarget as HTMLDivElement).style; r.setProperty('--sx', e.clientX+'px'); r.setProperty('--sy', e.clientY+'px'); }}>
                 {/* Fallback notice */}
                 {Boolean((result as any)?.fallbackUsed) && (
                     <div className="max-w-3xl mx-auto mb-4 p-3 rounded-lg border border-amber-400/30 bg-amber-500/10 text-amber-300 text-sm">
