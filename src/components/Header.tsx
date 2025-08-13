@@ -38,7 +38,7 @@ const Header: React.FC = () => {
                             rel="noopener noreferrer"
                             className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
                         >
-                            <img src="/logo b2b.png" alt="B2B" className="w-4 h-4 rounded" />
+                            <img src="/logo-b2b.png" alt="B2B" className="w-4 h-4 rounded" />
                             B2B App
                         </a>
 
