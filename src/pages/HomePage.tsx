@@ -6,6 +6,7 @@ import type { DynamicPromptResult, UserInput } from '../types';
 // import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import PromptGallery from '../components/PromptGallery';
+import FeedbackWall from '../components/FeedbackWall';
 // import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import SEOHead from '../components/SEOHead';
@@ -415,6 +416,9 @@ const HomePage: React.FC = () => {
                     ))}
                 </div>
             </div>
+
+            {/* Live feedback wall */}
+            <FeedbackWall />
 
 				{/* RelatedStartups section removed by request */}
         </div>

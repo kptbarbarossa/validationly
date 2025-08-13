@@ -160,6 +160,12 @@ body {
   animation: aurora 36s ease-in-out infinite;
 }
 
+/* Vertical marquee for feedback wall */
+@keyframes scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
 /* Premium: cursor spotlight overlay */
 .cursor-spotlight {
   pointer-events: none;
