@@ -711,14 +711,7 @@ const ResultsPage: React.FC = () => {
                         <div className={`text-sm font-medium ${getScoreColor(analysis?.score || 3)}`}>
                             {analysis?.score || 3}/5 - {getScoreText(analysis?.score || 3)}
                         </div>
-                        {/* Shareable snippet */}
-                        <ShareableSnippet
-                            ideaTitle={(result as any).idea || (result as any).content || 'Your startup idea'}
-                            score={Number((result as any).demandScore || 0)}
-                            platforms={sortedPlatformDefs.slice(0,3).map(p=>p.label)}
-                            dateISO={new Date().toISOString()}
-                            siteUrl={window.location.origin}
-                        />
+                        {/* Shareable snippet moved to bottom as a standalone card */}
                     </div>
                 </div>
 
@@ -1394,6 +1387,16 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
                     )}
+
+                    {/* Shareable snippet standalone */}
+                    <ShareableSnippet
+                        ideaTitle={(result as any).idea || (result as any).content || 'Your startup idea'}
+                        score={Number((result as any).demandScore || 0)}
+                        platforms={sortedPlatformDefs.slice(0,3).map(p=>p.label)}
+                        bullets={buildSummaryBullets().slice(0,3)}
+                        dateISO={new Date().toISOString()}
+                        siteUrl={window.location.origin}
+                    />
 
                     {/* Feedback card just above the bottom button */}
                     <div className="max-w-3xl mx-auto mb-6">

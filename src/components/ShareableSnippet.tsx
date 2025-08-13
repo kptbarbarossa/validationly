@@ -6,6 +6,7 @@ interface ShareableSnippetProps {
   platforms: string[]; // top platforms
   dateISO?: string;
   siteUrl?: string; // e.g., https://validationly.com
+  bullets?: string[]; // optional summary bullets to include in share text
 }
 
 const pad = (n: number) => (n < 10 ? `0${n}` : `${n}`);
@@ -102,11 +103,12 @@ async function renderPngCard(opts: { ideaTitle: string; score: number; platforms
   return canvas.toDataURL('image/png');
 }
 
-const ShareableSnippet: React.FC<ShareableSnippetProps> = ({ ideaTitle, score, platforms, dateISO, siteUrl = 'https://validationly.com' }) => {
+const ShareableSnippet: React.FC<ShareableSnippetProps> = ({ ideaTitle, score, platforms, dateISO, siteUrl = 'https://validationly.com', bullets }) => {
   const dateStr = useMemo(() => formatDate(dateISO), [dateISO]);
   const text = useMemo(() => {
     const top = platforms.slice(0, 2).join(', ');
-    const msg = `I validated my idea with Validationly — score ${Math.round(score)}/100. Top platforms: ${top}. Try yours → ${siteUrl}?ref=share-snippet`;
+    const extra = (bullets && bullets.length > 0) ? `\n• ${bullets.slice(0,3).join('\n• ')}` : '';
+    const msg = `I validated my idea with Validationly — score ${Math.round(score)}/100. Top platforms: ${top}.${extra}\nTry yours → ${siteUrl}?ref=share-snippet`;
     return msg;
   }, [score, platforms, siteUrl]);
 
