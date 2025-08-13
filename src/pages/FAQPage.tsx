@@ -7,7 +7,7 @@ const faqs = [
   { q: 'How fast are the results?', a: 'Typically within 15–30 seconds.' },
   { q: 'Which languages are supported?', a: 'We mirror your input language for outputs (Turkish, English, and others).' },
   { q: 'How is my data used?', a: 'No information entered is stored. Inputs are used only for analysis and then discarded. We care about privacy.' },
-  { q: 'Is it paid?', a: 'The core version is free for now; advanced features may arrive later.' },
+  { q: 'Is it paid?', a: 'The core version is free for now. If you find it useful, consider supporting with “Buy me a coffee” — your support helps me ship more improvements faster (still free for everyone).' },
 ];
 
 const FAQPage: React.FC = () => {
