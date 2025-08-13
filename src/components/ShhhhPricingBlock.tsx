@@ -63,7 +63,7 @@ const ShhhhPricingBlock: React.FC = () => {
     <section className="mt-16 glass glass-border rounded-3xl p-8 text-left">
       <div className="flex items-center gap-3 mb-3">
         <img src="/logo-b2b.png" alt="B2B" className="w-6 h-6 rounded" />
-        <span className="text-sm text-slate-300">B2B Pricing Utility</span>
+        <span className="text-sm text-slate-300">Shhhh Pricing ‑ Price Hider - B2B</span>
       </div>
       <h2 className="text-2xl font-bold text-white mb-4">
         Hide Prices from Guests, Drive More Account Signups
@@ -105,10 +105,6 @@ const ShhhhPricingBlock: React.FC = () => {
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
         >
           Explore Shhhh Pricing – Price Hider on the Shopify App Store
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-            <path fillRule="evenodd" d="M12.293 2.293a1 1 0 011.414 0l4 4A1 1 0 0117 8h-3a1 1 0 110-2h.586L12 3.414 3.707 11.707a1 1 0 01-1.414-1.414l10-10z" clipRule="evenodd" />
-            <path d="M5 6a1 1 0 011 1v7a1 1 0 001 1h7a1 1 0 110 2H7a3 3 0 01-3-3V7a1 1 0 011-1z" />
-          </svg>
         </a>
       </p>
     </section>
