@@ -1,6 +1,7 @@
 // List of supported platforms mirrored from backend platformNameLabel in api/validate.ts
 // Keep this list in sync with the backend mapping
 export const SUPPORTED_PLATFORMS: string[] = [
+  // Core social + discovery
   'twitter',       // X
   'reddit',
   'linkedin',
@@ -10,27 +11,31 @@ export const SUPPORTED_PLATFORMS: string[] = [
   'facebook',
   'producthunt',
   'pinterest',
+
+  // Dev & tech
   'github',
   'stackoverflow',
+  'hackernews',
+
+  // Business & market intel
   'angellist',
   'crunchbase',
+  'medium',
+
+  // Design & creative
   'dribbble',
   'behance',
   'figma',
-  'slack',
-  'clubhouse',
+  'canva',
+
+  // Pro/creator & knowledge
   'substack',
   'notion',
   'devto',
   'hashnode',
-  'gitlab',
-  'codepen',
   'indiehackers',
-  'awwwards',
-  'designs99',
-  'canva',
-  'adobe',
-  'unsplash',
+
+  // E‑commerce & retail
   'etsy',
   'amazon',
   'shopify',
