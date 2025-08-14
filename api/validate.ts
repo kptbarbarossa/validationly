@@ -1337,7 +1337,7 @@ export default async function handler(req: any, res: any) {
             console.error('❌ Graceful degradation also failed:', fallbackError);
             
             // Final fallback - return error response
-            return res.status(500).json({
+        return res.status(500).json({
                 message: 'Analysis system temporarily unavailable. Please try again later.',
                 error: process.env.NODE_ENV === 'development' ? error.message : undefined,
                 fallbackAttempted: true,
