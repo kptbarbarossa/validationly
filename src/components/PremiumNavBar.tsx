@@ -88,13 +88,6 @@ const PremiumNavBar: React.FC = () => {
               <span className="hidden lg:inline text-xs sm:text-sm">Feedback</span>
             </a>
 
-            {/* Floating arrow + support text */}
-            <div className="hidden lg:flex flex-col items-end mr-1 select-none">
-              <div className="text-amber-200/80 text-[10px] leading-tight mb-1 text-right">
-                tamamen ücretsiz — geliştirmeye katkı için destek olun
-              </div>
-              <div className="animate-bounce-y text-amber-300/80">⬇</div>
-            </div>
             <a
               href="https://buymeacoffee.com/kptbarbarossa"
               target="_blank"
