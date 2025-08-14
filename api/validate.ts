@@ -1114,13 +1114,15 @@ export default async function handler(req: any, res: any) {
 
         OUTPUT CONSTRAINTS (STRICT):
         - Platform list: include ONLY the TOP 6 most relevant platforms overall. Do NOT include more than 6.
-        - NON-EMPTY FIELDS REQUIRED per platform:
+        - NON-EMPTY FIELDS REQUIRED per platform (STRICT):
           • summary: REQUIRED, non-empty, <= 180 characters (omit platform if you cannot provide)
           • keyFindings: REQUIRED, EXACTLY 3 non-empty strings (omit platform if you cannot provide all 3)
           • contentSuggestion: REQUIRED, non-empty, <= 140 characters (omit platform if you cannot provide)
           • rubric: REQUIRED with integer scores (1-5) for reach, nicheFit, contentFit, competitiveSignal
         - If any platform cannot satisfy ALL the above, DO NOT include that platform in platformAnalyses.
-        - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit): keep sentences concise; avoid verbose paragraphs, and DO NOT leave fields empty.
+        - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit):
+          • Keep it VERY concise (max 2 short sentences per field)
+          • DO NOT leave fields empty. If insufficient evidence, write "insufficient evidence" explicitly.
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
@@ -1550,7 +1552,7 @@ async function getSimplifiedAIAnalysis(
         // Detect sector and get relevant platforms
         const sectors = promptManager.detectSector(content);
         const relevantPlatforms = promptManager.getSectorSpecificPlatforms(sectors);
-        const focusPlatforms = relevantPlatforms.slice(0, 6);
+        const focusPlatforms = relevantPlatforms.slice(0, 4);
         // Build compact platform schema for ONLY focus platforms to keep prompt small
         const platformNameLabel: Record<string, string> = {
             twitter: 'X', reddit: 'Reddit', linkedin: 'LinkedIn', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube',
@@ -1573,7 +1575,7 @@ async function getSimplifiedAIAnalysis(
         const runtimeModel = preferredModel || process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash';
         let result = await aiInstance.models.generateContent({
             model: runtimeModel,
-            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. KEEP OUTPUT CONCISE: one short sentence per field or 2-3 short bullets; numbers where applicable. RETURN ONLY JSON. NO EXTRA TEXT.:
+            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 4)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. KEEP OUTPUT CONCISE: one short sentence per field or 2-3 short bullets; numbers where applicable. RETURN ONLY JSON. NO EXTRA TEXT.:
 
             📊 MARKET INTELLIGENCE (provide specific numbers):
             - TAM: Research actual market size with $ amounts
@@ -2112,7 +2114,7 @@ ${responseText.slice(0, 6000)}`,
             ];
             const isCloneIdea = cloneKeywords.some(k => ideaLower.includes(k));
             if (isCloneIdea) {
-                const capped = Math.min(cleanResult.demandScore, 50);
+                const capped = Math.min(cleanResult.demandScore, 40);
                 if (capped !== cleanResult.demandScore) {
                     cleanResult.demandScore = capped;
                 }
