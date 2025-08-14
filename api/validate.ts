@@ -1,5 +1,5 @@
 import { GoogleGenAI, Type } from "@google/genai";
-import type { DynamicPromptResult } from '../src/types';
+// Use local DynamicPromptResult definition in this file
 
 // Dynamic prompt-based AI analysis system
 
@@ -774,98 +774,80 @@ Provide actionable and specific numbers where possible based on market norms.`
 
 const promptManager = new PromptManager();
 
-// Dynamic Prompt System Result
-interface DynamicPromptResult {
-    idea: string;
-    content?: string;
-    demandScore: number;
-    scoreJustification: string;
+// === Simple fusion of multiple results (majority/most-informative) ===
+function fuseResults(results: any[]): any {
+    if (!Array.isArray(results) || results.length === 0) return results?.[0];
+    const first = results[0] || {};
+    const avg = (nums: number[]) => Math.round(nums.reduce((s, n) => s + (Number.isFinite(n) ? n : 0), 0) / Math.max(1, nums.length));
+    const demandScore = avg(results.map(r => Number(r?.demandScore || 0)));
+    const scoreJustification = results.map(r => r?.scoreJustification || '').sort((a, b) => b.length - a.length)[0] || first.scoreJustification;
 
-    // Platform analyses from our dynamic prompt system
-    platformAnalyses: Record<string, PlatformAnalysis>;
+    const platformKeys = Array.from(new Set(results.flatMap(r => Object.keys(r?.platformAnalyses || {}))));
+    const platformAnalyses: any = {};
+    for (const k of platformKeys) {
+        const candidates = results.map(r => r?.platformAnalyses?.[k]).filter(Boolean);
+        if (candidates.length === 0) continue;
+        const best = candidates.reduce((best: any, cur: any) => {
+            if (!best) return cur;
+            const bs = Number(best.score || 0), cs = Number(cur.score || 0);
+            const bl = (best.summary || '').length, cl = (cur.summary || '').length;
+            if (cs > bs) return cur;
+            if (cs === bs && cl > bl) return cur;
+            return best;
+        }, null);
+        platformAnalyses[k] = best;
+    }
 
-    // Content suggestions
-    tweetSuggestion: string;
-    redditTitleSuggestion: string;
-    redditBodySuggestion: string;
-    linkedinSuggestion: string;
+    const pickLongest = (key: string) => results.map(r => r?.[key]).filter(Boolean).sort((a: any, b: any) => JSON.stringify(b).length - JSON.stringify(a).length)[0] || first[key];
+    const assumptions = Array.from(new Set(results.flatMap(r => r?.assumptions || []))).slice(0, 5);
+    const confidence = Math.max(0, Math.min(100, avg(results.map(r => Number(r?.confidence || 0)))));
+    const nextTestsRaw = results.flatMap(r => r?.nextTests || []);
+    const seen = new Set<string>();
+    const nextTests: any[] = [];
+    for (const t of nextTestsRaw) {
+        const key = `${t?.hypothesis || ''}|${t?.channel || ''}|${t?.metric || ''}`;
+        if (!seen.has(key)) { seen.add(key); nextTests.push(t); }
+        if (nextTests.length >= 3) break;
+    }
 
-    // Extended analysis sections
-    marketIntelligence?: {
-        tam: string;
-        sam: string;
-        som: string;
-        growthRate: string;
-        marketTiming: number;
-        keyTrends: string[];
+    return {
+        ...first,
+        demandScore,
+        scoreJustification,
+        platformAnalyses,
+        marketIntelligence: pickLongest('marketIntelligence'),
+        competitiveLandscape: pickLongest('competitiveLandscape'),
+        revenueModel: pickLongest('revenueModel'),
+        targetAudience: pickLongest('targetAudience'),
+        riskAssessment: pickLongest('riskAssessment'),
+        goToMarket: pickLongest('goToMarket'),
+        developmentRoadmap: pickLongest('developmentRoadmap'),
+        productMarketFit: pickLongest('productMarketFit'),
+        assumptions: assumptions.length ? assumptions : first.assumptions,
+        confidence: confidence || first.confidence,
+        nextTests: nextTests.length ? nextTests : first.nextTests
     };
-    competitiveLandscape?: {
-        directCompetitors: string[];
-        indirectCompetitors: string[];
-        marketPosition: string;
-        differentiationScore: number;
-        competitiveMoat: string;
-        entryBarriers: string;
-    };
-    revenueModel?: {
-        primaryModel: string;
-        pricePoint: string;
-        revenueStreams: string[];
-        breakEvenTimeline: string;
-        ltvCacRatio: string;
-        projectedMrr: string;
-    };
-    targetAudience?: {
-        primarySegment: string;
-        secondarySegment: string;
-        tertiarySegment: string;
-        painPoints: string[];
-        willingnessToPay: string;
-        customerAcquisitionChannels: string[];
-    };
-    riskAssessment?: {
-        technicalRisk: string;
-        marketRisk: string;
-        financialRisk: string;
-        regulatoryRisk: string;
-        overallRiskLevel: string;
-        mitigationStrategies: string[];
-    };
-    goToMarket?: {
-        phase1: string;
-        phase2: string;
-        phase3: string;
-        timeline: string;
-        budgetNeeded: string;
-        keyChannels: string[];
-    };
-    developmentRoadmap?: {
-        mvpTimeline: string;
-        betaLaunch: string;
-        publicLaunch: string;
-        keyFeatures: string[];
-        teamNeeded: string[];
-        techStack: string[];
-    };
-    productMarketFit?: {
-        problemSolutionFit: number;
-        solutionMarketFit: number;
-        earlyAdopterSignals: string;
-        retentionPrediction: string;
-        viralCoefficient: string;
-        pmfIndicators: string[];
-    };
-
-    // Metadata
-    promptMetadata?: {
-        sectorsDetected: string[];
-        analysisTypes: string[];
-        confidence: number;
-    };
-    // Language & model behavior metadata
-    language?: string;
-    fallbackUsed?: boolean;
 }
+
+// fuseResults is defined above
+
+// Community Match local types (runtime usage only)
+interface CommunityItem {
+    name: string;
+    url?: string;
+    members?: string;
+    fitReason: string;
+    rulesSummary: string;
+    entryMessage: string;
+}
+
+interface CommunityMatch {
+    subreddits: CommunityItem[];
+    discordServers: CommunityItem[];
+    linkedinGroups: CommunityItem[];
+}
+
+// Dynamic Prompt System Result type comes from src/types
 
 interface PlatformAnalysis {
     platformName: string;
@@ -967,7 +949,8 @@ function getAI(): GoogleGenAI {
     return ai;
 }
 
-
+// Ensure module context for TypeScript
+export {};
 
 // Legacy response schema for backward compatibility
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -1111,6 +1094,7 @@ export default async function handler(req: any, res: any) {
         11. Enhanced Financial Projections: Detailed revenue streams, funding requirements, break-even analysis
         12. Persona Analysis: Detailed customer personas with demographics, psychographics, and pain points
         13. Content Suggestions: Platform-optimized versions
+        14. Community Match: Top subreddits (20), Discord servers (10), LinkedIn groups (10) with rules and entry messages
 
         OUTPUT CONSTRAINTS (STRICT):
         - Platform list: include ONLY the TOP 6 most relevant platforms overall. Do NOT include more than 6.
@@ -1120,9 +1104,15 @@ export default async function handler(req: any, res: any) {
           • contentSuggestion: REQUIRED, non-empty, <= 140 characters (omit platform if you cannot provide)
           • rubric: REQUIRED with integer scores (1-5) for reach, nicheFit, contentFit, competitiveSignal
         - If any platform cannot satisfy ALL the above, DO NOT include that platform in platformAnalyses.
-        - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit):
+        - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit, communityMatch):
           • Keep it VERY concise (max 2 short sentences per field)
           • DO NOT leave fields empty. If insufficient evidence, write "insufficient evidence" explicitly.
+
+        - Community Match section (STRICT):
+          • communityMatch.subreddits: up to 20 items; each with {name, url, members, fitReason, rulesSummary, entryMessage}
+          • communityMatch.discordServers: up to 10 items; same fields
+          • communityMatch.linkedinGroups: up to 10 items; same fields
+          • Keep messages concise and compliant with community rules. If unsure, set rulesSummary to "insufficient evidence".
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
@@ -1376,7 +1366,7 @@ async function getEnhancedAIAnalysis(
     criticAgent?: CriticAgent,
     evidenceAnalyzer?: EvidenceAnalyzer,
     confidenceCalculator?: ConfidenceCalculator
-): Promise<DynamicPromptResult> {
+): Promise<any> {
     const startTime = Date.now();
     let retryCount = 0;
     let evidenceAnalysis;
@@ -1500,7 +1490,7 @@ async function getSimplifiedAIAnalysis(
     preferredModel?: string,
     weightsVariant?: string,
     options?: { morePlatforms?: boolean }
-): Promise<DynamicPromptResult> {
+): Promise<any> {
     // Helper: robust JSON parsing with light repairs
     const safeJsonParse = (rawText: string): any => {
         const tryParse = (txt: string) => {
@@ -1975,7 +1965,7 @@ ${responseText.slice(0, 6000)}`,
             const off = traverse(obj) || undefined;
             return { ok: !off, offending: off };
         };
-        const cleanResult: DynamicPromptResult = {
+        const cleanResult: any = {
             idea: parsedResult.idea || content,
             demandScore: Math.max(0, Math.min(100, parsedResult.demandScore || 65)),
             scoreJustification: parsedResult.scoreJustification || 'Market analysis completed',
@@ -2103,7 +2093,39 @@ ${responseText.slice(0, 6000)}`,
             goToMarket: parsedResult.goToMarket,
             developmentRoadmap: parsedResult.developmentRoadmap,
             productMarketFit: parsedResult.productMarketFit,
-            vcReview: parsedResult.vcReview
+            vcReview: parsedResult.vcReview,
+            communityMatch: {
+                subreddits: Array.isArray((parsedResult as any)?.communityMatch?.subreddits)
+                    ? ((parsedResult as any).communityMatch.subreddits as any[]).slice(0, 20).map((it: any) => ({
+                        name: typeof it?.name === 'string' ? it.name : '',
+                        url: typeof it?.url === 'string' ? it.url : undefined,
+                        members: typeof it?.members === 'string' ? it.members : undefined,
+                        fitReason: typeof it?.fitReason === 'string' ? it.fitReason : '',
+                        rulesSummary: typeof it?.rulesSummary === 'string' ? it.rulesSummary : '',
+                        entryMessage: typeof it?.entryMessage === 'string' ? it.entryMessage : ''
+                    }))
+                    : [],
+                discordServers: Array.isArray((parsedResult as any)?.communityMatch?.discordServers)
+                    ? ((parsedResult as any).communityMatch.discordServers as any[]).slice(0, 10).map((it: any) => ({
+                        name: typeof it?.name === 'string' ? it.name : '',
+                        url: typeof it?.url === 'string' ? it.url : undefined,
+                        members: typeof it?.members === 'string' ? it.members : undefined,
+                        fitReason: typeof it?.fitReason === 'string' ? it.fitReason : '',
+                        rulesSummary: typeof it?.rulesSummary === 'string' ? it.rulesSummary : '',
+                        entryMessage: typeof it?.entryMessage === 'string' ? it.entryMessage : ''
+                    }))
+                    : [],
+                linkedinGroups: Array.isArray((parsedResult as any)?.communityMatch?.linkedinGroups)
+                    ? ((parsedResult as any).communityMatch.linkedinGroups as any[]).slice(0, 10).map((it: any) => ({
+                        name: typeof it?.name === 'string' ? it.name : '',
+                        url: typeof it?.url === 'string' ? it.url : undefined,
+                        members: typeof it?.members === 'string' ? it.members : undefined,
+                        fitReason: typeof it?.fitReason === 'string' ? it.fitReason : '',
+                        rulesSummary: typeof it?.rulesSummary === 'string' ? it.rulesSummary : '',
+                        entryMessage: typeof it?.entryMessage === 'string' ? it.entryMessage : ''
+                    }))
+                    : []
+            }
         };
 
         // Clone/Brand penalty: generic consumer social or well-known brand clones get conservative cap
@@ -2421,4 +2443,3 @@ function fuseResults(results: any[]): any {
         nextTests: nextTests.length ? nextTests : first.nextTests
     };
 }
-

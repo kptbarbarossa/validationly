@@ -870,6 +870,102 @@ const ResultsPage: React.FC = () => {
                         <ProductMarketFitCard data={result.productMarketFit} />
                     </div>
 
+                    {/* Community Match */}
+                    {Boolean((result as any)?.communityMatch) && (
+                        <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10 max-w-6xl mx-auto mb-8">
+                            <div className="text-center mb-6">
+                                <h3 className="text-xl font-bold text-white mb-2">{isTR ? 'Community Match' : 'Community Match'}</h3>
+                                <p className="text-slate-300">{isTR ? 'Fikriniz için en uygun topluluklar ve giriş mesajları' : 'Best-fit communities for your idea with entry templates'}</p>
+                            </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                {/* Subreddits */}
+                                <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="font-semibold text-slate-100">Reddit</div>
+                                        <span className="text-xs px-2 py-1 rounded bg-orange-600/20 text-orange-300 border border-orange-600/30">{((result as any)?.communityMatch?.subreddits || []).length}</span>
+                                    </div>
+                                    <ul className="space-y-4 text-sm text-slate-200 max-h-96 overflow-auto pr-2">
+                                        {((result as any)?.communityMatch?.subreddits || []).map((c: any, i: number) => (
+                                            <li key={i} className="border-b border-white/10 pb-3 last:border-b-0">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <a href={c.url || '#'} target="_blank" rel="noreferrer" className="font-medium text-slate-100 hover:underline">{c.name || (isTR ? 'Veri yok' : 'No data')}</a>
+                                                    {c.members && <span className="text-xs text-slate-400">{c.members}</span>}
+                                                </div>
+                                                <div className="text-xs text-slate-300 mt-1">{c.fitReason || (isTR ? 'Veri yok' : 'No data')}</div>
+                                                <div className="text-xs text-slate-400 mt-1">{c.rulesSummary || (isTR ? 'Veri yok' : 'No data')}</div>
+                                                {c.entryMessage && (
+                                                    <div className="mt-2 bg-white/5 rounded p-3 border border-white/10">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <div className="text-xs font-semibold text-slate-300">{isTR ? 'Giriş Mesajı' : 'Entry Message'}</div>
+                                                            <button onClick={() => handleCopyToClipboard(c.entryMessage, `cm_reddit_${i}`)} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-white/20 text-slate-200">{copiedId === `cm_reddit_${i}` ? '✓' : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                                        </div>
+                                                        <div className="text-xs text-slate-200 whitespace-pre-wrap">{c.entryMessage}</div>
+                                                    </div>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                {/* Discord */}
+                                <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="font-semibold text-slate-100">Discord</div>
+                                        <span className="text-xs px-2 py-1 rounded bg-indigo-600/20 text-indigo-300 border border-indigo-600/30">{((result as any)?.communityMatch?.discordServers || []).length}</span>
+                                    </div>
+                                    <ul className="space-y-4 text-sm text-slate-200 max-h-96 overflow-auto pr-2">
+                                        {((result as any)?.communityMatch?.discordServers || []).map((c: any, i: number) => (
+                                            <li key={i} className="border-b border-white/10 pb-3 last:border-b-0">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <a href={c.url || '#'} target="_blank" rel="noreferrer" className="font-medium text-slate-100 hover:underline">{c.name || (isTR ? 'Veri yok' : 'No data')}</a>
+                                                    {c.members && <span className="text-xs text-slate-400">{c.members}</span>}
+                                                </div>
+                                                <div className="text-xs text-slate-300 mt-1">{c.fitReason || (isTR ? 'Veri yok' : 'No data')}</div>
+                                                <div className="text-xs text-slate-400 mt-1">{c.rulesSummary || (isTR ? 'Veri yok' : 'No data')}</div>
+                                                {c.entryMessage && (
+                                                    <div className="mt-2 bg-white/5 rounded p-3 border border-white/10">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <div className="text-xs font-semibold text-slate-300">{isTR ? 'Giriş Mesajı' : 'Entry Message'}</div>
+                                                            <button onClick={() => handleCopyToClipboard(c.entryMessage, `cm_discord_${i}`)} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-white/20 text-slate-200">{copiedId === `cm_discord_${i}` ? '✓' : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                                        </div>
+                                                        <div className="text-xs text-slate-200 whitespace-pre-wrap">{c.entryMessage}</div>
+                                                    </div>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                {/* LinkedIn Groups */}
+                                <div className="bg-white/5 rounded-xl p-6 border border-white/10">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="font-semibold text-slate-100">LinkedIn</div>
+                                        <span className="text-xs px-2 py-1 rounded bg-indigo-600/20 text-indigo-300 border border-indigo-600/30">{((result as any)?.communityMatch?.linkedinGroups || []).length}</span>
+                                    </div>
+                                    <ul className="space-y-4 text-sm text-slate-200 max-h-96 overflow-auto pr-2">
+                                        {((result as any)?.communityMatch?.linkedinGroups || []).map((c: any, i: number) => (
+                                            <li key={i} className="border-b border-white/10 pb-3 last:border-b-0">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <a href={c.url || '#'} target="_blank" rel="noreferrer" className="font-medium text-slate-100 hover:underline">{c.name || (isTR ? 'Veri yok' : 'No data')}</a>
+                                                    {c.members && <span className="text-xs text-slate-400">{c.members}</span>}
+                                                </div>
+                                                <div className="text-xs text-slate-300 mt-1">{c.fitReason || (isTR ? 'Veri yok' : 'No data')}</div>
+                                                <div className="text-xs text-slate-400 mt-1">{c.rulesSummary || (isTR ? 'Veri yok' : 'No data')}</div>
+                                                {c.entryMessage && (
+                                                    <div className="mt-2 bg-white/5 rounded p-3 border border-white/10">
+                                                        <div className="flex items-center justify-between mb-2">
+                                                            <div className="text-xs font-semibold text-slate-300">{isTR ? 'Giriş Mesajı' : 'Entry Message'}</div>
+                                                            <button onClick={() => handleCopyToClipboard(c.entryMessage, `cm_linkedin_${i}`)} className="text-xs px-2 py-1 rounded bg-white/5 border border-white/10 hover:border-white/20 text-slate-200">{copiedId === `cm_linkedin_${i}` ? '✓' : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                                        </div>
+                                                        <div className="text-xs text-slate-200 whitespace-pre-wrap">{c.entryMessage}</div>
+                                                    </div>
+                                                )}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* VC Review section removed */}
 
                     {/* Content Suggestions */}

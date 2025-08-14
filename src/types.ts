@@ -83,6 +83,9 @@ export interface DynamicPromptResult {
   language?: string;
   fallbackUsed?: boolean;
   
+  // Community Match (optional)
+  communityMatch?: CommunityMatch;
+  
   // Platform analyses from our dynamic prompt system
   platformAnalyses: {
     // Core platforms (Phase 1)
@@ -228,6 +231,22 @@ export interface SocialSuggestions {
     hashtags?: string[];
     goal?: string;
   };
+}
+
+// ---- Community Match schema ----
+export interface CommunityItem {
+  name: string;
+  url?: string;
+  members?: string; // e.g., "120k" or "12,345"
+  fitReason: string; // why this community fits the idea
+  rulesSummary: string; // key posting rules to respect
+  entryMessage: string; // a short, compliant intro/DM/post template
+}
+
+export interface CommunityMatch {
+  subreddits: CommunityItem[];
+  discordServers: CommunityItem[];
+  linkedinGroups: CommunityItem[];
 }
 
 // New analysis interfaces
