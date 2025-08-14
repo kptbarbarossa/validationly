@@ -1883,6 +1883,31 @@ ${responseText.slice(0, 6000)}`,
         // Remove hard-coded EN/TR checks to allow any language; rely on strict instruction + optional repair
 
         // Validate and clean the result
+        const isNonEmptyString = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
+        const isValidRubric = (r: any): boolean => {
+            const isInt15 = (n: any) => Number.isInteger(n) && n >= 1 && n <= 5;
+            return r && isInt15(r.reach) && isInt15(r.nicheFit) && isInt15(r.contentFit) && isInt15(r.competitiveSignal);
+        };
+        const isValidPlatform = (pa: any): boolean => {
+            if (!pa) return false;
+            const hasSummary = isNonEmptyString(pa.summary);
+            const hasSuggestion = isNonEmptyString(pa.contentSuggestion);
+            const hasKF = Array.isArray(pa.keyFindings) && pa.keyFindings.length === 3 && pa.keyFindings.every(isNonEmptyString);
+            // rubric might be in pa.rubric or flat; computePlatformScore handles absence, but we require rubric for validity
+            const rubricOk = isValidRubric(pa.rubric || pa);
+            return hasSummary && hasSuggestion && hasKF && rubricOk;
+        };
+        const buildPlatformEntry = (key: string, pa: any, sectorsForWeight: string[]) => {
+            const c = computePlatformScore(pa, sectorsForWeight);
+            return {
+                platformName: (pa?.platformName as string) || key,
+                score: c.score,
+                summary: pa.summary,
+                keyFindings: pa.keyFindings,
+                contentSuggestion: pa.contentSuggestion,
+                rubric: c.rubric
+            };
+        };
         const computePlatformScore = (pa: any, sectorsForWeight?: string[]): { score: number; rubric: { reach: number; nicheFit: number; contentFit: number; competitiveSignal: number } } => {
             const clamp = (n: any) => Math.max(1, Math.min(5, Number.isFinite(n) ? Math.round(n) : 3));
             const rubric = {
@@ -1994,130 +2019,74 @@ ${responseText.slice(0, 6000)}`,
                 producthunt: {
                     platformName: 'Product Hunt',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.producthunt, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.producthunt?.summary || 'Product Hunt shows strong launch potential.',
-                    keyFindings: parsedResult.platformAnalyses?.producthunt?.keyFindings || ['Tech community focus', 'Launch platform', 'Early adopter audience'],
-                    contentSuggestion: parsedResult.platformAnalyses?.producthunt?.contentSuggestion || 'Prepare for Product Hunt launch with compelling story.'
+                    summary: parsedResult.platformAnalyses?.producthunt?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.producthunt?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.producthunt?.contentSuggestion || ''
                 },
                 hackernews: {
                     platformName: 'Hacker News',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.hackernews, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.hackernews?.summary || 'Hacker News shows developer community interest.',
-                    keyFindings: parsedResult.platformAnalyses?.hackernews?.keyFindings || ['Developer audience', 'Technical discussion', 'Open source potential'],
-                    contentSuggestion: parsedResult.platformAnalyses?.hackernews?.contentSuggestion || 'Share technical insights and development journey.'
+                    summary: parsedResult.platformAnalyses?.hackernews?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.hackernews?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.hackernews?.contentSuggestion || ''
                 },
                 medium: {
                     platformName: 'Medium',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.medium, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.medium?.summary || 'Medium shows thought leadership potential.',
-                    keyFindings: parsedResult.platformAnalyses?.medium?.keyFindings || ['Long-form content', 'Professional audience', 'SEO benefits'],
-                    contentSuggestion: parsedResult.platformAnalyses?.medium?.contentSuggestion || 'Write detailed articles about your industry insights.'
+                    summary: parsedResult.platformAnalyses?.medium?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.medium?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.medium?.contentSuggestion || ''
                 },
                 discord: {
                     platformName: 'Discord',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.discord, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.discord?.summary || 'Discord shows community building potential.',
-                    keyFindings: parsedResult.platformAnalyses?.discord?.keyFindings || ['Real-time engagement', 'Community building', 'Niche audiences'],
-                    contentSuggestion: parsedResult.platformAnalyses?.discord?.contentSuggestion || 'Join relevant Discord servers and engage with communities.'
+                    summary: parsedResult.platformAnalyses?.discord?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.discord?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.discord?.contentSuggestion || ''
                 },
                 github: {
                     platformName: 'GitHub',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.github, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.github?.summary || 'GitHub shows open source potential.',
-                    keyFindings: parsedResult.platformAnalyses?.github?.keyFindings || ['Developer community', 'Open source opportunity', 'Technical credibility'],
-                    contentSuggestion: parsedResult.platformAnalyses?.github?.contentSuggestion || 'Create open source tools or documentation.'
+                    summary: parsedResult.platformAnalyses?.github?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.github?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.github?.contentSuggestion || ''
                 },
                 dribbble: {
                     platformName: 'Dribbble',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.dribbble, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.dribbble?.summary || 'Dribbble shows design community potential.',
-                    keyFindings: parsedResult.platformAnalyses?.dribbble?.keyFindings || ['Design community', 'Portfolio showcase', 'Creative feedback'],
-                    contentSuggestion: parsedResult.platformAnalyses?.dribbble?.contentSuggestion || 'Share design concepts and get creative feedback.'
+                    summary: parsedResult.platformAnalyses?.dribbble?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.dribbble?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.dribbble?.contentSuggestion || ''
                 },
                 angellist: {
                     platformName: 'AngelList',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.angellist, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.angellist?.summary || 'AngelList shows investor network potential.',
-                    keyFindings: parsedResult.platformAnalyses?.angellist?.keyFindings || ['Investor network', 'Startup ecosystem', 'Funding opportunities'],
-                    contentSuggestion: parsedResult.platformAnalyses?.angellist?.contentSuggestion || 'Create compelling startup profile for investors.'
+                    summary: parsedResult.platformAnalyses?.angellist?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.angellist?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.angellist?.contentSuggestion || ''
                 },
                 crunchbase: {
                     platformName: 'Crunchbase',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.crunchbase, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.crunchbase?.summary || 'Crunchbase shows market intelligence value.',
-                    keyFindings: parsedResult.platformAnalyses?.crunchbase?.keyFindings || ['Market intelligence', 'Competitor tracking', 'Industry analysis'],
-                    contentSuggestion: parsedResult.platformAnalyses?.crunchbase?.contentSuggestion || 'Research competitors and market trends.'
+                    summary: parsedResult.platformAnalyses?.crunchbase?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.crunchbase?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.crunchbase?.contentSuggestion || ''
                 }
             },
-            tweetSuggestion: parsedResult.tweetSuggestion || 'Share your startup idea on Twitter!',
-            redditTitleSuggestion: parsedResult.redditTitleSuggestion || 'Looking for feedback on my startup idea',
-            redditBodySuggestion: parsedResult.redditBodySuggestion || 'I would love to get your thoughts on this concept.',
-            linkedinSuggestion: parsedResult.linkedinSuggestion || 'Excited to share this new business concept with my network.',
+            tweetSuggestion: parsedResult.tweetSuggestion || '',
+            redditTitleSuggestion: parsedResult.redditTitleSuggestion || '',
+            redditBodySuggestion: parsedResult.redditBodySuggestion || '',
+            linkedinSuggestion: parsedResult.linkedinSuggestion || '',
 
             // Add comprehensive analysis with fallbacks
-            marketIntelligence: parsedResult.marketIntelligence || {
-                tam: "Market analysis in progress",
-                sam: "Calculating addressable market",
-                som: "Determining obtainable market",
-                growthRate: "Industry growth rate analysis",
-                marketTiming: 3,
-                keyTrends: ["Market analysis", "Industry trends", "Growth opportunities"]
-            },
-            competitiveLandscape: parsedResult.competitiveLandscape || {
-                directCompetitors: ["Analysis in progress"],
-                indirectCompetitors: ["Market research ongoing"],
-                marketPosition: "Competitive positioning analysis",
-                differentiationScore: 7,
-                competitiveMoat: "Competitive advantage assessment",
-                entryBarriers: "Market entry analysis"
-            },
-            revenueModel: parsedResult.revenueModel || {
-                primaryModel: "Business model analysis",
-                pricePoint: "Pricing strategy development",
-                revenueStreams: ["Revenue analysis", "Monetization strategy"],
-                breakEvenTimeline: "Financial projections",
-                ltvCacRatio: "Unit economics analysis",
-                projectedMrr: "Revenue projections"
-            },
-            targetAudience: parsedResult.targetAudience || {
-                primarySegment: "Customer segment analysis",
-                secondarySegment: "Market segmentation",
-                tertiarySegment: "Audience research",
-                painPoints: ["Customer research", "Pain point analysis"],
-                willingnessToPay: "Pricing sensitivity analysis",
-                customerAcquisitionChannels: ["Channel analysis", "Customer acquisition"]
-            },
-            riskAssessment: parsedResult.riskAssessment || {
-                technicalRisk: "Medium",
-                marketRisk: "Medium",
-                financialRisk: "Medium",
-                regulatoryRisk: "Low",
-                overallRiskLevel: "Medium",
-                mitigationStrategies: ["Risk analysis", "Mitigation planning"]
-            },
-            goToMarket: parsedResult.goToMarket || {
-                phase1: "Go-to-market strategy development",
-                phase2: "Market entry planning",
-                phase3: "Scale strategy",
-                timeline: "Strategic timeline",
-                budgetNeeded: "Budget analysis",
-                keyChannels: ["Channel strategy", "Market approach"]
-            },
-            developmentRoadmap: parsedResult.developmentRoadmap || {
-                mvpTimeline: "Development planning",
-                betaLaunch: "Beta strategy",
-                publicLaunch: "Launch planning",
-                keyFeatures: ["Feature analysis", "Product roadmap"],
-                teamNeeded: ["Team planning", "Resource allocation"],
-                techStack: ["Technology assessment", "Technical planning"]
-            },
-            productMarketFit: parsedResult.productMarketFit || {
-                problemSolutionFit: 75,
-                solutionMarketFit: 70,
-                earlyAdopterSignals: "PMF analysis in progress",
-                retentionPrediction: "Retention modeling",
-                viralCoefficient: "Growth analysis",
-                pmfIndicators: ["PMF assessment", "Market validation"]
-            },
+            marketIntelligence: parsedResult.marketIntelligence,
+            competitiveLandscape: parsedResult.competitiveLandscape,
+            revenueModel: parsedResult.revenueModel,
+            targetAudience: parsedResult.targetAudience,
+            riskAssessment: parsedResult.riskAssessment,
+            goToMarket: parsedResult.goToMarket,
+            developmentRoadmap: parsedResult.developmentRoadmap,
+            productMarketFit: parsedResult.productMarketFit,
             vcReview: parsedResult.vcReview
         };
 
