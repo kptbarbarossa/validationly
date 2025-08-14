@@ -708,20 +708,22 @@ const ResultsPage: React.FC = () => {
                     </div>
                     <div>
                         <h3 className="font-semibold text-slate-100">{platform}</h3>
-                        <div className={`text-sm font-medium ${getScoreColor(analysis?.score || 3)}`}>
-                            {analysis?.score || 3}/5 - {getScoreText(analysis?.score || 3)}
-                        </div>
+                        {typeof analysis?.score === 'number' ? (
+                            <div className={`text-sm font-medium ${getScoreColor(analysis.score)}`}>
+                                {analysis.score}/5 - {getScoreText(analysis.score)}
+                            </div>
+                        ) : (
+                            <div className="text-sm font-medium text-slate-400">{isTR ? 'Veri yok' : 'No data'}</div>
+                        )}
                         {/* Shareable snippet moved to bottom as a standalone card */}
                     </div>
                 </div>
 
                 <div className="mb-4">
                     <p className="text-sm text-slate-300 leading-relaxed glass-scroll">
-                        {analysis?.summary || (
-                            (result as any)?.language === 'Turkish'
-                                ? `Yapay zeka analizi ${platform.toLowerCase()} için orta düzey potansiyel gösteriyor. Hedefli içerik stratejisi ile iyileştirme alanı mevcut.`
-                                : `AI analysis shows moderate potential for ${platform.toLowerCase()} with room for improvement through targeted content strategy.`
-                        )}
+                        {(analysis && typeof analysis.summary === 'string' && analysis.summary.trim().length > 0)
+                            ? analysis.summary
+                            : (isTR ? 'Veri yok' : 'No data')}
                     </p>
                 </div>
 
