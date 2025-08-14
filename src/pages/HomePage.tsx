@@ -177,13 +177,6 @@ const HomePage: React.FC = () => {
                 <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
 
                 <div className="relative z-10 py-8">
-                    {/* Floating arrow and support note (top-right) */}
-                    <div className="hidden md:flex absolute -top-6 right-2 items-end gap-2 select-none">
-                        <div className="text-amber-200/80 text-[10px] leading-tight text-right">
-                            tamamen ücretsiz — geliştirmeye katkı için destek olun
-                        </div>
-                        <div className="animate-bounce-y text-amber-300/80 text-lg">⬇</div>
-                    </div>
                     {/* Logo removed by request */}
 
 					<h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up delay-100">
