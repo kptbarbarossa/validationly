@@ -123,6 +123,14 @@ body {
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+/* Gentle up-down bounce for arrow */
+@keyframes bounceY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-bounce-y { animation: bounceY 1.2s ease-in-out infinite; }
+
 /* Premium glass helpers */
 .glass {
   background: rgba(255, 255, 255, 0.06);
