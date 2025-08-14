@@ -1114,11 +1114,13 @@ export default async function handler(req: any, res: any) {
 
         OUTPUT CONSTRAINTS (STRICT):
         - Platform list: include ONLY the TOP 6 most relevant platforms overall. Do NOT include more than 6.
-        - For each platform object:
-          • summary: max 180 characters
-          • keyFindings: EXACTLY 3 bullet items (strings)
-          • contentSuggestion: max 140 characters
-        - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit): keep sentences concise; avoid verbose paragraphs.
+        - NON-EMPTY FIELDS REQUIRED per platform:
+          • summary: REQUIRED, non-empty, <= 180 characters (omit platform if you cannot provide)
+          • keyFindings: REQUIRED, EXACTLY 3 non-empty strings (omit platform if you cannot provide all 3)
+          • contentSuggestion: REQUIRED, non-empty, <= 140 characters (omit platform if you cannot provide)
+          • rubric: REQUIRED with integer scores (1-5) for reach, nicheFit, contentFit, competitiveSignal
+        - If any platform cannot satisfy ALL the above, DO NOT include that platform in platformAnalyses.
+        - For high-level sections (marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit): keep sentences concise; avoid verbose paragraphs, and DO NOT leave fields empty.
 
         CRITICAL RULES:
         - Use "X" instead of "Twitter" throughout your response
@@ -1837,12 +1839,13 @@ ${responseText.slice(0, 6000)}`,
                 try {
                     const minimal = await aiInstance.models.generateContent({
                         model: 'gemini-2.5-flash',
-                        contents: `${languageInstruction}\n\nProduce ONLY the following minimal JSON for the idea: "${content}". Keep strings concise. JSON shape:\n{
+                        contents: `${languageInstruction}\n\nProduce ONLY the following minimal JSON for the idea: "${content}". Keep strings concise. JSON shape (all required unless noted):\n{
   "idea": string,
   "demandScore": number, // 0-100
   "scoreJustification": string, // <= 140 chars
   "platformAnalyses": {
-    "twitter"?: {"platformName":"X","score":1-5,"summary":string,"keyFindings":[string,string,string],"contentSuggestion":string},
+    // Include ONLY platforms where you CAN provide ALL required fields below
+    "twitter"?: {"platformName":"X","score":1-5,"summary":string,"keyFindings":[string,string,string],"contentSuggestion":string,"rubric":{"reach":1-5,"nicheFit":1-5,"contentFit":1-5,"competitiveSignal":1-5}},
     "reddit"?: {...},
     "linkedin"?: {...},
     "instagram"?: {...},
@@ -1941,52 +1944,52 @@ ${responseText.slice(0, 6000)}`,
                 twitter: (()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.twitter, sectors); return {
                     platformName: 'X',
                     score: c.score,
-                    summary: parsedResult.platformAnalyses?.twitter?.summary || 'Twitter analysis shows moderate potential.',
-                    keyFindings: parsedResult.platformAnalyses?.twitter?.keyFindings || ['Analysis completed', 'Moderate engagement potential', 'Content strategy recommended'],
-                    contentSuggestion: parsedResult.platformAnalyses?.twitter?.contentSuggestion || 'Share your idea on X for feedback.',
+                    summary: parsedResult.platformAnalyses?.twitter?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.twitter?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.twitter?.contentSuggestion || '',
                     rubric: c.rubric
                 }; })(),
                 reddit: {
                     platformName: 'Reddit',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.reddit, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.reddit?.summary || 'Reddit communities show moderate interest.',
-                    keyFindings: parsedResult.platformAnalyses?.reddit?.keyFindings || ['Community engagement possible', 'Discussion potential identified', 'Subreddit targeting recommended'],
-                    contentSuggestion: parsedResult.platformAnalyses?.reddit?.contentSuggestion || 'Post in relevant subreddits for detailed feedback.'
+                    summary: parsedResult.platformAnalyses?.reddit?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.reddit?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.reddit?.contentSuggestion || ''
                 },
                 linkedin: {
                     platformName: 'LinkedIn',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.linkedin, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.linkedin?.summary || 'LinkedIn shows professional networking potential.',
-                    keyFindings: parsedResult.platformAnalyses?.linkedin?.keyFindings || ['Professional audience alignment', 'B2B networking opportunities', 'Thought leadership potential'],
-                    contentSuggestion: parsedResult.platformAnalyses?.linkedin?.contentSuggestion || 'Share professionally on LinkedIn for business feedback.'
+                    summary: parsedResult.platformAnalyses?.linkedin?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.linkedin?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.linkedin?.contentSuggestion || ''
                 },
                 instagram: {
                     platformName: 'Instagram',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.instagram, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.instagram?.summary || 'Instagram shows visual content potential.',
-                    keyFindings: parsedResult.platformAnalyses?.instagram?.keyFindings || ['Visual storytelling opportunity', 'Influencer marketing potential', 'Story engagement'],
-                    contentSuggestion: parsedResult.platformAnalyses?.instagram?.contentSuggestion || 'Create visual content showcasing your idea.'
+                    summary: parsedResult.platformAnalyses?.instagram?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.instagram?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.instagram?.contentSuggestion || ''
                 },
                 tiktok: {
                     platformName: 'TikTok',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.tiktok, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.tiktok?.summary || 'TikTok shows viral content potential.',
-                    keyFindings: parsedResult.platformAnalyses?.tiktok?.keyFindings || ['Gen Z audience reach', 'Viral potential', 'Short-form content'],
-                    contentSuggestion: parsedResult.platformAnalyses?.tiktok?.contentSuggestion || 'Create engaging short videos about your concept.'
+                    summary: parsedResult.platformAnalyses?.tiktok?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.tiktok?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.tiktok?.contentSuggestion || ''
                 },
                 youtube: {
                     platformName: 'YouTube',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.youtube, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.youtube?.summary || 'YouTube shows educational content potential.',
-                    keyFindings: parsedResult.platformAnalyses?.youtube?.keyFindings || ['Long-form content opportunity', 'Tutorial potential', 'Subscriber growth'],
-                    contentSuggestion: parsedResult.platformAnalyses?.youtube?.contentSuggestion || 'Create educational videos about your solution.'
+                    summary: parsedResult.platformAnalyses?.youtube?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.youtube?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.youtube?.contentSuggestion || ''
                 },
                 facebook: {
                     platformName: 'Facebook',
                     ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.facebook, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.facebook?.summary || 'Facebook shows community building potential.',
-                    keyFindings: parsedResult.platformAnalyses?.facebook?.keyFindings || ['Community groups', 'Event promotion', 'Older demographics'],
-                    contentSuggestion: parsedResult.platformAnalyses?.facebook?.contentSuggestion || 'Join relevant Facebook groups and communities.'
+                    summary: parsedResult.platformAnalyses?.facebook?.summary || '',
+                    keyFindings: parsedResult.platformAnalyses?.facebook?.keyFindings || [],
+                    contentSuggestion: parsedResult.platformAnalyses?.facebook?.contentSuggestion || ''
                 },
                 producthunt: {
                     platformName: 'Product Hunt',
