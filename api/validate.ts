@@ -1,4 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import type { DynamicPromptResult } from '../src/types';
+import { CriticAgent, EvidenceAnalyzer, ConfidenceCalculator, ErrorManager } from './enhanced-analysis';
 
 // Dynamic prompt-based AI analysis system
 
@@ -885,11 +887,13 @@ export default async function handler(req: any, res: any) {
         4. Competitive Landscape: Identify actual competitors and positioning
         5. Revenue Model: Realistic pricing and monetization strategies
         6. Target Audience: Specific customer segments and pain points
-        7. Risk Assessment: Technical, market, financial risk evaluation
+        7. Enhanced Risk Assessment: Multi-dimensional risk matrix with mitigation strategies
         8. Go-to-Market: Phased launch strategy with timelines
         9. Development Roadmap: Technical implementation timeline
         10. Product-Market Fit: PMF indicators and predictions
-        11. Content Suggestions: Platform-optimized versions
+        11. Enhanced Financial Projections: Detailed revenue streams, funding requirements, break-even analysis
+        12. Persona Analysis: Detailed customer personas with demographics, psychographics, and pain points
+        13. Content Suggestions: Platform-optimized versions
 
         OUTPUT CONSTRAINTS (STRICT):
         - Platform list: include ONLY the TOP 6 most relevant platforms overall. Do NOT include more than 6.
@@ -999,9 +1003,32 @@ export default async function handler(req: any, res: any) {
         ];
         const preferredModel = typeof model === 'string' && allowedModels.includes(model) ? model : undefined;
 
-        // Use simplified analysis approach with dynamic prompts (optional ensemble)
-        const baseRun = () => getSimplifiedAIAnalysis(inputContent, finalSystemInstruction, lang, preferredModel, weightsVariant, { morePlatforms: Boolean(req.body?.morePlatforms) });
+        // Initialize enhanced analysis components
+        const criticAgent = new CriticAgent(expectedLanguage);
+        const evidenceAnalyzer = new EvidenceAnalyzer();
+        const confidenceCalculator = new ConfidenceCalculator();
+        const errorManager = new ErrorManager();
+
+        // Use enhanced analysis approach with quality control
+        const baseRun = () => getEnhancedAIAnalysis(
+            inputContent, 
+            finalSystemInstruction, 
+            lang, 
+            preferredModel, 
+            weightsVariant, 
+            { 
+                morePlatforms: Boolean(req.body?.morePlatforms),
+                evidenceMode: Boolean(req.body?.evidence),
+                sectors: promptManager.detectSector(inputContent)
+            },
+            errorManager,
+            criticAgent,
+            evidenceAnalyzer,
+            confidenceCalculator
+        );
+
         let result = await baseRun();
+        
         if (req.body?.ensemble === true) {
             try {
                 const extra = await Promise.all([baseRun(), baseRun()]);
@@ -1009,24 +1036,231 @@ export default async function handler(req: any, res: any) {
             } catch {}
         }
 
-        console.log('✅ Dynamic prompt analysis completed successfully');
+        console.log('✅ Enhanced dynamic prompt analysis completed successfully');
         console.log('📊 Result structure:', Object.keys(result));
+        console.log('🎯 Quality score:', result.analysisMetadata?.qualityScore || 'N/A');
         return res.status(200).json(result);
 
     } catch (error) {
-        console.error('❌ Simplified validation error:', error);
+        console.error('❌ Enhanced validation error:', error);
 
-        // Return simplified error response
-        return res.status(500).json({
-            message: 'Analysis failed. Please try again.',
-            error: process.env.NODE_ENV === 'development' ? error.message : undefined
-        });
+        // Enhanced error handling with graceful degradation
+        try {
+            console.log('🔄 Attempting graceful degradation...');
+            
+            // Create a basic fallback result
+            const fallbackResult = {
+                idea: inputContent,
+                demandScore: 50,
+                scoreJustification: 'Analysis completed with limited capabilities due to system constraints',
+                platformAnalyses: {
+                    twitter: {
+                        platformName: 'X',
+                        score: 3,
+                        summary: 'Platform analysis temporarily unavailable. Moderate potential estimated.',
+                        keyFindings: ['Analysis limited', 'System fallback', 'Retry recommended'],
+                        contentSuggestion: 'Share your idea on X for community feedback.'
+                    },
+                    reddit: {
+                        platformName: 'Reddit',
+                        score: 3,
+                        summary: 'Community analysis temporarily unavailable. Moderate engagement potential.',
+                        keyFindings: ['Analysis limited', 'System fallback', 'Community validation needed'],
+                        contentSuggestion: 'Post in relevant subreddits for detailed feedback.'
+                    },
+                    linkedin: {
+                        platformName: 'LinkedIn',
+                        score: 3,
+                        summary: 'Professional network analysis temporarily unavailable.',
+                        keyFindings: ['Analysis limited', 'System fallback', 'Professional validation needed'],
+                        contentSuggestion: 'Share with your professional network on LinkedIn.'
+                    }
+                },
+                tweetSuggestion: `🚀 Working on a new idea: ${inputContent.substring(0, 100)}${inputContent.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
+                redditTitleSuggestion: 'Looking for feedback on my startup idea',
+                redditBodySuggestion: `I've been working on this concept: ${inputContent}. Would love to get your thoughts and feedback from the community.`,
+                linkedinSuggestion: `Exploring a new business opportunity: ${inputContent.substring(0, 200)}${inputContent.length > 200 ? '...' : ''} Interested in connecting with others in this space.`,
+                fallbackUsed: true,
+                confidence: 30,
+                language: expectedLanguage,
+                analysisMetadata: {
+                    analysisDate: new Date().toISOString(),
+                    aiModel: 'fallback-system',
+                    fallbackUsed: true,
+                    analysisVersion: '2.0-fallback',
+                    processingTime: 0,
+                    confidence: 30,
+                    language: expectedLanguage,
+                    completeness: 40,
+                    retryCount: 0,
+                    qualityScore: 40
+                },
+                criticAnalysis: {
+                    overallQuality: 40,
+                    issues: [
+                        {
+                            type: 'missing_field' as const,
+                            field: 'comprehensive_analysis',
+                            severity: 'high' as const,
+                            description: 'Full analysis unavailable due to system limitations',
+                            suggestion: 'Please try again later for complete analysis'
+                        }
+                    ],
+                    suggestions: ['Retry analysis when system is fully operational'],
+                    completenessScore: 40,
+                    consistencyScore: 80,
+                    needsRepair: true
+                }
+            };
+
+            console.log('✅ Graceful degradation successful - returning basic analysis');
+            return res.status(200).json(fallbackResult);
+
+        } catch (fallbackError) {
+            console.error('❌ Graceful degradation also failed:', fallbackError);
+            
+            // Final fallback - return error response
+            return res.status(500).json({
+                message: 'Analysis system temporarily unavailable. Please try again later.',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+                fallbackAttempted: true,
+                retryRecommended: true
+            });
+        }
     }
 }
 
 // Single AI call analysis - no separate platform functions needed
 
-// Simplified AI analysis using only Gemini 2.0
+// Enhanced AI analysis with quality control and evidence gathering
+async function getEnhancedAIAnalysis(
+    content: string,
+    systemInstruction: string,
+    forcedLang?: 'tr'|'en',
+    preferredModel?: string,
+    weightsVariant?: string,
+    options?: { morePlatforms?: boolean; evidenceMode?: boolean; sectors?: string[] },
+    errorManager?: ErrorManager,
+    criticAgent?: CriticAgent,
+    evidenceAnalyzer?: EvidenceAnalyzer,
+    confidenceCalculator?: ConfidenceCalculator
+): Promise<DynamicPromptResult> {
+    const startTime = Date.now();
+    let retryCount = 0;
+    let evidenceAnalysis;
+    let criticAnalysis;
+
+    // Gather evidence if enabled
+    if (options?.evidenceMode && evidenceAnalyzer && options.sectors) {
+        try {
+            console.log('🔍 Gathering market evidence...');
+            evidenceAnalysis = await evidenceAnalyzer.gatherEvidence(content, options.sectors);
+            console.log(`📊 Evidence quality: ${evidenceAnalysis.evidenceQuality}/100`);
+        } catch (error) {
+            console.warn('⚠️ Evidence gathering failed:', error);
+        }
+    }
+
+    // Enhanced system instruction with evidence
+    let enhancedSystemInstruction = systemInstruction;
+    if (evidenceAnalysis && evidenceAnalysis.sources.length > 0) {
+        const evidenceContext = evidenceAnalysis.sources
+            .map(source => `${source.platform}: ${source.content}`)
+            .join('\n');
+        
+        enhancedSystemInstruction += `\n\nMARKET EVIDENCE:\n${evidenceContext}\n\nUse this evidence to support your analysis where relevant.`;
+    }
+
+    // Execute analysis with error management
+    const executeAnalysis = async (): Promise<any> => {
+        retryCount++;
+        return await getSimplifiedAIAnalysis(
+            content,
+            enhancedSystemInstruction,
+            forcedLang,
+            preferredModel,
+            weightsVariant,
+            options
+        );
+    };
+
+    let result;
+    if (errorManager) {
+        result = await errorManager.executeWithRetry(executeAnalysis, {
+            model: preferredModel || 'gemini-2.0-flash-exp',
+            inputLength: content.length,
+            promptVersion: '2.0'
+        });
+    } else {
+        result = await executeAnalysis();
+    }
+
+    // Quality control with critic agent
+    if (criticAgent) {
+        try {
+            console.log('🔍 Running quality analysis...');
+            criticAnalysis = await criticAgent.analyzeQuality(result);
+            console.log(`📊 Quality score: ${criticAnalysis.overallQuality}/100`);
+
+            // Attempt repair if needed
+            if (criticAnalysis.needsRepair && criticAnalysis.overallQuality < 60) {
+                console.log('🔧 Attempting analysis repair...');
+                result = await criticAgent.repairAnalysis(result, criticAnalysis.issues);
+                
+                // Re-analyze after repair
+                criticAnalysis = await criticAgent.analyzeQuality(result);
+                console.log(`📊 Post-repair quality: ${criticAnalysis.overallQuality}/100`);
+            }
+        } catch (error) {
+            console.warn('⚠️ Quality analysis failed:', error);
+        }
+    }
+
+    // Enhanced confidence calculation
+    let enhancedConfidence;
+    if (confidenceCalculator) {
+        try {
+            enhancedConfidence = confidenceCalculator.calculateEnhancedConfidence(
+                result,
+                options?.sectors || [],
+                evidenceAnalysis,
+                criticAnalysis
+            );
+            console.log(`🎯 Enhanced confidence: ${enhancedConfidence.overall}/100`);
+        } catch (error) {
+            console.warn('⚠️ Confidence calculation failed:', error);
+        }
+    }
+
+    // Add enhanced metadata
+    const processingTime = Date.now() - startTime;
+    const enhancedResult = {
+        ...result,
+        // Enhanced metadata
+        analysisMetadata: {
+            analysisDate: new Date().toISOString(),
+            aiModel: preferredModel || 'gemini-2.0-flash-exp',
+            fallbackUsed: result.fallbackUsed || false,
+            analysisVersion: '2.0-enhanced',
+            processingTime,
+            confidence: result.confidence || 75,
+            language: result.language || 'English',
+            completeness: criticAnalysis?.completenessScore || 85,
+            retryCount,
+            qualityScore: criticAnalysis?.overallQuality || 80
+        },
+        // Quality control results
+        criticAnalysis,
+        // Evidence analysis results
+        evidenceAnalysis,
+        // Enhanced confidence
+        enhancedConfidence
+    };
+
+    return enhancedResult;
+}
+
+// Original simplified AI analysis (kept for compatibility and fallback)
 async function getSimplifiedAIAnalysis(
     content: string,
     systemInstruction: string,
@@ -1127,29 +1361,26 @@ async function getSimplifiedAIAnalysis(
             - Competitive Moat: Specific sustainable advantages
             - Entry Barriers: Real barriers to market entry
 
-            💰 REVENUE MODEL (realistic financial projections):
-            - Primary Model: Specific business model (SaaS, marketplace, etc.)
-            - Price Point: Exact pricing recommendation with currency
-            - Revenue Streams: 3 specific revenue sources
-            - Break-even Timeline: Realistic months to profitability
-            - LTV/CAC Ratio: Specific ratio with calculation
-            - Projected MRR: Monthly recurring revenue by year 1
+            💰 ENHANCED FINANCIAL PROJECTIONS (comprehensive financial analysis):
+            - Revenue Model: { primary: "business model", secondary: [alternative models], revenueStreams: [{ name, type, projectedRevenue, confidence }], scalabilityFactor: 1-10 }
+            - Pricing Strategy: { model: "freemium/subscription/one_time/usage_based/tiered", pricePoint: number, currency: "USD/EUR/etc", justification: "reasoning", competitivePosition: "premium/competitive/budget" }
+            - Financial Metrics: { ltvcacRatio: number, projectedMRR: number, churnRate: percentage, grossMargin: percentage, unitEconomics: "description" }
+            - Funding Requirements: { totalNeeded: amount, currency: "USD", breakdown: [{ category, amount, percentage, justification }], timeline: "months", fundingStage: "pre_seed/seed/series_a/bootstrap" }
+            - Break-even Analysis: { timeToBreakEven: months, monthlyBurnRate: amount, revenueRequired: amount, assumptions: [key assumptions] }
 
-            👥 TARGET AUDIENCE (specific customer segments):
-            - Primary Segment: Exact customer type with percentage
-            - Secondary Segment: Second customer group with percentage  
-            - Tertiary Segment: Third group with percentage
-            - Pain Points: 3 specific problems they face
-            - Willingness to Pay: Price range they'll accept
-            - Acquisition Channels: 3 specific marketing channels
+            👥 ENHANCED PERSONA ANALYSIS (detailed customer insights):
+            - Primary Persona: { segment: "customer type", demographics: { ageRange, income, location, occupation, education }, psychographics: { values: [], interests: [], behaviors: [], motivations: [] }, painPoints: [{ description, severity: 1-10, frequency: "daily/weekly/monthly/occasional", currentSolutions: [], satisfactionWithCurrent: 1-10 }], willingnessToPay: { minPrice, maxPrice, idealPrice, priceElasticity: "high/medium/low", paymentPreference: "monthly/annual/one_time" }, acquisitionChannels: [{ channel, effectiveness: 1-10, cost: "low/medium/high", timeToConvert, scalability: 1-10 }], marketSize: number, priority: "primary" }
+            - Secondary Persona: { same structure as primary but with priority: "secondary" }
+            - Tertiary Persona: { same structure as primary but with priority: "tertiary" }
 
-            ⚠️ RISK ASSESSMENT (evaluate each risk level):
-            - Technical Risk: Low/Medium/High with specific reasons
-            - Market Risk: Low/Medium/High with market factors
-            - Financial Risk: Low/Medium/High with financial factors
-            - Regulatory Risk: Low/Medium/High with compliance issues
+            ⚠️ ENHANCED RISK ASSESSMENT (multi-dimensional risk matrix):
+            - Technical Risk: { level: "Low/Medium/High", score: 0-100, factors: [reasons], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
+            - Market Risk: { level: "Low/Medium/High", score: 0-100, factors: [market factors], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
+            - Financial Risk: { level: "Low/Medium/High", score: 0-100, factors: [financial factors], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
+            - Regulatory Risk: { level: "Low/Medium/High", score: 0-100, factors: [compliance issues], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
+            - Competitive Risk: { level: "Low/Medium/High", score: 0-100, factors: [competitive threats], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
             - Overall Risk: Low/Medium/High summary
-            - Mitigation Strategies: 3 specific risk reduction tactics
+            - Mitigation Strategies: 5 comprehensive risk reduction tactics
 
             🚀 GO-TO-MARKET (actionable launch strategy):
             - Phase 1: Specific first 3-month strategy
@@ -1707,7 +1938,8 @@ ${responseText.slice(0, 6000)}`,
         console.log('❌ Platform analysis failed, using fallback...', error);
 
         // Detect language for fallback (respect forcedLang)
-        const isTurkish = forcedLang === 'tr' ? true : forcedLang === 'en' ? false : /[çğıöşüÇĞIİÖŞÜ]/.test(content) ||
+        // Note: Do NOT include plain 'I' in the character class to avoid false Turkish detection for English text
+        const isTurkish = forcedLang === 'tr' ? true : forcedLang === 'en' ? false : /[çğıöşüÇĞİÖŞÜ]/.test(content) ||
             /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
 
         // GROQ bridge fallback (model-based, avoids static placeholders)

@@ -639,6 +639,216 @@ export interface IndustryFramework {
   };
 }
 
+// Critic Agent - Quality Control System
+export interface CriticAnalysis {
+  overallQuality: number; // 0-100
+  issues: QualityIssue[];
+  suggestions: string[];
+  completenessScore: number; // 0-100
+  consistencyScore: number; // 0-100
+  needsRepair: boolean;
+}
+
+export interface QualityIssue {
+  type: 'missing_field' | 'inconsistent_data' | 'low_quality' | 'language_mixing' | 'unrealistic_numbers';
+  field: string;
+  severity: 'low' | 'medium' | 'high';
+  description: string;
+  suggestion: string;
+}
+
+// Evidence-Based Analysis
+export interface EvidenceSource {
+  platform: string;
+  type: 'reddit_post' | 'product_hunt' | 'crunchbase' | 'github' | 'news' | 'trend_data';
+  content: string;
+  url?: string;
+  relevanceScore: number; // 0-100
+  credibilityScore: number; // 0-100
+}
+
+export interface EvidenceAnalysis {
+  sources: EvidenceSource[];
+  evidenceQuality: number; // 0-100
+  supportingEvidence: string[];
+  contradictingEvidence: string[];
+  confidenceBoost: number; // -20 to +20
+}
+
+// Enhanced Confidence Scoring
+export interface ConfidenceFactors {
+  sectorCoverage: number; // 0-100
+  analysisDepth: number; // 0-100
+  schemaCompleteness: number; // 0-100
+  evidenceQuality: number; // 0-100
+  consistencyScore: number; // 0-100
+  modelReliability: number; // 0-100
+}
+
+export interface EnhancedConfidence {
+  overall: number; // 0-100
+  factors: ConfidenceFactors;
+  breakdown: string[];
+  recommendations: string[];
+}
+
+// Enhanced Risk Assessment
+export interface EnhancedRiskMatrix {
+  technical: RiskAssessment;
+  market: RiskAssessment;
+  financial: RiskAssessment;
+  regulatory: RiskAssessment;
+  competitive: RiskAssessment;
+  overall: RiskLevel;
+  mitigationStrategies: string[];
+}
+
+export interface RiskAssessment {
+  level: RiskLevel;
+  score: number; // 0-100
+  factors: string[];
+  impact: 'low' | 'medium' | 'high';
+  probability: 'low' | 'medium' | 'high';
+  mitigations: string[];
+}
+
+// Enhanced Financial Projections
+export interface EnhancedFinancialProjections {
+  revenueModel: RevenueModel;
+  pricingStrategy: PricingStrategy;
+  financialMetrics: FinancialMetrics;
+  fundingRequirements: FundingRequirements;
+  breakEvenAnalysis: BreakEvenAnalysis;
+}
+
+export interface RevenueModel {
+  primary: string;
+  secondary: string[];
+  revenueStreams: RevenueStream[];
+  scalabilityFactor: number; // 1-10
+}
+
+export interface RevenueStream {
+  name: string;
+  type: 'subscription' | 'one_time' | 'commission' | 'advertising' | 'freemium';
+  projectedRevenue: number;
+  confidence: number; // 0-100
+}
+
+export interface PricingStrategy {
+  model: 'freemium' | 'subscription' | 'one_time' | 'usage_based' | 'tiered';
+  pricePoint: number;
+  currency: string;
+  justification: string;
+  competitivePosition: 'premium' | 'competitive' | 'budget';
+}
+
+export interface FinancialMetrics {
+  ltvcacRatio: number;
+  projectedMRR: number;
+  churnRate: number;
+  grossMargin: number;
+  unitEconomics: string;
+}
+
+export interface FundingRequirements {
+  totalNeeded: number;
+  currency: string;
+  breakdown: FundingBreakdown[];
+  timeline: string;
+  fundingStage: 'pre_seed' | 'seed' | 'series_a' | 'bootstrap';
+}
+
+export interface FundingBreakdown {
+  category: string;
+  amount: number;
+  percentage: number;
+  justification: string;
+}
+
+export interface BreakEvenAnalysis {
+  timeToBreakEven: number; // months
+  monthlyBurnRate: number;
+  revenueRequired: number;
+  assumptions: string[];
+}
+
+// Enhanced Persona Analysis
+export interface EnhancedPersonaInsight {
+  segment: string;
+  demographics: Demographics;
+  psychographics: Psychographics;
+  painPoints: PainPoint[];
+  willingnessToPay: WillingnessToPay;
+  acquisitionChannels: AcquisitionChannel[];
+  marketSize: number;
+  priority: 'primary' | 'secondary' | 'tertiary';
+}
+
+export interface Demographics {
+  ageRange: string;
+  income: string;
+  location: string;
+  occupation: string;
+  education: string;
+}
+
+export interface Psychographics {
+  values: string[];
+  interests: string[];
+  behaviors: string[];
+  motivations: string[];
+}
+
+export interface PainPoint {
+  description: string;
+  severity: number; // 1-10
+  frequency: 'daily' | 'weekly' | 'monthly' | 'occasional';
+  currentSolutions: string[];
+  satisfactionWithCurrent: number; // 1-10
+}
+
+export interface WillingnessToPay {
+  minPrice: number;
+  maxPrice: number;
+  idealPrice: number;
+  priceElasticity: 'high' | 'medium' | 'low';
+  paymentPreference: 'monthly' | 'annual' | 'one_time';
+}
+
+export interface AcquisitionChannel {
+  channel: string;
+  effectiveness: number; // 1-10
+  cost: 'low' | 'medium' | 'high';
+  timeToConvert: string;
+  scalability: number; // 1-10
+}
+
+// Error Management - Enhanced Error Handling
+export interface RetryStrategy {
+  maxRetries: number;
+  backoffMultiplier: number;
+  initialDelay: number;
+  maxDelay: number;
+  retryableErrors: string[];
+}
+
+export interface FallbackConfig {
+  models: string[];
+  qualityThreshold: number;
+  gracefulDegradation: boolean;
+  fallbackPrompts: Record<string, string>;
+}
+
+export interface ErrorContext {
+  attempt: number;
+  model: string;
+  error: string;
+  timestamp: string;
+  inputLength: number;
+  promptVersion: string;
+}
+
 // Enhanced Validation Result
 export interface EnhancedValidationResult {
   // Core Analysis
@@ -654,21 +864,21 @@ export interface EnhancedValidationResult {
   industryFramework: IndustryFramework;
   industrySpecificInsights: string[];
   
-  // Risk Assessment
-  riskMatrix: RiskMatrix;
+  // Enhanced Risk Assessment
+  riskMatrix: EnhancedRiskMatrix;
   overallRiskLevel: RiskLevel;
   
   // Competitor Intelligence
   competitorAnalysis: CompetitorAnalysis;
   
-  // Financial Projections
-  financialProjections: FinancialProjections;
+  // Enhanced Financial Projections
+  financialProjections: EnhancedFinancialProjections;
   
   // Platform Analysis
   platformAnalysis: PlatformAnalysis;
   
-  // Persona Analysis
-  personaAnalysis: PersonaInsight[];
+  // Enhanced Persona Analysis
+  personaAnalysis: EnhancedPersonaInsight[];
   
   // Validation Roadmap
   validationRoadmap: ValidationRoadmap;
@@ -678,6 +888,15 @@ export interface EnhancedValidationResult {
   
   // Market Timing
   timingAnalysis: TimingAnalysis;
+  
+  // Quality Control
+  criticAnalysis: CriticAnalysis;
+  
+  // Evidence-Based Analysis
+  evidenceAnalysis?: EvidenceAnalysis;
+  
+  // Enhanced Confidence
+  enhancedConfidence: EnhancedConfidence;
   
   // Analysis Metadata
   analysisMetadata: {
@@ -689,6 +908,8 @@ export interface EnhancedValidationResult {
     confidence: number; // 0-100
     language: string;
     completeness: number; // 0-100 - percentage of analysis components completed
+    retryCount: number;
+    qualityScore: number;
   };
   
   // Backward Compatibility (maintain existing interface)
