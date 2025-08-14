@@ -1130,6 +1130,13 @@ export default async function handler(req: any, res: any) {
         - Make all suggestions actionable and data-driven
         - All content must feel authentic and valuable to entrepreneurs
 
+        CONSUMER SOCIAL GUARDRAILS (STRICT):
+        - If the idea is a generic consumer social network or resembles major platforms (Facebook, Instagram, TikTok, X/Twitter, Snapchat, Reddit, Discord, LinkedIn, Clubhouse), you MUST:
+          • Mark competition as HIGH and distribution/network effects as a MAJOR barrier
+          • List at least 3 REAL competitors (company names)
+          • Provide clear differentiation or state "insufficient differentiation"
+          • Be conservative in scoring (lower competitiveSignal) and avoid optimistic language
+
         Additionally, include:
         - assumptions: 3-5 short assumptions that your analysis relies on
         - confidence: integer 0-100 overall confidence in your analysis quality
@@ -1926,6 +1933,7 @@ ${responseText.slice(0, 6000)}`,
                 mobile:      { reach: 0.35, nicheFit: 0.25, contentFit: 0.25, competitiveSignal: 0.15 },
                 hardware:    { reach: 0.25, nicheFit: 0.30, contentFit: 0.20, competitiveSignal: 0.25 },
                 offline:     { reach: 0.40, nicheFit: 0.30, contentFit: 0.20, competitiveSignal: 0.10 },
+                consumer_social: { reach: 0.20, nicheFit: 0.25, contentFit: 0.20, competitiveSignal: 0.35 },
             };
             // A/B override by explicit variant name if provided
             if (weightsVariant && weightsMap[weightsVariant]) {
@@ -1934,7 +1942,13 @@ ${responseText.slice(0, 6000)}`,
                 const score = Math.max(1, Math.min(5, Math.round(weighted)));
                 return { score, rubric };
             }
-            const sectorKey = sectorsForWeight && sectorsForWeight.length ? (sectorsForWeight[0] as keyof typeof weightsMap) : 'default';
+            let sectorKey = sectorsForWeight && sectorsForWeight.length ? (sectorsForWeight[0] as keyof typeof weightsMap) : 'default';
+            // Heuristic: if idea matches big consumer social keywords, use consumer_social weights
+            const ideaLower = (content || '').toLowerCase();
+            const socialKeywords = ['facebook', 'instagram', 'tiktok', 'snapchat', 'twitter', 'x ', 'x(', 'social network', 'social media app'];
+            if (socialKeywords.some(k => ideaLower.includes(k))) {
+                sectorKey = 'consumer_social' as any;
+            }
             const w = weightsMap[sectorKey] || weightsMap.default;
             const weighted = rubric.reach * w.reach + rubric.nicheFit * w.nicheFit + rubric.contentFit * w.contentFit + rubric.competitiveSignal * w.competitiveSignal;
             const score = Math.max(1, Math.min(5, Math.round(weighted)));
