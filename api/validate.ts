@@ -2104,6 +2104,27 @@ ${responseText.slice(0, 6000)}`,
             vcReview: parsedResult.vcReview
         };
 
+        // Clone/Brand penalty: generic consumer social or well-known brand clones get conservative cap
+        try {
+            const ideaLower = (content || cleanResult.idea || '').toLowerCase();
+            const cloneKeywords = [
+                'facebook','instagram','tiktok','snapchat','twitter','x ',' x(', 'linkedin','reddit','discord','clubhouse','social network','social media app'
+            ];
+            const isCloneIdea = cloneKeywords.some(k => ideaLower.includes(k));
+            if (isCloneIdea) {
+                const capped = Math.min(cleanResult.demandScore, 50);
+                if (capped !== cleanResult.demandScore) {
+                    cleanResult.demandScore = capped;
+                }
+                const note = expectedLanguage === 'Turkish'
+                    ? 'Ağ etkisi ve büyük rakipler nedeniyle muhafazakâr skor (clone penalty).'
+                    : 'Conservative score due to network effects and dominant incumbents (clone penalty).';
+                cleanResult.scoreJustification = isNonEmptyString(cleanResult.scoreJustification)
+                    ? `${cleanResult.scoreJustification} — ${note}`
+                    : note;
+            }
+        } catch {}
+
         // Language post-check: if English expected but Turkish chars found anywhere, do a tiny repair call
         const langCheck = enforceLanguageOnObjectStrings(cleanResult, undefined);
         if (!langCheck.ok) {
