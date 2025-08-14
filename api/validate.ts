@@ -1220,7 +1220,9 @@ export default async function handler(req: any, res: any) {
         ];
         const preferredModel = typeof model === 'string' && allowedModels.includes(model) ? model : undefined;
 
-        // Initialize enhanced analysis components
+        // Initialize enhanced analysis components (detect language locally)
+        const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(inputContent) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(inputContent);
+        const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
         const criticAgent = new CriticAgent(expectedLanguage);
         const evidenceAnalyzer = new EvidenceAnalyzer();
         const confidenceCalculator = new ConfidenceCalculator();
@@ -1265,9 +1267,11 @@ export default async function handler(req: any, res: any) {
         try {
             console.log('🔄 Attempting graceful degradation...');
             
-            // Create a basic fallback result
+            // Create a basic fallback result (avoid using out-of-scope vars)
+            const fbIdea = (req.body?.idea || req.body?.content || '').toString();
+            const fbLang = /[çğıöşüÇĞİÖŞÜ]/.test(fbIdea) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(fbIdea) ? 'Turkish' : 'English';
             const fallbackResult = {
-                idea: inputContent,
+                idea: fbIdea,
                 demandScore: 50,
                 scoreJustification: 'Analysis completed with limited capabilities due to system constraints',
                 platformAnalyses: {
@@ -1293,13 +1297,13 @@ export default async function handler(req: any, res: any) {
                         contentSuggestion: 'Share with your professional network on LinkedIn.'
                     }
                 },
-                tweetSuggestion: `🚀 Working on a new idea: ${inputContent.substring(0, 100)}${inputContent.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
+                tweetSuggestion: `🚀 Working on a new idea: ${fbIdea.substring(0, 100)}${fbIdea.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
                 redditTitleSuggestion: 'Looking for feedback on my startup idea',
-                redditBodySuggestion: `I've been working on this concept: ${inputContent}. Would love to get your thoughts and feedback from the community.`,
-                linkedinSuggestion: `Exploring a new business opportunity: ${inputContent.substring(0, 200)}${inputContent.length > 200 ? '...' : ''} Interested in connecting with others in this space.`,
+                redditBodySuggestion: `I've been working on this concept: ${fbIdea}. Would love to get your thoughts and feedback from the community.`,
+                linkedinSuggestion: `Exploring a new business opportunity: ${fbIdea.substring(0, 200)}${fbIdea.length > 200 ? '...' : ''} Interested in connecting with others in this space.`,
                 fallbackUsed: true,
                 confidence: 30,
-                language: expectedLanguage,
+                language: fbLang,
                 analysisMetadata: {
                     analysisDate: new Date().toISOString(),
                     aiModel: 'fallback-system',
@@ -1307,7 +1311,7 @@ export default async function handler(req: any, res: any) {
                     analysisVersion: '2.0-fallback',
                     processingTime: 0,
                     confidence: 30,
-                    language: expectedLanguage,
+                    language: fbLang,
                     completeness: 40,
                     retryCount: 0,
                     qualityScore: 40
