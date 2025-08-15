@@ -100,31 +100,25 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Direct API call to our fast validate system
+            // Direct API call to our validate system with fast mode
             const ideaPayload = userInput.idea;
-            const response = await fetch('/api/fast-validate', {
+            const response = await fetch('/api/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: ideaPayload })
+                body: JSON.stringify({ idea: ideaPayload, fast: true })
             });
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const apiResponse = await response.json();
-            
-            if (!apiResponse.ok) {
-                throw new Error(apiResponse.message || 'API call failed');
-            }
-
-            const result = apiResponse.result;
+            const result = await response.json();
             console.log('API call successful', result);
             
             // Track successful validation
-            trackValidation(userInput.idea, result.score);
+            trackValidation(userInput.idea, result.demandScore || result.score);
             
             navigate('/results', { state: { result, fastMode: true } });
         } catch (err) {

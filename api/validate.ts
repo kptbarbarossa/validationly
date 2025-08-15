@@ -1161,17 +1161,56 @@ export default async function handler(req: any, res: any) {
         if (fast === true) {
             try {
                 const aiInstance = getAI();
-                const fastSys = `You are a strict JSON generator. Respond in SAME LANGUAGE as user. Return ONLY JSON with keys: idea, demandScore(0-100), scoreJustification, platformAnalyses(object of up to 3 among X, Reddit, LinkedIn with {platformName, score(1-5), summary(<=140), keyFindings[3], contentSuggestion(<=120)}), tweetSuggestion, redditTitleSuggestion, redditBodySuggestion, linkedinSuggestion. Keep strings short.`;
+                const fastSys = `You are Validationly, an expert market research analyst. Respond ONLY in ${expectedLanguage}. 
+
+SCORING SYSTEM (VERY IMPORTANT):
+- Main demandScore: 0-100 based on overall market demand potential
+  * 0-25: Very low demand (major problems, tiny niche)
+  * 26-45: Low demand (limited market, challenges)  
+  * 46-65: Moderate demand (decent potential, some competition)
+  * 66-80: High demand (strong market, good opportunity)
+  * 81-100: Excellent demand (huge market, great timing)
+
+Return STRICT JSON with keys: 
+{
+  "idea": string,
+  "demandScore": number (0-100 MAIN DEMAND SCORE),
+  "scoreJustification": string (explain why this score),
+  "platformAnalyses": {
+    "X": { "platformName": "X", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string },
+    "Reddit": { "platformName": "Reddit", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string },
+    "LinkedIn": { "platformName": "LinkedIn", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string }
+  },
+  "tweetSuggestion": string,
+  "redditTitleSuggestion": string,
+  "redditBodySuggestion": string,
+  "linkedinSuggestion": string
+}
+
+RULES:
+- Be realistic and honest with demandScore (0-100)
+- Platform scores (1-5) are separate from main demandScore
+- Provide comprehensive analysis without artificial length limits
+- Use "X" instead of "Twitter"
+- Don't inflate scores - be truthful about market potential`;
+
                 const r = await aiInstance.models.generateContent({
                     model: process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash',
                     contents: `ANALYZE: "${inputContent}"\nReturn JSON only.`,
-                    config: { systemInstruction: fastSys, responseMimeType: 'application/json', temperature: 0.2, maxOutputTokens: 800 }
+                    config: { systemInstruction: fastSys, responseMimeType: 'application/json', temperature: 0.3, maxOutputTokens: 1200 }
                 });
                 const parsed = ((): any => { try { return JSON.parse((r.text || '').trim()); } catch { return null; } })();
                 if (parsed && typeof parsed === 'object') {
+                    // Validate demandScore
+                    if (typeof parsed.demandScore !== 'number' || parsed.demandScore < 0 || parsed.demandScore > 100) {
+                        parsed.demandScore = 50;
+                    }
+                    console.log(`Fast analysis completed - Score: ${parsed.demandScore}/100`);
                     return res.status(200).json(parsed);
                 }
-            } catch {}
+            } catch (error) {
+                console.log('Fast mode failed:', error);
+            }
             // fallback to normal path if fast failed
         }
 
