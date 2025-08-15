@@ -853,7 +853,7 @@ const ResultsPage: React.FC = () => {
                                 {row.map((def, idx) => {
                                     const analysis: any = platformAnalysesObj?.[def.key] || {};
                                     const isTR = ((result as any)?.language || '').toLowerCase().includes('turkish');
-                                    const bullets: string[] = Array.isArray(analysis?.keyFindings) ? analysis.keyFindings.slice(0,3) : [];
+                                    const bullets: string[] = Array.isArray(analysis?.keyFindings) ? analysis.keyFindings : [];
                                     return (
                                         <div key={def.key} className={`flex items-start gap-3 bg-white/5 backdrop-blur rounded-xl p-4 border border-white/10 ${def.bg}`}>
                                             <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-white/10 border border-white/10 flex-shrink-0">
@@ -875,7 +875,7 @@ const ResultsPage: React.FC = () => {
                                                 )}
                                                 <div className="text-sm text-slate-200 mt-1">{analysis?.summary || (isTR ? 'Veri yok' : 'No data')}</div>
                                                 <ul className="mt-2 space-y-1 text-sm text-slate-200">
-                                                    {bullets.length === 0 ? (
+                                                    {(!Array.isArray(bullets) || bullets.length === 0) ? (
                                                         <li className="text-slate-400">{isTR ? 'Madde yok' : 'No bullets'}</li>
                                                     ) : bullets.map((b, i) => (
                                                         <li key={i} className="flex items-start gap-2"><span className="text-indigo-300">•</span><span className="truncate">{b}</span></li>
@@ -1194,7 +1194,7 @@ const ResultsPage: React.FC = () => {
                                                         <div className="text-xs text-slate-400">{isTR ? 'Şiddet' : 'Severity'}: {p.severity ?? '-'}</div>
                                                     </div>
                                                     {Array.isArray(p.examples) && p.examples.length > 0 && (
-                                                        <div className="mt-2 text-xs text-slate-300">“{p.examples[0]}”</div>
+                                                        <div className="mt-2 text-xs text-slate-300">"{p.examples[0]}"</div>
                                                     )}
                                                     {Array.isArray(p.evidence) && p.evidence.length > 0 && (
                                                         <div className="mt-2 text-xs text-slate-400 truncate">
