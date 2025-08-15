@@ -352,70 +352,33 @@ export default function SmartResultsPage() {
                             </div>
                         </div>
 
-                                                     {/* Additional Tools */}
+                                                     {/* Tweet Series Generator */}
                              <div className="mb-12">
                                  <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
-                                     <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
-                                         <span className="text-3xl">🛠️</span>
-                                         {isTR ? 'Ek Araçlar' : 'Additional Tools'}
-                                     </h2>
-                                     
-                                     <div className="grid md:grid-cols-2 gap-6">
-                                         {/* Social Media Validation */}
-                                         <div className="p-6 bg-slate-700/30 rounded-xl border border-slate-600">
-                                             <div className="text-center">
-                                                 <div className="text-4xl mb-3">🔍</div>
-                                                 <h3 className="text-lg font-semibold text-white mb-2">
-                                                     {isTR ? 'Sosyal Medya Validasyonu' : 'Social Media Validation'}
-                                                 </h3>
-                                                 <p className="text-slate-300 text-sm mb-4">
-                                                     {isTR 
-                                                         ? 'Fikrin için gerçek sosyal medya verilerini analiz et ve validasyon skoru üret'
-                                                         : 'Analyze real social media data for your idea and generate validation scores'
-                                                     }
-                                                 </p>
-                                                 <button
-                                                     onClick={() => navigate('/social-validation', { 
-                                                         state: { 
-                                                             idea: result.idea || result.content,
-                                                             industry: '',
-                                                             targetAudience: ''
-                                                         }
-                                                     })}
-                                                     className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-lg font-semibold text-white transition-all transform hover:scale-105"
-                                                 >
-                                                     {isTR ? 'Sosyal Medyada Ara' : 'Search Social Media'}
-                                                 </button>
-                                             </div>
-                                         </div>
-
-                                         {/* X Post Generator */}
-                                         <div className="p-6 bg-slate-700/30 rounded-xl border border-slate-600">
-                                             <div className="text-center">
-                                                 <div className="text-4xl mb-3">🐦</div>
-                                                 <h3 className="text-lg font-semibold text-white mb-2">
-                                                     {isTR ? 'X Post Üretici' : 'X Post Generator'}
-                                                 </h3>
-                                                 <p className="text-slate-300 text-sm mb-4">
-                                                     {isTR 
-                                                         ? 'Build-in-public için 5 X post serisi üret ve fikrini test et'
-                                                         : 'Generate 5 X post series for build-in-public and test your idea'
-                                                     }
-                                                 </p>
-                                                 <button
-                                                     onClick={() => navigate('/tweet-generator', { 
-                                                         state: { 
-                                                             idea: result.idea || result.content,
-                                                             industry: '',
-                                                             targetAudience: ''
-                                                         }
-                                                     })}
-                                                     className="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-lg font-semibold text-white transition-all transform hover:scale-105"
-                                                 >
-                                                     {isTR ? 'X Post Serisi Üret' : 'Generate X Post Series'}
-                                                 </button>
-                                             </div>
-                                         </div>
+                                     <div className="text-center">
+                                         <div className="text-6xl mb-4">🐦</div>
+                                         <h2 className="text-2xl font-bold text-white mb-4">
+                                             {isTR ? 'Tweet Serisi Üreticisi' : 'Tweet Series Generator'}
+                                         </h2>
+                                         <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
+                                             {isTR 
+                                                 ? 'Fikrini sosyal medyada test etmek için 5 tweet\'lik build-in-public serisi üret. Topluluk geri bildirimi al ve fikrini doğrula.'
+                                                 : 'Generate a 5-tweet build-in-public series to test your idea on social media. Get community feedback and validate your concept.'
+                                             }
+                                         </p>
+                                         <button
+                                             onClick={() => navigate('/tweet-generator', { 
+                                                 state: { 
+                                                     idea: result.idea || result.content,
+                                                     industry: '',
+                                                     targetAudience: ''
+                                                 }
+                                             })}
+                                             className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-semibold text-white transition-all transform hover:scale-105 shadow-lg"
+                                         >
+                                             <span className="text-xl">🚀</span>
+                                             {isTR ? 'Tweet Serisi Üret' : 'Generate Tweet Series'}
+                                         </button>
                                      </div>
                                  </div>
                              </div>
