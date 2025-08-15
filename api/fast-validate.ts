@@ -8,26 +8,38 @@ function detectLang(text: string): 'Turkish' | 'English' {
 
 function calculateScore(platforms: any, idea: string): number {
   const scores = Object.values(platforms || {}).map((p: any) => p?.score || 0);
+  console.log('Platform scores:', scores);
+  
   if (scores.length === 0) return 45;
   
   const avgScore = scores.reduce((a: number, b: number) => a + b, 0) / scores.length;
   let finalScore = Math.round(avgScore * 20); // Convert 1-5 to 20-100 scale
+  console.log('Average score:', avgScore, 'Final score before penalties:', finalScore);
   
   // Single platform penalty
-  if (scores.length === 1) finalScore = Math.round(finalScore * 0.85);
+  if (scores.length === 1) {
+    const oldScore = finalScore;
+    finalScore = Math.round(finalScore * 0.85);
+    console.log('Single platform penalty applied:', oldScore, '->', finalScore);
+  }
   
-  // Clone detection and penalty
+  // Clone detection and penalty - only for obvious clones
   const cloneKeywords = [
-    'social media', 'social network', 'like facebook', 'like instagram', 'like tiktok',
-    'like twitter', 'like linkedin', 'like snapchat', 'like discord', 'like reddit',
-    'facebook for', 'instagram for', 'tiktok for', 'twitter for', 'linkedin for'
+    'facebook clone', 'instagram clone', 'tiktok clone', 'twitter clone', 
+    'linkedin clone', 'snapchat clone', 'discord clone', 'reddit clone',
+    'facebook but for', 'instagram but for', 'tiktok but for', 'twitter but for',
+    'like facebook but', 'like instagram but', 'like tiktok but', 'like twitter but'
   ];
   
-  if (cloneKeywords.some(keyword => idea.toLowerCase().includes(keyword.toLowerCase()))) {
+  const isClone = cloneKeywords.some(keyword => idea.toLowerCase().includes(keyword.toLowerCase()));
+  if (isClone) {
+    console.log('Clone detected for idea:', idea, 'Score capped at 40');
     finalScore = Math.min(finalScore, 40);
   }
   
-  return Math.max(0, Math.min(100, finalScore));
+  const result = Math.max(0, Math.min(100, finalScore));
+  console.log('Final calculated score:', result);
+  return result;
 }
 
 function cleanJsonResponse(text: string): string {
