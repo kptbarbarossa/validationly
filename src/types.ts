@@ -1052,3 +1052,18 @@ export interface FastValidateResult {
     linkedin: string;
   };
 }
+
+// Credit System Types
+export interface UserCredits {
+  email: string;
+  credits: number;
+  plan: 'free' | 'starter' | 'pro' | 'business';
+  totalUsed: number;
+}
+
+export interface CreditResponse {
+  ok: boolean;
+  message?: string;
+  needsUpgrade?: boolean;
+  user?: UserCredits;
+}

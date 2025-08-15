@@ -1020,7 +1020,7 @@ export default async function handler(req: any, res: any) {
             });
         }
 
-        const { idea, content, lang, model, evidence, weightsVariant, enhance, vcReview, fast } = req.body;
+        const { idea, content, lang, model, evidence, weightsVariant, enhance, vcReview, fast, email } = req.body;
         const inputContent = idea || content;
 
         // Input validation
@@ -1030,6 +1030,32 @@ export default async function handler(req: any, res: any) {
             });
         }
         validateInput(inputContent);
+
+        // Credit system check (skip for enhance mode)
+        if (enhance !== true && email) {
+            try {
+                const creditResponse = await fetch(`${req.headers.host?.includes('localhost') ? 'http://localhost:3000' : 'https://' + req.headers.host}/api/user-credits`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, action: 'use_credit' })
+                });
+                
+                const creditResult = await creditResponse.json();
+                
+                if (!creditResult.ok) {
+                    return res.status(402).json({
+                        message: creditResult.message,
+                        needsUpgrade: creditResult.needsUpgrade,
+                        user: creditResult.user
+                    });
+                }
+                
+                console.log(`Credit used for ${email}: ${creditResult.user.credits} remaining`);
+            } catch (creditError) {
+                console.error('Credit check failed:', creditError);
+                // Continue without credit check in case of error (graceful degradation)
+            }
+        }
 
         // Lightweight enhance mode: return enriched prompt text in same language
         if (enhance === true) {
