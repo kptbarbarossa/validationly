@@ -79,14 +79,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 }
 
 STRICT RULES:
-- summary: max 160 chars, concise market insight
-- findings: exactly 3 short bullet points (max 80 chars each)
-- suggestion: max 140 chars, actionable content advice
+- summary: concise market insight (no length limit)
+- findings: provide as many relevant bullet points as you can find
+- suggestion: actionable content advice (no length limit)
 - score: integer 1-5 (platform potential)
 - posts must be realistic and engaging
 - redditBody must be multi-sentence paragraph
 - linkedin must be professional
-- Keep everything concise and valuable
+- Provide comprehensive analysis without artificial limits
 - Use "X" instead of "Twitter" in content
 - Be realistic with scores, avoid over-optimism`;
 
@@ -102,7 +102,7 @@ Simulate scanning X (Twitter), Reddit, and LinkedIn for market demand signals. P
         systemInstruction: system,
         responseMimeType: 'application/json',
         temperature: 0.2,
-        maxOutputTokens: 700,
+        maxOutputTokens: 1200,
       }
     });
 
