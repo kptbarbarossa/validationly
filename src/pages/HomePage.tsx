@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { PLATFORM_COUNT } from '../constants/platforms';
 import { useNavigate } from 'react-router-dom';
 // Direct API call - no service layer needed
-import type { DynamicPromptResult, UserInput } from '../types';
+import type { UserInput } from '../types';
 // import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import PromptGallery from '../components/PromptGallery';
@@ -100,9 +100,9 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Direct API call to our dynamic prompt system
+            // Direct API call to our fast validate system
             const ideaPayload = userInput.idea;
-            const response = await fetch('/api/validate', {
+            const response = await fetch('/api/fast-validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,13 +114,19 @@ const HomePage: React.FC = () => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result: DynamicPromptResult = await response.json();
+            const apiResponse = await response.json();
+            
+            if (!apiResponse.ok) {
+                throw new Error(apiResponse.message || 'API call failed');
+            }
+
+            const result = apiResponse.result;
             console.log('API call successful', result);
             
             // Track successful validation
-            trackValidation(userInput.idea, result.demandScore);
+            trackValidation(userInput.idea, result.score);
             
-            navigate('/results', { state: { result } });
+            navigate('/results', { state: { result, fastMode: true } });
         } catch (err) {
             console.error('API call failed:', err);
             

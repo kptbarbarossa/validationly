@@ -1027,3 +1027,28 @@ export abstract class IndustryClassifier extends AnalysisComponent {
     };
   }
 }
+
+// Fast Validate Interfaces
+export interface FastPlatformAnalysis {
+  summary: string;
+  findings: string[];
+  suggestion: string;
+  score: number; // 1-5
+}
+
+export interface FastValidateResult {
+  idea: string;
+  score: number; // 0-100
+  justification: string;
+  platforms: {
+    twitter?: FastPlatformAnalysis;
+    reddit?: FastPlatformAnalysis;
+    linkedin?: FastPlatformAnalysis;
+  };
+  posts: {
+    tweet: string;
+    redditTitle: string;
+    redditBody: string;
+    linkedin: string;
+  };
+}
