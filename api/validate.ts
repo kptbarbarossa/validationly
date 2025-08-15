@@ -2146,6 +2146,47 @@ ${responseText.slice(0, 6000)}`,
             }
         };
 
+        // Recompute a more stable demandScore from platform rubrics (1-5 → 20-100) with simple penalties/bonuses
+        try {
+            const platformKeysPreferred = ['twitter','reddit','linkedin'];
+            const entries: Array<{ key:string; score:number; rubric?: any }> = [];
+            for (const key of Object.keys(cleanResult.platformAnalyses || {})) {
+                const p = (cleanResult.platformAnalyses as any)[key];
+                if (!p) continue;
+                const s = Number(p.score);
+                if (Number.isFinite(s)) {
+                    entries.push({ key, score: s, rubric: p.rubric });
+                }
+            }
+            // If preferred platforms exist, focus on them; otherwise use whatever exists
+            const focused = entries.filter(e => platformKeysPreferred.includes(e.key)).length > 0
+                ? entries.filter(e => platformKeysPreferred.includes(e.key))
+                : entries;
+            if (focused.length > 0) {
+                // Normalize 1-5 to 20-100
+                const normalized = focused.map(e => Math.max(20, Math.min(100, Math.round(e.score * 20))));
+                // Slight weight if rubric has competitiveSignal
+                const withWeights = normalized.map((n, i) => {
+                    const r = focused[i].rubric || {};
+                    const comp = Number(r.competitiveSignal || 3); // 1-5
+                    const w = 0.7 + (Math.max(1, Math.min(5, Math.round(comp))) - 3) * 0.05; // ~0.6–0.8
+                    return n * w;
+                });
+                let agg = Math.round(withWeights.reduce((a, b) => a + b, 0) / withWeights.length);
+                // Penalize if only 1 platform had data
+                if (focused.length === 1) agg = Math.round(agg * 0.85);
+                // Apply clone penalty cap if applicable (below existing logic may add note)
+                const ideaLower2 = (content || cleanResult.idea || '').toLowerCase();
+                const cloneKeywords2 = ['facebook','instagram','tiktok','snapchat','twitter','x ',' x(','linkedin','reddit','discord','clubhouse','social network','social media app'];
+                const isCloneIdea2 = cloneKeywords2.some(k => ideaLower2.includes(k));
+                if (isCloneIdea2) agg = Math.min(agg, 40);
+                // Blend with model-provided score to reduce variance
+                const modelScore = Math.max(0, Math.min(100, Number(parsedResult.demandScore || 0)));
+                const blended = Number.isFinite(modelScore) && modelScore > 0 ? Math.round(0.7 * agg + 0.3 * modelScore) : agg;
+                cleanResult.demandScore = Math.max(0, Math.min(100, blended));
+            }
+        } catch {}
+
         // Clone/Brand penalty: generic consumer social or well-known brand clones get conservative cap
         try {
             const ideaLower = (content || cleanResult.idea || '').toLowerCase();
