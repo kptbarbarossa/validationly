@@ -140,6 +140,8 @@ const ResultsPage: React.FC = () => {
     const [, forceRerender] = useState(0);
     const [painOpen, setPainOpen] = useState(false);
     const [painData, setPainData] = useState<any | null>(null);
+    const [msgOpen, setMsgOpen] = useState(false);
+    const [msgData, setMsgData] = useState<any | null>(null);
 
     // Animation trigger
     useEffect(() => {
@@ -976,7 +978,7 @@ const ResultsPage: React.FC = () => {
                             <h3 className="text-xl font-bold text-white mb-2">Test Your Idea</h3>
                             <p className="text-slate-300">Copy and use these AI-generated posts to validate your idea on social platforms</p>
                         </div>
-                        <div className="flex items-center justify-center mb-6">
+                        <div className="flex items-center justify-center gap-3 mb-6">
                             <button
                                 onClick={async () => {
                                     try {
@@ -996,6 +998,25 @@ const ResultsPage: React.FC = () => {
                                 }}
                                 className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
                             >{isTR ? 'Pain Point Bul' : 'Find Pain Points'}</button>
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        setMsgOpen(true);
+                                        setMsgData({ loading: true });
+                                        const r = await fetch('/api/message-simulator', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: result.content || result.idea }) });
+                                        const j = await r.json();
+                                        if (j?.ok) {
+                                            const obj = (()=>{ try { return JSON.parse(j.result); } catch { return null; }})();
+                                            setMsgData(obj || { error: 'Parse error' });
+                                        } else {
+                                            setMsgData({ error: 'Request failed' });
+                                        }
+                                    } catch (e) {
+                                        setMsgData({ error: 'Network error' });
+                                    }
+                                }}
+                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                            >{isTR ? 'Mesaj Simülatörü' : 'Message Simulator'}</button>
                         </div>
                         {/* Quick Actions removed by request */}
                         {/* Screen reader live region for copy feedback */}
@@ -1162,6 +1183,65 @@ const ResultsPage: React.FC = () => {
                                             ))}
                                         </ul>
                                         <div className="text-xs text-slate-400">{isTR ? 'Güven' : 'Confidence'}: {painData.confidence ?? '-'}</div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Message Simulator Modal */}
+                    {msgOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <div className="absolute inset-0 bg-black/60" onClick={() => setMsgOpen(false)} />
+                            <div className="relative bg-slate-900 border border-white/10 rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-lg font-semibold text-white">{isTR ? 'Pazarlama & Satış Mesajı' : 'Marketing & Sales Message'}</h3>
+                                    <button onClick={() => setMsgOpen(false)} className="text-slate-300 hover:text-white">✕</button>
+                                </div>
+                                {!msgData || msgData.loading ? (
+                                    <div className="text-slate-300">{isTR ? 'Yükleniyor...' : 'Loading...'}</div>
+                                ) : msgData.error ? (
+                                    <div className="text-red-300 text-sm">{String(msgData.error)}</div>
+                                ) : (
+                                    <div className="space-y-5 text-sm">
+                                        <div>
+                                            <div className="text-slate-300 mb-1">Landing</div>
+                                            <div className="bg-white/5 border border-white/10 rounded p-3 text-slate-200">
+                                                <div className="font-semibold">{msgData?.landingCopy?.headline}</div>
+                                                <div className="text-slate-300">{msgData?.landingCopy?.subheadline}</div>
+                                                <ul className="mt-2 list-disc list-inside">
+                                                    {(msgData?.landingCopy?.bullets || []).slice(0,3).map((b: string, i: number) => (<li key={i}>{b}</li>))}
+                                                </ul>
+                                                <div className="mt-2 text-indigo-300">{msgData?.landingCopy?.cta}</div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="text-slate-300 mb-1">Email</div>
+                                            <div className="bg-white/5 border border-white/10 rounded p-3 text-slate-200">
+                                                <div className="font-semibold">{msgData?.email?.subject}</div>
+                                                <pre className="whitespace-pre-wrap text-sm mt-1">{msgData?.email?.body}</pre>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div className="text-slate-300 mb-1">Demo Script</div>
+                                            <ol className="bg-white/5 border border-white/10 rounded p-3 text-slate-200 list-decimal list-inside space-y-1">
+                                                {(msgData?.demoScript?.steps || []).slice(0,6).map((s: string, i: number) => (<li key={i}>{s}</li>))}
+                                            </ol>
+                                        </div>
+                                        {Array.isArray(msgData?.icpVariants) && msgData.icpVariants.length > 0 && (
+                                            <div>
+                                                <div className="text-slate-300 mb-1">ICP Variants</div>
+                                                <ul className="bg-white/5 border border-white/10 rounded p-3 text-slate-200 space-y-2">
+                                                    {msgData.icpVariants.slice(0,4).map((v: any, i: number) => (
+                                                        <li key={i}>
+                                                            <div className="font-semibold">{v.segment}</div>
+                                                            <div className="text-xs text-slate-300">{(v.messageAdjustments || []).join(' • ')}</div>
+                                                            {v.sampleHook && <div className="text-indigo-300 text-xs mt-1">{v.sampleHook}</div>}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>
