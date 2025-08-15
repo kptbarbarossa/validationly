@@ -262,7 +262,15 @@ const ResultsPage: React.FC = () => {
         .map(def => ({ def, score: Math.max(1, Math.min(5, Number(platformAnalysesObj?.[def.key]?.score || 0))) }))
         .sort((a, b) => b.score - a.score)
         .map(x => x.def);
-    const visiblePlatformDefs = sortedPlatformDefs;
+    // Prefer X, Reddit, LinkedIn if available with data; otherwise fill to 3 with top-scoring
+    const preferKeys: PlatformKey[] = ['twitter','reddit','linkedin'] as any;
+    const hasData = (k: PlatformKey) => {
+        const a: any = platformAnalysesObj?.[k];
+        return a && (a.summary || (Array.isArray(a?.keyFindings) && a.keyFindings.length > 0));
+    };
+    const preferred = PLATFORM_DEFS.filter(d => preferKeys.includes(d.key) && hasData(d.key)).map(d => d);
+    const rest = sortedPlatformDefs.filter(d => !preferred.find(p => p.key === d.key));
+    const visiblePlatformDefs = [...preferred, ...rest].slice(0, 3);
 
     // Build concise bullet summary for quick scan
     const buildSummaryBullets = (): string[] => {
@@ -819,7 +827,18 @@ const ResultsPage: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Social Media Platform Analysis */}
+                    {/* Score Bar */}
+                    <div className="mb-6 max-w-3xl mx-auto">
+                        <div className="flex items-center justify-between mb-2">
+                            <div className="text-sm text-slate-300">{isTR ? 'Talep Skoru' : 'Demand Score'}</div>
+                            <div className="text-sm text-slate-200 font-semibold">{Math.max(0, Math.min(100, Number(result.demandScore||0)))} / 100</div>
+                        </div>
+                        <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
+                            <div className="h-2 bg-gradient-to-r from-indigo-500 to-cyan-500" style={{ width: `${Math.max(0, Math.min(100, Number(result.demandScore||0)))}%` }} />
+                        </div>
+                    </div>
+
+                    {/* Platform Analysis */}
 
                     {visiblePlatformDefs.length > 0 && (
                     <div className="mb-4">
@@ -827,22 +846,36 @@ const ResultsPage: React.FC = () => {
                         <div className="text-sm text-slate-300 mb-4 text-center">
                             Sector-specific platform recommendations based on your idea
                         </div>
-                        {/* Controls removed (Show All / More platforms) */}
+                        {/* Horizontal concise platform boxes */}
 
-                        {chunk(visiblePlatformDefs, 4).map((row, rowIdx) => (
-                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6" key={rowIdx}>
+                        {chunk(visiblePlatformDefs, 3).map((row, rowIdx) => (
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" key={rowIdx}>
                                 {row.map((def, idx) => {
-                                    const analysis = platformAnalysesObj?.[def.key];
-                                    const delay = 100 + (rowIdx * 4 + idx) * 50;
+                                    const analysis: any = platformAnalysesObj?.[def.key] || {};
+                                    const isTR = ((result as any)?.language || '').toLowerCase().includes('turkish');
+                                    const bullets: string[] = Array.isArray(analysis?.keyFindings) ? analysis.keyFindings.slice(0,3) : [];
                                     return (
-                                        <PlatformCard
-                                            key={def.key}
-                                            platform={def.label}
-                                            analysis={analysis}
-                                            icon={def.icon}
-                                            bgColor={def.bg}
-                                            delay={delay}
-                                        />
+                                        <div key={def.key} className={`flex items-start gap-3 bg-white/5 backdrop-blur rounded-xl p-4 border border-white/10 ${def.bg}`}>
+                                            <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-white/10 border border-white/10 flex-shrink-0">
+                                                {def.icon}
+                                            </div>
+                                            <div className="min-w-0">
+                                                <div className="flex items-center justify-between gap-2">
+                                                    <div className="font-semibold text-slate-100 truncate">{def.label}</div>
+                                                    {typeof analysis?.score === 'number' && (
+                                                        <span className="text-xs px-2 py-0.5 rounded bg-white/10 border border-white/10 text-slate-300">{analysis.score}/5</span>
+                                                    )}
+                                                </div>
+                                                <div className="text-sm text-slate-200 mt-1">{analysis?.summary || (isTR ? 'Veri yok' : 'No data')}</div>
+                                                <ul className="mt-2 space-y-1 text-sm text-slate-200">
+                                                    {bullets.length === 0 ? (
+                                                        <li className="text-slate-400">{isTR ? 'Madde yok' : 'No bullets'}</li>
+                                                    ) : bullets.map((b, i) => (
+                                                        <li key={i} className="flex items-start gap-2"><span className="text-indigo-300">•</span><span className="truncate">{b}</span></li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+                                        </div>
                                     );
                                 })}
                             </div>
@@ -854,25 +887,7 @@ const ResultsPage: React.FC = () => {
 
                     {/* Feedback card removed here; will be placed above bottom button */}
 
-                    {/* Market Intelligence Cards - Tier 1 */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <MarketIntelligenceCard data={result.marketIntelligence} />
-                        <CompetitiveLandscapeCard data={result.competitiveLandscape} />
-                        <RevenueModelCard data={result.revenueModel} />
-                    </div>
-
-                    {/* Strategic Analysis Cards - Tier 2 */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <TargetAudienceCard data={result.targetAudience} />
-                        <RiskAssessmentCard data={result.riskAssessment} />
-                        <GoToMarketCard data={result.goToMarket} />
-                    </div>
-
-                    {/* Advanced Analysis Cards - Tier 3 */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                        <DevelopmentRoadmapCard data={result.developmentRoadmap} />
-                        <ProductMarketFitCard data={result.productMarketFit} />
-                    </div>
+                    {/* Heavy analysis cards hidden for concise summary mode */}
 
                     {/* Community Match */}
                     {Boolean((result as any)?.communityMatch) && (
