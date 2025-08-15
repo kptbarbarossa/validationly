@@ -58,8 +58,8 @@ export default function SmartResultsPage() {
                     </div>
                 </div>
 
-                <div className="container mx-auto px-4 py-16 max-w-4xl">
-                    {/* Big Score */}
+                <div className="container mx-auto px-4 py-16 max-w-6xl">
+                    {/* Hero Section */}
                     <div className="text-center mb-16">
                         <div className="text-8xl md:text-9xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
                             {result.demandScore}
@@ -67,51 +67,117 @@ export default function SmartResultsPage() {
                         <div className="text-2xl text-slate-300 mb-8">
                             {isTR ? 'Validasyon Skoru' : 'Validation Score'}
                         </div>
-                    </div>
-
-                    {/* Idea Title */}
-                    <div className="text-center mb-16">
-                        <h1 className="text-3xl md:text-4xl font-bold text-slate-100 mb-8 leading-relaxed">
+                        <h1 className="text-3xl md:text-4xl font-bold text-slate-100 mb-8 leading-relaxed max-w-4xl mx-auto">
                             "{result.idea || result.content}"
                         </h1>
                     </div>
 
+                    {/* Score Justification */}
+                    {result.scoreJustification && (
+                        <div className="mb-12">
+                            <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
+                                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <span className="text-3xl">📊</span>
+                                    {isTR ? 'Skor Açıklaması' : 'Score Justification'}
+                                </h2>
+                                <p className="text-slate-300 text-lg leading-relaxed">
+                                    {result.scoreJustification}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Platform Analysis */}
+                    {result.platformAnalysis && (
+                        <div className="mb-12">
+                            <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
+                                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <span className="text-3xl">🔍</span>
+                                    {isTR ? 'Platform Analizi' : 'Platform Analysis'}
+                                </h2>
+                                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    {Object.entries(result.platformAnalysis).map(([platform, data]: [string, any]) => (
+                                        <div key={platform} className="p-6 bg-slate-700/30 rounded-xl border border-slate-600">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <span className="text-2xl">
+                                                    {platform === 'x' ? '🐦' : 
+                                                     platform === 'reddit' ? '📱' : 
+                                                     platform === 'linkedin' ? '💼' : '🌐'}
+                                                </span>
+                                                <h3 className="font-semibold text-white capitalize">
+                                                    {platform === 'x' ? 'X (Twitter)' : platform}
+                                                </h3>
+                                            </div>
+                                            <div className="text-3xl font-bold text-indigo-400 mb-2">
+                                                {data.score}/5
+                                            </div>
+                                            <p className="text-slate-300 text-sm">
+                                                {data.summary}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Post Suggestions */}
+                    {result.postSuggestions && result.postSuggestions.length > 0 && (
+                        <div className="mb-12">
+                            <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
+                                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <span className="text-3xl">💡</span>
+                                    {isTR ? 'Post Önerileri' : 'Post Suggestions'}
+                                </h2>
+                                <div className="space-y-4">
+                                    {result.postSuggestions.map((suggestion, index) => (
+                                        <div key={index} className="p-4 bg-slate-700/30 rounded-lg border border-slate-600">
+                                            <p className="text-slate-300">{suggestion}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Tweet Series Generator */}
-                    <div className="text-center mb-16">
+                    <div className="mb-12">
                         <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
-                            <div className="text-6xl mb-6">🐦</div>
-                            <h2 className="text-2xl font-bold text-white mb-4">
-                                {isTR ? 'Tweet Serisi Üreticisi' : 'Tweet Series Generator'}
-                            </h2>
-                            <p className="text-slate-300 mb-8 max-w-2xl mx-auto">
-                                {isTR 
-                                    ? 'Fikrini sosyal medyada test etmek için 5 tweet\'lik build-in-public serisi üret'
-                                    : 'Generate a 5-tweet build-in-public series to test your idea on social media'
-                                }
-                            </p>
-                            <button
-                                onClick={() => navigate('/tweet-generator', { 
-                                    state: { 
-                                        idea: result.idea || result.content,
-                                        industry: '',
-                                        targetAudience: ''
+                            <div className="text-center">
+                                <div className="text-6xl mb-4">🐦</div>
+                                <h2 className="text-2xl font-bold text-white mb-4">
+                                    {isTR ? 'Tweet Serisi Üreticisi' : 'Tweet Series Generator'}
+                                </h2>
+                                <p className="text-slate-300 mb-6 max-w-2xl mx-auto">
+                                    {isTR 
+                                        ? 'Fikrini sosyal medyada test etmek için 5 tweet\'lik build-in-public serisi üret. Topluluk geri bildirimi al ve fikrini doğrula.'
+                                        : 'Generate a 5-tweet build-in-public series to test your idea on social media. Get community feedback and validate your concept.'
                                     }
-                                })}
-                                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-semibold text-white transition-all transform hover:scale-105 shadow-lg"
-                            >
-                                <span className="text-xl">🚀</span>
-                                {isTR ? 'Tweet Serisi Üret' : 'Generate Tweet Series'}
-                            </button>
+                                </p>
+                                <button
+                                    onClick={() => navigate('/tweet-generator', { 
+                                        state: { 
+                                            idea: result.idea || result.content,
+                                            industry: '',
+                                            targetAudience: ''
+                                        }
+                                    })}
+                                    className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 rounded-xl font-semibold text-white transition-all transform hover:scale-105 shadow-lg"
+                                >
+                                    <span className="text-xl">🚀</span>
+                                    {isTR ? 'Tweet Serisi Üret' : 'Generate Tweet Series'}
+                                </button>
+                            </div>
                         </div>
                     </div>
 
-                    {/* Bottom CTA */}
+                    {/* Action Buttons */}
                     <div className="text-center">
                         <button
                             onClick={() => navigate('/')}
-                            className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-xl font-semibold text-white transition-all transform hover:scale-105"
+                            className="inline-flex items-center gap-3 px-8 py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-semibold text-white transition-all transform hover:scale-105 shadow-lg"
                         >
-                            <span className="text-xl">✨</span>
+                            <span className="text-xl">🔄</span>
                             {isTR ? 'Başka Fikir Analiz Et' : 'Analyze Another Idea'}
                         </button>
                     </div>
