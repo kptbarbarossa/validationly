@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { PLATFORM_COUNT } from '../constants/platforms';
 import { useNavigate } from 'react-router-dom';
 // Direct API call - no service layer needed
-import type { UserInput, UserCredits, CreditResponse } from '../types';
+import type { UserInput } from '../types';
 // import LoadingSpinner from '../components/LoadingSpinner';
 import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import PromptGallery from '../components/PromptGallery';
@@ -25,9 +25,6 @@ const HomePage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false); // analysis submit loading
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
-    const [email, setEmail] = useState('');
-    const [userCredits, setUserCredits] = useState<UserCredits | null>(null);
-    const [showUpgrade, setShowUpgrade] = useState(false);
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -35,29 +32,7 @@ const HomePage: React.FC = () => {
 
     useEffect(() => {
         textareaRef.current?.focus();
-        
-        // Load email from localStorage
-        const savedEmail = localStorage.getItem('validationly_email');
-        if (savedEmail) {
-            setEmail(savedEmail);
-            checkUserCredits(savedEmail);
-        }
     }, []);
-
-    const checkUserCredits = async (userEmail: string) => {
-        try {
-            const response = await fetch(`/api/user-credits?email=${encodeURIComponent(userEmail)}`, {
-                method: 'GET',
-                headers: { 'Content-Type': 'application/json' }
-            });
-            const result: CreditResponse = await response.json();
-            if (result.ok && result.user) {
-                setUserCredits(result.user);
-            }
-        } catch (error) {
-            console.error('Failed to check credits:', error);
-        }
-    };
 
     const validateInput = (idea: string): UserInput => {
         // Ensure idea is a string and handle null/undefined cases
@@ -109,22 +84,8 @@ const HomePage: React.FC = () => {
 
         if (!userInput.isValid || !userInput.idea?.trim()) {
             console.log('Validation failed - input not valid');
-            setIsSubmitting(false);
             return;
         }
-
-        // Check email and credits
-        if (!email || !email.includes('@')) {
-            setUserInput(prev => ({
-                ...prev,
-                errorMessage: 'Please enter your email to continue'
-            }));
-            setIsSubmitting(false);
-            return;
-        }
-
-        // Save email to localStorage
-        localStorage.setItem('validationly_email', email);
 
         // Track validation start
         trackEvent('validation_started', {
@@ -146,7 +107,7 @@ const HomePage: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: ideaPayload, fast: true, email: email })
+                body: JSON.stringify({ idea: ideaPayload, fast: true })
             });
 
             if (!response.ok) {
@@ -154,27 +115,7 @@ const HomePage: React.FC = () => {
             }
 
             const result = await response.json();
-            
-            // Check for credit limit error
-            if (response.status === 402 && result.needsUpgrade) {
-                setUserCredits(result.user);
-                setShowUpgrade(true);
-                setUserInput(prev => ({
-                    ...prev,
-                    errorMessage: result.message || 'No credits remaining'
-                }));
-                return;
-            }
-            
             console.log('API call successful', result);
-            
-            // Update user credits after successful analysis
-            if (result.user) {
-                setUserCredits(result.user);
-            } else {
-                // Refresh credits
-                checkUserCredits(email);
-            }
             
             // Track successful validation
             trackValidation(userInput.idea, result.demandScore || result.score);
@@ -261,30 +202,6 @@ const HomePage: React.FC = () => {
                         <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
                         <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
-                            
-                            {/* Email Input */}
-                            <div className="p-4 pb-0">
-                                <div className="flex items-center justify-between mb-3">
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="your-email@example.com"
-                                        className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-sm text-slate-300 placeholder-slate-500"
-                                        disabled={isLoading}
-                                    />
-                                    {userCredits && (
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <span className="text-slate-400">Credits:</span>
-                                            <span className={`font-semibold ${userCredits.credits > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                                                {userCredits.credits}
-                                            </span>
-                                            <span className="text-xs text-slate-500">({userCredits.plan})</span>
-                                        </div>
-                                    )}
-                                </div>
-                                <div className="h-px bg-white/10 mb-0"></div>
-                            </div>
                             
                             <textarea
                                 ref={textareaRef}
@@ -386,67 +303,6 @@ const HomePage: React.FC = () => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
             />
-
-            {/* Upgrade Modal */}
-            {showUpgrade && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-slate-800 rounded-2xl p-6 max-w-md w-full border border-slate-700">
-                        <div className="text-center">
-                            <div className="text-4xl mb-4">🚀</div>
-                            <h3 className="text-xl font-bold text-white mb-2">Upgrade to Continue</h3>
-                            <p className="text-slate-300 mb-6">
-                                You've used all your free credits. Choose a plan to continue analyzing ideas.
-                            </p>
-                            
-                            <div className="space-y-3 mb-6">
-                                <div className="bg-slate-700 rounded-lg p-4 border border-indigo-500">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <div className="font-semibold text-white">Starter</div>
-                                            <div className="text-sm text-slate-300">20 analyses/month</div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="text-xl font-bold text-white">$19</div>
-                                            <div className="text-xs text-slate-400">/month</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <div className="bg-slate-700 rounded-lg p-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <div className="font-semibold text-white">Pro</div>
-                                            <div className="text-sm text-slate-300">100 analyses/month</div>
-                                        </div>
-                                        <div className="text-right">
-                                            <div className="text-xl font-bold text-white">$49</div>
-                                            <div className="text-xs text-slate-400">/month</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div className="flex gap-3">
-                                <button
-                                    onClick={() => setShowUpgrade(false)}
-                                    className="flex-1 px-4 py-2 border border-slate-600 text-slate-300 rounded-lg hover:bg-slate-700 transition-colors"
-                                >
-                                    Maybe Later
-                                </button>
-                                <button
-                                    onClick={() => {
-                                        // TODO: Implement Stripe payment
-                                        window.open('https://buy.stripe.com/test_your_payment_link', '_blank');
-                                    }}
-                                    className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
-                                >
-                                    Upgrade Now
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
 
             {/* Removed sample ideas section (Prompt Gallery replaces it) */}
 
