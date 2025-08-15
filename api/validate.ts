@@ -1081,7 +1081,26 @@ export default async function handler(req: any, res: any) {
         - Platform names can stay as "Twitter", "Reddit", "LinkedIn" but all descriptions must match the specified language
 
         COMPREHENSIVE ANALYSIS METHODOLOGY:
-        1. Demand Score (0-100): Overall market demand assessment
+        1. Demand Score (0-100): Overall market demand assessment using this STRICT scoring framework:
+           
+           SCORING CALIBRATION (0-100):
+           • 90-100: EXCEPTIONAL - Proven high demand (Uber 2008, iPhone 2007 level opportunity)
+           • 80-89: STRONG - Clear demand signals, viable market, manageable competition
+           • 70-79: GOOD - Moderate demand, competitive but addressable market
+           • 60-69: FAIR - Some demand signals, execution-dependent success
+           • 50-59: WEAK - Limited demand, challenging market conditions
+           • 40-49: POOR - Minimal demand signals, high barriers
+           • 30-39: VERY POOR - Little to no demand evidence
+           • 0-29: FAILED - No viable market demand, fundamental flaws
+           
+           SCORING FACTORS (weight each equally):
+           - Market Size & Growth: Is this a billion+ market growing >10% yearly?
+           - Problem Urgency: Do people actively seek solutions daily/weekly?
+           - Competition Gap: Is there an underserved niche or weak incumbents?
+           - Monetization Clarity: Can users easily pay $10+ monthly?
+           - Technical Feasibility: Can this be built in 6-12 months?
+           
+           BE CONSERVATIVE: Most ideas score 45-65. Only exceptional concepts score 80+.
         2. Platform Analysis: Analyze X, Reddit, LinkedIn market signals
         3. Market Intelligence: TAM/SAM/SOM sizing with real market data
         4. Competitive Landscape: Identify actual competitors and positioning
@@ -1161,7 +1180,9 @@ export default async function handler(req: any, res: any) {
         if (fast === true) {
             try {
                 const aiInstance = getAI();
-                const fastSys = `You are a senior startup validation expert with 15+ years experience in market research, venture capital, and entrepreneurship. Respond ONLY in ${expectedLanguage}.
+                // Detect language for fast mode
+                const fastExpectedLanguage = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content) ? 'Turkish' : 'English';
+                const fastSys = `You are a senior startup validation expert with 15+ years experience in market research, venture capital, and entrepreneurship. Respond ONLY in ${fastExpectedLanguage}.
 
 PROFESSIONAL VALIDATION METHODOLOGY:
 
@@ -1179,12 +1200,17 @@ PROFESSIONAL VALIDATION METHODOLOGY:
 - Market size and growth rate
 - Regulatory and technical barriers
 
-3. SCORING FRAMEWORK (0-100):
-* 85-100: Exceptional opportunity (proven demand, large market, clear differentiation)
-* 70-84: Strong potential (good demand signals, viable market, manageable competition)
-* 50-69: Moderate opportunity (some demand, competitive market, execution dependent)
-* 30-49: Challenging (weak demand signals, small market, or high barriers)
-* 0-29: High risk (no clear demand, saturated market, or fundamental issues)
+3. SCORING FRAMEWORK (0-100) - BE CONSERVATIVE:
+* 90-100: EXCEPTIONAL - Proven high demand (Uber 2008, iPhone 2007 level)
+* 80-89: STRONG - Clear demand signals, viable market, manageable competition
+* 70-79: GOOD - Moderate demand, competitive but addressable market
+* 60-69: FAIR - Some demand signals, execution-dependent success
+* 50-59: WEAK - Limited demand, challenging market conditions
+* 40-49: POOR - Minimal demand signals, high barriers
+* 30-39: VERY POOR - Little to no demand evidence
+* 0-29: FAILED - No viable market demand, fundamental flaws
+
+MOST IDEAS SCORE 45-65. Only exceptional concepts score 80+.
 
 Return STRICT JSON:
 {
@@ -2205,67 +2231,32 @@ ${responseText.slice(0, 6000)}`,
             }
         };
 
-        // Recompute a more stable demandScore from platform rubrics (1-5 → 20-100) with simple penalties/bonuses
+        // Simple score validation and stabilization
         try {
-            const platformKeysPreferred = ['twitter','reddit','linkedin'];
-            const entries: Array<{ key:string; score:number; rubric?: any }> = [];
-            for (const key of Object.keys(cleanResult.platformAnalyses || {})) {
-                const p = (cleanResult.platformAnalyses as any)[key];
-                if (!p) continue;
-                const s = Number(p.score);
-                if (Number.isFinite(s)) {
-                    entries.push({ key, score: s, rubric: p.rubric });
-                }
-            }
-            // If preferred platforms exist, focus on them; otherwise use whatever exists
-            const focused = entries.filter(e => platformKeysPreferred.includes(e.key)).length > 0
-                ? entries.filter(e => platformKeysPreferred.includes(e.key))
-                : entries;
-            if (focused.length > 0) {
-                // Normalize 1-5 to 20-100
-                const normalized = focused.map(e => Math.max(20, Math.min(100, Math.round(e.score * 20))));
-                // Slight weight if rubric has competitiveSignal
-                const withWeights = normalized.map((n, i) => {
-                    const r = focused[i].rubric || {};
-                    const comp = Number(r.competitiveSignal || 3); // 1-5
-                    const w = 0.7 + (Math.max(1, Math.min(5, Math.round(comp))) - 3) * 0.05; // ~0.6–0.8
-                    return n * w;
-                });
-                let agg = Math.round(withWeights.reduce((a, b) => a + b, 0) / withWeights.length);
-                // Penalize if only 1 platform had data
-                if (focused.length === 1) agg = Math.round(agg * 0.85);
-                // Apply clone penalty cap if applicable (below existing logic may add note)
-                const ideaLower2 = (content || cleanResult.idea || '').toLowerCase();
-                const cloneKeywords2 = ['facebook','instagram','tiktok','snapchat','twitter','x ',' x(','linkedin','reddit','discord','clubhouse','social network','social media app'];
-                const isCloneIdea2 = cloneKeywords2.some(k => ideaLower2.includes(k));
-                if (isCloneIdea2) agg = Math.min(agg, 40);
-                // Blend with model-provided score to reduce variance
-                const modelScore = Math.max(0, Math.min(100, Number(parsedResult.demandScore || 0)));
-                const blended = Number.isFinite(modelScore) && modelScore > 0 ? Math.round(0.7 * agg + 0.3 * modelScore) : agg;
-                cleanResult.demandScore = Math.max(0, Math.min(100, blended));
-            }
-        } catch {}
-
-        // Clone/Brand penalty: generic consumer social or well-known brand clones get conservative cap
-        try {
+            // Use AI's score directly, just validate it's reasonable
+            let finalScore = Math.max(0, Math.min(100, Number(parsedResult.demandScore || 50)));
+            
+            // Apply clone penalty if needed (simplified)
             const ideaLower = (content || cleanResult.idea || '').toLowerCase();
             const cloneKeywords = [
-                'facebook','instagram','tiktok','snapchat','twitter','x ',' x(', 'linkedin','reddit','discord','clubhouse','social network','social media app'
+                'facebook', 'instagram', 'tiktok', 'snapchat', 'twitter', 'x ', ' x(', 
+                'linkedin', 'reddit', 'discord', 'clubhouse', 'social network', 'social media app'
             ];
             const isCloneIdea = cloneKeywords.some(k => ideaLower.includes(k));
+            
             if (isCloneIdea) {
-                const capped = Math.min(cleanResult.demandScore, 40);
-                if (capped !== cleanResult.demandScore) {
-                    cleanResult.demandScore = capped;
-                }
+                finalScore = Math.min(finalScore, 40);
                 const note = expectedLanguage === 'Turkish'
-                    ? 'Ağ etkisi ve büyük rakipler nedeniyle muhafazakâr skor (clone penalty).'
-                    : 'Conservative score due to network effects and dominant incumbents (clone penalty).';
-                cleanResult.scoreJustification = isNonEmptyString(cleanResult.scoreJustification)
-                    ? `${cleanResult.scoreJustification} — ${note}`
-                    : note;
+                    ? 'Sosyal medya klonu - muhafazakâr skor.'
+                    : 'Social media clone - conservative score.';
+                cleanResult.scoreJustification = `${cleanResult.scoreJustification} ${note}`;
             }
+            
+            cleanResult.demandScore = finalScore;
+            console.log(`📊 Final score: ${finalScore}/100 (clone penalty: ${isCloneIdea})`);
         } catch {}
+
+        // Clone penalty already applied above - no need for duplicate logic
 
         // Language post-check: if English expected but Turkish chars found anywhere, do a tiny repair call
         const langCheck = enforceLanguageOnObjectStrings(cleanResult, undefined);
