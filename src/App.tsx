@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
 import SmartResultsPage from './pages/SmartResultsPage';
 import AITweetGenerator from './pages/AITweetGenerator';
+import SocialValidation from './pages/SocialValidation';
 import FAQPage from './pages/FAQPage';
 import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
@@ -72,6 +73,7 @@ const App: React.FC = () => {
               <Route path="/results" element={<ResultsPage />} />
               <Route path="/smart-results" element={<SmartResultsPage />} />
               <Route path="/tweet-generator" element={<AITweetGenerator />} />
+              <Route path="/social-validation" element={<SocialValidation />} />
               <Route path="/faq" element={<FAQPage />} />
               <Route path="/blog" element={<BlogIndexPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
