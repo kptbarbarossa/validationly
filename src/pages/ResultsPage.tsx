@@ -974,40 +974,7 @@ const ResultsPage: React.FC = () => {
                             <h3 className="text-xl font-bold text-white mb-2">Test Your Idea</h3>
                             <p className="text-slate-300">Copy and use these AI-generated posts to validate your idea on social platforms</p>
                         </div>
-                        {/* Quick Actions: LP + Optimize */}
-                        <div className="flex items-center justify-center gap-3 mb-6">
-                            <button
-                                onClick={async () => {
-                                    try {
-                                        const payload = {
-                                            idea: result.content || result.idea,
-                                            headline: (result as any)?.marketIntelligence?.tam ? (isTR ? 'Fikriniz için bekleme listesi' : 'Join the waitlist') : (result.content || result.idea),
-                                            subheadline: (result as any)?.scoreJustification || '' ,
-                                            bullets: ((result as any)?.competitiveLandscape?.directCompetitors || []).slice(0,3)
-                                        };
-                                        const r = await fetch('/api/lp-generate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-                                        const j = await r.json();
-                                        if (j?.ok && j?.url) { window.open(j.url, '_blank'); }
-                                    } catch {}
-                                }}
-                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
-                            >{isTR ? 'LP Oluştur' : 'Generate LP'}</button>
-                            <button
-                                onClick={async () => {
-                                    try {
-                                        const r = await fetch('/api/refine-optimize', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ idea: result.content || result.idea }) });
-                                        const j = await r.json();
-                                        if (j?.ok && j?.result) {
-                                            const obj = (()=>{ try { return JSON.parse(j.result); } catch { return null; }})();
-                                            if (obj) {
-                                                alert((isTR ? 'Öneriler:\n\n' : 'Suggestions:\n\n') + JSON.stringify(obj, null, 2));
-                                            }
-                                        }
-                                    } catch {}
-                                }}
-                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
-                            >{isTR ? 'Optimize Et' : 'Optimize Idea'}</button>
-                        </div>
+                        {/* Quick Actions removed by request */}
                         {/* Screen reader live region for copy feedback */}
                         <div className="sr-only" aria-live="polite" role="status">
                             {copiedId === 'tweet'
