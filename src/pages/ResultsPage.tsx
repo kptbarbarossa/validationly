@@ -117,6 +117,88 @@ export default function ResultsPage() {
                         </p>
                     </div>
 
+                    {/* Market Intelligence */}
+                    <div className="mb-8 grid md:grid-cols-2 gap-6">
+                        {/* Market Size & Competition */}
+                        <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                            <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                                <svg className="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                                </svg>
+                                {isTR ? 'Pazar Analizi' : 'Market Analysis'}
+                            </h3>
+                            
+                            {(result as any).marketSize && (
+                                <div className="mb-4">
+                                    <div className="text-sm font-medium text-slate-300 mb-1">
+                                        {isTR ? 'Pazar Büyüklüğü' : 'Market Size'}
+                                    </div>
+                                    <div className="text-slate-200">
+                                        {(result as any).marketSize}
+                                    </div>
+                                </div>
+                            )}
+                            
+                            {(result as any).competitionLevel && (
+                                <div>
+                                    <div className="text-sm font-medium text-slate-300 mb-1">
+                                        {isTR ? 'Rekabet Seviyesi' : 'Competition Level'}
+                                    </div>
+                                    <div className="text-slate-200">
+                                        {(result as any).competitionLevel}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Key Risks */}
+                        {(result as any).keyRisks && Array.isArray((result as any).keyRisks) && (result as any).keyRisks.length > 0 && (
+                            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                                <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                    {isTR ? 'Ana Riskler' : 'Key Risks'}
+                                </h3>
+                                <ul className="space-y-2">
+                                    {(result as any).keyRisks.map((risk: string, idx: number) => (
+                                        <li key={idx} className="flex items-start gap-2 text-sm text-slate-300">
+                                            <span className="text-red-400 mt-0.5">⚠</span>
+                                            <span>{risk}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Validation Steps */}
+                    {(result as any).validationSteps && Array.isArray((result as any).validationSteps) && (result as any).validationSteps.length > 0 && (
+                        <div className="mb-8">
+                            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                                <h3 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
+                                    <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                    {isTR ? 'Doğrulama Adımları' : 'Next Validation Steps'}
+                                </h3>
+                                <div className="text-sm text-slate-400 mb-4">
+                                    {isTR ? 'Fikrini test etmek için bu adımları takip et:' : 'Follow these steps to validate your idea:'}
+                                </div>
+                                <ul className="space-y-3">
+                                    {(result as any).validationSteps.map((step: string, idx: number) => (
+                                        <li key={idx} className="flex items-start gap-3">
+                                            <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">
+                                                {idx + 1}
+                                            </div>
+                                            <span className="text-slate-300">{step}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Platform Analysis */}
                     {platforms.length > 0 && (
                         <div className="mb-8">
