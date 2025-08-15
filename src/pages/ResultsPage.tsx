@@ -138,6 +138,8 @@ const ResultsPage: React.FC = () => {
     const [refineText, setRefineText] = React.useState('');
     const [copiedId, setCopiedId] = useState<string | null>(null);
     const [, forceRerender] = useState(0);
+    const [painOpen, setPainOpen] = useState(false);
+    const [painData, setPainData] = useState<any | null>(null);
 
     // Animation trigger
     useEffect(() => {
@@ -974,6 +976,27 @@ const ResultsPage: React.FC = () => {
                             <h3 className="text-xl font-bold text-white mb-2">Test Your Idea</h3>
                             <p className="text-slate-300">Copy and use these AI-generated posts to validate your idea on social platforms</p>
                         </div>
+                        <div className="flex items-center justify-center mb-6">
+                            <button
+                                onClick={async () => {
+                                    try {
+                                        setPainOpen(true);
+                                        setPainData({ loading: true });
+                                        const r = await fetch('/api/find-pain-points', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idea: result.content || result.idea }) });
+                                        const j = await r.json();
+                                        if (j?.ok) {
+                                            const obj = (()=>{ try { return JSON.parse(j.result); } catch { return null; }})();
+                                            setPainData(obj || { error: 'Parse error' });
+                                        } else {
+                                            setPainData({ error: 'Request failed' });
+                                        }
+                                    } catch (e) {
+                                        setPainData({ error: 'Network error' });
+                                    }
+                                }}
+                                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 hover:border-white/20 text-slate-200"
+                            >{isTR ? 'Pain Point Bul' : 'Find Pain Points'}</button>
+                        </div>
                         {/* Quick Actions removed by request */}
                         {/* Screen reader live region for copy feedback */}
                         <div className="sr-only" aria-live="polite" role="status">
@@ -1103,6 +1126,47 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Pain Points Modal */}
+                    {painOpen && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                            <div className="absolute inset-0 bg-black/60" onClick={() => setPainOpen(false)} />
+                            <div className="relative bg-slate-900 border border-white/10 rounded-2xl max-w-2xl w-full p-6 shadow-2xl">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-lg font-semibold text-white">{isTR ? 'Pain Points' : 'Pain Points'}</h3>
+                                    <button onClick={() => setPainOpen(false)} className="text-slate-300 hover:text-white">✕</button>
+                                </div>
+                                {!painData || painData.loading ? (
+                                    <div className="text-slate-300">{isTR ? 'Yükleniyor...' : 'Loading...'}</div>
+                                ) : painData.error ? (
+                                    <div className="text-red-300 text-sm">{String(painData.error)}</div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <div className="text-sm text-slate-200">{painData.summary || (isTR ? 'Özet yok' : 'No summary')}</div>
+                                        <ul className="space-y-3">
+                                            {Array.isArray(painData.painPoints) && painData.painPoints.slice(0,8).map((p: any, i: number) => (
+                                                <li key={i} className="bg-white/5 border border-white/10 rounded-lg p-3">
+                                                    <div className="flex items-center justify-between">
+                                                        <div className="font-medium text-slate-100">{p.issue || (isTR ? 'Bilinmiyor' : 'Unknown')}</div>
+                                                        <div className="text-xs text-slate-400">{isTR ? 'Şiddet' : 'Severity'}: {p.severity ?? '-'}</div>
+                                                    </div>
+                                                    {Array.isArray(p.examples) && p.examples.length > 0 && (
+                                                        <div className="mt-2 text-xs text-slate-300">“{p.examples[0]}”</div>
+                                                    )}
+                                                    {Array.isArray(p.evidence) && p.evidence.length > 0 && (
+                                                        <div className="mt-2 text-xs text-slate-400 truncate">
+                                                            <a className="hover:underline" href={p.evidence[0]} target="_blank" rel="noreferrer">{p.evidence[0]}</a>
+                                                        </div>
+                                                    )}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                        <div className="text-xs text-slate-400">{isTR ? 'Güven' : 'Confidence'}: {painData.confidence ?? '-'}</div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Enriched Social Suggestions */}
                     {Boolean((result as any)?.socialSuggestions) && (
