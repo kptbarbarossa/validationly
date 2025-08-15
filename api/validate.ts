@@ -1020,7 +1020,7 @@ export default async function handler(req: any, res: any) {
             });
         }
 
-        const { idea, content, lang, model, evidence, weightsVariant, enhance, vcReview } = req.body;
+        const { idea, content, lang, model, evidence, weightsVariant, enhance, vcReview, fast } = req.body;
         const inputContent = idea || content;
 
         // Input validation
@@ -1156,6 +1156,24 @@ export default async function handler(req: any, res: any) {
         Analyze the following startup idea: "${inputContent}"${evidenceText}`;
 
         console.log('🚀 Starting dynamic prompt analysis...');
+
+        // Fast mode: return minimal analysis quickly (3 platforms, no heavy sections)
+        if (fast === true) {
+            try {
+                const aiInstance = getAI();
+                const fastSys = `You are a strict JSON generator. Respond in SAME LANGUAGE as user. Return ONLY JSON with keys: idea, demandScore(0-100), scoreJustification, platformAnalyses(object of up to 3 among X, Reddit, LinkedIn with {platformName, score(1-5), summary(<=140), keyFindings[3], contentSuggestion(<=120)}), tweetSuggestion, redditTitleSuggestion, redditBodySuggestion, linkedinSuggestion. Keep strings short.`;
+                const r = await aiInstance.models.generateContent({
+                    model: process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash',
+                    contents: `ANALYZE: "${inputContent}"\nReturn JSON only.`,
+                    config: { systemInstruction: fastSys, responseMimeType: 'application/json', temperature: 0.2, maxOutputTokens: 800 }
+                });
+                const parsed = ((): any => { try { return JSON.parse((r.text || '').trim()); } catch { return null; } })();
+                if (parsed && typeof parsed === 'object') {
+                    return res.status(200).json(parsed);
+                }
+            } catch {}
+            // fallback to normal path if fast failed
+        }
 
         // Simplified AI Analysis - use only Gemini 2.0 for now
         // eslint-disable-next-line @typescript-eslint/no-unused-vars

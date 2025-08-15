@@ -76,6 +76,7 @@ const HomePage: React.FC = () => {
     };
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [fastMode, setFastMode] = useState(false);
 
     const triggerValidation = async () => {
         if (isSubmitting) return;
@@ -107,7 +108,7 @@ const HomePage: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: ideaPayload })
+                body: JSON.stringify({ idea: ideaPayload, fast: fastMode })
             });
 
             if (!response.ok) {
@@ -222,6 +223,10 @@ const HomePage: React.FC = () => {
 
                             {/* Enhanced action bar: Submit + Enhance + Gallery */}
                             <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                                <label className="hidden sm:flex items-center gap-1 text-xs text-slate-300 mr-2 select-none">
+                                    <input type="checkbox" checked={fastMode} onChange={(e)=>setFastMode(e.target.checked)} className="rounded" />
+                                    {fastMode ? 'Fast mode' : 'Fast mode'}
+                                </label>
                                 <button
                                     type="button"
                                     onClick={() => setGalleryOpen(true)}
