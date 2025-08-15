@@ -866,6 +866,13 @@ const ResultsPage: React.FC = () => {
                                                         <span className="text-xs px-2 py-0.5 rounded bg-white/10 border border-white/10 text-slate-300">{analysis.score}/5</span>
                                                     )}
                                                 </div>
+                                                {typeof analysis?.score === 'number' && (
+                                                    <div className="mt-2">
+                                                        <div className="w-full h-1.5 bg-white/10 rounded">
+                                                            <div className="h-1.5 rounded bg-indigo-500" style={{ width: `${Math.max(1, Math.min(5, Math.round(analysis.score))) / 5 * 100}%` }} />
+                                                        </div>
+                                                    </div>
+                                                )}
                                                 <div className="text-sm text-slate-200 mt-1">{analysis?.summary || (isTR ? 'Veri yok' : 'No data')}</div>
                                                 <ul className="mt-2 space-y-1 text-sm text-slate-200">
                                                     {bullets.length === 0 ? (
