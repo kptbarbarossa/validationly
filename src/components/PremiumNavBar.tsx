@@ -6,7 +6,7 @@ import Logo from './Logo';
 const navItems: Array<{ to: string; label: string; external?: boolean }> = [
   { to: '/', label: 'New Analysis' },
   { to: '/social-validation', label: 'Social Validation' },
-  { to: '/tweet-generator', label: 'Tweet Generator' },
+  { to: '/tweet-generator', label: 'X Generator' },
   { to: '/faq', label: 'FAQ' },
   { to: '/blog', label: 'Blog' },
   // { to: '/use-cases', label: 'Use Cases' }, // hidden from nav for SEO-only exposure

@@ -12,12 +12,22 @@ interface TweetSeries {
 
 export default function AITweetGenerator() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [idea, setIdea] = useState('');
   const [industry, setIndustry] = useState('');
   const [targetAudience, setTargetAudience] = useState('');
   const [tweetSeries, setTweetSeries] = useState<TweetSeries[]>([]);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
+
+  // Check if idea was passed from results page
+  React.useEffect(() => {
+    if (location.state?.idea) {
+      setIdea(location.state.idea);
+      if (location.state.industry) setIndustry(location.state.industry);
+      if (location.state.targetAudience) setTargetAudience(location.state.targetAudience);
+    }
+  }, [location.state]);
 
   const generateTweets = async () => {
     if (!idea.trim()) return;
@@ -127,15 +137,15 @@ export default function AITweetGenerator() {
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Hero Section */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-              {isTurkish ? 'AI Tweet Üretici' : 'AI Tweet Generator'}
-            </h1>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              {isTurkish 
-                ? 'Startup fikrin için 5 tweet\'lik build-in-public serisi üret. Sosyal medyada fikrini test et ve topluluk geri bildirimi al.'
-                : 'Generate a 5-tweet build-in-public series for your startup idea. Test your idea on social media and get community feedback.'
-              }
-            </p>
+                         <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
+               {isTurkish ? 'AI X Üretici' : 'AI X Generator'}
+             </h1>
+             <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+               {isTurkish 
+                 ? 'Startup fikrin için 5 X post\'luk build-in-public serisi üret. Sosyal medyada fikrini test et ve topluluk geri bildirimi al.'
+                 : 'Generate a 5 X post build-in-public series for your startup idea. Test your idea on social media and get community feedback.'
+               }
+             </p>
           </div>
 
           {/* Input Form */}
@@ -191,7 +201,7 @@ export default function AITweetGenerator() {
                   </span>
                 ) : (
                   <span className="flex items-center gap-2">
-                    🚀 {isTurkish ? 'Tweet Serisi Üret' : 'Generate Tweet Series'}
+                    🚀 {isTurkish ? 'X Post Serisi Üret' : 'Generate X Post Series'}
                   </span>
                 )}
               </button>
@@ -201,9 +211,9 @@ export default function AITweetGenerator() {
           {/* Generated Tweets */}
           {tweetSeries.length > 0 && (
             <div className="space-y-6">
-              <h2 className="text-2xl font-bold text-white text-center mb-8">
-                {isTurkish ? 'Build-in-Public Tweet Serisi' : 'Build-in-Public Tweet Series'}
-              </h2>
+                             <h2 className="text-2xl font-bold text-white text-center mb-8">
+                 {isTurkish ? 'Build-in-Public X Post Serisi' : 'Build-in-Public X Post Series'}
+               </h2>
               
               {tweetSeries.map((tweet, index) => (
                 <div key={tweet.id} className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700">
@@ -213,9 +223,9 @@ export default function AITweetGenerator() {
                         {index + 1}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-slate-200">
-                          {isTurkish ? 'Tweet' : 'Tweet'} #{index + 1}
-                        </h3>
+                                                 <h3 className="font-semibold text-slate-200">
+                           {isTurkish ? 'X Post' : 'X Post'} #{index + 1}
+                         </h3>
                         <p className="text-sm text-slate-400">{tweet.purpose}</p>
                       </div>
                     </div>
@@ -257,10 +267,10 @@ export default function AITweetGenerator() {
                   💡 {isTurkish ? 'Build-in-Public İpuçları' : 'Build-in-Public Tips'}
                 </h3>
                 <ul className="space-y-2 text-slate-300">
-                  <li>• {isTurkish ? 'Her tweet\'i 24-48 saat arayla paylaş' : 'Share each tweet 24-48 hours apart'}</li>
-                  <li>• {isTurkish ? 'Gerçek geri bildirimleri topla ve sonraki tweet\'lerde kullan' : 'Collect real feedback and use it in subsequent tweets'}</li>
-                  <li>• {isTurkish ? 'Hashtag\'leri hedef kitlenin aradığı kelimelerle eşleştir' : 'Match hashtags with what your target audience searches for'}</li>
-                  <li>• {isTurkish ? 'Engagement metriklerini takip et ve en iyi performans gösteren tweet\'leri analiz et' : 'Track engagement metrics and analyze your best-performing tweets'}</li>
+                                     <li>• {isTurkish ? 'Her X post\'u 24-48 saat arayla paylaş' : 'Share each X post 24-48 hours apart'}</li>
+                   <li>• {isTurkish ? 'Gerçek geri bildirimleri topla ve sonraki X post\'larda kullan' : 'Collect real feedback and use it in subsequent X posts'}</li>
+                   <li>• {isTurkish ? 'Hashtag\'leri hedef kitlenin aradığı kelimelerle eşleştir' : 'Match hashtags with what your target audience searches for'}</li>
+                   <li>• {isTurkish ? 'Engagement metriklerini takip et ve en iyi performans gösteren X post\'ları analiz et' : 'Track engagement metrics and analyze your best-performing X posts'}</li>
                 </ul>
               </div>
             </div>

@@ -27,12 +27,22 @@ interface SocialValidationResult {
 
 export default function SocialValidation() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [idea, setIdea] = useState('');
   const [industry, setIndustry] = useState('');
   const [targetAudience, setTargetAudience] = useState('');
   const [result, setResult] = useState<SocialValidationResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Check if idea was passed from results page
+  React.useEffect(() => {
+    if (location.state?.idea) {
+      setIdea(location.state.idea);
+      if (location.state.industry) setIndustry(location.state.industry);
+      if (location.state.targetAudience) setTargetAudience(location.state.targetAudience);
+    }
+  }, [location.state]);
 
   const validateIdea = async () => {
     if (!idea.trim()) return;
