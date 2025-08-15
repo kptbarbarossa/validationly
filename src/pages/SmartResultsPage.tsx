@@ -94,6 +94,7 @@ export default function SmartResultsPage() {
     const navigate = useNavigate();
     const [result, setResult] = useState<DynamicPromptResult | null>(null);
     const [loading, setLoading] = useState(true);
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         if (location.state?.result) {
@@ -116,6 +117,45 @@ export default function SmartResultsPage() {
     const insight = getScoreInsight(result.demandScore, isTR);
     const keyInsight = extractKeyInsight(result, isTR);
     const actionPlan = getActionPlan(result, isTR);
+
+    // Heuristic mitigations from risks
+    const mitigations: string[] = (() => {
+        const risks: string[] = Array.isArray((result as any).keyRisks) ? (result as any).keyRisks : [];
+        const items: string[] = [];
+        for (const r of risks.slice(0, 4)) {
+            const low = (r || '').toLowerCase();
+            if (low.includes('competition')) items.push(isTR ? 'Daha dar bir niş seç ve benzersiz değeri netle.' : 'Narrow the niche and sharpen unique value.');
+            else if (low.includes('regulation') || low.includes('compliance')) items.push(isTR ? 'Erken hukuki danışmanlık al, minimum veri topla.' : 'Engage legal early, minimize data collection.');
+            else if (low.includes('demand') || low.includes('market')) items.push(isTR ? '50-100$ mikro kampanyayla talebi ölç.' : 'Run a $50–$100 micro-campaign to measure demand.');
+            else if (low.includes('acquisition') || low.includes('distribution') || low.includes('cac')) items.push(isTR ? 'Organik/partner/komünite kanallarını test et.' : 'Test organic/partner/community channels.');
+            else if (low.includes('technical') || low.includes('ai')) items.push(isTR ? 'No-code/low-code ile MVP’yi çıkar, karmaşığı ertele.' : 'Ship MVP with no/low-code, defer complexity.');
+            else items.push(isTR ? 'En büyük riski küçülten bir deney tasarla ve ölç.' : 'Design a small experiment to reduce the biggest risk.');
+        }
+        return items;
+    })();
+
+    // Simple validation timeline based on score
+    const timeline: Array<{ title: string; items: string[] }> = (() => {
+        const s = result.demandScore || 0;
+        if (s >= 70) {
+            return [
+                { title: isTR ? 'Hafta 1' : 'Week 1', items: [isTR ? 'Landing page + e-posta topla' : 'Landing page + collect emails', isTR ? '3 sosyal test paylaşımı' : '3 social test posts'] },
+                { title: isTR ? 'Hafta 2' : 'Week 2', items: [isTR ? '10 kullanıcı görüşmesi' : '10 customer interviews', isTR ? 'Fiyat testi (anket veya Stripe test link)' : 'Pricing test (survey or Stripe test link)'] },
+                { title: isTR ? 'Hafta 3' : 'Week 3', items: [isTR ? 'MVP iskeleti' : 'MVP skeleton', isTR ? 'Bekleme listesi 100+' : 'Waitlist 100+'] }
+            ];
+        }
+        if (s >= 50) {
+            return [
+                { title: isTR ? 'Hafta 1' : 'Week 1', items: [isTR ? 'Problem/çözüm görüşmeleri (8+)' : 'Problem/solution interviews (8+)', isTR ? 'Rakip fark analizi' : 'Differentiation analysis'] },
+                { title: isTR ? 'Hafta 2' : 'Week 2', items: [isTR ? 'Mikro kampanya (50$)' : 'Micro paid test ($50)', isTR ? 'Komünite/partner dağıtımı' : 'Community/partner distribution'] }
+            ];
+        }
+        return [
+            { title: isTR ? 'Bugün' : 'Today', items: [isTR ? 'Fikir tezini netleştir' : 'Clarify the hypothesis', isTR ? 'Yeni segment seç ve test et' : 'Pick a new segment and test'] }
+        ];
+    })();
+
+    const summaryText = `${result.idea || result.content || ''} — Score ${result.demandScore}/100. ${keyInsight}`;
 
     // Platform data for quick tests
     const platforms = [
@@ -150,10 +190,12 @@ export default function SmartResultsPage() {
                     </div>
                 </div>
 
-                <div className="container mx-auto px-4 py-8 max-w-4xl">
-                    
+                <div className="container mx-auto px-4 py-8 max-w-6xl">
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {/* Main column */}
+                        <div className="md:col-span-2">
                     {/* Hero Score Section */}
-                    <div className="text-center mb-12">
+                    <div className="text-center md:text-left mb-12" id="overview">
                         <div className="mb-6">
                             <div className="text-6xl md:text-8xl font-bold mb-4 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
                                 {result.demandScore}
@@ -188,7 +230,7 @@ export default function SmartResultsPage() {
                     </div>
 
                     {/* Action Plan */}
-                    <div className="mb-12">
+                    <div className="mb-12" id="action-plan">
                         <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
                             <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                 <span className="text-3xl">🎯</span>
@@ -210,7 +252,7 @@ export default function SmartResultsPage() {
 
                     {/* Quick Social Tests */}
                     {platforms.length > 0 && (
-                        <div className="mb-12">
+                        <div className="mb-12" id="quick-tests">
                             <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
                                 <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
                                     <span className="text-3xl">📱</span>
@@ -246,7 +288,7 @@ export default function SmartResultsPage() {
                     )}
 
                     {/* Market & Risk Summary (Minimal) */}
-                    <div className="mb-12">
+                    <div className="mb-12" id="market">
                         <div className="grid md:grid-cols-2 gap-6">
                             {/* Market Info */}
                             {((result as any).marketSize || (result as any).competitionLevel) && (
@@ -288,8 +330,30 @@ export default function SmartResultsPage() {
                         </div>
                     </div>
 
-                    {/* Bottom CTA */}
-                    <div className="text-center">
+                        {/* Timeline */}
+                        <div className="mb-12" id="timeline">
+                            <div className="bg-slate-800/50 rounded-2xl p-8 border border-slate-700">
+                                <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                                    <span className="text-3xl">📅</span>
+                                    {isTR ? 'Doğrulama Zaman Çizelgesi' : 'Validation Timeline'}
+                                </h2>
+                                <div className="grid md:grid-cols-3 gap-4">
+                                    {timeline.map((t, idx) => (
+                                        <div key={idx} className="p-4 bg-slate-700/30 rounded-xl">
+                                            <div className="font-semibold text-slate-200 mb-2">{t.title}</div>
+                                            <ul className="space-y-2">
+                                                {t.items.map((it, i) => (
+                                                    <li key={i} className="text-slate-300 text-sm">• {it}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Bottom CTA */}
+                        <div className="text-center">
                         <button
                             onClick={() => navigate('/')}
                             className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-xl font-semibold text-white transition-all transform hover:scale-105"
@@ -297,6 +361,50 @@ export default function SmartResultsPage() {
                             <span className="text-xl">✨</span>
                             {isTR ? 'Başka Fikir Analiz Et' : 'Analyze Another Idea'}
                         </button>
+                    </div>
+                        </div>
+
+                        {/* Sticky Summary (desktop) */}
+                        <aside className="hidden md:block md:col-span-1">
+                            <div className="sticky top-6 space-y-4">
+                                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                                    <div className="text-sm text-slate-400 mb-1">{isTR ? 'Özet' : 'Summary'}</div>
+                                    <div className="text-slate-200 text-sm leading-relaxed">{summaryText}</div>
+                                </div>
+                                <nav className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                                    <div className="text-sm text-slate-400 mb-2">{isTR ? 'Bölümler' : 'Sections'}</div>
+                                    <ul className="space-y-2 text-slate-200 text-sm">
+                                        <li><a className="hover:text-white" href="#overview">{isTR ? 'Genel Bakış' : 'Overview'}</a></li>
+                                        <li><a className="hover:text-white" href="#action-plan">{isTR ? 'Eylem Planı' : 'Action Plan'}</a></li>
+                                        <li><a className="hover:text-white" href="#quick-tests">{isTR ? 'Hızlı Testler' : 'Quick Tests'}</a></li>
+                                        <li><a className="hover:text-white" href="#market">{isTR ? 'Pazar' : 'Market'}</a></li>
+                                        <li><a className="hover:text-white" href="#timeline">{isTR ? 'Zaman Çizelgesi' : 'Timeline'}</a></li>
+                                    </ul>
+                                </nav>
+                                {mitigations.length > 0 && (
+                                    <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
+                                        <div className="text-sm text-slate-400 mb-2">{isTR ? 'Risk Azaltma' : 'Mitigations'}</div>
+                                        <ul className="space-y-2 text-sm text-slate-200">
+                                            {mitigations.map((m, i) => (<li key={i}>• {m}</li>))}
+                                        </ul>
+                                    </div>
+                                )}
+                                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700 space-y-2">
+                                    <button
+                                        onClick={() => { navigator.clipboard.writeText(summaryText); setCopied(true); setTimeout(() => setCopied(false), 1500); }}
+                                        className="w-full px-3 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-sm"
+                                    >
+                                        {copied ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Özeti Kopyala' : 'Copy Summary')}
+                                    </button>
+                                    <button
+                                        onClick={() => window.print()}
+                                        className="w-full px-3 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm"
+                                    >
+                                        {isTR ? 'PDF Olarak Kaydet' : 'Save as PDF'}
+                                    </button>
+                                </div>
+                            </div>
+                        </aside>
                     </div>
                 </div>
             </div>
