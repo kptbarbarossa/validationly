@@ -2259,6 +2259,26 @@ ${responseText.slice(0, 6000)}`,
             console.warn('GROQ bridge failed:', e);
         }
 
+        // Rescue fallback: try a minimal Gemini JSON response before static placeholders
+        try {
+            const aiRescue = getAI();
+            const rescueModel = process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash';
+            const sys = 'Respond ONLY with valid JSON. Keep fields short. No extra text.';
+            const r2 = await aiRescue.models.generateContent({
+                model: rescueModel,
+                contents: `MINIMAL ANALYSIS FOR: "${content}"
+Return JSON with keys: idea, demandScore, scoreJustification, platformAnalyses{ twitter|reddit|linkedin each: { platformName, score(1-5), summary, keyFindings[], contentSuggestion } }, tweetSuggestion, redditTitleSuggestion, redditBodySuggestion, linkedinSuggestion.`,
+                config: { systemInstruction: sys, responseMimeType: 'application/json', temperature: 0.2, maxOutputTokens: 1024 }
+            });
+            const txt2 = (r2.text || '').trim();
+            try {
+                const parsed2 = JSON.parse(txt2);
+                if (parsed2 && typeof parsed2 === 'object') {
+                    return parsed2 as any;
+                }
+            } catch {}
+        } catch {}
+
         if (isTurkish) {
             // Turkish fallback
             return {
