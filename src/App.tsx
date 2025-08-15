@@ -3,6 +3,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
+import SmartResultsPage from './pages/SmartResultsPage';
 import FAQPage from './pages/FAQPage';
 import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
@@ -68,6 +69,7 @@ const App: React.FC = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/results" element={<ResultsPage />} />
+              <Route path="/smart-results" element={<SmartResultsPage />} />
               <Route path="/faq" element={<FAQPage />} />
               <Route path="/blog" element={<BlogIndexPage />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
