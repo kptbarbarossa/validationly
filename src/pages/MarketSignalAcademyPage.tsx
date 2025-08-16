@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PremiumNavBar } from '../components/PremiumNavBar';
 import { SEOHead } from '../components/SEOHead';
 
 interface Course {
@@ -30,7 +29,7 @@ const MarketSignalAcademyPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'courses' | 'case-studies' | 'tools'>('courses');
   const navigate = useNavigate();
 
-  const isTR = true; // Türkçe sabit
+  const isTR = false; // English by default
 
   const courses: Course[] = [
     {
@@ -200,7 +199,7 @@ const MarketSignalAcademyPage: React.FC = () => {
       />
       
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
-        <PremiumNavBar />
+
         
         <div className="relative container mx-auto px-6 py-16">
           {/* Header */}
