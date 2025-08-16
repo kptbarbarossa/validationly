@@ -7,6 +7,14 @@ const ToolsPage: React.FC = () => {
 
     const tools = [
         {
+            id: 'trend-hunter',
+            title: 'Trend Hunter',
+            description: 'Discover viral trends and generate profitable startup ideas from social media momentum.',
+            icon: '🎯',
+            route: '/trend-hunter',
+            features: ['Viral trend analysis', 'Startup idea generation', 'Market gap detection', 'Timing optimization']
+        },
+        {
             id: 'x-generator',
             title: 'X Content Generator',
             description: 'Generate engaging Twitter/X posts for your startup idea with AI-powered content creation.',
@@ -44,45 +52,43 @@ const ToolsPage: React.FC = () => {
                     </div>
 
                     {/* Tools Grid */}
-                    <div className="flex justify-center">
-                        <div className="w-full max-w-md">
-                            {tools.map((tool) => (
-                                <div
-                                    key={tool.id}
-                                    className="group bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer"
-                                    onClick={() => navigate(tool.route)}
-                                >
-                                    <div className="flex items-start gap-4">
-                                        <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
-                                            {tool.icon}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                        {tools.map((tool) => (
+                            <div
+                                key={tool.id}
+                                className="group bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                onClick={() => navigate(tool.route)}
+                            >
+                                <div className="flex items-start gap-4">
+                                    <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
+                                        {tool.icon}
+                                    </div>
+                                    <div className="flex-1">
+                                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-cyan-400 transition-all duration-300">
+                                            {tool.title}
+                                        </h3>
+                                        <p className="text-slate-300 mb-4 leading-relaxed text-sm">
+                                            {tool.description}
+                                        </p>
+                                        
+                                        {/* Features */}
+                                        <div className="grid grid-cols-2 gap-1 mb-4">
+                                            {tool.features.map((feature, index) => (
+                                                <div key={index} className="flex items-center gap-2 text-xs text-slate-400">
+                                                    <div className="w-1 h-1 rounded-full bg-indigo-400" />
+                                                    {feature}
+                                                </div>
+                                            ))}
                                         </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-cyan-400 transition-all duration-300">
-                                                {tool.title}
-                                            </h3>
-                                            <p className="text-slate-300 mb-4 leading-relaxed text-sm">
-                                                {tool.description}
-                                            </p>
-                                            
-                                            {/* Features */}
-                                            <div className="grid grid-cols-2 gap-1 mb-4">
-                                                {tool.features.map((feature, index) => (
-                                                    <div key={index} className="flex items-center gap-2 text-xs text-slate-400">
-                                                        <div className="w-1 h-1 rounded-full bg-indigo-400" />
-                                                        {feature}
-                                                    </div>
-                                                ))}
-                                            </div>
 
-                                            {/* CTA Button */}
-                                            <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-lg text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25 text-sm">
-                                                Use Tool →
-                                            </button>
-                                        </div>
+                                        {/* CTA Button */}
+                                        <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-lg text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25 text-sm">
+                                            Use Tool →
+                                        </button>
                                     </div>
                                 </div>
-                            ))}
-                        </div>
+                            </div>
+                        ))}
                     </div>
 
                     {/* Coming Soon Section */}
@@ -90,9 +96,9 @@ const ToolsPage: React.FC = () => {
                         <h2 className="text-2xl font-bold text-white mb-8">Coming Soon</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                             {[
-                                { icon: '📊', title: 'Market Research Tool', desc: 'Deep market analysis' },
-                                { icon: '🎯', title: 'Competitor Tracker', desc: 'Monitor competition' },
-                                { icon: '📈', title: 'Growth Metrics', desc: 'Track your progress' }
+                                { icon: '📊', title: 'Social Momentum Tracker', desc: 'Real-time trend momentum analysis' },
+                                { icon: '🎯', title: 'Early Signal Dashboard', desc: 'Spot opportunities before others' },
+                                { icon: '📈', title: 'Market Timing Optimizer', desc: 'Perfect your launch timing' }
                             ].map((item, index) => (
                                 <div key={index} className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 opacity-60">
                                     <div className="text-3xl mb-3">{item.icon}</div>

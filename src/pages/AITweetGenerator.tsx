@@ -138,7 +138,7 @@ export default function AITweetGenerator() {
           {/* Hero Section */}
           <div className="text-center mb-12">
                          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-400 to-cyan-400 bg-clip-text text-transparent">
-               {isTurkish ? 'AI X Üretici' : 'AI X Generator'}
+               {isTurkish ? 'X Content Generator' : 'X Content Generator'}
              </h1>
              <p className="text-xl text-slate-300 max-w-3xl mx-auto">
                {isTurkish 
