@@ -94,6 +94,8 @@ const ShhhhPricingBlock: React.FC = () => {
         Require login for price visibility to boost conversions and build your database. Ideal for fashion, luxury, and
         wholesale.
       </p>
+
+      <p>
         <a
           href="https://apps.shopify.com/shhhh-pricing"
           target="_blank"
@@ -102,7 +104,7 @@ const ShhhhPricingBlock: React.FC = () => {
         >
           Explore on Shopify App Store for Login to See Price ‑ Price Hider
         </a>
-      </div>
+      </p>
     </section>
   );
 };
