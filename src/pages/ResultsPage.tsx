@@ -51,10 +51,10 @@ export default function ResultsPage() {
 
     if (loading || !result) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+            <div className="min-h-screen bg-slate-900 flex items-center justify-center">
                 <div className="text-white text-lg">Loading...</div>
-        </div>
-    );
+            </div>
+        );
     }
 
     const isTR = detectLanguage(result.idea);
@@ -67,242 +67,281 @@ export default function ResultsPage() {
                 description={`Market validation results for "${result.idea}". Score: ${result.demandScore}/100. ${result.scoreJustification}`}
             />
             
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
-                <div className="container mx-auto px-4 py-8 max-w-4xl">
-                    
-                    {/* Header */}
-                    <div className="text-center mb-8">
-                        <div className="inline-flex items-center gap-2 mb-4">
-                            <img src="/logo.png" alt="Validationly" className="w-6 h-6" />
-                            <span className="text-sm text-slate-300">Validationly</span>
+            <div className="min-h-screen bg-slate-900 text-white">
+                {/* Top Header */}
+                <div className="bg-slate-800 border-b border-slate-700 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <span className="text-xl font-semibold">Validationly</span>
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={() => navigate('/')}
+                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+                            >
+                                {isTR ? 'Yeni Analiz' : 'New Analysis'}
+                            </button>
+                        </div>
                     </div>
-                        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-slate-100">
-                            "{result.idea}"
-                        </h1>
-                                            </div>
+                </div>
 
-                    {/* Demand Score */}
+                <div className="container mx-auto px-6 py-8">
+                    {/* Page Title */}
                     <div className="mb-8">
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <div className="text-lg font-semibold text-slate-200">
-                                    {isTR ? 'Talep Skoru' : 'Demand Score'}
-                                </div>
-                                <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium bg-${status.color}-100 text-${status.color}-700 border border-${status.color}-200`}>
-                                    <span>{status.icon}</span>
-                                    {status.text}
-                                </div>
-                            </div>
-                                                        <div className="text-3xl font-bold text-white">
-                                {result.demandScore}
-                            </div>
-                    </div>
-
-                        <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden mb-3">
-                            <div 
-                                className="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-1000 ease-out"
-                                style={{ width: `${Math.max(2, result.demandScore)}%` }}
-                            />
-                            </div>
-
-                        <p className="text-sm text-slate-300 leading-relaxed">
-                            {result.scoreJustification}
+                        <h1 className="text-3xl font-bold text-white mb-2">
+                            {isTR ? 'Proje İstatistikleri' : 'Project Statistics'}
+                        </h1>
+                        <p className="text-slate-400">
+                            "{result.idea}"
                         </p>
                     </div>
 
-                    {/* Signal Summary */}
-                    <div className="mb-8">
-                        <h2 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                            <svg className="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                                            </svg>
-                            {isTR ? 'Sinyal Özeti' : 'Signal Summary'}
-                        </h2>
-                        
-                        <div className="grid gap-4">
-                            {/* Twitter */}
-                            {result.platformAnalyses?.twitter && (
-                                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-                            <div className="flex items-start gap-3">
-                                        <div className="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <XIcon />
+                    {/* Main Dashboard Grid */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        {/* Large Main Card - Validation Score */}
+                        <div className="lg:col-span-2 bg-slate-800 rounded-2xl p-6 border border-slate-700">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-white">Validation Score</h3>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">
+                                        {status.icon} {status.text}
+                                    </span>
                                 </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <h3 className="font-medium text-slate-200">X (Twitter)</h3>
-                                                <div className="flex items-center gap-2">
-                                                                                                        <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">
-                                                        {result.platformAnalyses.twitter.score}/5
-                                                    </span>
-                                        </div>
-                                        </div>
-                                            <div className="w-full h-1.5 bg-slate-700 rounded-full mb-3">
-                                                <div 
-                                                    className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-                                                    style={{ width: `${(result.platformAnalyses.twitter.score / 5) * 100}%` }}
-                                                />
-                                                    </div>
-                                            <p className="text-sm text-slate-300 mb-3">
-                                                {result.platformAnalyses.twitter.summary}
-                                            </p>
-                                            <ul className="space-y-1 text-sm text-slate-300">
-                                                {result.platformAnalyses.twitter.findings?.map((finding, idx) => (
-                                                    <li key={idx} className="flex items-start gap-2">
-                                                        <span className="text-indigo-400 mt-0.5">•</span>
-                                                        <span>{finding}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
+                            </div>
+                            
+                            <div className="text-center mb-6">
+                                <div className="text-6xl font-bold text-white mb-2">
+                                    {result.demandScore}
+                                </div>
+                                <div className="text-slate-400">/ 100</div>
+                            </div>
+
+                            {/* Progress Bar */}
+                            <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden mb-4">
+                                <div 
+                                    className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000 ease-out"
+                                    style={{ width: `${Math.max(2, result.demandScore)}%` }}
+                                />
+                            </div>
+
+                            <p className="text-sm text-slate-300 leading-relaxed">
+                                {result.scoreJustification}
+                            </p>
+                        </div>
+
+                        {/* Small Cards Row 1 */}
+                        <div className="space-y-6">
+                            {/* Bounce Rate Card */}
+                            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl p-4 border border-purple-500/30">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="w-8 h-8 bg-purple-500/30 rounded-lg flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-xs px-2 py-1 bg-purple-500/20 rounded text-purple-300">
+                                        Market Fit
+                                    </span>
+                                </div>
+                                <div className="text-2xl font-bold text-white mb-1">
+                                    {result.demandScore}%
+                                </div>
+                                <div className="text-xs text-slate-300">
+                                    {isTR ? 'Pazar Uyumu' : 'Market Fit Score'}
+                                </div>
+                            </div>
+
+                            {/* Pages per Visit Card */}
+                            <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <div className="text-2xl font-bold text-white mb-1">
+                                    {result.platformAnalyses ? Object.keys(result.platformAnalyses).length : 0}
+                                </div>
+                                <div className="text-xs text-slate-300">
+                                    {isTR ? 'Platform Analizi' : 'Platforms Analyzed'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Platform Analysis Section */}
+                    {result.platformAnalyses && (
+                        <div className="mb-8">
+                            <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                                <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                                </svg>
+                                {isTR ? 'Platform Analizi' : 'Platform Analysis'}
+                            </h2>
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                {/* Twitter */}
+                                {result.platformAnalyses.twitter && (
+                                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                                    <XIcon />
+                                                </div>
+                                                <h3 className="font-semibold text-white">X (Twitter)</h3>
                                             </div>
-                                            </div>
+                                            <span className="text-lg font-bold text-blue-400">
+                                                {result.platformAnalyses.twitter.score}/5
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="w-full h-2 bg-slate-700 rounded-full mb-4">
+                                            <div 
+                                                className="h-2 bg-blue-500 rounded-full transition-all duration-500"
+                                                style={{ width: `${(result.platformAnalyses.twitter.score / 5) * 100}%` }}
+                                            />
+                                        </div>
+                                        
+                                        <p className="text-sm text-slate-300 mb-4">
+                                            {result.platformAnalyses.twitter.summary}
+                                        </p>
                                     </div>
                                 )}
 
                                 {/* Reddit */}
-                            {result.platformAnalyses?.reddit && (
-                                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <RedditIcon />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <h3 className="font-medium text-slate-200">Reddit</h3>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">
-                                                        {result.platformAnalyses.reddit.score}/5
-                                                </span>
-                                        </div>
-                                        </div>
-                                            <div className="w-full h-1.5 bg-slate-700 rounded-full mb-3">
-                                                <div 
-                                                    className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-                                                    style={{ width: `${(result.platformAnalyses.reddit.score / 5) * 100}%` }}
-                                                />
-                                        </div>
-                                            <p className="text-sm text-slate-300 mb-3">
-                                                {result.platformAnalyses.reddit.summary}
-                                            </p>
-                                            <ul className="space-y-1 text-sm text-slate-300">
-                                                {result.platformAnalyses.reddit.findings?.map((finding, idx) => (
-                                                    <li key={idx} className="flex items-start gap-2">
-                                                        <span className="text-indigo-400 mt-0.5">•</span>
-                                                        <span>{finding}</span>
-                                                    </li>
-                                                    ))}
-                                                </ul>
+                                {result.platformAnalyses.reddit && (
+                                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                                    <RedditIcon />
+                                                </div>
+                                                <h3 className="font-semibold text-white">Reddit</h3>
                                             </div>
-                                            </div>
+                                            <span className="text-lg font-bold text-orange-400">
+                                                {result.platformAnalyses.reddit.score}/5
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="w-full h-2 bg-slate-700 rounded-full mb-4">
+                                            <div 
+                                                className="h-2 bg-orange-500 rounded-full transition-all duration-500"
+                                                style={{ width: `${(result.platformAnalyses.reddit.score / 5) * 100}%` }}
+                                            />
+                                        </div>
+                                        
+                                        <p className="text-sm text-slate-300 mb-4">
+                                            {result.platformAnalyses.reddit.summary}
+                                        </p>
                                     </div>
                                 )}
 
                                 {/* LinkedIn */}
-                            {result.platformAnalyses?.linkedin && (
-                                <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center flex-shrink-0">
-                                            <LinkedInIcon />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <h3 className="font-medium text-slate-200">LinkedIn</h3>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">
-                                                        {result.platformAnalyses.linkedin.score}/5
-                                                </span>
-                                        </div>
-                                        </div>
-                                            <div className="w-full h-1.5 bg-slate-700 rounded-full mb-3">
-                                                <div 
-                                                    className="h-full bg-indigo-500 rounded-full transition-all duration-500"
-                                                    style={{ width: `${(result.platformAnalyses.linkedin.score / 5) * 100}%` }}
-                                                />
+                                {result.platformAnalyses.linkedin && (
+                                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                                                    <LinkedInIcon />
+                                                </div>
+                                                <h3 className="font-semibold text-white">LinkedIn</h3>
                                             </div>
-                                            <p className="text-sm text-slate-300 mb-3">
-                                                {result.platformAnalyses.linkedin.summary}
-                                            </p>
-                                            <ul className="space-y-1 text-sm text-slate-300">
-                                                {result.platformAnalyses.linkedin.findings?.map((finding, idx) => (
-                                                    <li key={idx} className="flex items-start gap-2">
-                                                        <span className="text-indigo-400 mt-0.5">•</span>
-                                                        <span>{finding}</span>
-                                                    </li>
-                                                    ))}
-                                                </ul>
-                                            </div>
-                                            </div>
+                                            <span className="text-lg font-bold text-indigo-400">
+                                                {result.platformAnalyses.linkedin.score}/5
+                                            </span>
+                                        </div>
+                                        
+                                        <div className="w-full h-2 bg-slate-700 rounded-full mb-4">
+                                            <div 
+                                                className="h-2 bg-indigo-500 rounded-full transition-all duration-500"
+                                                style={{ width: `${(result.platformAnalyses.linkedin.score / 5) * 100}%` }}
+                                            />
+                                        </div>
+                                        
+                                        <p className="text-sm text-slate-300 mb-4">
+                                            {result.platformAnalyses.linkedin.summary}
+                                        </p>
                                     </div>
-                                            )}
-                                        </div>
-                                        </div>
+                                )}
+                            </div>
+                        </div>
+                    )}
 
-                    {/* Post Suggestions */}
+                    {/* Post Suggestions Section */}
                     <div className="mb-8">
-                        <h2 className="text-lg font-semibold text-slate-200 mb-4 flex items-center gap-2">
-                            <svg className="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
+                        <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                            <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" />
                             </svg>
                             {isTR ? 'Post Önerileri' : 'Post Suggestions'}
                         </h2>
                         
-                        <div className="grid gap-4">
-                            {/* Tweet */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-                                        <div className="flex items-center gap-2 mb-3">
-                                    <XIcon />
-                                    <h3 className="font-medium text-slate-200">X (Twitter)</h3>
-                                        </div>
-                                <div className="bg-slate-900/50 rounded-lg p-3 font-mono text-sm text-slate-300">
-                                    {result.tweetSuggestion}
-                                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Twitter */}
+                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                        <XIcon />
                                     </div>
+                                    <h3 className="font-semibold text-white">X (Twitter)</h3>
+                                </div>
+                                <div className="bg-slate-900/50 rounded-lg p-4 font-mono text-sm text-slate-300 mb-4">
+                                    {result.tweetSuggestion}
+                                </div>
+                                <button className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white text-sm transition-colors">
+                                    {isTR ? 'Kopyala' : 'Copy'}
+                                </button>
+                            </div>
 
                             {/* Reddit */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-                                        <div className="flex items-center gap-2 mb-3">
-                                    <RedditIcon />
-                                    <h3 className="font-medium text-slate-200">Reddit</h3>
-                                        </div>
-                                <div className="space-y-2">
+                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
+                                        <RedditIcon />
+                                    </div>
+                                    <h3 className="font-semibold text-white">Reddit</h3>
+                                </div>
+                                <div className="space-y-3 mb-4">
                                     <div>
                                         <div className="text-xs text-slate-400 mb-1">{isTR ? 'Başlık:' : 'Title:'}</div>
-                                        <div className="bg-slate-900/50 rounded-lg p-2 font-mono text-sm text-slate-300">
+                                        <div className="bg-slate-900/50 rounded-lg p-3 font-mono text-sm text-slate-300">
                                             {result.redditTitleSuggestion}
-                                            </div>
+                                        </div>
                                     </div>
                                     <div>
                                         <div className="text-xs text-slate-400 mb-1">{isTR ? 'İçerik:' : 'Body:'}</div>
                                         <div className="bg-slate-900/50 rounded-lg p-3 font-mono text-sm text-slate-300">
                                             {result.redditBodySuggestion}
                                         </div>
-                                        </div>
-                                            </div>
                                     </div>
+                                </div>
+                                <button className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white text-sm transition-colors">
+                                    {isTR ? 'Kopyala' : 'Copy'}
+                                </button>
+                            </div>
 
                             {/* LinkedIn */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 border border-slate-700">
-                                        <div className="flex items-center gap-2 mb-3">
-                                    <LinkedInIcon />
-                                    <h3 className="font-medium text-slate-200">LinkedIn</h3>
-                                        </div>
-                                <div className="bg-slate-900/50 rounded-lg p-3 font-mono text-sm text-slate-300">
-                                    {result.linkedinSuggestion}
-                                            </div>
+                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                                <div className="flex items-center gap-3 mb-4">
+                                    <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                                        <LinkedInIcon />
                                     </div>
+                                    <h3 className="font-semibold text-white">LinkedIn</h3>
+                                </div>
+                                <div className="bg-slate-900/50 rounded-lg p-4 font-mono text-sm text-slate-300 mb-4">
+                                    {result.linkedinSuggestion}
+                                </div>
+                                <button className="w-full px-4 py-2 bg-indigo-500 hover:bg-indigo-600 rounded-lg text-white text-sm transition-colors">
+                                    {isTR ? 'Kopyala' : 'Copy'}
+                                </button>
                             </div>
                         </div>
-
-                    {/* Back Button */}
-                    <div className="text-center">
-                            <button
-                                onClick={() => navigate('/')}
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 rounded-lg font-medium text-white transition-colors"
-                            >
-                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-                            </svg>
-                            {isTR ? 'Yeni Analiz' : 'New Analysis'}
-                            </button>
                     </div>
                 </div>
             </div>
