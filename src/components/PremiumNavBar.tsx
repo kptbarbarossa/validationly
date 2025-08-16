@@ -190,5 +190,6 @@ const PremiumNavBar: React.FC = () => {
 };
 
 export default PremiumNavBar;
+export { PremiumNavBar };
 
 
