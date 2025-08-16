@@ -10,17 +10,9 @@ const ToolsPage: React.FC = () => {
             id: 'x-generator',
             title: 'X Content Generator',
             description: 'Generate engaging Twitter/X posts for your startup idea with AI-powered content creation.',
-            icon: '🐦',
+            icon: '𝕏',
             route: '/tweet-generator',
             features: ['AI-powered content', '5-tweet series', 'Optimized for engagement', 'Ready to post']
-        },
-        {
-            id: 'validation-analyzer',
-            title: 'Idea Validation',
-            description: 'Get comprehensive market validation for your startup idea across social platforms.',
-            icon: '🔍',
-            route: '/',
-            features: ['Market analysis', 'Platform insights', 'Demand scoring', 'Post suggestions']
         }
     ];
 
@@ -52,43 +44,45 @@ const ToolsPage: React.FC = () => {
                     </div>
 
                     {/* Tools Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                        {tools.map((tool) => (
-                            <div
-                                key={tool.id}
-                                className="group bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer"
-                                onClick={() => navigate(tool.route)}
-                            >
-                                <div className="flex items-start gap-6">
-                                    <div className="text-5xl group-hover:scale-110 transition-transform duration-300">
-                                        {tool.icon}
-                                    </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-cyan-400 transition-all duration-300">
-                                            {tool.title}
-                                        </h3>
-                                        <p className="text-slate-300 mb-6 leading-relaxed">
-                                            {tool.description}
-                                        </p>
-                                        
-                                        {/* Features */}
-                                        <div className="grid grid-cols-2 gap-2 mb-6">
-                                            {tool.features.map((feature, index) => (
-                                                <div key={index} className="flex items-center gap-2 text-sm text-slate-400">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
-                                                    {feature}
-                                                </div>
-                                            ))}
+                    <div className="flex justify-center">
+                        <div className="w-full max-w-md">
+                            {tools.map((tool) => (
+                                <div
+                                    key={tool.id}
+                                    className="group bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                    onClick={() => navigate(tool.route)}
+                                >
+                                    <div className="flex items-start gap-4">
+                                        <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
+                                            {tool.icon}
                                         </div>
+                                        <div className="flex-1">
+                                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-cyan-400 transition-all duration-300">
+                                                {tool.title}
+                                            </h3>
+                                            <p className="text-slate-300 mb-4 leading-relaxed text-sm">
+                                                {tool.description}
+                                            </p>
+                                            
+                                            {/* Features */}
+                                            <div className="grid grid-cols-2 gap-1 mb-4">
+                                                {tool.features.map((feature, index) => (
+                                                    <div key={index} className="flex items-center gap-2 text-xs text-slate-400">
+                                                        <div className="w-1 h-1 rounded-full bg-indigo-400" />
+                                                        {feature}
+                                                    </div>
+                                                ))}
+                                            </div>
 
-                                        {/* CTA Button */}
-                                        <button className="w-full px-6 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-xl text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25">
-                                            Use Tool →
-                                        </button>
+                                            {/* CTA Button */}
+                                            <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-lg text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25 text-sm">
+                                                Use Tool →
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
 
                     {/* Coming Soon Section */}
