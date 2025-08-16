@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import type { DynamicPromptResult } from '../types';
 import SEOHead from '../components/SEOHead';
@@ -39,6 +39,7 @@ export default function ResultsPage() {
     const navigate = useNavigate();
     const [result, setResult] = useState<DynamicPromptResult | null>(null);
     const [loading, setLoading] = useState(true);
+    const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
     useEffect(() => {
         if (location.state?.result) {
@@ -48,6 +49,23 @@ export default function ResultsPage() {
             navigate('/');
         }
     }, [location.state, navigate]);
+
+    async function handleCopyPrompt(promptText: string, index: number) {
+        try {
+            if (navigator?.clipboard?.writeText) {
+                await navigator.clipboard.writeText(promptText);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = promptText;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+            setCopiedIndex(index);
+            setTimeout(() => setCopiedIndex(null), 1500);
+        } catch {}
+    }
 
     if (loading || !result) {
         return (
@@ -59,6 +77,33 @@ export default function ResultsPage() {
 
     const isTR = detectLanguage(result.idea);
     const status = getScoreStatus(result.demandScore, isTR);
+    
+    const prompts: string[] = [
+        isTR 
+            ? `Bu fikrin pazar talebini tek cümlede özetle: ${result.idea}`
+            : `Summarize market demand in one sentence for: ${result.idea}`,
+        isTR 
+            ? `Bu fikir için 3 hedef müşteri segmentini tek cümlede listele`
+            : `List 3 target customer segments in one line`,
+        isTR 
+            ? `Bu fikrin 1 cümlelik değer önerisini yaz`
+            : `Write a one‑sentence value proposition for this idea`,
+        isTR 
+            ? `İlk 30 günde test edilmesi gereken 3 metrik ver`
+            : `Give 3 metrics to validate in the first 30 days`,
+        isTR 
+            ? `En yüksek etkili 3 edinim kanalını tek cümlede öner`
+            : `Suggest 3 high‑impact acquisition channels`,
+        isTR 
+            ? `Bu fikir için 1 cümlelik yatırımcı pitch yaz`
+            : `Write a one‑sentence investor pitch`,
+        isTR 
+            ? `Bu fikirle ilgili 5 X post fikrini tek cümle halinde ver`
+            : `Give 5 one‑line X post ideas about this concept`,
+        isTR 
+            ? `Bu fikrin 3 ana riskini tek cümlede yaz`
+            : `List 3 primary risks in one line`,
+    ];
 
     return (
         <>
@@ -272,6 +317,37 @@ export default function ResultsPage() {
                             </div>
                         </div>
                     )}
+
+                    {/* Prompt Gallery - One-line prompts */}
+                    <div className="mb-8">
+                        <h2 className="text-xl font-semibold text-white mb-6 flex items-center justify-between">
+                            <span className="flex items-center gap-2">
+                                <svg className="w-5 h-5 text-fuchsia-400" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M4 3h12a1 1 0 011 1v9a1 1 0 01-1 1H8l-4 3V4a1 1 0 011-1z" />
+                                </svg>
+                                {isTR ? 'Prompt Galerisi' : 'Prompt Gallery'}
+                            </span>
+                            <span className="text-xs px-2 py-1 rounded bg-slate-700 text-slate-300">
+                                {isTR ? 'Tek cümle' : 'One‑liners'}
+                            </span>
+                        </h2>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {prompts.map((p, idx) => (
+                                <div key={idx} className="bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-start justify-between gap-3">
+                                    <div className="text-slate-300 text-sm leading-relaxed">
+                                        {p}
+                                    </div>
+                                    <button
+                                        onClick={() => handleCopyPrompt(p, idx)}
+                                        className={`flex-shrink-0 px-3 py-2 rounded-md text-xs font-medium transition-colors ${copiedIndex===idx ? 'bg-emerald-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-200'}`}
+                                    >
+                                        {copiedIndex===idx ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
 
                     {/* Post Suggestions Section */}
                     <div className="mb-8">
