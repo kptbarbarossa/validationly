@@ -15,6 +15,14 @@ const ToolsPage: React.FC = () => {
             features: ['Viral trend analysis', 'Startup idea generation', 'Market gap detection', 'Timing optimization']
         },
         {
+            id: 'trend-to-startup',
+            title: 'Trend → Startup Generator',
+            description: 'Transform viral trends into detailed startup opportunities with market analysis and competition assessment.',
+            icon: '🚀',
+            route: '/trend-to-startup',
+            features: ['Detailed startup ideas', 'Market size analysis', 'Competition assessment', 'Revenue models']
+        },
+        {
             id: 'x-generator',
             title: 'X Content Generator',
             description: 'Generate engaging Twitter/X posts for your startup idea with AI-powered content creation.',
@@ -52,7 +60,7 @@ const ToolsPage: React.FC = () => {
                     </div>
 
                     {/* Tools Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
                         {tools.map((tool) => (
                             <div
                                 key={tool.id}

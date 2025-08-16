@@ -162,6 +162,9 @@ const ResultsPage: React.FC = () => {
     const fromTrendHunter = (location.state as any)?.fromTrendHunter as boolean;
     const trendIdea = (location.state as any)?.trendIdea as string;
     const trendDescription = (location.state as any)?.trendDescription as string;
+    const fromTrendToStartup = (location.state as any)?.fromTrendToStartup as boolean;
+    const startupIdea = (location.state as any)?.startupIdea as string;
+    const startupDescription = (location.state as any)?.startupDescription as string;
 
     // Handle trend hunter validation
     useEffect(() => {
@@ -195,14 +198,50 @@ const ResultsPage: React.FC = () => {
             
             return;
         }
-    }, [fromTrendHunter, trendIdea, trendDescription, result, navigate]);
+
+        // Handle trend-to-startup validation
+        if (fromTrendToStartup && startupIdea && !result) {
+            setIsLoading(true);
+            
+            fetch('/api/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    idea: `${startupIdea}: ${startupDescription}`,
+                    fast: true 
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                navigate('/results', { 
+                    state: { result: data },
+                    replace: true 
+                });
+            })
+            .catch(err => {
+                console.error('Startup validation error:', err);
+                navigate('/');
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+            
+            return;
+        }
+    }, [fromTrendHunter, trendIdea, trendDescription, fromTrendToStartup, startupIdea, startupDescription, result, navigate]);
     
     if (isLoading) {
         return (
             <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-                    <p className="text-white text-lg">Trend fikri analiz ediliyor...</p>
+                    <p className="text-white text-lg">
+                        {fromTrendHunter ? 'Trend fikri analiz ediliyor...' : 
+                         fromTrendToStartup ? 'Startup fikri analiz ediliyor...' : 
+                         'Analiz ediliyor...'}
+                    </p>
                 </div>
             </div>
         );

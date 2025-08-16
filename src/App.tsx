@@ -7,6 +7,7 @@ import ResultsPage from './pages/ResultsPage';
 import AITweetGenerator from './pages/AITweetGenerator';
 import ToolsPage from './pages/ToolsPage';
 import TrendHunterPage from './pages/TrendHunterPage';
+import TrendToStartupPage from './pages/TrendToStartupPage';
 
 import FAQPage from './pages/FAQPage';
 import BlogIndexPage from './pages/BlogIndexPage';
@@ -77,6 +78,7 @@ const App: React.FC = () => {
               <Route path="/results" element={<ResultsPage />} />
               <Route path="/tweet-generator" element={<AITweetGenerator />} />
               <Route path="/trend-hunter" element={<TrendHunterPage />} />
+              <Route path="/trend-to-startup" element={<TrendToStartupPage />} />
               <Route path="/tools" element={<ToolsPage />} />
 
               <Route path="/faq" element={<FAQPage />} />
