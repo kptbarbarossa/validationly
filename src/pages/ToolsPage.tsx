@@ -29,6 +29,14 @@ const ToolsPage: React.FC = () => {
             icon: '𝕏',
             route: '/tweet-generator',
             features: ['AI-powered content', '5-tweet series', 'Optimized for engagement', 'Ready to post']
+        },
+        {
+            id: 'market-academy',
+            title: 'Market Signal Academy',
+            description: 'Master trend analysis and market intelligence through comprehensive courses and real case studies.',
+            icon: '🎓',
+            route: '/market-signal-academy',
+            features: ['Expert training', 'Real case studies', 'Practical tools', 'Market intelligence']
         }
     ];
 
@@ -60,7 +68,7 @@ const ToolsPage: React.FC = () => {
                     </div>
 
                     {/* Tools Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {tools.map((tool) => (
                             <div
                                 key={tool.id}
@@ -99,16 +107,16 @@ const ToolsPage: React.FC = () => {
                         ))}
                     </div>
 
-                    {/* Coming Soon Section */}
+                    {/* Features Highlight */}
                     <div className="mt-20 text-center">
-                        <h2 className="text-2xl font-bold text-white mb-8">Coming Soon</h2>
+                        <h2 className="text-2xl font-bold text-white mb-8">Powered by Advanced AI</h2>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
                             {[
-                                { icon: '📊', title: 'Social Momentum Tracker', desc: 'Real-time trend momentum analysis' },
-                                { icon: '🎯', title: 'Early Signal Dashboard', desc: 'Spot opportunities before others' },
-                                { icon: '📈', title: 'Market Timing Optimizer', desc: 'Perfect your launch timing' }
+                                { icon: '🧠', title: 'Market Signal Intelligence', desc: 'AI-powered trend detection and analysis' },
+                                { icon: '⚡', title: 'Early Signal Detection', desc: 'Spot opportunities before competition' },
+                                { icon: '🎯', title: 'Optimal Timing Analysis', desc: 'Perfect your market entry timing' }
                             ].map((item, index) => (
-                                <div key={index} className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 opacity-60">
+                                <div key={index} className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
                                     <div className="text-3xl mb-3">{item.icon}</div>
                                     <h3 className="font-semibold text-white mb-2">{item.title}</h3>
                                     <p className="text-sm text-slate-400">{item.desc}</p>
