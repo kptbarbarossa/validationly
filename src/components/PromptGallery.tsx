@@ -16,6 +16,20 @@ type PromptTemplate = {
 };
 
 const TEMPLATES: PromptTemplate[] = [
+    { id: 'ol-en-1', category: 'Quick', title: 'Demand summary', description: 'One sentence', content: 'Summarize market demand in one sentence for: {idea}', tags: ['one-liner'] },
+    { id: 'ol-en-2', category: 'Quick', title: 'Value proposition', description: 'One sentence', content: 'Write a one‑sentence value proposition for this idea', tags: ['one-liner'] },
+    { id: 'ol-en-3', category: 'Quick', title: 'Target segments', description: 'One sentence', content: 'List 3 target customer segments in one line', tags: ['one-liner'] },
+    { id: 'ol-en-4', category: 'Quick', title: 'First 30‑day metrics', description: 'One sentence', content: 'Give 3 metrics to validate in the first 30 days', tags: ['one-liner'] },
+    { id: 'ol-en-5', category: 'Quick', title: 'Acquisition channels', description: 'One sentence', content: 'Suggest 3 high‑impact acquisition channels', tags: ['one-liner'] },
+    { id: 'ol-en-6', category: 'Quick', title: 'Investor pitch', description: 'One sentence', content: 'Write a one‑sentence investor pitch for this idea', tags: ['one-liner'] },
+    { id: 'ol-en-7', category: 'Quick', title: 'Risks', description: 'One sentence', content: 'List 3 primary risks in one line', tags: ['one-liner'] },
+    { id: 'ol-tr-1', category: 'Hızlı', title: 'Talep özeti', description: 'Tek cümle', content: 'Bu fikrin pazar talebini tek cümlede özetle: {fikir}', tags: ['tek-cumle'] },
+    { id: 'ol-tr-2', category: 'Hızlı', title: 'Değer önerisi', description: 'Tek cümle', content: 'Bu fikrin 1 cümlelik değer önerisini yaz', tags: ['tek-cumle'] },
+    { id: 'ol-tr-3', category: 'Hızlı', title: 'Hedef segmentler', description: 'Tek cümle', content: '3 hedef müşteri segmentini tek cümlede listele', tags: ['tek-cumle'] },
+    { id: 'ol-tr-4', category: 'Hızlı', title: 'İlk 30 gün metrikleri', description: 'Tek cümle', content: 'İlk 30 günde test edilmesi gereken 3 metriği yaz', tags: ['tek-cumle'] },
+    { id: 'ol-tr-5', category: 'Hızlı', title: 'Edinim kanalları', description: 'Tek cümle', content: 'En yüksek etkili 3 edinim kanalını tek cümlede öner', tags: ['tek-cumle'] },
+    { id: 'ol-tr-6', category: 'Hızlı', title: 'Yatırımcı pitch', description: 'Tek cümle', content: 'Bu fikir için 1 cümlelik yatırımcı pitch yaz', tags: ['tek-cumle'] },
+    { id: 'ol-tr-7', category: 'Hızlı', title: 'Riskler', description: 'Tek cümle', content: 'Bu fikrin 3 ana riskini tek cümlede yaz', tags: ['tek-cumle'] },
 	{
 		id: 'saas-b2b-basic',
 		category: 'SaaS & B2B',

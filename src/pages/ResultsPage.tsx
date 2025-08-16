@@ -318,37 +318,6 @@ export default function ResultsPage() {
                         </div>
                     )}
 
-                    {/* Prompt Gallery - One-line prompts */}
-                    <div className="mb-8">
-                        <h2 className="text-xl font-semibold text-white mb-6 flex items-center justify-between">
-                            <span className="flex items-center gap-2">
-                                <svg className="w-5 h-5 text-fuchsia-400" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M4 3h12a1 1 0 011 1v9a1 1 0 01-1 1H8l-4 3V4a1 1 0 011-1z" />
-                                </svg>
-                                {isTR ? 'Prompt Galerisi' : 'Prompt Gallery'}
-                            </span>
-                            <span className="text-xs px-2 py-1 rounded bg-slate-700 text-slate-300">
-                                {isTR ? 'Tek cümle' : 'One‑liners'}
-                            </span>
-                        </h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {prompts.map((p, idx) => (
-                                <div key={idx} className="bg-slate-800 border border-slate-700 rounded-xl p-4 flex items-start justify-between gap-3">
-                                    <div className="text-slate-300 text-sm leading-relaxed">
-                                        {p}
-                                    </div>
-                                    <button
-                                        onClick={() => handleCopyPrompt(p, idx)}
-                                        className={`flex-shrink-0 px-3 py-2 rounded-md text-xs font-medium transition-colors ${copiedIndex===idx ? 'bg-emerald-600 text-white' : 'bg-slate-700 hover:bg-slate-600 text-slate-200'}`}
-                                    >
-                                        {copiedIndex===idx ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
-                                    </button>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
                     {/* Post Suggestions Section */}
                     <div className="mb-8">
                         <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
