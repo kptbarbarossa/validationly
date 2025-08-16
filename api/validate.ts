@@ -1362,6 +1362,49 @@ CRITICAL RULES:
         console.log('✅ Enhanced dynamic prompt analysis completed successfully');
         console.log('📊 Result structure:', Object.keys(result));
         console.log('🎯 Quality score:', result.analysisMetadata?.qualityScore || 'N/A');
+        
+        // Add social momentum analysis if enabled
+        try {
+            if (req.body?.includeMomentum !== false) { // Default to true
+                console.log('🎯 Adding social momentum analysis...');
+                
+                // Call internal momentum analysis
+                const momentumResponse = await fetch(`${req.headers.host ? `https://${req.headers.host}` : 'http://localhost:3000'}/api/social-momentum`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        idea: result.idea,
+                        originalScore: result.demandScore,
+                        language: result.language?.toLowerCase().includes('turkish') ? 'tr' : 'en'
+                    })
+                });
+
+                if (momentumResponse.ok) {
+                    const momentumData = await momentumResponse.json();
+                    
+                    // Enhance result with momentum data
+                    result.socialMomentum = momentumData.analysis;
+                    
+                    // Update demand score if momentum suggests it
+                    if (momentumData.analysis?.enhancedValidationScore && 
+                        Math.abs(momentumData.analysis.enhancedValidationScore - result.demandScore) <= 20) {
+                        result.originalDemandScore = result.demandScore;
+                        result.demandScore = momentumData.analysis.enhancedValidationScore;
+                        result.momentumAdjusted = true;
+                    }
+                    
+                    console.log(`🚀 Momentum analysis added - Score: ${result.demandScore}/100 (${result.momentumAdjusted ? 'adjusted' : 'unchanged'})`);
+                } else {
+                    console.log('⚠️ Momentum analysis failed, continuing without it');
+                }
+            }
+        } catch (momentumError) {
+            console.error('⚠️ Momentum analysis error (non-critical):', momentumError);
+            // Continue without momentum - it's an enhancement, not critical
+        }
+        
         return res.status(200).json(result);
 
     } catch (error) {

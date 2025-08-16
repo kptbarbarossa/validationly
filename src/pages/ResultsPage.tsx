@@ -5,6 +5,8 @@ import { SEOHead } from '../components/SEOHead';
 interface ValidationResult {
     idea: string;
     demandScore: number;
+    originalDemandScore?: number; // Before momentum adjustment
+    momentumAdjusted?: boolean;
     scoreJustification: string;
     tweetSuggestion: string;
     redditTitleSuggestion: string;
@@ -42,6 +44,45 @@ interface ValidationResult {
             summary: string;
             keyFindings?: string[];
         };
+    };
+    socialMomentum?: {
+        momentumScore: number;
+        trendPhase: 'emerging' | 'growing' | 'peak' | 'declining' | 'stagnant';
+        socialSignals: {
+            searchVolume: {
+                trend: 'increasing' | 'stable' | 'decreasing';
+                score: number;
+                keywords: string[];
+            };
+            socialMentions: {
+                platforms: Array<{
+                    name: string;
+                    activity: 'high' | 'medium' | 'low';
+                    sentiment: 'positive' | 'neutral' | 'negative';
+                    score: number;
+                }>;
+                overallScore: number;
+            };
+            competitorGaps: {
+                hasGaps: boolean;
+                opportunities: string[];
+                score: number;
+            };
+        };
+        timingAnalysis: {
+            isEarlyStage: boolean;
+            marketReadiness: number;
+            recommendedAction: 'wait' | 'move_now' | 'too_late';
+            timeWindow: string;
+        };
+        camilloFactors: {
+            realWorldSignals: string[];
+            earlyAdopterBehavior: string[];
+            marketMomentum: number;
+            arbitrageOpportunity: number;
+        };
+        enhancedValidationScore: number;
+        recommendation: string;
     };
 }
 
@@ -258,6 +299,24 @@ const ResultsPage: React.FC = () => {
                                 </div>
                                 
                                 <p className="text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
+                                
+                                {/* Momentum Adjustment Indicator */}
+                                {result.momentumAdjusted && result.originalDemandScore && (
+                                    <div className="mt-4 p-3 bg-indigo-500/20 border border-indigo-500/30 rounded-xl">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <span className="text-indigo-400">🎯</span>
+                                            <span className="text-sm font-medium text-indigo-300">
+                                                {isTR ? 'Sosyal Momentum Ayarlaması' : 'Social Momentum Adjustment'}
+                                            </span>
+                                        </div>
+                                        <p className="text-xs text-indigo-200">
+                                            {isTR ? 
+                                                `Orijinal skor ${result.originalDemandScore} → ${result.demandScore} (sosyal sinyaller temel alınarak)` :
+                                                `Original score ${result.originalDemandScore} → ${result.demandScore} (based on social signals)`
+                                            }
+                                        </p>
+                                    </div>
+                                )}
                             </div>
 
                             {/* Signal Summary */}
@@ -340,6 +399,143 @@ const ResultsPage: React.FC = () => {
                                                 </ul>
                                             </div>
                                         )}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Social Momentum Analysis */}
+                            {result.socialMomentum && (
+                                <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
+                                    <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                                        <span className="text-2xl">🎯</span>
+                                        {isTR ? 'Sosyal Momentum Analizi' : 'Social Momentum Analysis'}
+                                    </h2>
+                                    
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                                        {/* Momentum Score */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-indigo-400">📊</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'Momentum Skoru' : 'Momentum Score'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-2xl font-bold text-indigo-400 mb-1">
+                                                {result.socialMomentum.momentumScore}/100
+                                            </div>
+                                            <div className="w-full bg-slate-700 rounded-full h-2">
+                                                <div 
+                                                    className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
+                                                    style={{ width: `${result.socialMomentum.momentumScore}%` }}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {/* Trend Phase */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-green-400">📈</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'Trend Fazı' : 'Trend Phase'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-lg font-bold text-green-400 capitalize">
+                                                {result.socialMomentum.trendPhase === 'emerging' ? (isTR ? 'Yeni Ortaya Çıkıyor' : 'Emerging') :
+                                                 result.socialMomentum.trendPhase === 'growing' ? (isTR ? 'Büyüyor' : 'Growing') :
+                                                 result.socialMomentum.trendPhase === 'peak' ? (isTR ? 'Zirve' : 'Peak') :
+                                                 result.socialMomentum.trendPhase === 'declining' ? (isTR ? 'Azalıyor' : 'Declining') :
+                                                 (isTR ? 'Durgun' : 'Stagnant')}
+                                            </div>
+                                        </div>
+
+                                        {/* Market Readiness */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-yellow-400">🎯</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'Pazar Hazırlığı' : 'Market Readiness'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-2xl font-bold text-yellow-400 mb-1">
+                                                {result.socialMomentum.timingAnalysis.marketReadiness}%
+                                            </div>
+                                            <div className="text-xs text-slate-400">
+                                                {result.socialMomentum.timingAnalysis.timeWindow}
+                                            </div>
+                                        </div>
+
+                                        {/* Arbitrage Opportunity */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-purple-400">💎</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'Arbitraj Fırsatı' : 'Arbitrage Opportunity'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-2xl font-bold text-purple-400 mb-1">
+                                                {result.socialMomentum.camilloFactors.arbitrageOpportunity}/100
+                                            </div>
+                                            <div className="text-xs text-slate-400">
+                                                {result.socialMomentum.timingAnalysis.recommendedAction === 'move_now' ? 
+                                                    (isTR ? 'Şimdi Hareket Et' : 'Move Now') :
+                                                 result.socialMomentum.timingAnalysis.recommendedAction === 'wait' ?
+                                                    (isTR ? 'Bekle' : 'Wait') :
+                                                    (isTR ? 'Çok Geç' : 'Too Late')
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Camillo Factors */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-blue-400">🔍</span>
+                                                {isTR ? 'Gerçek Dünya Sinyalleri' : 'Real World Signals'}
+                                            </h3>
+                                            <ul className="space-y-2">
+                                                {result.socialMomentum.camilloFactors.realWorldSignals.map((signal, i) => (
+                                                    <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                                                        <span className="text-blue-400 mt-1">•</span>
+                                                        <span>{signal}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-green-400">👥</span>
+                                                {isTR ? 'Erken Kullanıcı Davranışı' : 'Early Adopter Behavior'}
+                                            </h3>
+                                            <ul className="space-y-2">
+                                                {result.socialMomentum.camilloFactors.earlyAdopterBehavior.map((behavior, i) => (
+                                                    <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                                                        <span className="text-green-400 mt-1">•</span>
+                                                        <span>{behavior}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                    {/* Recommendation */}
+                                    <div className="mt-6 p-4 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-xl">
+                                        <h3 className="font-semibold text-white mb-2 flex items-center gap-2">
+                                            <span className="text-indigo-400">💡</span>
+                                            {isTR ? 'Momentum Önerisi' : 'Momentum Recommendation'}
+                                        </h3>
+                                        <p className="text-slate-300 text-sm">
+                                            {result.socialMomentum.recommendation}
+                                        </p>
                                     </div>
                                 </div>
                             )}
