@@ -11,7 +11,7 @@ const XContentGeneratorGuide: React.FC = () => {
                 keywords="X content generator, Twitter generator, startup content, build in public, AI content creation, social media marketing, startup marketing"
             />
             
-            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+            <div className="relative text-white">
                 {/* Decorative Background */}
                 <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
                 <div className="pointer-events-none absolute top-20 -right-20 h-80 w-80 rounded-full bg-blue-400/15 blur-3xl" />

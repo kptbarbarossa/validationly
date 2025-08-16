@@ -198,7 +198,7 @@ const MarketSignalAcademyPage: React.FC = () => {
         description={isTR ? "Trend analizi, market intelligence ve startup validasyon konularında kapsamlı eğitimler. Case study'ler ve pratik örnekler." : "Comprehensive training in trend analysis, market intelligence and startup validation. Case studies and practical examples."}
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div>
 
         
         <div className="relative container mx-auto px-6 py-16">

@@ -107,7 +107,7 @@ export default function AITweetGenerator() {
         description="Generate 5 tweet series for build-in-public content to validate your startup idea"
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
+      <div className="text-white">
         {/* Header */}
         <div className="border-b border-slate-700 bg-slate-900/50 backdrop-blur">
           <div className="container mx-auto px-4 py-4">

@@ -222,7 +222,7 @@ const ResultsPage: React.FC = () => {
             })
             .catch(err => {
                 console.error('Startup validation error:', err);
-                navigate('/');
+            navigate('/');
             })
             .finally(() => {
                 setIsLoading(false);
@@ -234,7 +234,7 @@ const ResultsPage: React.FC = () => {
     
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center">
+            <div className="flex items-center justify-center" style={{minHeight: 'calc(100vh - 120px)'}}>
                 <div className="text-center">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto mb-4"></div>
                     <p className="text-white text-lg">
@@ -246,7 +246,7 @@ const ResultsPage: React.FC = () => {
             </div>
         );
     }
-    
+
     if (!result) {
         navigate('/');
         return null;
@@ -313,33 +313,33 @@ const ResultsPage: React.FC = () => {
                 description={`Market validation results for "${result.idea}". Score: ${result.demandScore}/100. ${result.scoreJustification}`}
             />
             
-            <div className="relative min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white overflow-hidden">
+            <div className="relative text-white overflow-hidden">
                 {/* Decorative Background Shapes */}
                 <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
                 <div className="pointer-events-none absolute top-20 -right-20 h-80 w-80 rounded-full bg-blue-400/15 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl" />
 
-                <div className="relative flex min-h-screen">
+                <div className="relative flex" style={{minHeight: 'calc(100vh - 120px)'}}>
                     {/* Left Sidebar */}
                     <aside className="w-20 flex-shrink-0 flex flex-col items-center py-6 bg-white/5 backdrop-blur border-r border-white/10">
                         <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mb-8">
                             <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                        </div>
+                </div>
                         
                         <nav className="flex flex-col gap-4">
                             <div className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
                                 <svg className="w-5 h-5 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
                                 </svg>
-                            </div>
+                </div>
                             <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center hover:bg-white/10 cursor-pointer transition-colors">
                                 <svg className="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
                                     <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45.75a2.5 2.5 0 00-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clipRule="evenodd"/>
                                 </svg>
-                            </div>
+            </div>
                         </nav>
                     </aside>
 
@@ -349,13 +349,13 @@ const ResultsPage: React.FC = () => {
                         <div className="flex-1 p-8">
                             {/* Header */}
                             <header className="flex items-center justify-between mb-8">
-                                <div>
+                <div>
                                     <h1 className="text-3xl font-bold flex items-center gap-3">
                                         {isTR ? 'Analiz Sonuçları' : 'Analysis Results'} 
                                         <span className="text-2xl">🚀</span>
                                     </h1>
                                     <p className="text-slate-400 mt-1">{isTR ? 'Fikrinizin pazar potansiyeli' : 'Market potential of your idea'}</p>
-                                </div>
+                </div>
                                 <button
                                     onClick={() => navigate('/')}
                                     className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-2xl text-white font-medium transition-colors"
@@ -367,22 +367,22 @@ const ResultsPage: React.FC = () => {
                             {/* Score Card */}
                             <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
                                 <div className="flex items-center justify-between mb-6">
-                                    <div>
+                <div>
                                         <h2 className="text-xl font-semibold text-white mb-2">{isTR ? 'Talep Skoru' : 'Demand Score'}</h2>
                                         <p className="text-slate-400 text-sm">{isTR ? 'Pazardaki potansiyel' : 'Market potential'}</p>
-                                    </div>
+                </div>
                                     <div className="text-right">
                                         <div className="text-4xl font-bold text-white mb-1">{result.demandScore}</div>
                                         <div className="text-slate-400 text-sm">/ 100</div>
-                                    </div>
-                                </div>
+            </div>
+                </div>
                                 
                                 <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
                                     <div 
                                         className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000 ease-out rounded-full" 
                                         style={{ width: `${Math.max(2, progress)}%` }} 
                                     />
-                                </div>
+                </div>
                                 
                                 <p className="text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
                                 
@@ -396,11 +396,11 @@ const ResultsPage: React.FC = () => {
                                                     <span className="text-sm font-medium text-indigo-300">
                                                         {isTR ? 'Sosyal Momentum Ayarlaması' : 'Social Momentum Adjustment'}
                                                     </span>
-                                                </div>
+                </div>
                                                 <p className="text-xs text-indigo-200">
                                                     {isTR ? 'Sosyal sinyaller temel alınarak skor güncellendi' : 'Score updated based on social signals'}
                                                 </p>
-                                            </div>
+                </div>
                                         )}
                                         {result.earlySignalAdjusted && (
                                             <div className="p-3 bg-purple-500/20 border border-purple-500/30 rounded-xl">
@@ -409,21 +409,21 @@ const ResultsPage: React.FC = () => {
                                                     <span className="text-sm font-medium text-purple-300">
                                                         {isTR ? 'Erken Sinyal Bonusu' : 'Early Signal Bonus'}
                                                     </span>
-                                                </div>
+            </div>
                                                 <p className="text-xs text-purple-200">
                                                     {isTR ? 'Optimal zamanlama fırsatı tespit edildi' : 'Optimal timing opportunity detected'}
                                                 </p>
-                                            </div>
+                </div>
                                         )}
                                         <div className="text-xs text-slate-400 text-center">
                                             {isTR ? 
                                                 `Orijinal skor: ${result.originalDemandScore} → Güncel skor: ${result.demandScore}` :
                                                 `Original score: ${result.originalDemandScore} → Current score: ${result.demandScore}`
                                             }
-                                        </div>
-                                    </div>
+                </div>
+                    </div>
                                 )}
-                            </div>
+                </div>
 
                             {/* Signal Summary */}
                             {result.platformAnalyses && (
@@ -434,17 +434,17 @@ const ResultsPage: React.FC = () => {
                                         {/* LinkedIn */}
                                         {(result.platformAnalyses.LinkedIn || result.platformAnalyses.linkedin) && (
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-4">
                                                     <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
                                                         <LinkedInIcon />
-                                                    </div>
-                                                    <div>
+                    </div>
+                    <div>
                                                         <h3 className="font-semibold text-white">LinkedIn</h3>
                                                         <span className="text-blue-300 font-bold">
                                                             {(result.platformAnalyses.LinkedIn || result.platformAnalyses.linkedin)?.score}/5
-                                                        </span>
-                                                    </div>
-                                                </div>
+                        </span>
+                    </div>
+                    </div>
                                                 <ul className="space-y-2 text-sm text-slate-300">
                                                     {getBulletPoints(result.platformAnalyses.LinkedIn || result.platformAnalyses.linkedin).slice(0, 3).map((item, i) => (
                                                         <li key={i} className="flex items-start gap-2">
@@ -453,23 +453,23 @@ const ResultsPage: React.FC = () => {
                                                         </li>
                                                     ))}
                                                 </ul>
-                                            </div>
+                    </div>
                                         )}
 
                                         {/* X (Twitter) */}
                                         {(result.platformAnalyses.X || result.platformAnalyses.twitter) && (
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                                <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-4">
                                                     <div className="w-10 h-10 bg-slate-700/50 rounded-xl flex items-center justify-center">
                                                         <XIcon />
-                                                    </div>
-                                                    <div>
+                </div>
+                <div>
                                                         <h3 className="font-semibold text-white">X (Twitter)</h3>
                                                         <span className="text-slate-300 font-bold">
                                                             {(result.platformAnalyses.X || result.platformAnalyses.twitter)?.score}/5
                                                         </span>
-                                                    </div>
-                                                </div>
+                </div>
+            </div>
                                                 <ul className="space-y-2 text-sm text-slate-300">
                                                     {getBulletPoints(result.platformAnalyses.X || result.platformAnalyses.twitter).slice(0, 3).map((item, i) => (
                                                         <li key={i} className="flex items-start gap-2">
@@ -478,23 +478,23 @@ const ResultsPage: React.FC = () => {
                                                         </li>
                                                     ))}
                                                 </ul>
-                                            </div>
+                </div>
                                         )}
 
                                         {/* Reddit */}
                                         {(result.platformAnalyses.Reddit || result.platformAnalyses.reddit) && (
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                                <div className="flex items-center gap-3 mb-4">
+            <div className="flex items-center gap-3 mb-4">
                                                     <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
                                                         <RedditIcon />
-                                                    </div>
-                                                    <div>
+                </div>
+                <div>
                                                         <h3 className="font-semibold text-white">Reddit</h3>
                                                         <span className="text-orange-300 font-bold">
                                                             {(result.platformAnalyses.Reddit || result.platformAnalyses.reddit)?.score}/5
                                                         </span>
-                                                    </div>
-                                                </div>
+                </div>
+            </div>
                                                 <ul className="space-y-2 text-sm text-slate-300">
                                                     {getBulletPoints(result.platformAnalyses.Reddit || result.platformAnalyses.reddit).slice(0, 3).map((item, i) => (
                                                         <li key={i} className="flex items-start gap-2">
@@ -503,10 +503,10 @@ const ResultsPage: React.FC = () => {
                                                         </li>
                                                     ))}
                                                 </ul>
-                                            </div>
+                </div>
                                         )}
-                                    </div>
-                                </div>
+                </div>
+                </div>
                             )}
 
                             {/* Social Momentum Analysis */}
@@ -523,72 +523,72 @@ const ResultsPage: React.FC = () => {
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-indigo-400">📊</span>
-                                                </div>
+                    </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'Momentum Skoru' : 'Momentum Score'}
                                                 </h3>
-                                            </div>
+                </div>
                                             <div className="text-2xl font-bold text-indigo-400 mb-1">
                                                 {result.socialMomentum.momentumScore}/100
-                                            </div>
+                    </div>
                                             <div className="w-full bg-slate-700 rounded-full h-2">
                                                 <div 
                                                     className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all duration-1000"
                                                     style={{ width: `${result.socialMomentum.momentumScore}%` }}
                                                 />
-                                            </div>
-                                        </div>
+                </div>
+            </div>
 
                                         {/* Trend Phase */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-green-400">📈</span>
-                                                </div>
+                </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'Trend Fazı' : 'Trend Phase'}
                                                 </h3>
-                                            </div>
+                </div>
                                             <div className="text-lg font-bold text-green-400 capitalize">
                                                 {result.socialMomentum.trendPhase === 'emerging' ? (isTR ? 'Yeni Ortaya Çıkıyor' : 'Emerging') :
                                                  result.socialMomentum.trendPhase === 'growing' ? (isTR ? 'Büyüyor' : 'Growing') :
                                                  result.socialMomentum.trendPhase === 'peak' ? (isTR ? 'Zirve' : 'Peak') :
                                                  result.socialMomentum.trendPhase === 'declining' ? (isTR ? 'Azalıyor' : 'Declining') :
                                                  (isTR ? 'Durgun' : 'Stagnant')}
-                                            </div>
-                                        </div>
+            </div>
+                </div>
 
                                         {/* Market Readiness */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-yellow-400">🎯</span>
-                                                </div>
+                </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'Pazar Hazırlığı' : 'Market Readiness'}
                                                 </h3>
-                                            </div>
+                </div>
                                             <div className="text-2xl font-bold text-yellow-400 mb-1">
                                                 {result.socialMomentum.timingAnalysis.marketReadiness}%
-                                            </div>
+                </div>
                                             <div className="text-xs text-slate-400">
                                                 {result.socialMomentum.timingAnalysis.timeWindow}
-                                            </div>
-                                        </div>
+                </div>
+            </div>
 
                                         {/* Market Opportunity */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-purple-400">💎</span>
-                                                </div>
+                    </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'Pazar Fırsatı' : 'Market Opportunity'}
                                                 </h3>
-                                            </div>
+                        </div>
                                             <div className="text-2xl font-bold text-purple-400 mb-1">
                                                 {result.socialMomentum.earlyDetectionFactors.marketOpportunity}/100
-                                            </div>
+                    </div>
                                             <div className="text-xs text-slate-400">
                                                 {result.socialMomentum.timingAnalysis.recommendedAction === 'move_now' ? 
                                                     (isTR ? 'Şimdi Hareket Et' : 'Move Now') :
@@ -596,9 +596,9 @@ const ResultsPage: React.FC = () => {
                                                     (isTR ? 'Bekle' : 'Wait') :
                                                     (isTR ? 'Çok Geç' : 'Too Late')
                                                 }
-                                            </div>
+                </div>
                                         </div>
-                                    </div>
+                </div>
 
                                     {/* Early Detection Factors */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -612,10 +612,10 @@ const ResultsPage: React.FC = () => {
                                                     <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
                                                         <span className="text-blue-400 mt-1">•</span>
                                                         <span>{signal}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
 
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
@@ -627,11 +627,11 @@ const ResultsPage: React.FC = () => {
                                                     <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
                                                         <span className="text-green-400 mt-1">•</span>
                                                         <span>{behavior}</span>
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        </div>
-                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+                        </div>
+                    </div>
 
                                     {/* Recommendation */}
                                     <div className="mt-6 p-4 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-xl">
@@ -642,9 +642,9 @@ const ResultsPage: React.FC = () => {
                                         <p className="text-slate-300 text-sm">
                                             {result.socialMomentum.recommendation}
                                         </p>
-                                    </div>
-                                </div>
-                            )}
+                        </div>
+                    </div>
+                    )}
 
                             {/* Early Signal Mode Analysis */}
                             {result.earlySignal && (
@@ -661,83 +661,83 @@ const ResultsPage: React.FC = () => {
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-purple-400">⚡</span>
-                                                </div>
+                    </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'Sinyal Skoru' : 'Signal Score'}
                                                 </h3>
-                                            </div>
+                    </div>
                                             <div className="text-2xl font-bold text-purple-400 mb-2">
                                                 {result.earlySignal.earlySignalScore}/100
-                                            </div>
+                    </div>
                                             <div className="text-xs text-slate-400 capitalize">
                                                 {result.earlySignal.signalStrength === 'weak' ? (isTR ? 'Zayıf' : 'Weak') :
                                                  result.earlySignal.signalStrength === 'moderate' ? (isTR ? 'Orta' : 'Moderate') :
                                                  result.earlySignal.signalStrength === 'strong' ? (isTR ? 'Güçlü' : 'Strong') :
                                                  (isTR ? 'Olağanüstü' : 'Exceptional')}
-                                            </div>
-                                        </div>
+                        </div>
+                        </div>
 
                                         {/* Market Cycle */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-blue-400">📊</span>
-                                                </div>
+                                        </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'Pazar Döngüsü' : 'Market Cycle'}
                                                 </h3>
-                                            </div>
+                                    </div>
                                             <div className="text-lg font-bold text-blue-400 capitalize">
                                                 {result.earlySignal.timingIntelligence.marketCycle === 'pre-trend' ? (isTR ? 'Trend Öncesi' : 'Pre-trend') :
                                                  result.earlySignal.timingIntelligence.marketCycle === 'early-trend' ? (isTR ? 'Erken Trend' : 'Early-trend') :
                                                  result.earlySignal.timingIntelligence.marketCycle === 'mid-trend' ? (isTR ? 'Orta Trend' : 'Mid-trend') :
                                                  result.earlySignal.timingIntelligence.marketCycle === 'late-trend' ? (isTR ? 'Geç Trend' : 'Late-trend') :
                                                  (isTR ? 'Trend Sonrası' : 'Post-trend')}
-                                            </div>
+                                    </div>
                                             <div className="text-xs text-slate-400">
                                                 {result.earlySignal.timingIntelligence.optimalEntryWindow}
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
 
                                         {/* First Mover Advantage */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-green-400">🚀</span>
-                                                </div>
+                                        </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'İlk Hareket Avantajı' : 'First Mover Advantage'}
                                                 </h3>
-                                            </div>
+                                    </div>
                                             <div className="text-2xl font-bold text-green-400 mb-1">
                                                 {result.earlySignal.timingIntelligence.firstMoverAdvantage}%
-                                            </div>
+                                    </div>
                                             <div className="text-xs text-slate-400">
                                                 {result.earlySignal.timingIntelligence.windowOfOpportunity}
-                                            </div>
-                                        </div>
+                                </div>
+                            </div>
 
                                         {/* Confidence Level */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-yellow-400">🎯</span>
-                                                </div>
+                                        </div>
                                                 <h3 className="font-semibold text-white text-sm">
                                                     {isTR ? 'Güven Seviyesi' : 'Confidence Level'}
                                                 </h3>
-                                            </div>
+                                    </div>
                                             <div className="text-2xl font-bold text-yellow-400 mb-1">
                                                 {result.earlySignal.confidence}%
-                                            </div>
+                                </div>
                                             <div className="text-xs text-slate-400 capitalize">
                                                 {result.earlySignal.timingIntelligence.competitorAwareness === 'none' ? (isTR ? 'Rakip Yok' : 'No Competition') :
                                                  result.earlySignal.timingIntelligence.competitorAwareness === 'minimal' ? (isTR ? 'Az Rakip' : 'Minimal Competition') :
                                                  result.earlySignal.timingIntelligence.competitorAwareness === 'emerging' ? (isTR ? 'Yeni Rakipler' : 'Emerging Competition') :
                                                  (isTR ? 'Yoğun Rekabet' : 'High Competition')}
-                                            </div>
-                                        </div>
-                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
                                     {/* Signal Sources & Action Plan */}
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -760,15 +760,15 @@ const ResultsPage: React.FC = () => {
                                                             <div className="flex-1">
                                                                 <div className="text-sm font-medium text-white">{indicator.source}</div>
                                                                 <div className="text-xs text-slate-300">{indicator.signal}</div>
-                                                            </div>
+                                </div>
                                                             <div className="text-right ml-4">
                                                                 <div className="text-sm font-bold text-green-400">{indicator.strength}%</div>
                                                                 <div className="text-xs text-slate-400 capitalize">{indicator.reliability}</div>
-                                                            </div>
-                                                        </div>
+                                </div>
+                            </div>
                                                     ))}
-                                                </div>
-                                            </div>
+                        </div>
+                    </div>
 
                                             {/* Market Gaps */}
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
@@ -781,16 +781,16 @@ const ResultsPage: React.FC = () => {
                                                         <div key={i} className="flex justify-between items-start">
                                                             <div className="flex-1">
                                                                 <div className="text-sm text-slate-300">{gap.gap}</div>
-                                                            </div>
+                            </div>
                                                             <div className="text-right ml-4">
                                                                 <div className="text-xs text-orange-400 capitalize">{gap.size}</div>
                                                                 <div className="text-xs text-slate-400 capitalize">{gap.accessibility}</div>
-                                                            </div>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
                                         </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            </div>
+                                    </div>
 
                                         {/* Action Plan */}
                                         <div className="space-y-6">
@@ -813,7 +813,7 @@ const ResultsPage: React.FC = () => {
                                                         </li>
                                                     ))}
                                                 </ul>
-                                            </div>
+                                        </div>
 
                                             {/* Short Term Goals */}
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
@@ -841,18 +841,18 @@ const ResultsPage: React.FC = () => {
                                                     <div className="flex justify-between">
                                                         <span className="text-sm text-slate-300">{isTR ? 'Zamanlama Riski' : 'Timing Risk'}</span>
                                                         <span className="text-sm font-bold text-orange-400">{result.earlySignal.riskFactors.timingRisk}%</span>
-                                                    </div>
+                                            </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-sm text-slate-300">{isTR ? 'Rekabet Riski' : 'Competition Risk'}</span>
                                                         <span className="text-sm font-bold text-orange-400">{result.earlySignal.riskFactors.competitionRisk}%</span>
-                                                    </div>
+                                    </div>
                                                     <div className="flex justify-between">
                                                         <span className="text-sm text-slate-300">{isTR ? 'Pazar Kabul Riski' : 'Market Acceptance Risk'}</span>
                                                         <span className="text-sm font-bold text-orange-400">{result.earlySignal.riskFactors.marketAcceptanceRisk}%</span>
-                                                    </div>
-                                                </div>
-                                            </div>
                                         </div>
+                                        </div>
+                                            </div>
+                                    </div>
                                     </div>
 
                                     {/* Recommendation */}
@@ -867,9 +867,9 @@ const ResultsPage: React.FC = () => {
                                         <div className="text-xs text-slate-400">
                                             <strong>{isTR ? 'Uzun Vadeli Strateji:' : 'Long Term Strategy:'}</strong> {result.earlySignal.actionPlan.longTermStrategy}
                                         </div>
-                                    </div>
-                                </div>
-                            )}
+                                        </div>
+                                            </div>
+                                        )}
 
                             {/* Post Suggestions */}
                             <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
@@ -888,32 +888,32 @@ const ResultsPage: React.FC = () => {
                                                 <XIcon />
                                             </div>
                                             <h3 className="font-semibold text-white">X (Twitter)</h3>
-                                        </div>
+                                    </div>
                                         <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px]">
                                             {result.tweetSuggestion}
                                         </div>
                                         <div className="flex gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => postToTwitter(result.tweetSuggestion)} 
                                                 className="flex-1 px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-xl text-white text-sm font-medium transition-colors"
                                             >
                                                 {isTR ? 'Post' : 'Post'}
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => copyText(result.tweetSuggestion, 0)} 
                                                 className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===0 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
                                             >
                                                 {copiedIndex===0 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
                                             </button>
                                         </div>
-                                    </div>
+                                            </div>
 
                                     {/* Reddit */}
                                     <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                         <div className="flex items-center gap-3 mb-4">
                                             <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
                                                 <RedditIcon />
-                                            </div>
+                                        </div>
                                             <h3 className="font-semibold text-white">Reddit</h3>
                                         </div>
                                         <div className="space-y-3 mb-4">
@@ -921,60 +921,60 @@ const ResultsPage: React.FC = () => {
                                                 <div className="text-xs text-slate-400 mb-2">{isTR ? 'Başlık:' : 'Title:'}</div>
                                                 <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300">
                                                     {result.redditTitleSuggestion}
-                                                </div>
                                             </div>
+                                    </div>
                                             <div>
                                                 <div className="text-xs text-slate-400 mb-2">{isTR ? 'İçerik:' : 'Body:'}</div>
                                                 <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300 max-h-20 overflow-y-auto">
                                                     {result.redditBodySuggestion}
-                                                </div>
+                                        </div>
                                             </div>
                                         </div>
                                         <div className="flex gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => postToReddit(result.redditTitleSuggestion, result.redditBodySuggestion)} 
                                                 className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-xl text-white text-sm font-medium transition-colors"
                                             >
                                                 {isTR ? 'Post' : 'Post'}
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => copyText(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 1)} 
                                                 className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===1 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
                                             >
                                                 {copiedIndex===1 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
                                             </button>
                                         </div>
-                                    </div>
+                                            </div>
 
                                     {/* LinkedIn */}
                                     <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                         <div className="flex items-center gap-3 mb-4">
                                             <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                                                 <LinkedInIcon />
-                                            </div>
+                                        </div>
                                             <h3 className="font-semibold text-white">LinkedIn</h3>
                                         </div>
                                         <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px] overflow-y-auto">
                                             {result.linkedinSuggestion}
                                         </div>
                                         <div className="flex gap-2">
-                                            <button 
+                                            <button
                                                 onClick={() => postToLinkedIn(result.linkedinSuggestion)} 
                                                 className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-white text-sm font-medium transition-colors"
                                             >
                                                 {isTR ? 'Post' : 'Post'}
                                             </button>
-                                            <button 
+                                            <button
                                                 onClick={() => copyText(result.linkedinSuggestion, 2)} 
                                                 className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===2 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
                                             >
                                                 {copiedIndex===2 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
                                             </button>
                                         </div>
+                                            </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
+                                        </div>
+                                        </div>
 
                         {/* Right Sidebar */}
                         <aside className="w-80 p-8 bg-white/5 backdrop-blur border-l border-white/10">
@@ -986,16 +986,16 @@ const ResultsPage: React.FC = () => {
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-400 text-sm">{isTR ? 'Analiz Süresi' : 'Analysis Time'}</span>
                                             <span className="text-white font-medium">~30s</span>
-                                        </div>
+                                            </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-400 text-sm">{isTR ? 'Platform Sayısı' : 'Platforms'}</span>
                                             <span className="text-white font-medium">3</span>
-                                        </div>
+                                    </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-400 text-sm">{isTR ? 'Güvenilirlik' : 'Confidence'}</span>
                                             <span className="text-green-400 font-medium">{status.text}</span>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
                                 </div>
 
                                 {/* Action Items */}
@@ -1013,8 +1013,8 @@ const ResultsPage: React.FC = () => {
                                         <button className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10">
                                             <div className="text-sm font-medium text-white">{isTR ? 'Sosyal Medyada Test' : 'Social Media Test'}</div>
                                             <div className="text-xs text-slate-400 mt-1">{isTR ? 'Postları paylaş ve geri bildirim al' : 'Share posts and get feedback'}</div>
-                                        </button>
-                                    </div>
+                            </button>
+                    </div>
                                 </div>
                             </div>
                         </aside>

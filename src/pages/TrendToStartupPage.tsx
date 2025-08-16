@@ -131,7 +131,7 @@ const TrendToStartupPage: React.FC = () => {
         description={isTR ? "Viral trendleri analiz edin ve bunlardan karlı startup fikirleri üretin. AI destekli pazar analizi ve rekabet değerlendirmesi." : "Analyze viral trends and generate profitable startup ideas. AI-powered market analysis and competition assessment."}
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div>
 
         
         <div className="relative container mx-auto px-6 py-16">

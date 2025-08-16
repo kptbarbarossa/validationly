@@ -107,7 +107,7 @@ const TrendHunterPage: React.FC = () => {
         description={isTR ? "Viral trendleri analiz edin ve bunlardan startup fikirleri üretin. Sosyal momentum ve pazar boşluklarını keşfedin." : "Analyze viral trends and generate startup ideas from them. Discover social momentum and market gaps."}
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div>
         
         <div className="relative container mx-auto px-6 py-16">
           {/* Header */}

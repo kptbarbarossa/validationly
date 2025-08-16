@@ -48,7 +48,7 @@ const ToolsPage: React.FC = () => {
                 keywords="startup tools, content generator, twitter generator, idea validation, AI tools, market analysis"
             />
             
-            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white overflow-hidden">
+            <div className="relative text-white overflow-hidden">
                 {/* Decorative Background Shapes */}
                 <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
                 <div className="pointer-events-none absolute top-20 -right-20 h-80 w-80 rounded-full bg-blue-400/15 blur-3xl" />
