@@ -69,7 +69,7 @@ const ResultsPage: React.FC = () => {
     const [progress, setProgress] = useState(0);
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
     
-    const result = location.state as ValidationResult;
+    const result = (location.state as any)?.result as ValidationResult;
     
     if (!result) {
         navigate('/');

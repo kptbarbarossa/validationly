@@ -6,7 +6,7 @@ const faqJsonLd = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'What does Shhhh Pricing do?',
+      name: 'What does Login to See Price do?',
       acceptedAnswer: {
         '@type': 'Answer',
         text:
@@ -63,13 +63,13 @@ const ShhhhPricingBlock: React.FC = () => {
     <section className="mt-16 glass glass-border rounded-3xl p-8 text-left">
       <div className="flex items-center gap-3 mb-3">
         <img src="/logo-b2b.png" alt="B2B" className="w-6 h-6 rounded" />
-        <span className="text-sm text-slate-300">Shhhh Pricing ‑ Price Hider - B2B</span>
+        <span className="text-sm text-slate-300">Login to See Price ‑ Price Hider - B2B</span>
       </div>
       <h2 className="text-2xl font-bold text-white mb-4">
         Hide Prices from Guests, Drive More Account Signups
       </h2>
       <p className="text-slate-300 mb-4">
-        With Shhhh Pricing – Price Hider, hide product prices and the “Add to Cart” action from visitors who aren’t
+        With Login to See Price – Price Hider, hide product prices and the “Add to Cart” action from visitors who aren’t
         logged in. Create urgency and exclusivity that nudges visitors to create an account, grow your email list
         organically, and meet B2B pricing requirements with ease.
       </p>
@@ -94,18 +94,13 @@ const ShhhhPricingBlock: React.FC = () => {
         Require login for price visibility to boost conversions and build your database. Ideal for fashion, luxury, and
         wholesale.
       </p>
-
-      <div className="flex items-center justify-between">
-        <div className="text-2xl font-bold text-white">
-          Login to See Price
-        </div>
         <a
           href="https://apps.shopify.com/shhhh-pricing"
           target="_blank"
           rel="nofollow noopener"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
         >
-          Explore on Shopify App Store
+          Explore on Shopify App Store for Login to See Price ‑ Price Hider
         </a>
       </div>
     </section>
