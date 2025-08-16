@@ -40,6 +40,7 @@ export default function ResultsPage() {
     const [result, setResult] = useState<DynamicPromptResult | null>(null);
     const [loading, setLoading] = useState(true);
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+    const [progress, setProgress] = useState<number>(0);
 
     useEffect(() => {
         if (location.state?.result) {
@@ -103,6 +104,12 @@ export default function ResultsPage() {
     const isTR = detectLanguage(result.idea);
     const status = getScoreStatus(result.demandScore, isTR);
     
+    // animate score bar
+    useEffect(() => {
+        const timer = setTimeout(() => setProgress(result.demandScore || 0), 100);
+        return () => clearTimeout(timer);
+    }, [result.demandScore]);
+
     // no local prompts here; Prompt Gallery lives on HomePage
 
     return (
@@ -153,7 +160,7 @@ export default function ResultsPage() {
                             <div className="text-slate-400">/ 100</div>
                         </div>
                         <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500" style={{ width: `${Math.max(2, result.demandScore)}%` }} />
+                            <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000 ease-out" style={{ width: `${Math.max(2, progress)}%` }} />
                         </div>
                         <p className="mt-4 text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
                     </div>
@@ -162,7 +169,21 @@ export default function ResultsPage() {
                     {result.platformAnalyses && (
                         <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-8">
                             <h2 className="text-xl font-semibold text-white mb-6">{isTR ? 'Sinyal Özeti' : 'Signal Summary'}</h2>
-                            {/* Twitter */}
+                            {/* LinkedIn first */}
+                            {result.platformAnalyses.linkedin && (
+                                <div className="mb-6 last:mb-0">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <div className="flex items-center gap-2 text-white"><LinkedInIcon /> LinkedIn</div>
+                                        <span className="text-sm text-indigo-400 font-semibold">{result.platformAnalyses.linkedin.score}/5</span>
+                                    </div>
+                                    <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
+                                        {getBulletPoints(result.platformAnalyses.linkedin).map((item, i) => (
+                                            <li key={i}>{item}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                            {/* X (Twitter) */}
                             {result.platformAnalyses.twitter && (
                                 <div className="mb-6 last:mb-0">
                                     <div className="flex items-center justify-between mb-2">
@@ -178,27 +199,13 @@ export default function ResultsPage() {
                             )}
                             {/* Reddit */}
                             {result.platformAnalyses.reddit && (
-                                <div className="mb-6 last:mb-0">
+                                <div className="mb-0">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2 text-white"><RedditIcon /> Reddit</div>
                                         <span className="text-sm text-orange-400 font-semibold">{result.platformAnalyses.reddit.score}/5</span>
                                     </div>
                                     <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
                                         {getBulletPoints(result.platformAnalyses.reddit).map((item, i) => (
-                                            <li key={i}>{item}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            )}
-                            {/* LinkedIn */}
-                            {result.platformAnalyses.linkedin && (
-                                <div className="mb-0">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center gap-2 text-white"><LinkedInIcon /> LinkedIn</div>
-                                        <span className="text-sm text-indigo-400 font-semibold">{result.platformAnalyses.linkedin.score}/5</span>
-                                    </div>
-                                    <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
-                                        {getBulletPoints(result.platformAnalyses.linkedin).map((item, i) => (
                                             <li key={i}>{item}</li>
                                         ))}
                                     </ul>
