@@ -50,21 +50,46 @@ export default function ResultsPage() {
         }
     }, [location.state, navigate]);
 
-    async function handleCopyPrompt(promptText: string, index: number) {
+    function getBulletPoints(input?: { keyFindings?: string[]; findings?: string[]; summary?: string }) {
+        if (!input) return [] as string[];
+        if (Array.isArray((input as any).keyFindings) && (input as any).keyFindings.length > 0) return (input as any).keyFindings as string[];
+        if (Array.isArray((input as any).findings) && (input as any).findings.length > 0) return (input as any).findings as string[];
+        if ((input as any).summary) {
+            const parts = ((input as any).summary as string)
+                .split(/[.;]\s+/)
+                .map(s => s.trim())
+                .filter(Boolean);
+            return parts.slice(0, 5);
+        }
+        return [] as string[];
+    }
+
+    async function copyText(text: string, index: number) {
         try {
-            if (navigator?.clipboard?.writeText) {
-                await navigator.clipboard.writeText(promptText);
-            } else {
-                const textarea = document.createElement('textarea');
-                textarea.value = promptText;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textarea);
-            }
+            await navigator.clipboard.writeText(text);
             setCopiedIndex(index);
-            setTimeout(() => setCopiedIndex(null), 1500);
+            setTimeout(() => setCopiedIndex(null), 1200);
         } catch {}
+    }
+
+    function openInNewTab(url: string) {
+        try { window.open(url, '_blank', 'noopener,noreferrer'); } catch {}
+    }
+
+    function postToTwitter(text: string) {
+        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
+        openInNewTab(url);
+    }
+
+    function postToReddit(title: string, body: string) {
+        const url = `https://www.reddit.com/submit?title=${encodeURIComponent(title)}&text=${encodeURIComponent(body)}`;
+        openInNewTab(url);
+    }
+
+    async function postToLinkedIn(text: string) {
+        // LinkedIn does not allow prefilled text reliably; copy and open composer
+        await navigator.clipboard.writeText(text);
+        openInNewTab('https://www.linkedin.com/feed/?shareActive=true');
     }
 
     if (loading || !result) {
@@ -78,32 +103,7 @@ export default function ResultsPage() {
     const isTR = detectLanguage(result.idea);
     const status = getScoreStatus(result.demandScore, isTR);
     
-    const prompts: string[] = [
-        isTR 
-            ? `Bu fikrin pazar talebini tek cümlede özetle: ${result.idea}`
-            : `Summarize market demand in one sentence for: ${result.idea}`,
-        isTR 
-            ? `Bu fikir için 3 hedef müşteri segmentini tek cümlede listele`
-            : `List 3 target customer segments in one line`,
-        isTR 
-            ? `Bu fikrin 1 cümlelik değer önerisini yaz`
-            : `Write a one‑sentence value proposition for this idea`,
-        isTR 
-            ? `İlk 30 günde test edilmesi gereken 3 metrik ver`
-            : `Give 3 metrics to validate in the first 30 days`,
-        isTR 
-            ? `En yüksek etkili 3 edinim kanalını tek cümlede öner`
-            : `Suggest 3 high‑impact acquisition channels`,
-        isTR 
-            ? `Bu fikir için 1 cümlelik yatırımcı pitch yaz`
-            : `Write a one‑sentence investor pitch`,
-        isTR 
-            ? `Bu fikirle ilgili 5 X post fikrini tek cümle halinde ver`
-            : `Give 5 one‑line X post ideas about this concept`,
-        isTR 
-            ? `Bu fikrin 3 ana riskini tek cümlede yaz`
-            : `List 3 primary risks in one line`,
-    ];
+    // no local prompts here; Prompt Gallery lives on HomePage
 
     return (
         <>
@@ -136,182 +136,73 @@ export default function ResultsPage() {
                 </div>
 
                 <div className="container mx-auto px-6 py-8">
-                    {/* Page Title */}
-                    <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-white mb-2">
-                            {isTR ? 'Proje İstatistikleri' : 'Project Statistics'}
-                        </h1>
-                        <p className="text-slate-400">
-                            "{result.idea}"
-                        </p>
+                    {/* Title */}
+                    <div className="mb-6">
+                        <h1 className="text-3xl font-bold text-white mb-1">{result.idea}</h1>
+                        <div className="text-slate-400 text-sm">{isTR ? 'Validasyon Özeti' : 'Validation Summary'}</div>
                     </div>
 
-                    {/* Main Dashboard Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                        {/* Large Main Card - Validation Score */}
-                        <div className="lg:col-span-2 bg-slate-800 rounded-2xl p-6 border border-slate-700">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-semibold text-white">Validation Score</h3>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">
-                                        {status.icon} {status.text}
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <div className="text-center mb-6">
-                                <div className="text-6xl font-bold text-white mb-2">
-                                    {result.demandScore}
-                                </div>
-                                <div className="text-slate-400">/ 100</div>
-                            </div>
-
-                            {/* Progress Bar */}
-                            <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden mb-4">
-                                <div 
-                                    className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000 ease-out"
-                                    style={{ width: `${Math.max(2, result.demandScore)}%` }}
-                                />
-                            </div>
-
-                            <p className="text-sm text-slate-300 leading-relaxed">
-                                {result.scoreJustification}
-                            </p>
+                    {/* Score Bar */}
+                    <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-8">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-semibold text-white">{isTR ? 'Talep Skoru' : 'Demand Score'}</h3>
+                            <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">{status.icon} {status.text}</span>
                         </div>
-
-                        {/* Small Cards Row 1 */}
-                        <div className="space-y-6">
-                            {/* Bounce Rate Card */}
-                            <div className="bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-xl p-4 border border-purple-500/30">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 bg-purple-500/30 rounded-lg flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
-                                        </svg>
-                                    </div>
-                                    <span className="text-xs px-2 py-1 bg-purple-500/20 rounded text-purple-300">
-                                        Market Fit
-                                    </span>
-                                </div>
-                                <div className="text-2xl font-bold text-white mb-1">
-                                    {result.demandScore}%
-                                </div>
-                                <div className="text-xs text-slate-300">
-                                    {isTR ? 'Pazar Uyumu' : 'Market Fit Score'}
-                                </div>
-                            </div>
-
-                            {/* Pages per Visit Card */}
-                            <div className="bg-slate-800 rounded-xl p-4 border border-slate-700">
-                                <div className="flex items-center justify-between mb-2">
-                                    <div className="w-8 h-8 bg-slate-700 rounded-lg flex items-center justify-center">
-                                        <svg className="w-4 h-4 text-slate-300" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" />
-                                        </svg>
-                                    </div>
-                                </div>
-                                <div className="text-2xl font-bold text-white mb-1">
-                                    {result.platformAnalyses ? Object.keys(result.platformAnalyses).length : 0}
-                                </div>
-                                <div className="text-xs text-slate-300">
-                                    {isTR ? 'Platform Analizi' : 'Platforms Analyzed'}
-                                </div>
-                            </div>
+                        <div className="flex items-end gap-4 mb-4">
+                            <div className="text-5xl font-bold text-white">{result.demandScore}</div>
+                            <div className="text-slate-400">/ 100</div>
                         </div>
+                        <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500" style={{ width: `${Math.max(2, result.demandScore)}%` }} />
+                        </div>
+                        <p className="mt-4 text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
                     </div>
 
-                    {/* Platform Analysis Section */}
+                    {/* Signal Summary */}
                     {result.platformAnalyses && (
-                        <div className="mb-8">
-                            <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
-                                <svg className="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
-                                </svg>
-                                {isTR ? 'Platform Analizi' : 'Platform Analysis'}
-                            </h2>
-                            
+                        <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-8">
+                            <h2 className="text-xl font-semibold text-white mb-6">{isTR ? 'Sinyal Özeti' : 'Signal Summary'}</h2>
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                 {/* Twitter */}
                                 {result.platformAnalyses.twitter && (
-                                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                                    <XIcon />
-                                                </div>
-                                                <h3 className="font-semibold text-white">X (Twitter)</h3>
-                                            </div>
-                                            <span className="text-lg font-bold text-blue-400">
-                                                {result.platformAnalyses.twitter.score}/5
-                                            </span>
+                                    <div className="bg-slate-900/40 rounded-xl p-5 border border-slate-700">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2 text-white"><XIcon /> X (Twitter)</div>
+                                            <span className="text-sm text-blue-400 font-semibold">{result.platformAnalyses.twitter.score}/5</span>
                                         </div>
-                                        
-                                        <div className="w-full h-2 bg-slate-700 rounded-full mb-4">
-                                            <div 
-                                                className="h-2 bg-blue-500 rounded-full transition-all duration-500"
-                                                style={{ width: `${(result.platformAnalyses.twitter.score / 5) * 100}%` }}
-                                            />
-                                        </div>
-                                        
-                                        <p className="text-sm text-slate-300 mb-4">
-                                            {result.platformAnalyses.twitter.summary}
-                                        </p>
+                                        <ul className="space-y-2 text-sm text-slate-300 list-disc list-inside">
+                                            {getBulletPoints(result.platformAnalyses.twitter).map((item, i) => (
+                                                <li key={i}>{item}</li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 )}
-
                                 {/* Reddit */}
                                 {result.platformAnalyses.reddit && (
-                                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                                                    <RedditIcon />
-                                                </div>
-                                                <h3 className="font-semibold text-white">Reddit</h3>
-                                            </div>
-                                            <span className="text-lg font-bold text-orange-400">
-                                                {result.platformAnalyses.reddit.score}/5
-                                            </span>
+                                    <div className="bg-slate-900/40 rounded-xl p-5 border border-slate-700">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2 text-white"><RedditIcon /> Reddit</div>
+                                            <span className="text-sm text-orange-400 font-semibold">{result.platformAnalyses.reddit.score}/5</span>
                                         </div>
-                                        
-                                        <div className="w-full h-2 bg-slate-700 rounded-full mb-4">
-                                            <div 
-                                                className="h-2 bg-orange-500 rounded-full transition-all duration-500"
-                                                style={{ width: `${(result.platformAnalyses.reddit.score / 5) * 100}%` }}
-                                            />
-                                        </div>
-                                        
-                                        <p className="text-sm text-slate-300 mb-4">
-                                            {result.platformAnalyses.reddit.summary}
-                                        </p>
+                                        <ul className="space-y-2 text-sm text-slate-300 list-disc list-inside">
+                                            {getBulletPoints(result.platformAnalyses.reddit).map((item, i) => (
+                                                <li key={i}>{item}</li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 )}
-
                                 {/* LinkedIn */}
                                 {result.platformAnalyses.linkedin && (
-                                    <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 bg-indigo-500/20 rounded-lg flex items-center justify-center">
-                                                    <LinkedInIcon />
-                                                </div>
-                                                <h3 className="font-semibold text-white">LinkedIn</h3>
-                                            </div>
-                                            <span className="text-lg font-bold text-indigo-400">
-                                                {result.platformAnalyses.linkedin.score}/5
-                                            </span>
+                                    <div className="bg-slate-900/40 rounded-xl p-5 border border-slate-700">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div className="flex items-center gap-2 text-white"><LinkedInIcon /> LinkedIn</div>
+                                            <span className="text-sm text-indigo-400 font-semibold">{result.platformAnalyses.linkedin.score}/5</span>
                                         </div>
-                                        
-                                        <div className="w-full h-2 bg-slate-700 rounded-full mb-4">
-                                            <div 
-                                                className="h-2 bg-indigo-500 rounded-full transition-all duration-500"
-                                                style={{ width: `${(result.platformAnalyses.linkedin.score / 5) * 100}%` }}
-                                            />
-                                        </div>
-                                        
-                                        <p className="text-sm text-slate-300 mb-4">
-                                            {result.platformAnalyses.linkedin.summary}
-                                        </p>
+                                        <ul className="space-y-2 text-sm text-slate-300 list-disc list-inside">
+                                            {getBulletPoints(result.platformAnalyses.linkedin).map((item, i) => (
+                                                <li key={i}>{item}</li>
+                                            ))}
+                                        </ul>
                                     </div>
                                 )}
                             </div>
@@ -339,9 +230,10 @@ export default function ResultsPage() {
                                 <div className="bg-slate-900/50 rounded-lg p-4 font-mono text-sm text-slate-300 mb-4">
                                     {result.tweetSuggestion}
                                 </div>
-                                <button className="w-full px-4 py-2 bg-blue-500 hover:bg-blue-600 rounded-lg text-white text-sm transition-colors">
-                                    {isTR ? 'Kopyala' : 'Copy'}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button onClick={() => postToTwitter(result.tweetSuggestion)} className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
+                                    <button onClick={() => copyText(result.tweetSuggestion, 0)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===0 ? 'bg-emerald-600' : 'bg-blue-500 hover:bg-blue-600'}`}>{copiedIndex===0 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                </div>
                             </div>
 
                             {/* Reddit */}
@@ -366,9 +258,10 @@ export default function ResultsPage() {
                                         </div>
                                     </div>
                                 </div>
-                                <button className="w-full px-4 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white text-sm transition-colors">
-                                    {isTR ? 'Kopyala' : 'Copy'}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button onClick={() => postToReddit(result.redditTitleSuggestion, result.redditBodySuggestion)} className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
+                                    <button onClick={() => copyText(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 1)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===1 ? 'bg-emerald-600' : 'bg-orange-500 hover:bg-orange-600'}`}>{copiedIndex===1 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                </div>
                             </div>
 
                             {/* LinkedIn */}
@@ -382,9 +275,10 @@ export default function ResultsPage() {
                                 <div className="bg-slate-900/50 rounded-lg p-4 font-mono text-sm text-slate-300 mb-4">
                                     {result.linkedinSuggestion}
                                 </div>
-                                <button className="w-full px-4 py-2 bg-indigo-500 hover:bg-indigo-600 rounded-lg text-white text-sm transition-colors">
-                                    {isTR ? 'Kopyala' : 'Copy'}
-                                </button>
+                                <div className="flex gap-2">
+                                    <button onClick={() => postToLinkedIn(result.linkedinSuggestion)} className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
+                                    <button onClick={() => copyText(result.linkedinSuggestion, 2)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===2 ? 'bg-emerald-600' : 'bg-indigo-500 hover:bg-indigo-600'}`}>{copiedIndex===2 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                </div>
                             </div>
                         </div>
                     </div>
