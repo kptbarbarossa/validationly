@@ -4,6 +4,7 @@ import SEOHead from '../components/SEOHead';
 import ShhhhPricingBlock from '../components/ShhhhPricingBlock';
 
 const posts = [
+  { slug: 'x-content-generator-guide', title: 'X Content Generator: AI-Powered Twitter Posts for Startups', desc: 'Learn how to create engaging Twitter/X content with AI. Get 5-tweet series, hashtags, and build-in-public strategies.', date: '2024-12-18' },
   { slug: 'saas-idea-validation-guide', title: 'SaaS Idea Validation: A Step‑by‑Step Guide', desc: 'Fast market signals, ICP, hypothesis → experiment.', date: '2025-08-03' },
   { slug: 'validate-idea-in-24-hours', title: 'Validate an Idea in 24 Hours: Workflow and Metrics', desc: 'A 1‑day practical process with measurable KPIs.', date: '2025-08-03' },
   { slug: 'read-demand-signals-social-platforms', title: 'Reading Demand Signals on X, Reddit, and LinkedIn', desc: 'How to read platform‑specific signals with examples.', date: '2025-08-03' },

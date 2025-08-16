@@ -10,6 +10,7 @@ import ToolsPage from './pages/ToolsPage';
 import FAQPage from './pages/FAQPage';
 import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
+import XContentGeneratorGuide from './pages/blog/XContentGeneratorGuide';
 import UseCaseSaaSPage from './pages/UseCaseSaaSPage';
 import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
 import UseCasesIndexPage from './pages/UseCasesIndexPage';
@@ -78,6 +79,7 @@ const App: React.FC = () => {
 
               <Route path="/faq" element={<FAQPage />} />
               <Route path="/blog" element={<BlogIndexPage />} />
+              <Route path="/blog/x-content-generator-guide" element={<XContentGeneratorGuide />} />
               <Route path="/blog/:slug" element={<BlogPostPage />} />
               <Route path="/use-cases" element={<UseCasesIndexPage />} />
               <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
