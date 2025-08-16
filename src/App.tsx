@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 
 import ResultsPage from './pages/ResultsPage';
-import SmartResultsPage from './pages/SmartResultsPage';
 import AITweetGenerator from './pages/AITweetGenerator';
 
 import FAQPage from './pages/FAQPage';
@@ -73,7 +72,6 @@ const App: React.FC = () => {
               <Route path="/" element={<HomePage />} />
 
               <Route path="/results" element={<ResultsPage />} />
-              <Route path="/smart-results" element={<SmartResultsPage />} />
               <Route path="/tweet-generator" element={<AITweetGenerator />} />
 
               <Route path="/faq" element={<FAQPage />} />
