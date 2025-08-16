@@ -47,7 +47,7 @@ const RedditIcon = () => (
     </svg>
 );
 
-export const ResultsPage: React.FC = () => {
+const ResultsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [progress, setProgress] = useState(0);
@@ -422,3 +422,5 @@ export const ResultsPage: React.FC = () => {
         </>
     );
 };
+
+export default ResultsPage;
