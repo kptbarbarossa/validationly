@@ -33,10 +33,10 @@ const faqJsonLd = {
     },
     {
       '@type': 'Question',
-      name: 'What’s the pricing?',
+      name: 'What's the pricing?',
       acceptedAnswer: {
         '@type': 'Answer',
-        text: 'It’s $4.99/month (or $49.99/year) and comes with a 7-day free trial.'
+        text: 'Login to see pricing details and trial information.'
       }
     }
   ]
@@ -84,9 +84,7 @@ const ShhhhPricingBlock: React.FC = () => {
         <li>
           <strong>Mobile-optimized:</strong> Flawless experience on all devices.
         </li>
-        <li>
-          <strong>Multi-language:</strong> 7 languages with automatic detection.
-        </li>
+
         <li>
           <strong>Zero maintenance:</strong> Set it once and let it run automatically.
         </li>
@@ -97,16 +95,19 @@ const ShhhhPricingBlock: React.FC = () => {
         wholesale.
       </p>
 
-      <p>
+      <div className="flex items-center justify-between">
+        <div className="text-2xl font-bold text-white">
+          Login to See Price
+        </div>
         <a
           href="https://apps.shopify.com/shhhh-pricing"
           target="_blank"
           rel="nofollow noopener"
           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white transition-colors"
         >
-          Explore Shhhh Pricing – Price Hider on the Shopify App Store
+          Explore on Shopify App Store
         </a>
-      </p>
+      </div>
     </section>
   );
 };
