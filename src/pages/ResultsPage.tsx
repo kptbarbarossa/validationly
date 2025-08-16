@@ -119,12 +119,17 @@ export default function ResultsPage() {
                 description={`Market validation results for "${result.idea}". Score: ${result.demandScore}/100. ${result.scoreJustification}`}
             />
             
-            <div className="min-h-screen bg-slate-900 text-white">
+            <div className="relative min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+                {/* Decorative Background */}
+                <div className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-indigo-600/30 blur-3xl" />
+                <div className="pointer-events-none absolute -bottom-24 -right-24 h-96 w-96 rounded-full bg-blue-500/20 blur-3xl" />
+                <div className="pointer-events-none absolute top-20 right-10 h-64 w-64 rounded-full bg-violet-500/20 blur-2xl" />
+
                 {/* Top Header */}
-                <div className="bg-slate-800 border-b border-slate-700 px-6 py-4">
+                <div className="relative bg-black/30 backdrop-blur border-b border-white/10 px-6 py-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
+                            <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-full flex items-center justify-center">
                                 <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                                     <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
@@ -134,7 +139,7 @@ export default function ResultsPage() {
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={() => navigate('/')}
-                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
+                                className="px-4 py-2 bg-white/10 border border-white/10 hover:bg-white/15 rounded-lg transition-colors"
                             >
                                 {isTR ? 'Yeni Analiz' : 'New Analysis'}
                             </button>
@@ -142,7 +147,7 @@ export default function ResultsPage() {
                     </div>
                 </div>
 
-                <div className="container mx-auto px-6 py-8">
+                <div className="relative container mx-auto px-6 py-8">
                     {/* Title */}
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold text-white mb-1">{result.idea}</h1>
@@ -150,31 +155,31 @@ export default function ResultsPage() {
                     </div>
 
                     {/* Score Bar */}
-                    <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-8">
+                    <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 mb-8">
                         <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold text-white">{isTR ? 'Talep Skoru' : 'Demand Score'}</h3>
-                            <span className="text-xs px-2 py-1 bg-slate-700 rounded text-slate-300">{status.icon} {status.text}</span>
+                            <span className="text-xs px-2 py-1 bg-white/10 border border-white/10 rounded text-slate-200">{status.icon} {status.text}</span>
                         </div>
                         <div className="flex items-end gap-4 mb-4">
                             <div className="text-5xl font-bold text-white">{result.demandScore}</div>
                             <div className="text-slate-400">/ 100</div>
                         </div>
-                        <div className="w-full h-3 bg-slate-700 rounded-full overflow-hidden">
-                            <div className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000 ease-out" style={{ width: `${Math.max(2, progress)}%` }} />
+                        <div className="w-full h-3 bg-white/10 rounded-full overflow-hidden">
+                            <div className="h-full bg-gradient-to-r from-indigo-500 to-cyan-500 transition-all duration-1000 ease-out" style={{ width: `${Math.max(2, progress)}%` }} />
                         </div>
                         <p className="mt-4 text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
                     </div>
 
                     {/* Signal Summary - Single block list */}
                     {result.platformAnalyses && (
-                        <div className="bg-slate-800 rounded-2xl p-6 border border-slate-700 mb-8">
+                        <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 mb-8">
                             <h2 className="text-xl font-semibold text-white mb-6">{isTR ? 'Sinyal Özeti' : 'Signal Summary'}</h2>
                             {/* LinkedIn first */}
                             {result.platformAnalyses.linkedin && (
                                 <div className="mb-6 last:mb-0">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2 text-white"><LinkedInIcon /> LinkedIn</div>
-                                        <span className="text-sm text-indigo-400 font-semibold">{result.platformAnalyses.linkedin.score}/5</span>
+                                        <span className="text-sm text-indigo-300 font-semibold">{result.platformAnalyses.linkedin.score}/5</span>
                                     </div>
                                     <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
                                         {getBulletPoints(result.platformAnalyses.linkedin).map((item, i) => (
@@ -188,7 +193,7 @@ export default function ResultsPage() {
                                 <div className="mb-6 last:mb-0">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2 text-white"><XIcon /> X (Twitter)</div>
-                                        <span className="text-sm text-blue-400 font-semibold">{result.platformAnalyses.twitter.score}/5</span>
+                                        <span className="text-sm text-blue-300 font-semibold">{result.platformAnalyses.twitter.score}/5</span>
                                     </div>
                                     <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
                                         {getBulletPoints(result.platformAnalyses.twitter).map((item, i) => (
@@ -202,7 +207,7 @@ export default function ResultsPage() {
                                 <div className="mb-0">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2 text-white"><RedditIcon /> Reddit</div>
-                                        <span className="text-sm text-orange-400 font-semibold">{result.platformAnalyses.reddit.score}/5</span>
+                                        <span className="text-sm text-orange-300 font-semibold">{result.platformAnalyses.reddit.score}/5</span>
                                     </div>
                                     <ul className="list-disc list-inside text-sm text-slate-300 space-y-1">
                                         {getBulletPoints(result.platformAnalyses.reddit).map((item, i) => (
@@ -225,7 +230,7 @@ export default function ResultsPage() {
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* Twitter */}
-                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                            <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                                         <XIcon />
@@ -236,13 +241,13 @@ export default function ResultsPage() {
                                     {result.tweetSuggestion}
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={() => postToTwitter(result.tweetSuggestion)} className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
-                                    <button onClick={() => copyText(result.tweetSuggestion, 0)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===0 ? 'bg-emerald-600' : 'bg-blue-500 hover:bg-blue-600'}`}>{copiedIndex===0 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                    <button onClick={() => postToTwitter(result.tweetSuggestion)} className="flex-1 px-4 py-2 bg-blue-600/90 hover:bg-blue-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
+                                    <button onClick={() => copyText(result.tweetSuggestion, 0)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===0 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}>{copiedIndex===0 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
                                 </div>
                             </div>
 
                             {/* Reddit */}
-                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                            <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
                                         <RedditIcon />
@@ -264,13 +269,13 @@ export default function ResultsPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={() => postToReddit(result.redditTitleSuggestion, result.redditBodySuggestion)} className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
-                                    <button onClick={() => copyText(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 1)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===1 ? 'bg-emerald-600' : 'bg-orange-500 hover:bg-orange-600'}`}>{copiedIndex===1 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                    <button onClick={() => postToReddit(result.redditTitleSuggestion, result.redditBodySuggestion)} className="flex-1 px-4 py-2 bg-orange-600/90 hover:bg-orange-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
+                                    <button onClick={() => copyText(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 1)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===1 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}>{copiedIndex===1 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
                                 </div>
                             </div>
 
                             {/* LinkedIn */}
-                            <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+                            <div className="bg-white/5 backdrop-blur rounded-xl p-6 border border-white/10">
                                 <div className="flex items-center gap-3 mb-4">
                                     <div className="w-8 h-8 bg-indigo-500/20 rounded-lg flex items-center justify-center">
                                         <LinkedInIcon />
@@ -281,8 +286,8 @@ export default function ResultsPage() {
                                     {result.linkedinSuggestion}
                                 </div>
                                 <div className="flex gap-2">
-                                    <button onClick={() => postToLinkedIn(result.linkedinSuggestion)} className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
-                                    <button onClick={() => copyText(result.linkedinSuggestion, 2)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===2 ? 'bg-emerald-600' : 'bg-indigo-500 hover:bg-indigo-600'}`}>{copiedIndex===2 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
+                                    <button onClick={() => postToLinkedIn(result.linkedinSuggestion)} className="flex-1 px-4 py-2 bg-indigo-600/90 hover:bg-indigo-700 rounded-lg text-white text-sm transition-colors">{isTR ? 'Post' : 'Post'}</button>
+                                    <button onClick={() => copyText(result.linkedinSuggestion, 2)} className={`flex-1 px-4 py-2 rounded-lg text-white text-sm transition-colors ${copiedIndex===2 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}>{copiedIndex===2 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}</button>
                                 </div>
                             </div>
                         </div>
