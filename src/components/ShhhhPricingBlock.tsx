@@ -33,7 +33,7 @@ const faqJsonLd = {
     },
     {
       '@type': 'Question',
-      name: 'What's the pricing?',
+      name: 'What is the pricing?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'Login to see pricing details and trial information.'
