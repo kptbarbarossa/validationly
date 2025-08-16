@@ -113,4 +113,5 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   return null; // This component doesn't render anything
 };
 
+export { SEOHead };
 export default SEOHead;
