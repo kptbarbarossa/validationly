@@ -11,6 +11,22 @@ interface ValidationResult {
     redditBodySuggestion: string;
     linkedinSuggestion: string;
     platformAnalyses?: {
+        LinkedIn?: {
+            score: number;
+            summary: string;
+            keyFindings?: string[];
+        };
+        X?: {
+            score: number;
+            summary: string;
+            keyFindings?: string[];
+        };
+        Reddit?: {
+            score: number;
+            summary: string;
+            keyFindings?: string[];
+        };
+        // Legacy support
         linkedin?: {
             score: number;
             summary: string;
@@ -103,12 +119,16 @@ const ResultsPage: React.FC = () => {
     };
 
     const getBulletPoints = (analysis: any) => {
+        if (!analysis) return [];
         if (analysis.keyFindings && analysis.keyFindings.length > 0) {
             return analysis.keyFindings.slice(0, 3);
         }
         // Fallback to summary split by sentences
         return analysis.summary?.split('.').filter((s: string) => s.trim().length > 10).slice(0, 3) || [];
     };
+
+    // Debug: Log the result data to see what we're getting
+    console.log('ResultsPage data:', result);
 
     return (
         <>
@@ -198,7 +218,7 @@ const ResultsPage: React.FC = () => {
                                     
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                         {/* LinkedIn */}
-                                        {result.platformAnalyses.linkedin && (
+                                        {(result.platformAnalyses.LinkedIn || result.platformAnalyses.linkedin) && (
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                                 <div className="flex items-center gap-3 mb-4">
                                                     <div className="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center">
@@ -206,11 +226,13 @@ const ResultsPage: React.FC = () => {
                                                     </div>
                                                     <div>
                                                         <h3 className="font-semibold text-white">LinkedIn</h3>
-                                                        <span className="text-blue-300 font-bold">{result.platformAnalyses.linkedin.score}/5</span>
+                                                        <span className="text-blue-300 font-bold">
+                                                            {(result.platformAnalyses.LinkedIn || result.platformAnalyses.linkedin)?.score}/5
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <ul className="space-y-2 text-sm text-slate-300">
-                                                    {getBulletPoints(result.platformAnalyses.linkedin).slice(0, 3).map((item, i) => (
+                                                    {getBulletPoints(result.platformAnalyses.LinkedIn || result.platformAnalyses.linkedin).slice(0, 3).map((item, i) => (
                                                         <li key={i} className="flex items-start gap-2">
                                                             <span className="text-blue-400 mt-1">•</span>
                                                             <span>{item}</span>
@@ -221,7 +243,7 @@ const ResultsPage: React.FC = () => {
                                         )}
 
                                         {/* X (Twitter) */}
-                                        {result.platformAnalyses.twitter && (
+                                        {(result.platformAnalyses.X || result.platformAnalyses.twitter) && (
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                                 <div className="flex items-center gap-3 mb-4">
                                                     <div className="w-10 h-10 bg-slate-700/50 rounded-xl flex items-center justify-center">
@@ -229,11 +251,13 @@ const ResultsPage: React.FC = () => {
                                                     </div>
                                                     <div>
                                                         <h3 className="font-semibold text-white">X (Twitter)</h3>
-                                                        <span className="text-slate-300 font-bold">{result.platformAnalyses.twitter.score}/5</span>
+                                                        <span className="text-slate-300 font-bold">
+                                                            {(result.platformAnalyses.X || result.platformAnalyses.twitter)?.score}/5
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <ul className="space-y-2 text-sm text-slate-300">
-                                                    {getBulletPoints(result.platformAnalyses.twitter).slice(0, 3).map((item, i) => (
+                                                    {getBulletPoints(result.platformAnalyses.X || result.platformAnalyses.twitter).slice(0, 3).map((item, i) => (
                                                         <li key={i} className="flex items-start gap-2">
                                                             <span className="text-slate-400 mt-1">•</span>
                                                             <span>{item}</span>
@@ -244,7 +268,7 @@ const ResultsPage: React.FC = () => {
                                         )}
 
                                         {/* Reddit */}
-                                        {result.platformAnalyses.reddit && (
+                                        {(result.platformAnalyses.Reddit || result.platformAnalyses.reddit) && (
                                             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                                 <div className="flex items-center gap-3 mb-4">
                                                     <div className="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center">
@@ -252,11 +276,13 @@ const ResultsPage: React.FC = () => {
                                                     </div>
                                                     <div>
                                                         <h3 className="font-semibold text-white">Reddit</h3>
-                                                        <span className="text-orange-300 font-bold">{result.platformAnalyses.reddit.score}/5</span>
+                                                        <span className="text-orange-300 font-bold">
+                                                            {(result.platformAnalyses.Reddit || result.platformAnalyses.reddit)?.score}/5
+                                                        </span>
                                                     </div>
                                                 </div>
                                                 <ul className="space-y-2 text-sm text-slate-300">
-                                                    {getBulletPoints(result.platformAnalyses.reddit).slice(0, 3).map((item, i) => (
+                                                    {getBulletPoints(result.platformAnalyses.Reddit || result.platformAnalyses.reddit).slice(0, 3).map((item, i) => (
                                                         <li key={i} className="flex items-start gap-2">
                                                             <span className="text-orange-400 mt-1">•</span>
                                                             <span>{item}</span>
