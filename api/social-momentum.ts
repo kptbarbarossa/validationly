@@ -33,12 +33,12 @@ interface SocialMomentumAnalysis {
     recommendedAction: 'wait' | 'move_now' | 'too_late';
     timeWindow: string;
   };
-  camilloFactors: {
-    // Chris Camillo-inspired factors
+  earlyDetectionFactors: {
+    // Market signal intelligence factors
     realWorldSignals: string[];
     earlyAdopterBehavior: string[];
     marketMomentum: number;
-    arbitrageOpportunity: number; // 0-100
+    marketOpportunity: number; // 0-100
   };
   enhancedValidationScore: number; // Original + momentum boost/penalty
   recommendation: string;
@@ -67,7 +67,7 @@ export default async function handler(req: any, res: any) {
     });
 
     const prompt = language === 'tr' ? `
-    Sen bir sosyal momentum analiz uzmanısın. Chris Camillo'nun "sosyal arbitraj" metodolojisinden ilham alarak, girilen startup fikrini analiz et.
+    Sen bir sosyal momentum analiz uzmanısın. Market sinyal zekası metodolojisini kullanarak, girilen startup fikrini analiz et.
 
     STARTUP FİKRİ: "${idea}"
     ${originalScore ? `MEVCUT VALİDASYON SKORU: ${originalScore}/100` : ''}
@@ -77,7 +77,7 @@ export default async function handler(req: any, res: any) {
     2. Trend fazını belirle (emerging/growing/peak/declining/stagnant)
     3. Sosyal sinyalleri analiz et (arama hacmi, sosyal medya aktivitesi, rekabet boşlukları)
     4. Zamanlama analizi yap (erken aşama mı, pazar hazır mı?)
-    5. Camillo faktörlerini değerlendir (gerçek dünya sinyalleri, erken kullanıcı davranışı)
+    5. Erken tespit faktörlerini değerlendir (gerçek dünya sinyalleri, erken kullanıcı davranışı)
     6. Geliştirilmiş validasyon skoru öner
 
     ÇIKTI FORMATI (JSON):
@@ -126,11 +126,11 @@ export default async function handler(req: any, res: any) {
         "recommendedAction": "move_now", // wait/move_now/too_late
         "timeWindow": "6-12 ay içinde harekete geç"
       },
-      "camilloFactors": {
+      "earlyDetectionFactors": {
         "realWorldSignals": ["gerçek dünya sinyali 1", "sinyal 2"],
         "earlyAdopterBehavior": ["erken kullanıcı davranışı 1", "davranış 2"],
         "marketMomentum": 80,
-        "arbitrageOpportunity": 75
+        "marketOpportunity": 75
       },
       "enhancedValidationScore": 82, // orijinal skor + momentum etkisi
       "recommendation": "detaylı öneri ve strateji"
@@ -138,12 +138,12 @@ export default async function handler(req: any, res: any) {
 
     ÖNEMLI:
     - Sadece JSON formatında yanıt ver
-    - Chris Camillo'nun "erken sinyal yakalama" metodolojisini uygula
+    - Market sinyal zekası ile "erken fırsat yakalama" metodolojisini uygula
     - Gerçekçi ve kanıta dayalı değerlendirmeler yap
     - Türkçe içerik üret
     - Momentum skorunu sosyal sinyaller ve zamanlama ile destekle
     ` : `
-    You are a social momentum analysis expert. Analyze the given startup idea using Chris Camillo's "social arbitrage" methodology.
+    You are a social momentum analysis expert. Analyze the given startup idea using market signal intelligence methodology.
 
     STARTUP IDEA: "${idea}"
     ${originalScore ? `CURRENT VALIDATION SCORE: ${originalScore}/100` : ''}
@@ -153,7 +153,7 @@ export default async function handler(req: any, res: any) {
     2. Determine trend phase (emerging/growing/peak/declining/stagnant)
     3. Analyze social signals (search volume, social media activity, competitor gaps)
     4. Perform timing analysis (early stage?, market ready?)
-    5. Evaluate Camillo factors (real-world signals, early adopter behavior)
+    5. Evaluate early detection factors (real-world signals, early adopter behavior)
     6. Suggest enhanced validation score
 
     OUTPUT FORMAT (JSON):
@@ -202,11 +202,11 @@ export default async function handler(req: any, res: any) {
         "recommendedAction": "move_now", // wait/move_now/too_late
         "timeWindow": "move within 6-12 months"
       },
-      "camilloFactors": {
+      "earlyDetectionFactors": {
         "realWorldSignals": ["real world signal 1", "signal 2"],
         "earlyAdopterBehavior": ["early adopter behavior 1", "behavior 2"],
         "marketMomentum": 80,
-        "arbitrageOpportunity": 75
+        "marketOpportunity": 75
       },
       "enhancedValidationScore": 82, // original score + momentum effect
       "recommendation": "detailed recommendation and strategy"
@@ -214,7 +214,7 @@ export default async function handler(req: any, res: any) {
 
     IMPORTANT:
     - Respond only in JSON format
-    - Apply Chris Camillo's "early signal detection" methodology
+    - Apply market signal intelligence "early opportunity detection" methodology
     - Make realistic, evidence-based evaluations
     - Support momentum score with social signals and timing
     `;
@@ -264,11 +264,11 @@ export default async function handler(req: any, res: any) {
           recommendedAction: 'move_now',
           timeWindow: language === 'tr' ? '6-12 ay içinde harekete geç' : 'Move within 6-12 months'
         },
-        camilloFactors: {
+        earlyDetectionFactors: {
           realWorldSignals: [language === 'tr' ? 'Sosyal medya aktivitesi artışı' : 'Increasing social media activity'],
           earlyAdopterBehavior: [language === 'tr' ? 'Erken kullanıcı ilgisi' : 'Early user interest'],
           marketMomentum: 70,
-          arbitrageOpportunity: 65
+          marketOpportunity: 65
         },
         enhancedValidationScore: originalScore ? Math.min(100, originalScore + 10) : 70,
         recommendation: language === 'tr' ? 'Sosyal momentum olumlu, harekete geçmek için uygun zaman' : 'Social momentum is positive, good time to take action'

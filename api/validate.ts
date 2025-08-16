@@ -1405,6 +1405,50 @@ CRITICAL RULES:
             // Continue without momentum - it's an enhancement, not critical
         }
         
+        // Add Early Signal Mode analysis if enabled
+        try {
+            if (req.body?.includeEarlySignal !== false) { // Default to true
+                console.log('🎯 Adding Early Signal Mode analysis...');
+                
+                // Call internal early signal analysis
+                const earlySignalResponse = await fetch(`${req.headers.host ? `https://${req.headers.host}` : 'http://localhost:3000'}/api/early-signal`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        idea: result.idea,
+                        originalScore: result.demandScore,
+                        socialMomentum: result.socialMomentum,
+                        language: result.language?.toLowerCase().includes('turkish') ? 'tr' : 'en'
+                    })
+                });
+
+                if (earlySignalResponse.ok) {
+                    const earlySignalData = await earlySignalResponse.json();
+                    
+                    // Enhance result with early signal data
+                    result.earlySignal = earlySignalData.analysis;
+                    
+                    // Update demand score if early signal suggests significant enhancement
+                    if (earlySignalData.analysis?.enhancedScore && 
+                        Math.abs(earlySignalData.analysis.enhancedScore - result.demandScore) <= 25 &&
+                        earlySignalData.analysis.confidence >= 70) {
+                        result.originalDemandScore = result.originalDemandScore || result.demandScore;
+                        result.demandScore = earlySignalData.analysis.enhancedScore;
+                        result.earlySignalAdjusted = true;
+                    }
+                    
+                    console.log(`🚀 Early Signal analysis added - Score: ${result.demandScore}/100 (${result.earlySignalAdjusted ? 'enhanced' : 'unchanged'})`);
+                } else {
+                    console.log('⚠️ Early Signal analysis failed, continuing without it');
+                }
+            }
+        } catch (earlySignalError) {
+            console.error('⚠️ Early Signal analysis error (non-critical):', earlySignalError);
+            // Continue without early signal - it's an enhancement, not critical
+        }
+        
         return res.status(200).json(result);
 
     } catch (error) {

@@ -7,6 +7,7 @@ interface ValidationResult {
     demandScore: number;
     originalDemandScore?: number; // Before momentum adjustment
     momentumAdjusted?: boolean;
+    earlySignalAdjusted?: boolean;
     scoreJustification: string;
     tweetSuggestion: string;
     redditTitleSuggestion: string;
@@ -75,13 +76,59 @@ interface ValidationResult {
             recommendedAction: 'wait' | 'move_now' | 'too_late';
             timeWindow: string;
         };
-        camilloFactors: {
+        earlyDetectionFactors: {
             realWorldSignals: string[];
             earlyAdopterBehavior: string[];
             marketMomentum: number;
-            arbitrageOpportunity: number;
+            marketOpportunity: number;
         };
         enhancedValidationScore: number;
+        recommendation: string;
+    };
+    earlySignal?: {
+        earlySignalScore: number;
+        signalStrength: 'weak' | 'moderate' | 'strong' | 'exceptional';
+        timingIntelligence: {
+            marketCycle: 'pre-trend' | 'early-trend' | 'mid-trend' | 'late-trend' | 'post-trend';
+            optimalEntryWindow: string;
+            competitorAwareness: 'none' | 'minimal' | 'emerging' | 'high';
+            firstMoverAdvantage: number;
+            windowOfOpportunity: string;
+        };
+        signalSources: {
+            technicalIndicators: Array<{
+                source: string;
+                signal: string;
+                strength: number;
+                reliability: 'low' | 'medium' | 'high';
+            }>;
+            behavioralSignals: Array<{
+                behavior: string;
+                evidence: string;
+                significance: number;
+            }>;
+            marketGaps: Array<{
+                gap: string;
+                size: 'small' | 'medium' | 'large';
+                accessibility: 'easy' | 'moderate' | 'difficult';
+            }>;
+        };
+        riskFactors: {
+            timingRisk: number;
+            competitionRisk: number;
+            marketAcceptanceRisk: number;
+            overallRisk: 'low' | 'medium' | 'high';
+            mitigationStrategies: string[];
+        };
+        actionPlan: {
+            immediateActions: string[];
+            shortTermGoals: string[];
+            longTermStrategy: string;
+            keyMetrics: string[];
+            successIndicators: string[];
+        };
+        enhancedScore: number;
+        confidence: number;
         recommendation: string;
     };
 }
@@ -300,21 +347,41 @@ const ResultsPage: React.FC = () => {
                                 
                                 <p className="text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
                                 
-                                {/* Momentum Adjustment Indicator */}
-                                {result.momentumAdjusted && result.originalDemandScore && (
-                                    <div className="mt-4 p-3 bg-indigo-500/20 border border-indigo-500/30 rounded-xl">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <span className="text-indigo-400">🎯</span>
-                                            <span className="text-sm font-medium text-indigo-300">
-                                                {isTR ? 'Sosyal Momentum Ayarlaması' : 'Social Momentum Adjustment'}
-                                            </span>
-                                        </div>
-                                        <p className="text-xs text-indigo-200">
+                                {/* Score Adjustment Indicators */}
+                                {((result.momentumAdjusted || result.earlySignalAdjusted) && result.originalDemandScore) && (
+                                    <div className="mt-4 space-y-2">
+                                        {result.momentumAdjusted && (
+                                            <div className="p-3 bg-indigo-500/20 border border-indigo-500/30 rounded-xl">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-indigo-400">🎯</span>
+                                                    <span className="text-sm font-medium text-indigo-300">
+                                                        {isTR ? 'Sosyal Momentum Ayarlaması' : 'Social Momentum Adjustment'}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-indigo-200">
+                                                    {isTR ? 'Sosyal sinyaller temel alınarak skor güncellendi' : 'Score updated based on social signals'}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {result.earlySignalAdjusted && (
+                                            <div className="p-3 bg-purple-500/20 border border-purple-500/30 rounded-xl">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-purple-400">⚡</span>
+                                                    <span className="text-sm font-medium text-purple-300">
+                                                        {isTR ? 'Erken Sinyal Bonusu' : 'Early Signal Bonus'}
+                                                    </span>
+                                                </div>
+                                                <p className="text-xs text-purple-200">
+                                                    {isTR ? 'Optimal zamanlama fırsatı tespit edildi' : 'Optimal timing opportunity detected'}
+                                                </p>
+                                            </div>
+                                        )}
+                                        <div className="text-xs text-slate-400 text-center">
                                             {isTR ? 
-                                                `Orijinal skor ${result.originalDemandScore} → ${result.demandScore} (sosyal sinyaller temel alınarak)` :
-                                                `Original score ${result.originalDemandScore} → ${result.demandScore} (based on social signals)`
+                                                `Orijinal skor: ${result.originalDemandScore} → Güncel skor: ${result.demandScore}` :
+                                                `Original score: ${result.originalDemandScore} → Current score: ${result.demandScore}`
                                             }
-                                        </p>
+                                        </div>
                                     </div>
                                 )}
                             </div>
@@ -470,18 +537,18 @@ const ResultsPage: React.FC = () => {
                                             </div>
                                         </div>
 
-                                        {/* Arbitrage Opportunity */}
+                                        {/* Market Opportunity */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <div className="flex items-center gap-3 mb-3">
                                                 <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
                                                     <span className="text-purple-400">💎</span>
                                                 </div>
                                                 <h3 className="font-semibold text-white text-sm">
-                                                    {isTR ? 'Arbitraj Fırsatı' : 'Arbitrage Opportunity'}
+                                                    {isTR ? 'Pazar Fırsatı' : 'Market Opportunity'}
                                                 </h3>
                                             </div>
                                             <div className="text-2xl font-bold text-purple-400 mb-1">
-                                                {result.socialMomentum.camilloFactors.arbitrageOpportunity}/100
+                                                {result.socialMomentum.earlyDetectionFactors.marketOpportunity}/100
                                             </div>
                                             <div className="text-xs text-slate-400">
                                                 {result.socialMomentum.timingAnalysis.recommendedAction === 'move_now' ? 
@@ -494,7 +561,7 @@ const ResultsPage: React.FC = () => {
                                         </div>
                                     </div>
 
-                                    {/* Camillo Factors */}
+                                    {/* Early Detection Factors */}
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
                                             <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
@@ -502,7 +569,7 @@ const ResultsPage: React.FC = () => {
                                                 {isTR ? 'Gerçek Dünya Sinyalleri' : 'Real World Signals'}
                                             </h3>
                                             <ul className="space-y-2">
-                                                {result.socialMomentum.camilloFactors.realWorldSignals.map((signal, i) => (
+                                                {result.socialMomentum.earlyDetectionFactors.realWorldSignals.map((signal, i) => (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
                                                         <span className="text-blue-400 mt-1">•</span>
                                                         <span>{signal}</span>
@@ -517,7 +584,7 @@ const ResultsPage: React.FC = () => {
                                                 {isTR ? 'Erken Kullanıcı Davranışı' : 'Early Adopter Behavior'}
                                             </h3>
                                             <ul className="space-y-2">
-                                                {result.socialMomentum.camilloFactors.earlyAdopterBehavior.map((behavior, i) => (
+                                                {result.socialMomentum.earlyDetectionFactors.earlyAdopterBehavior.map((behavior, i) => (
                                                     <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
                                                         <span className="text-green-400 mt-1">•</span>
                                                         <span>{behavior}</span>
@@ -536,6 +603,231 @@ const ResultsPage: React.FC = () => {
                                         <p className="text-slate-300 text-sm">
                                             {result.socialMomentum.recommendation}
                                         </p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Early Signal Mode Analysis */}
+                            {result.earlySignal && (
+                                <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
+                                    <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                                        <span className="text-2xl">⚡</span>
+                                        {isTR ? 'Erken Sinyal Analizi' : 'Early Signal Analysis'}
+                                    </h2>
+                                    
+                                    {/* Top Metrics */}
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                                        {/* Signal Score */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-purple-400">⚡</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'Sinyal Skoru' : 'Signal Score'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-2xl font-bold text-purple-400 mb-2">
+                                                {result.earlySignal.earlySignalScore}/100
+                                            </div>
+                                            <div className="text-xs text-slate-400 capitalize">
+                                                {result.earlySignal.signalStrength === 'weak' ? (isTR ? 'Zayıf' : 'Weak') :
+                                                 result.earlySignal.signalStrength === 'moderate' ? (isTR ? 'Orta' : 'Moderate') :
+                                                 result.earlySignal.signalStrength === 'strong' ? (isTR ? 'Güçlü' : 'Strong') :
+                                                 (isTR ? 'Olağanüstü' : 'Exceptional')}
+                                            </div>
+                                        </div>
+
+                                        {/* Market Cycle */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-blue-400">📊</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'Pazar Döngüsü' : 'Market Cycle'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-lg font-bold text-blue-400 capitalize">
+                                                {result.earlySignal.timingIntelligence.marketCycle === 'pre-trend' ? (isTR ? 'Trend Öncesi' : 'Pre-trend') :
+                                                 result.earlySignal.timingIntelligence.marketCycle === 'early-trend' ? (isTR ? 'Erken Trend' : 'Early-trend') :
+                                                 result.earlySignal.timingIntelligence.marketCycle === 'mid-trend' ? (isTR ? 'Orta Trend' : 'Mid-trend') :
+                                                 result.earlySignal.timingIntelligence.marketCycle === 'late-trend' ? (isTR ? 'Geç Trend' : 'Late-trend') :
+                                                 (isTR ? 'Trend Sonrası' : 'Post-trend')}
+                                            </div>
+                                            <div className="text-xs text-slate-400">
+                                                {result.earlySignal.timingIntelligence.optimalEntryWindow}
+                                            </div>
+                                        </div>
+
+                                        {/* First Mover Advantage */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-green-400">🚀</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'İlk Hareket Avantajı' : 'First Mover Advantage'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-2xl font-bold text-green-400 mb-1">
+                                                {result.earlySignal.timingIntelligence.firstMoverAdvantage}%
+                                            </div>
+                                            <div className="text-xs text-slate-400">
+                                                {result.earlySignal.timingIntelligence.windowOfOpportunity}
+                                            </div>
+                                        </div>
+
+                                        {/* Confidence Level */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <div className="flex items-center gap-3 mb-3">
+                                                <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
+                                                    <span className="text-yellow-400">🎯</span>
+                                                </div>
+                                                <h3 className="font-semibold text-white text-sm">
+                                                    {isTR ? 'Güven Seviyesi' : 'Confidence Level'}
+                                                </h3>
+                                            </div>
+                                            <div className="text-2xl font-bold text-yellow-400 mb-1">
+                                                {result.earlySignal.confidence}%
+                                            </div>
+                                            <div className="text-xs text-slate-400 capitalize">
+                                                {result.earlySignal.timingIntelligence.competitorAwareness === 'none' ? (isTR ? 'Rakip Yok' : 'No Competition') :
+                                                 result.earlySignal.timingIntelligence.competitorAwareness === 'minimal' ? (isTR ? 'Az Rakip' : 'Minimal Competition') :
+                                                 result.earlySignal.timingIntelligence.competitorAwareness === 'emerging' ? (isTR ? 'Yeni Rakipler' : 'Emerging Competition') :
+                                                 (isTR ? 'Yoğun Rekabet' : 'High Competition')}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Signal Sources & Action Plan */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                        {/* Signal Sources */}
+                                        <div className="space-y-6">
+                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                                <span className="text-blue-400">📡</span>
+                                                {isTR ? 'Sinyal Kaynakları' : 'Signal Sources'}
+                                            </h3>
+
+                                            {/* Technical Indicators */}
+                                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                                <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                    <span className="text-green-400">📈</span>
+                                                    {isTR ? 'Teknik Göstergeler' : 'Technical Indicators'}
+                                                </h4>
+                                                <div className="space-y-3">
+                                                    {result.earlySignal.signalSources.technicalIndicators.map((indicator, i) => (
+                                                        <div key={i} className="flex justify-between items-start">
+                                                            <div className="flex-1">
+                                                                <div className="text-sm font-medium text-white">{indicator.source}</div>
+                                                                <div className="text-xs text-slate-300">{indicator.signal}</div>
+                                                            </div>
+                                                            <div className="text-right ml-4">
+                                                                <div className="text-sm font-bold text-green-400">{indicator.strength}%</div>
+                                                                <div className="text-xs text-slate-400 capitalize">{indicator.reliability}</div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+
+                                            {/* Market Gaps */}
+                                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                                <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                    <span className="text-orange-400">🎯</span>
+                                                    {isTR ? 'Pazar Boşlukları' : 'Market Gaps'}
+                                                </h4>
+                                                <div className="space-y-3">
+                                                    {result.earlySignal.signalSources.marketGaps.map((gap, i) => (
+                                                        <div key={i} className="flex justify-between items-start">
+                                                            <div className="flex-1">
+                                                                <div className="text-sm text-slate-300">{gap.gap}</div>
+                                                            </div>
+                                                            <div className="text-right ml-4">
+                                                                <div className="text-xs text-orange-400 capitalize">{gap.size}</div>
+                                                                <div className="text-xs text-slate-400 capitalize">{gap.accessibility}</div>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Action Plan */}
+                                        <div className="space-y-6">
+                                            <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                                                <span className="text-purple-400">🎯</span>
+                                                {isTR ? 'Aksiyon Planı' : 'Action Plan'}
+                                            </h3>
+
+                                            {/* Immediate Actions */}
+                                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                                <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                    <span className="text-red-400">🚨</span>
+                                                    {isTR ? 'Acil Aksiyonlar' : 'Immediate Actions'}
+                                                </h4>
+                                                <ul className="space-y-2">
+                                                    {result.earlySignal.actionPlan.immediateActions.map((action, i) => (
+                                                        <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                                                            <span className="text-red-400 mt-1">•</span>
+                                                            <span>{action}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+
+                                            {/* Short Term Goals */}
+                                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                                <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                    <span className="text-yellow-400">⏰</span>
+                                                    {isTR ? 'Kısa Vadeli Hedefler' : 'Short Term Goals'}
+                                                </h4>
+                                                <ul className="space-y-2">
+                                                    {result.earlySignal.actionPlan.shortTermGoals.map((goal, i) => (
+                                                        <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
+                                                            <span className="text-yellow-400 mt-1">•</span>
+                                                            <span>{goal}</span>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            </div>
+
+                                            {/* Risk Factors */}
+                                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                                <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                    <span className="text-orange-400">⚠️</span>
+                                                    {isTR ? 'Risk Faktörleri' : 'Risk Factors'}
+                                                </h4>
+                                                <div className="space-y-3">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm text-slate-300">{isTR ? 'Zamanlama Riski' : 'Timing Risk'}</span>
+                                                        <span className="text-sm font-bold text-orange-400">{result.earlySignal.riskFactors.timingRisk}%</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm text-slate-300">{isTR ? 'Rekabet Riski' : 'Competition Risk'}</span>
+                                                        <span className="text-sm font-bold text-orange-400">{result.earlySignal.riskFactors.competitionRisk}%</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm text-slate-300">{isTR ? 'Pazar Kabul Riski' : 'Market Acceptance Risk'}</span>
+                                                        <span className="text-sm font-bold text-orange-400">{result.earlySignal.riskFactors.marketAcceptanceRisk}%</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Recommendation */}
+                                    <div className="mt-8 p-6 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 rounded-xl">
+                                        <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
+                                            <span className="text-purple-400">💡</span>
+                                            {isTR ? 'Erken Sinyal Önerisi' : 'Early Signal Recommendation'}
+                                        </h3>
+                                        <p className="text-slate-300 text-sm mb-4">
+                                            {result.earlySignal.recommendation}
+                                        </p>
+                                        <div className="text-xs text-slate-400">
+                                            <strong>{isTR ? 'Uzun Vadeli Strateji:' : 'Long Term Strategy:'}</strong> {result.earlySignal.actionPlan.longTermStrategy}
+                                        </div>
                                     </div>
                                 </div>
                             )}
