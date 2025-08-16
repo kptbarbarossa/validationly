@@ -120,7 +120,7 @@ const HomePage: React.FC = () => {
             // Track successful validation
             trackValidation(userInput.idea, result.demandScore || result.score);
             
-            navigate('/smart-results', { state: { result, fastMode: true } });
+                            navigate('/results', { state: { result, fastMode: true } });
         } catch (err) {
             console.error('API call failed:', err);
             

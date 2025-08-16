@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+
 import ResultsPage from './pages/ResultsPage';
 import SmartResultsPage from './pages/SmartResultsPage';
 import AITweetGenerator from './pages/AITweetGenerator';
@@ -70,6 +71,7 @@ const App: React.FC = () => {
           <main className="container mx-auto px-0 py-0 sm:py-0">
             <Routes>
               <Route path="/" element={<HomePage />} />
+
               <Route path="/results" element={<ResultsPage />} />
               <Route path="/smart-results" element={<SmartResultsPage />} />
               <Route path="/tweet-generator" element={<AITweetGenerator />} />
