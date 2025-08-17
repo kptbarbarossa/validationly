@@ -1725,7 +1725,7 @@ async function getSimplifiedAIAnalysis(
         const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content);
         const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
         
-        // Enhanced prompt with real-world data integration
+        // Enhanced prompt with real-world data integration - OUTPUT IN SAME LANGUAGE AS INPUT
         const enhancedPrompt = expectedLanguage === 'Turkish' ? 
             `Bu startup fikrini analiz et: "${content}"
             
@@ -1744,6 +1744,8 @@ async function getSimplifiedAIAnalysis(
             - Trend verilerini değerlendir
             - Sosyal medya sinyallerini analiz et
             
+            ⚠️ ÖNEMLİ: TÜM ÇIKTIYI TÜRKÇE VER! JSON içindeki tüm metinler Türkçe olmalı.
+            
             Sadece JSON döndür. Şu yapıyı kullan:
             {
                 "idea": "fikir",
@@ -1751,20 +1753,20 @@ async function getSimplifiedAIAnalysis(
                 "scoreJustification": "veri destekli skor gerekçesi",
                 "realWorldData": {
                     "socialMediaSignals": {
-                        "twitter": { "trending": boolean, "sentiment": "positive/neutral/negative", "volume": "high/medium/low" },
-                        "facebook": { "groupActivity": "high/medium/low", "engagement": "high/medium/low" },
-                        "tiktok": { "viralPotential": "high/medium/low", "userReaction": "positive/neutral/negative" }
+                        "twitter": { "trending": boolean, "sentiment": "olumlu/nötr/olumsuz", "volume": "yüksek/orta/düşük" },
+                        "facebook": { "groupActivity": "yüksek/orta/düşük", "engagement": "yüksek/orta/düşük" },
+                        "tiktok": { "viralPotential": "yüksek/orta/düşük", "userReaction": "olumlu/nötr/olumsuz" }
                     },
                     "forumInsights": {
-                        "reddit": { "discussionVolume": "high/medium/low", "painPoints": ["ağrı1", "ağrı2"] },
-                        "quora": { "questionFrequency": "high/medium/low", "topics": ["konu1", "konu2"] }
+                        "reddit": { "discussionVolume": "yüksek/orta/düşük", "painPoints": ["ağrı1", "ağrı2"] },
+                        "quora": { "questionFrequency": "yüksek/orta/düşük", "topics": ["konu1", "konu2"] }
                     },
                     "marketplaceData": {
                         "amazon": { "similarProducts": number, "avgRating": number, "reviewCount": number },
-                        "appStore": { "competitorApps": number, "avgRating": number, "downloads": "high/medium/low" }
+                        "appStore": { "competitorApps": number, "avgRating": number, "downloads": "yüksek/orta/düşük" }
                     },
                     "consumerSentiment": {
-                        "overallSentiment": "positive/neutral/negative",
+                        "overallSentiment": "olumlu/nötr/olumsuz",
                         "keyComplaints": ["şikayet1", "şikayet2"],
                         "positiveFeedback": ["olumlu1", "olumlu2"]
                     }
@@ -1799,7 +1801,7 @@ async function getSimplifiedAIAnalysis(
                 "redditTitleSuggestion": "veri destekli reddit başlık önerisi",
                 "redditBodySuggestion": "veri destekli reddit içerik önerisi",
                 "linkedinSuggestion": "veri destekli linkedin önerisi",
-                "dataConfidence": "high/medium/low (veri kalitesi)",
+                "dataConfidence": "yüksek/orta/düşük (veri kalitesi)",
                 "lastDataUpdate": "son veri güncelleme zamanı"
             }` :
             `Analyze this startup idea: "${content}"
@@ -1818,6 +1820,8 @@ async function getSimplifiedAIAnalysis(
             - Identify user pain points
             - Evaluate trend data
             - Analyze social media signals
+            
+            ⚠️ IMPORTANT: GIVE ALL OUTPUT IN ENGLISH! All text in JSON must be in English.
             
             Return only JSON. Use this structure:
             {

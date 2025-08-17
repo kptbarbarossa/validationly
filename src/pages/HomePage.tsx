@@ -230,7 +230,7 @@ const HomePage: React.FC = () => {
                                     aria-label="Open prompt gallery"
                                     title="Open prompt gallery"
                                 >
-                                    Prompt Gallery
+                                    📚
                                 </button>
                             <button
                                     type="button"
@@ -258,7 +258,7 @@ const HomePage: React.FC = () => {
                                             Enhancing…
                                         </span>
                                     ) : (
-                                        '✨ Enhance'
+                                        '✨'
                                     )}
                                 </button>
                             <button

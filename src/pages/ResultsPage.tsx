@@ -537,6 +537,245 @@ const ResultsPage: React.FC = () => {
                 </div>
                             )}
 
+                            {/* Real-World Data Analysis */}
+                            {result.realWorldData && (
+                                <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                                            <span className="text-2xl">🌍</span>
+                                            {isTR ? 'Gerçek Dünya Veri Analizi' : 'Real-World Data Analysis'}
+                                        </h2>
+                                        <div className="flex items-center gap-3">
+                                            <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                                                result.dataConfidence === 'high' || result.dataConfidence === 'yüksek' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                                                result.dataConfidence === 'medium' || result.dataConfidence === 'orta' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                                'bg-red-500/20 text-red-400 border border-red-500/30'
+                                            }`}>
+                                                {isTR ? 
+                                                    (result.dataConfidence === 'high' || result.dataConfidence === 'yüksek' ? 'Yüksek Güven' : 
+                                                     result.dataConfidence === 'medium' || result.dataConfidence === 'orta' ? 'Orta Güven' : 'Düşük Güven') :
+                                                    (result.dataConfidence === 'high' || result.dataConfidence === 'yüksek' ? 'High Confidence' : 
+                                                     result.dataConfidence === 'medium' || result.dataConfidence === 'orta' ? 'Medium Confidence' : 'Low Confidence')
+                                                }
+                                            </div>
+                                            {result.lastDataUpdate && (
+                                                <div className="text-xs text-slate-400">
+                                                    📅 {new Date(result.lastDataUpdate).toLocaleDateString()}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        {/* Social Media Signals */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-lg">📱</span>
+                                                {isTR ? 'Sosyal Medya Sinyalleri' : 'Social Media Signals'}
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {/* Twitter */}
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-slate-300">X (Twitter)</span>
+                                                    <div className="flex items-center gap-2">
+                                                        {result.realWorldData.socialMediaSignals.twitter.trending && (
+                                                            <span className="px-2 py-1 bg-green-500/20 text-green-400 text-xs rounded-full">🔥</span>
+                                                        )}
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.socialMediaSignals.twitter.sentiment === 'positive' || result.realWorldData.socialMediaSignals.twitter.sentiment === 'olumlu' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.socialMediaSignals.twitter.sentiment === 'negative' || result.realWorldData.socialMediaSignals.twitter.sentiment === 'olumsuz' ? 'bg-red-500/20 text-red-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.socialMediaSignals.twitter.sentiment}
+                                                        </span>
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.socialMediaSignals.twitter.volume === 'high' || result.realWorldData.socialMediaSignals.twitter.volume === 'yüksek' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.socialMediaSignals.twitter.volume === 'medium' || result.realWorldData.socialMediaSignals.twitter.volume === 'orta' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.socialMediaSignals.twitter.volume}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* Facebook */}
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-slate-300">Facebook</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.socialMediaSignals.facebook.groupActivity === 'high' || result.realWorldData.socialMediaSignals.facebook.groupActivity === 'yüksek' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.socialMediaSignals.facebook.groupActivity === 'medium' || result.realWorldData.socialMediaSignals.facebook.groupActivity === 'orta' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.socialMediaSignals.facebook.groupActivity}
+                                                        </span>
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.socialMediaSignals.facebook.engagement === 'high' || result.realWorldData.socialMediaSignals.facebook.engagement === 'yüksek' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.socialMediaSignals.facebook.engagement === 'medium' || result.realWorldData.socialMediaSignals.facebook.engagement === 'orta' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.socialMediaSignals.facebook.engagement}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* TikTok */}
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-slate-300">TikTok</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.socialMediaSignals.tiktok.viralPotential === 'high' || result.realWorldData.socialMediaSignals.tiktok.viralPotential === 'yüksek' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.socialMediaSignals.tiktok.viralPotential === 'medium' || result.realWorldData.socialMediaSignals.tiktok.viralPotential === 'orta' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.socialMediaSignals.tiktok.viralPotential}
+                                                        </span>
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.socialMediaSignals.tiktok.userReaction === 'positive' || result.realWorldData.socialMediaSignals.tiktok.userReaction === 'olumlu' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.socialMediaSignals.tiktok.userReaction === 'negative' || result.realWorldData.socialMediaSignals.tiktok.userReaction === 'olumsuz' ? 'bg-red-500/20 text-red-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.socialMediaSignals.tiktok.userReaction}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Forum Insights */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-lg">💬</span>
+                                                {isTR ? 'Forum İçgörüleri' : 'Forum Insights'}
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {/* Reddit */}
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-slate-300">Reddit</span>
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.forumInsights.reddit.discussionVolume === 'high' || result.realWorldData.forumInsights.reddit.discussionVolume === 'yüksek' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.forumInsights.reddit.discussionVolume === 'medium' || result.realWorldData.forumInsights.reddit.discussionVolume === 'orta' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.forumInsights.reddit.discussionVolume}
+                                                        </span>
+                                                    </div>
+                                                    {result.realWorldData.forumInsights.reddit.painPoints.length > 0 && (
+                                                        <div className="text-xs text-slate-400">
+                                                            {isTR ? 'Ağrı noktaları:' : 'Pain points:'} {result.realWorldData.forumInsights.reddit.painPoints.join(', ')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                
+                                                {/* Quora */}
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-slate-300">Quora</span>
+                                                        <span className={`px-2 py-1 rounded-full text-xs ${
+                                                            result.realWorldData.forumInsights.quora.questionFrequency === 'high' || result.realWorldData.forumInsights.quora.questionFrequency === 'yüksek' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.forumInsights.quora.questionFrequency === 'medium' || result.realWorldData.forumInsights.quora.questionFrequency === 'orta' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.forumInsights.quora.questionFrequency}
+                                                        </span>
+                                                    </div>
+                                                    {result.realWorldData.forumInsights.quora.topics.length > 0 && (
+                                                        <div className="text-xs text-slate-400">
+                                                            {isTR ? 'Konular:' : 'Topics:'} {result.realWorldData.forumInsights.quora.topics.join(', ')}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Marketplace Data & Consumer Sentiment */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                                        {/* Marketplace Data */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-lg">🛒</span>
+                                                {isTR ? 'Pazar Yeri Verileri' : 'Marketplace Data'}
+                                            </h3>
+                                            <div className="space-y-4">
+                                                {/* Amazon */}
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-slate-300">Amazon</span>
+                                                        <span className="text-sm text-slate-400">
+                                                            {result.realWorldData.marketplaceData.amazon.similarProducts} benzer ürün
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-4 text-xs text-slate-400">
+                                                        <span>⭐ {result.realWorldData.marketplaceData.amazon.avgRating}/5</span>
+                                                        <span>📝 {result.realWorldData.marketplaceData.amazon.reviewCount} yorum</span>
+                                                    </div>
+                                                </div>
+                                                
+                                                {/* App Store */}
+                                                <div>
+                                                    <div className="flex items-center justify-between mb-2">
+                                                        <span className="text-slate-300">App Store</span>
+                                                        <span className="text-sm text-slate-400">
+                                                            {result.realWorldData.marketplaceData.appStore.competitorApps} rakip uygulama
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex items-center gap-4 text-xs text-slate-400">
+                                                        <span>⭐ {result.realWorldData.marketplaceData.appStore.avgRating}/5</span>
+                                                        <span className={`px-2 py-1 rounded-full ${
+                                                            result.realWorldData.marketplaceData.appStore.downloads === 'high' || result.realWorldData.marketplaceData.appStore.downloads === 'yüksek' ? 'bg-green-500/20 text-green-400' :
+                                                            result.realWorldData.marketplaceData.appStore.downloads === 'medium' || result.realWorldData.marketplaceData.appStore.downloads === 'orta' ? 'bg-yellow-500/20 text-yellow-400' :
+                                                            'bg-slate-500/20 text-slate-400'
+                                                        }`}>
+                                                            {result.realWorldData.marketplaceData.appStore.downloads}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Consumer Sentiment */}
+                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-lg">😊</span>
+                                                {isTR ? 'Tüketici Duyguları' : 'Consumer Sentiment'}
+                                            </h3>
+                                            <div className="space-y-4">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-slate-300">{isTR ? 'Genel Duygu' : 'Overall Sentiment'}</span>
+                                                    <span className={`px-2 py-1 rounded-full text-xs ${
+                                                        result.realWorldData.consumerSentiment.overallSentiment === 'positive' || result.realWorldData.consumerSentiment.overallSentiment === 'olumlu' ? 'bg-green-500/20 text-green-400' :
+                                                        result.realWorldData.consumerSentiment.overallSentiment === 'negative' || result.realWorldData.consumerSentiment.overallSentiment === 'olumsuz' ? 'bg-red-500/20 text-red-400' :
+                                                        'bg-slate-500/20 text-slate-400'
+                                                    }`}>
+                                                        {result.realWorldData.consumerSentiment.overallSentiment}
+                                                    </span>
+                                                </div>
+                                                
+                                                {result.realWorldData.consumerSentiment.keyComplaints.length > 0 && (
+                                                    <div>
+                                                        <span className="text-xs text-slate-400">{isTR ? 'Ana şikayetler:' : 'Key complaints:'}</span>
+                                                        <div className="text-xs text-red-400 mt-1">
+                                                            {result.realWorldData.consumerSentiment.keyComplaints.join(', ')}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                                
+                                                {result.realWorldData.consumerSentiment.positiveFeedback.length > 0 && (
+                                                    <div>
+                                                        <span className="text-xs text-slate-400">{isTR ? 'Olumlu geri bildirimler:' : 'Positive feedback:'}</span>
+                                                        <div className="text-xs text-green-400 mt-1">
+                                                            {result.realWorldData.consumerSentiment.positiveFeedback.join(', ')}
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Social Momentum Analysis */}
                             {result.socialMomentum && (
                                 <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
