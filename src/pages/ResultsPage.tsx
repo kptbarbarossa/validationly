@@ -455,18 +455,18 @@ const ResultsPage: React.FC = () => {
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-400">Twitter:</span>
                                                 <span className={`px-2 py-1 rounded text-xs ${
-                                                    result.realWorldData.socialMediaSignals.twitter.trending ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'
+                                                    result.realWorldData.socialMediaSignals?.twitter?.trending ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'
                                                 }`}>
-                                                    {result.realWorldData.socialMediaSignals.twitter.trending ? '🔥 Trending' : 'Normal'}
+                                                    {result.realWorldData.socialMediaSignals?.twitter?.trending ? '🔥 Trending' : 'Normal'}
                                                 </span>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-400">Facebook:</span>
-                                                <span className="text-white text-sm">{result.realWorldData.socialMediaSignals.facebook.groupActivity}</span>
+                                                <span className="text-white text-sm">{result.realWorldData.socialMediaSignals?.facebook?.groupActivity || 'N/A'}</span>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-400">TikTok:</span>
-                                                <span className="text-white text-sm">{result.realWorldData.socialMediaSignals.tiktok.viralPotential}</span>
+                                                <span className="text-white text-sm">{result.realWorldData.socialMediaSignals?.tiktok?.viralPotential || 'N/A'}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -501,11 +501,11 @@ const ResultsPage: React.FC = () => {
                                         <div className="space-y-4">
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-400">Amazon:</span>
-                                                <span className="text-white text-sm">{result.realWorldData.marketplaceData.amazon.similarProducts} ürün</span>
+                                                <span className="text-white text-sm">{result.realWorldData.marketplaceData?.amazon?.similarProducts || 0} ürün</span>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-400">App Store:</span>
-                                                <span className="text-white text-sm">{result.realWorldData.marketplaceData.appStore.competitorApps} uygulama</span>
+                                                <span className="text-white text-sm">{result.realWorldData.marketplaceData?.appStore?.competitorApps || 0} uygulama</span>
                                             </div>
                                         </div>
                                     </div>
@@ -520,11 +520,11 @@ const ResultsPage: React.FC = () => {
                                             <div className="flex items-center justify-between">
                                                 <span className="text-slate-400">Genel:</span>
                                                 <span className={`px-2 py-1 rounded text-xs ${
-                                                    result.realWorldData.consumerSentiment.overallSentiment === 'positive' ? 'bg-green-500/20 text-green-400' :
-                                                    result.realWorldData.consumerSentiment.overallSentiment === 'negative' ? 'bg-red-500/20 text-red-400' :
+                                                    result.realWorldData.consumerSentiment?.overallSentiment === 'positive' ? 'bg-green-500/20 text-green-400' :
+                                                    result.realWorldData.consumerSentiment?.overallSentiment === 'negative' ? 'bg-red-500/20 text-red-400' :
                                                     'bg-yellow-500/20 text-yellow-400'
                                                 }`}>
-                                                    {result.realWorldData.consumerSentiment.overallSentiment}
+                                                    {result.realWorldData.consumerSentiment?.overallSentiment || 'N/A'}
                                                 </span>
                                             </div>
                                         </div>
@@ -549,7 +549,7 @@ const ResultsPage: React.FC = () => {
                                         <h3 className="font-semibold text-white">X (Twitter)</h3>
                                     </div>
                                     <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px]">
-                                        {result.tweetSuggestion}
+                                        {result.tweetSuggestion || (isTR ? 'Tweet önerisi yükleniyor...' : 'Loading tweet suggestion...')}
                                     </div>
                                     <div className="flex gap-2">
                                         <button
@@ -581,13 +581,13 @@ const ResultsPage: React.FC = () => {
                                         <div>
                                             <div className="text-xs text-slate-400 mb-2">{isTR ? 'Başlık:' : 'Title:'}</div>
                                             <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300">
-                                                {result.redditTitleSuggestion}
+                                                {result.redditTitleSuggestion || (isTR ? 'Reddit başlık önerisi yükleniyor...' : 'Loading Reddit title suggestion...')}
                                             </div>
                                         </div>
                                         <div>
                                             <div className="text-xs text-slate-400 mb-2">{isTR ? 'İçerik:' : 'Body:'}</div>
                                             <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300 max-h-20 overflow-y-auto">
-                                                {result.redditBodySuggestion}
+                                                {result.redditBodySuggestion || (isTR ? 'Reddit içerik önerisi yükleniyor...' : 'Loading Reddit body suggestion...')}
                                             </div>
                                         </div>
                                     </div>
@@ -618,7 +618,7 @@ const ResultsPage: React.FC = () => {
                                         <h3 className="font-semibold text-white">LinkedIn</h3>
                                     </div>
                                     <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px] overflow-y-auto">
-                                        {result.linkedinSuggestion}
+                                        {result.linkedinSuggestion || (isTR ? 'LinkedIn önerisi yükleniyor...' : 'Loading LinkedIn suggestion...')}
                                     </div>
                                     <div className="flex gap-2">
                                         <button
