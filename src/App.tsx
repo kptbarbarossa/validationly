@@ -9,7 +9,7 @@ import ToolsPage from './pages/ToolsPage';
 import TrendHunterPage from './pages/TrendHunterPage';
 import TrendToStartupPage from './pages/TrendToStartupPage';
 import MarketSignalAcademyPage from './pages/MarketSignalAcademyPage';
-import SocialArbitragePage from './pages/SocialArbitragePage';
+import SocialValidationPage from './pages/SocialValidationPage';
 
 import FAQPage from './pages/FAQPage';
 import BlogIndexPage from './pages/BlogIndexPage';
@@ -82,7 +82,7 @@ const App: React.FC = () => {
               <Route path="/trend-hunter" element={<TrendHunterPage />} />
               <Route path="/trend-to-startup" element={<TrendToStartupPage />} />
               <Route path="/market-signal-academy" element={<MarketSignalAcademyPage />} />
-              <Route path="/social-arbitrage" element={<SocialArbitragePage />} />
+                                        <Route path="/social-validation" element={<SocialValidationPage />} />
               <Route path="/tools" element={<ToolsPage />} />
 
               <Route path="/faq" element={<FAQPage />} />

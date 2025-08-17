@@ -3,12 +3,12 @@ import { GoogleGenerativeAI } from '@google/genai';
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 
-interface SocialArbitrageRequest {
+interface SocialValidationRequest {
   idea: string;
   useAI?: 'gemini' | 'openai' | 'groq';
 }
 
-interface SocialArbitrageResult {
+interface SocialValidationResult {
   idea: string;
   validationScore: number;
   arbitrageScore: number;
@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { idea, useAI = 'gemini' }: SocialArbitrageRequest = req.body;
+    const { idea, useAI = 'gemini' }: SocialValidationRequest = req.body;
 
     if (!idea || typeof idea !== 'string') {
       return res.status(400).json({ error: 'Valid idea is required' });
@@ -125,7 +125,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Parse AI response and extract key insights
     const analysis = parseAIResponse(aiResponse, idea);
 
-    const result: SocialArbitrageResult = {
+    const result: SocialValidationResult = {
       idea,
       validationScore: analysis.validationScore,
       arbitrageScore: analysis.arbitrageScore,
@@ -135,11 +135,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       lastAnalysis: new Date().toISOString()
     };
 
-    console.log(`Social arbitrage analysis completed for: ${idea}`);
+            console.log(`Social validation analysis completed for: ${idea}`);
     return res.status(200).json(result);
 
   } catch (error) {
-    console.error('Social arbitrage analysis error:', error);
+    console.error('Social validation analysis error:', error);
     return res.status(500).json({ 
       error: 'Analysis failed',
       details: error instanceof Error ? error.message : 'Unknown error'

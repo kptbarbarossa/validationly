@@ -39,12 +39,12 @@ const ToolsPage: React.FC = () => {
             features: ['Expert training', 'Real case studies', 'Practical tools', 'Market intelligence']
         },
         {
-            id: 'social-arbitrage',
-            title: 'Social Arbitrage Analysis',
+            id: 'social-validation',
+            title: 'Social Validation Analysis',
             description: 'Discover early trend opportunities and market timing advantages using AI-powered social media trend analysis.',
             icon: '🚀',
-            route: '/social-arbitrage',
-            features: ['Trend phase analysis', 'Social media signals', 'Arbitrage scoring', 'Strategic recommendations']
+            route: '/social-validation',
+            features: ['Trend phase analysis', 'Social media signals', 'Validation scoring', 'Strategic recommendations']
         }
     ];
 

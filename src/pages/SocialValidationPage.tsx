@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { SEOHead } from '../components/SEOHead';
 
-interface SocialArbitrageResult {
+interface SocialValidationResult {
   idea: string;
   validationScore: number;
   arbitrageScore: number;
@@ -27,7 +27,7 @@ interface SocialArbitrageResult {
   lastAnalysis: string;
 }
 
-const SocialArbitragePage: React.FC = () => {
+const SocialValidationPage: React.FC = () => {
   const [idea, setIdea] = useState('');
   const [useAI, setUseAI] = useState<'gemini' | 'openai' | 'groq'>('gemini');
   const [isLoading, setIsLoading] = useState(false);
@@ -43,7 +43,7 @@ const SocialArbitragePage: React.FC = () => {
     setResult(null);
 
     try {
-      const response = await fetch('/api/social-arbitrage', {
+                        const response = await fetch('/api/social-validation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ idea: idea.trim(), useAI })
@@ -86,8 +86,8 @@ const SocialArbitragePage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Social Arbitrage Analysis | Validationly"
-        description="Analyze business ideas for social arbitrage opportunities using AI-powered trend analysis and market timing insights."
+                            title="Social Validation Analysis | Validationly"
+                    description="Analyze business ideas for social validation opportunities using AI-powered trend analysis and market timing insights."
       />
       
       <div className="relative text-white overflow-hidden">
@@ -99,12 +99,12 @@ const SocialArbitragePage: React.FC = () => {
         <div className="relative p-8">
           {/* Header */}
           <header className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3">
-              🚀 Social Arbitrage Analysis
-            </h1>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-              Discover early trend opportunities and market timing advantages using AI-powered social media trend analysis
-            </p>
+                                    <h1 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3">
+                          🚀 Social Validation Analysis
+                        </h1>
+                        <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+                          Discover early trend opportunities and market timing advantages using AI-powered social media trend analysis
+                        </p>
           </header>
 
           {/* Input Form */}
@@ -161,7 +161,7 @@ const SocialArbitragePage: React.FC = () => {
                 disabled={isLoading || !idea.trim()}
                 className="w-full py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-2xl text-white font-semibold text-lg transition-all transform hover:scale-105"
               >
-                {isLoading ? '🔍 Analyzing...' : '🚀 Analyze Social Arbitrage'}
+                                            {isLoading ? '🔍 Analyzing...' : '🚀 Analyze Social Validation'}
               </button>
             </form>
           </div>
@@ -363,4 +363,4 @@ const SocialArbitragePage: React.FC = () => {
   );
 };
 
-export default SocialArbitragePage;
+export default SocialValidationPage;
