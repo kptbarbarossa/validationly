@@ -553,7 +553,7 @@ Provide clear OPEX/CAPEX plans, realistic payback periods, and hyperlocal market
 
         // ==== Few-shot example blocks per sector (concise, high-signal) ====
         'saas-examples': `FEW-SHOT EXAMPLES:\nGOOD (EN): \"Churn ~2.1%/mo; LTV ~$520; CAC ~$140; LTV/CAC ~3.7x. ICP: SMB design teams (20-200 seats).\"\nWHY: Concrete metrics, coherent unit economics.\nBAD: \"Everyone will use this, market is huge.\"\nWHY: Generic claim, no numbers.`,
-        'ecommerce-examples': `FEW-SHOT EXAMPLES:\nGOOD (TR): \"CR ~%2.4; AOV ~₺420; aylık trafik ~35K; sepette terk ~%68→ kurtarma e-posta akışı ile ~%12 kazanım.\"\nNEDEN: Ölçülebilir metrik ve aksiyon.\nKÖTÜ: \"İnstagram’da satarız.\" (nicelik yok).`,
+        'ecommerce-examples': `FEW-SHOT EXAMPLES:\nGOOD (TR): \"CR ~%2.4; AOV ~₺420; aylık trafik ~35K; sepette terk ~%68→ kurtarma e-posta akışı ile ~%12 kazanım.\"\nNEDEN: Ölçülebilir metrik ve aksiyon.\nKÖTÜ: \"İnstagram'da satarız.\" (nicelik yok).`,
         'fintech-examples': `FEW-SHOT EXAMPLES:\nGOOD (EN): \"Take rate ~1.2%; fraud loss <0.1%; CAC ~$60; payback ~4 mo; KYC/AML: vendor X, go-live ~6-8 wks.\"\nWHY: Risk & compliance + unit economics together.`,
         'design-examples': `FEW-SHOT EXAMPLES:\nGOOD (EN): \"Figma Community templates weekly DL ~2K; PLG loop via remix; pricing $9/mo creator tier.\"\nWHY: Community metric + monetization.`,
         'marketplace-examples': `FEW-SHOT EXAMPLES:\nGOOD (EN): \"GMV path: M1 $8K → M3 $45K; take rate 12%; fill rate 68%; supply seeding via cohort of 50 providers.\"\nWHY: Liquidity + GMV with milestones.`,
@@ -1710,952 +1710,182 @@ async function getSimplifiedAIAnalysis(
 
         // Replace smart quotes and remove trailing commas
         text = text
-            .replace(/[“”]/g, '"')
-            .replace(/[‘’]/g, "'")
+            .replace(/[""]/g, '"')
+            .replace(/['']/g, "'")
             .replace(/,(\s*[}\]])/g, '$1');
 
         parsed = tryParse(text);
         return parsed;
     };
-    // Use the dynamic system instruction passed from the main function
 
     try {
-        console.log('🎯 Using single AI call with dynamic prompt system...');
-        console.log('📝 System instruction length:', systemInstruction.length);
-        console.log('🎯 Input content:', content);
-
-        // Language: mirror the user's input language (heuristic detection)
+        console.log('🎯 Using simplified AI analysis...');
+        
+        // Language detection
         const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content);
         const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
-        const languageInstruction = `Respond ONLY in ${expectedLanguage}. Keep 100% consistency across ALL text fields. Do not include words from any other language.`;
-
-        // Detect sector and get relevant platforms
-        const sectors = promptManager.detectSector(content);
-        const relevantPlatforms = promptManager.getSectorSpecificPlatforms(sectors);
-        const focusPlatforms = relevantPlatforms.slice(0, 4);
-        // Build compact platform schema for ONLY focus platforms to keep prompt small
-        const platformNameLabel: Record<string, string> = {
-            twitter: 'X', reddit: 'Reddit', linkedin: 'LinkedIn', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube',
-            facebook: 'Facebook', producthunt: 'Product Hunt', pinterest: 'Pinterest', github: 'GitHub', stackoverflow: 'Stack Overflow',
-            angellist: 'AngelList', crunchbase: 'Crunchbase', dribbble: 'Dribbble', behance: 'Behance', figma: 'Figma Community',
-            slack: 'Slack Communities', clubhouse: 'Clubhouse', substack: 'Substack', notion: 'Notion Community', devto: 'Dev.to',
-            hashnode: 'Hashnode', gitlab: 'GitLab', codepen: 'CodePen', indiehackers: 'Indie Hackers', awwwards: 'Awwwards',
-            designs99: '99designs', canva: 'Canva Community', adobe: 'Adobe Community', unsplash: 'Unsplash', etsy: 'Etsy',
-            amazon: 'Amazon Seller Central', shopify: 'Shopify Community', woocommerce: 'WooCommerce'
-        };
-        const schemaLines = focusPlatforms
-            .map(p => `"${p}": { "platformName": "${platformNameLabel[p] || p}", "score": number (1-5), "summary": "analysis", "keyFindings": ["finding1", "finding2", "finding3"], "contentSuggestion": "suggestion", "rubric": { "reach": number (1-5), "nicheFit": number (1-5), "contentFit": number (1-5), "competitiveSignal": number (1-5) } }`)
-            .join(',\n                        ');
         
-        console.log(`🎯 Detected sectors: ${sectors.join(', ')}`);
-        console.log(`📱 Relevant platforms: ${relevantPlatforms.join(', ')}`);
+        // Simple prompt for core validation
+        const simplePrompt = expectedLanguage === 'Turkish' ? 
+            `Bu startup fikrini analiz et: "${content}"
+            
+            Sadece JSON döndür. Şu yapıyı kullan:
+            {
+                "idea": "fikir",
+                "demandScore": 0-100 arası sayı,
+                "scoreJustification": "skor gerekçesi",
+                "platformAnalyses": {
+                    "twitter": {
+                        "platformName": "X",
+                        "score": 1-5 arası,
+                        "summary": "kısa analiz",
+                        "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
+                        "contentSuggestion": "içerik önerisi"
+                    },
+                    "reddit": {
+                        "platformName": "Reddit", 
+                        "score": 1-5 arası,
+                        "summary": "kısa analiz",
+                        "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
+                        "contentSuggestion": "içerik önerisi"
+                    },
+                    "linkedin": {
+                        "platformName": "LinkedIn",
+                        "score": 1-5 arası, 
+                        "summary": "kısa analiz",
+                        "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
+                        "contentSuggestion": "içerik önerisi"
+                    }
+                },
+                "tweetSuggestion": "tweet önerisi",
+                "redditTitleSuggestion": "reddit başlık önerisi",
+                "redditBodySuggestion": "reddit içerik önerisi",
+                "linkedinSuggestion": "linkedin önerisi"
+            }` :
+            `Analyze this startup idea: "${content}"
+            
+            Return only JSON. Use this structure:
+            {
+                "idea": "idea",
+                "demandScore": number 0-100,
+                "scoreJustification": "score justification",
+                "platformAnalyses": {
+                    "twitter": {
+                        "platformName": "X",
+                        "score": number 1-5,
+                        "summary": "brief analysis",
+                        "keyFindings": ["finding1", "finding2", "finding3"],
+                        "contentSuggestion": "content suggestion"
+                    },
+                    "reddit": {
+                        "platformName": "Reddit",
+                        "score": number 1-5,
+                        "summary": "brief analysis", 
+                        "keyFindings": ["finding1", "finding2", "finding3"],
+                        "contentSuggestion": "content suggestion"
+                    },
+                    "linkedin": {
+                        "platformName": "LinkedIn",
+                        "score": number 1-5,
+                        "summary": "brief analysis",
+                        "keyFindings": ["finding1", "finding2", "finding3"],
+                        "contentSuggestion": "content suggestion"
+                    }
+                },
+                "tweetSuggestion": "tweet suggestion",
+                "redditTitleSuggestion": "reddit title suggestion",
+                "redditBodySuggestion": "reddit content suggestion", 
+                "linkedinSuggestion": "linkedin suggestion"
+            }`;
 
-        // Single comprehensive AI analysis using our dynamic prompt system
+        // Single AI call with simple prompt
         const aiInstance = getAI();
         const runtimeModel = preferredModel || process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash';
-        let result = await aiInstance.models.generateContent({
+        
+        console.log(`🎯 Using model: ${runtimeModel}`);
+        
+        const result = await aiInstance.models.generateContent({
             model: runtimeModel,
-            contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 4)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. KEEP OUTPUT CONCISE: one short sentence per field or 2-3 short bullets; numbers where applicable. RETURN ONLY JSON. NO EXTRA TEXT.:
-
-            📊 MARKET INTELLIGENCE (provide specific numbers):
-            - TAM: Research actual market size with $ amounts
-            - SAM: Calculate serviceable market with methodology  
-            - SOM: Realistic obtainable market projection
-            - Growth Rate: Industry-specific growth percentages
-            - Market Timing: Rate 1-5 stars based on current trends
-            - Key Trends: 3 specific industry trends driving growth
-
-            🥊 COMPETITIVE LANDSCAPE (name real competitors):
-            - Direct Competitors: List 3 actual company names in this space
-            - Indirect Competitors: 2 alternative solutions
-            - Market Position: Specific positioning strategy
-            - Differentiation Score: Rate 1-10 with reasoning
-            - Competitive Moat: Specific sustainable advantages
-            - Entry Barriers: Real barriers to market entry
-
-            💰 ENHANCED FINANCIAL PROJECTIONS (comprehensive financial analysis):
-            - Revenue Model: { primary: "business model", secondary: [alternative models], revenueStreams: [{ name, type, projectedRevenue, confidence }], scalabilityFactor: 1-10 }
-            - Pricing Strategy: { model: "freemium/subscription/one_time/usage_based/tiered", pricePoint: number, currency: "USD/EUR/etc", justification: "reasoning", competitivePosition: "premium/competitive/budget" }
-            - Financial Metrics: { ltvcacRatio: number, projectedMRR: number, churnRate: percentage, grossMargin: percentage, unitEconomics: "description" }
-            - Funding Requirements: { totalNeeded: amount, currency: "USD", breakdown: [{ category, amount, percentage, justification }], timeline: "months", fundingStage: "pre_seed/seed/series_a/bootstrap" }
-            - Break-even Analysis: { timeToBreakEven: months, monthlyBurnRate: amount, revenueRequired: amount, assumptions: [key assumptions] }
-
-            👥 ENHANCED PERSONA ANALYSIS (detailed customer insights):
-            - Primary Persona: { segment: "customer type", demographics: { ageRange, income, location, occupation, education }, psychographics: { values: [], interests: [], behaviors: [], motivations: [] }, painPoints: [{ description, severity: 1-10, frequency: "daily/weekly/monthly/occasional", currentSolutions: [], satisfactionWithCurrent: 1-10 }], willingnessToPay: { minPrice, maxPrice, idealPrice, priceElasticity: "high/medium/low", paymentPreference: "monthly/annual/one_time" }, acquisitionChannels: [{ channel, effectiveness: 1-10, cost: "low/medium/high", timeToConvert, scalability: 1-10 }], marketSize: number, priority: "primary" }
-            - Secondary Persona: { same structure as primary but with priority: "secondary" }
-            - Tertiary Persona: { same structure as primary but with priority: "tertiary" }
-
-            ⚠️ ENHANCED RISK ASSESSMENT (multi-dimensional risk matrix):
-            - Technical Risk: { level: "Low/Medium/High", score: 0-100, factors: [reasons], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
-            - Market Risk: { level: "Low/Medium/High", score: 0-100, factors: [market factors], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
-            - Financial Risk: { level: "Low/Medium/High", score: 0-100, factors: [financial factors], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
-            - Regulatory Risk: { level: "Low/Medium/High", score: 0-100, factors: [compliance issues], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
-            - Competitive Risk: { level: "Low/Medium/High", score: 0-100, factors: [competitive threats], impact: "low/medium/high", probability: "low/medium/high", mitigations: [strategies] }
-            - Overall Risk: Low/Medium/High summary
-            - Mitigation Strategies: 5 comprehensive risk reduction tactics
-
-            🚀 GO-TO-MARKET (actionable launch strategy):
-            - Phase 1: Specific first 3-month strategy
-            - Phase 2: Months 4-6 scaling approach
-            - Phase 3: Months 7-12 expansion plan
-            - Timeline: Overall launch timeline
-            - Budget Needed: Specific $ amount for launch
-            - Key Channels: 3 primary marketing channels
-
-            🛠️ DEVELOPMENT ROADMAP (realistic timelines):
-            - MVP Timeline: Specific months to MVP
-            - Beta Launch: Months to beta version
-            - Public Launch: Months to full launch
-            - Key Features: 3 essential features to build
-            - Team Needed: 3 specific roles to hire
-            - Tech Stack: 3 recommended technologies
-
-            🎯 PRODUCT-MARKET FIT (measurable indicators):
-            - Problem-Solution Fit: Percentage score 0-100
-            - Solution-Market Fit: Percentage score 0-100  
-            - Early Adopter Signals: Specific indicators to watch
-            - Retention Prediction: Expected retention percentage
-            - Viral Coefficient: Growth multiplier potential
-            - PMF Indicators: 3 metrics to track success
-
-            - Analyze ONLY these focus platforms: ${focusPlatforms.join(', ')}`,
+            contents: simplePrompt,
             config: {
-                        systemInstruction: systemInstruction + `\n\nLANGUAGE ENFORCEMENT: Respond ONLY in the SAME LANGUAGE as the user input. Do not mix languages. All text fields must use the same language as input.\n\nRUBRIC REQUIREMENT: For EVERY platform under platformAnalyses, include a 'rubric' object with integer scores (1-5) for: reach, nicheFit, contentFit, competitiveSignal.\n\nCITATIONS (OPTIONAL): If EVIDENCE is provided above, include a 'citations' array per relevant section with { source, evidence } drawn strictly from the EVIDENCE. If evidence is insufficient, set citations to an empty array and state \"insufficient evidence\" in the relevant summaries.\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL required keys (even if estimated). Use non-empty strings for all text fields. No nulls, no empty arrays. Include ALL relevant platforms as specified:
-                {
-                    "idea": "${content}",
-                    "demandScore": number (0-100),
-                    "scoreJustification": "short justification phrase",
-                    "platformAnalyses": {
-                        ${schemaLines}
-                    },
-                    "tweetSuggestion": "optimized Twitter post",
-                    "redditTitleSuggestion": "compelling Reddit title",
-                    "redditBodySuggestion": "detailed Reddit post body",
-                    "linkedinSuggestion": "professional LinkedIn post",
-                    
-                    "marketIntelligence": {
-                        "tam": "Total Addressable Market size",
-                        "sam": "Serviceable Addressable Market size", 
-                        "som": "Serviceable Obtainable Market size",
-                        "growthRate": "Market growth rate percentage",
-                        "marketTiming": number (1-5),
-                        "keyTrends": ["trend1", "trend2", "trend3"]
-                    },
-                    
-                    "competitiveLandscape": {
-                        "directCompetitors": ["competitor1", "competitor2", "competitor3"],
-                        "indirectCompetitors": ["indirect1", "indirect2"],
-                        "marketPosition": "positioning description",
-                        "differentiationScore": number (1-10),
-                        "competitiveMoat": "competitive advantage description",
-                        "entryBarriers": "market entry barriers"
-                    },
-                    
-                    "revenueModel": {
-                        "primaryModel": "business model type",
-                        "pricePoint": "pricing recommendation",
-                        "revenueStreams": ["stream1", "stream2", "stream3"],
-                        "breakEvenTimeline": "time to break even",
-                        "ltvCacRatio": "lifetime value to customer acquisition cost ratio",
-                        "projectedMrr": "monthly recurring revenue projection"
-                    },
-                    
-                    "targetAudience": {
-                        "primarySegment": "primary customer segment",
-                        "secondarySegment": "secondary customer segment",
-                        "tertiarySegment": "tertiary customer segment",
-                        "painPoints": ["pain1", "pain2", "pain3"],
-                        "willingnessToPay": "willingness to pay assessment",
-                        "customerAcquisitionChannels": ["channel1", "channel2", "channel3"]
-                    },
-                    
-                    "riskAssessment": {
-                        "technicalRisk": "Low|Medium|High",
-                        "marketRisk": "Low|Medium|High",
-                        "financialRisk": "Low|Medium|High",
-                        "regulatoryRisk": "Low|Medium|High",
-                        "overallRiskLevel": "Low|Medium|High",
-                        "mitigationStrategies": ["strategy1", "strategy2", "strategy3"]
-                    },
-                    
-                    "goToMarket": {
-                        "phase1": "first phase strategy",
-                        "phase2": "second phase strategy", 
-                        "phase3": "third phase strategy",
-                        "timeline": "overall timeline",
-                        "budgetNeeded": "budget requirement",
-                        "keyChannels": ["channel1", "channel2", "channel3"]
-                    },
-                    
-                    "developmentRoadmap": {
-                        "mvpTimeline": "MVP development timeline",
-                        "betaLaunch": "beta launch timeline",
-                        "publicLaunch": "public launch timeline",
-                        "keyFeatures": ["feature1", "feature2", "feature3"],
-                        "teamNeeded": ["role1", "role2", "role3"],
-                        "techStack": ["tech1", "tech2", "tech3"]
-                    },
-                    
-                    "productMarketFit": {
-                        "problemSolutionFit": number (0-100),
-                        "solutionMarketFit": number (0-100),
-                        "earlyAdopterSignals": "early adopter indicators",
-                        "retentionPrediction": "retention prediction",
-                        "viralCoefficient": "viral growth potential",
-                        "pmfIndicators": ["indicator1", "indicator2", "indicator3"]
-                    },
-                    "assumptions": ["assumption1","assumption2","assumption3"],
-                    "confidence": number (0-100),
-                    "nextTests": [
-                      { "hypothesis": "...", "channel": "...", "metric": "..." },
-                      { "hypothesis": "...", "channel": "...", "metric": "..." },
-                      { "hypothesis": "...", "channel": "...", "metric": "..." }
-                    ],
-                    "socialSuggestions": {
-                      "x": {
-                        "variants": [ { "text": "...", "goal": "e.g., 1.5%+ engagement", "variables": ["emoji","number","question"] } ],
-                        "thread": ["intro","problem","solution","CTA"]
-                      },
-                      "reddit": {
-                        "subreddits": ["sub1","sub2"],
-                        "titleVariants": ["title A","title B"],
-                        "body": "...",
-                        "goal": "10+ comments"
-                      },
-                      "linkedin": {
-                        "post": "...",
-                        "hashtags": ["#...","#..."],
-                        "goal": "5+ comments"
-                      },
-                      "instagram": {
-                        "hooks": ["...","..."],
-                        "caption": "...",
-                        "hashtags": ["#...","#..."],
-                        "shots": ["...","..."],
-                        "goal": "saves/shares > baseline"
-                      }
-                    }
-                }`,
-                responseMimeType: "application/json",
-                temperature: 0,
-                maxOutputTokens: 1792,
-                // Note: safetySettings categories vary by SDK version; omit to avoid INVALID_ARGUMENT
+                temperature: 0.3,
+                maxOutputTokens: 1000,
             }
         });
 
-        let responseText = result.text?.trim();
-        // Debug finish reason if available
-        try { console.log('🧪 finishReason:', (result as any)?.response?.candidates?.[0]?.finishReason || (result as any)?.candidates?.[0]?.finishReason || 'n/a'); } catch {}
-        console.log('🧪 AI raw length:', responseText ? responseText.length : 0);
-        if (!responseText) {
-            // Immediate retry with pro model and permissive safety settings
-            try {
-                result = await aiInstance.models.generateContent({
-                    model: process.env.GEMINI_MODEL_RETRY || 'gemini-1.5-pro',
-                    contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${focusPlatforms.join(', ')} (USE ONLY THESE; MAX 6)\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input. KEEP OUTPUT CONCISE. RETURN ONLY JSON.`,
-                    config: {
-                        systemInstruction: systemInstruction,
-                        responseMimeType: 'application/json',
-                        temperature: 0,
-                        maxOutputTokens: 1792,
-                    }
-                });
-                responseText = result.text?.trim() || '';
-                try { console.log('🧪 Pro finishReason:', (result as any)?.response?.candidates?.[0]?.finishReason || (result as any)?.candidates?.[0]?.finishReason || 'n/a'); } catch {}
-                console.log('🧪 Pro retry raw length:', responseText.length);
-            } catch {}
-        if (!responseText) {
-            throw new Error('Empty response from AI analysis');
+        const responseText = result.text?.trim();
+        console.log('📝 AI Response received, length:', responseText?.length || 0);
+
+        if (responseText) {
+            const parsed = safeJsonParse(responseText);
+            if (parsed && typeof parsed === 'object') {
+                // Validate and clean the response
+                const cleaned = {
+                    idea: content,
+                    demandScore: Math.max(0, Math.min(100, parsed.demandScore || 50)),
+                    scoreJustification: parsed.scoreJustification || 'Analysis completed',
+                    language: expectedLanguage,
+                    fallbackUsed: false,
+                    platformAnalyses: parsed.platformAnalyses || {},
+                    tweetSuggestion: parsed.tweetSuggestion || '',
+                    redditTitleSuggestion: parsed.redditTitleSuggestion || '',
+                    redditBodySuggestion: parsed.redditBodySuggestion || '',
+                    linkedinSuggestion: parsed.linkedinSuggestion || ''
+                };
+
+                console.log('✅ AI analysis successful, score:', cleaned.demandScore);
+                return cleaned;
             }
         }
 
-        // Pre-clean: normalize BOM/nbsp and stray fences/utf quotes before parse
-        const preClean = (txt: string) => txt
-            .replace(/^\uFEFF/, '')
-            .replace(/[\u00A0\u200B\u200C\u200D]/g, ' ')
-            .replace(/^```\s*json\s*/i, '')
-            .replace(/^```/i, '')
-            .replace(/```\s*$/i, '')
-            .replace(/```/g, '')
-            .replace(/[“”]/g, '"')
-            .replace(/[‘’]/g, "'");
-        responseText = preClean(responseText);
+        throw new Error('Failed to parse AI response');
 
-        let parsedResult = safeJsonParse(responseText);
-        if (!parsedResult) {
-            // Attempt a quick JSON repair before retrying model
-            try {
-                const aiRepair = getAI();
-                const repairTry = await aiRepair.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: `CLEAN THIS TO VALID JSON. Return ONLY valid JSON with no extra text. If input has markdown fences or trailing text, remove them and output just a valid JSON:
-${responseText.slice(0, 6000)}`,
-                    config: {
-                        systemInstruction: 'You strictly convert malformed JSON-like text into valid JSON. Output JSON only.',
-                        responseMimeType: 'application/json',
-                        temperature: 0,
-                        maxOutputTokens: 1024,
-                    }
-                });
-                const repaired1 = safeJsonParse(repairTry.text?.trim() || '');
-                if (repaired1) {
-                    parsedResult = repaired1;
-                }
-            } catch {}
-
-            if (!parsedResult) {
-                // Retry once with stable model
-            try {
-                result = await aiInstance.models.generateContent({
-                    model: 'gemini-2.5-flash',
-                    contents: `${languageInstruction}\n\nANALYZE THIS STARTUP IDEA: "${content}"\n\n🎯 DETECTED SECTORS: ${sectors.join(', ')}\n📱 FOCUS PLATFORMS: ${relevantPlatforms.join(', ')}\n\nProvide COMPREHENSIVE BUSINESS ANALYSIS with REAL DATA. IMPORTANT: Keep the response strictly in the same language as the input.:`,
-                    config: {
-                        systemInstruction: systemInstruction + `\n\nLANGUAGE ENFORCEMENT: Respond ONLY in the SAME LANGUAGE as the user input. Do not mix languages.\n\nRESPONSE FORMAT: Return JSON with this exact structure including ALL required keys (even if estimated). Use non-empty strings for all text fields. No nulls, no empty arrays. Include ALL relevant platforms as specified:
-                { ... }`,
-                        responseMimeType: "application/json",
-                        temperature: 0,
-                        maxOutputTokens: 3072,
-                    }
-                });
-                responseText = preClean(result.text?.trim() || '');
-                parsedResult = safeJsonParse(responseText);
-                console.log('🧪 Retry raw length:', responseText ? responseText.length : 0);
-            } catch (e) {
-                // fall through to outer catch
-            }
-            if (!parsedResult) {
-                // Final attempt: request a minimal core JSON (small schema) to avoid truncation
-                try {
-                    const minimal = await aiInstance.models.generateContent({
-                        model: 'gemini-2.5-flash',
-                        contents: `${languageInstruction}\n\nProduce ONLY the following minimal JSON for the idea: "${content}". Keep strings concise. JSON shape (all required unless noted):\n{
-  "idea": string,
-  "demandScore": number, // 0-100
-  "scoreJustification": string, // <= 140 chars
-  "platformAnalyses": {
-    // Include ONLY platforms where you CAN provide ALL required fields below
-    "twitter"?: {"platformName":"X","score":1-5,"summary":string,"keyFindings":[string,string,string],"contentSuggestion":string,"rubric":{"reach":1-5,"nicheFit":1-5,"contentFit":1-5,"competitiveSignal":1-5}},
-    "reddit"?: {...},
-    "linkedin"?: {...},
-    "instagram"?: {...},
-    "tiktok"?: {...},
-    "youtube"?: {...},
-    "facebook"?: {...},
-    "producthunt"?: {...}
-  },
-  "tweetSuggestion": string,
-  "redditTitleSuggestion": string,
-  "redditBodySuggestion": string,
-  "linkedinSuggestion": string
-}\nReturn JSON only.`,
-                        config: {
-                            systemInstruction: 'Output minimal, valid JSON only. Keep per-field text short. Language must mirror input.',
-                            responseMimeType: 'application/json',
-                            temperature: 0,
-                            maxOutputTokens: 1792,
-                        }
-                    });
-                    const mText = preClean(minimal.text?.trim() || '');
-                    const mParsed = safeJsonParse(mText);
-                    if (mParsed) {
-                        parsedResult = mParsed;
-                    }
-                } catch {}
-            if (!parsedResult) {
-                throw new Error('Invalid JSON from AI');
-            }
-        }
-            }
-        }
-
-        // If language fields sneak in mixed-language content, enforce by simple heuristic
-        // Remove hard-coded EN/TR checks to allow any language; rely on strict instruction + optional repair
-
-        // Validate and clean the result
-        const isNonEmptyString = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0;
-        const isValidRubric = (r: any): boolean => {
-            const isInt15 = (n: any) => Number.isInteger(n) && n >= 1 && n <= 5;
-            return r && isInt15(r.reach) && isInt15(r.nicheFit) && isInt15(r.contentFit) && isInt15(r.competitiveSignal);
-        };
-        const isValidPlatform = (pa: any): boolean => {
-            if (!pa) return false;
-            const hasSummary = isNonEmptyString(pa.summary);
-            const hasSuggestion = isNonEmptyString(pa.contentSuggestion);
-            const hasKF = Array.isArray(pa.keyFindings) && pa.keyFindings.length === 3 && pa.keyFindings.every(isNonEmptyString);
-            // rubric might be in pa.rubric or flat; computePlatformScore handles absence, but we require rubric for validity
-            const rubricOk = isValidRubric(pa.rubric || pa);
-            return hasSummary && hasSuggestion && hasKF && rubricOk;
-        };
-        const buildPlatformEntry = (key: string, pa: any, sectorsForWeight: string[]) => {
-            const c = computePlatformScore(pa, sectorsForWeight);
-            return {
-                platformName: (pa?.platformName as string) || key,
-                score: c.score,
-                summary: pa.summary,
-                keyFindings: pa.keyFindings,
-                contentSuggestion: pa.contentSuggestion,
-                rubric: c.rubric
-            };
-        };
-        const computePlatformScore = (pa: any, sectorsForWeight?: string[]): { score: number; rubric: { reach: number; nicheFit: number; contentFit: number; competitiveSignal: number } } => {
-            const clamp = (n: any) => Math.max(1, Math.min(5, Number.isFinite(n) ? Math.round(n) : 3));
-            const rubric = {
-                reach: clamp(pa?.rubric?.reach ?? pa?.reach),
-                nicheFit: clamp(pa?.rubric?.nicheFit ?? pa?.nicheFit),
-                contentFit: clamp(pa?.rubric?.contentFit ?? pa?.contentFit),
-                competitiveSignal: clamp(pa?.rubric?.competitiveSignal ?? pa?.competitiveSignal),
-            };
-            const weightsMap: Record<string, { reach:number; nicheFit:number; contentFit:number; competitiveSignal:number }> = {
-                default:     { reach: 0.30, nicheFit: 0.30, contentFit: 0.20, competitiveSignal: 0.20 },
-                saas:        { reach: 0.20, nicheFit: 0.35, contentFit: 0.20, competitiveSignal: 0.25 },
-                ecommerce:   { reach: 0.35, nicheFit: 0.25, contentFit: 0.25, competitiveSignal: 0.15 },
-                fintech:     { reach: 0.20, nicheFit: 0.30, contentFit: 0.20, competitiveSignal: 0.30 },
-                design:      { reach: 0.25, nicheFit: 0.30, contentFit: 0.30, competitiveSignal: 0.15 },
-                marketplace: { reach: 0.30, nicheFit: 0.30, contentFit: 0.20, competitiveSignal: 0.20 },
-                mobile:      { reach: 0.35, nicheFit: 0.25, contentFit: 0.25, competitiveSignal: 0.15 },
-                hardware:    { reach: 0.25, nicheFit: 0.30, contentFit: 0.20, competitiveSignal: 0.25 },
-                offline:     { reach: 0.40, nicheFit: 0.30, contentFit: 0.20, competitiveSignal: 0.10 },
-                consumer_social: { reach: 0.20, nicheFit: 0.25, contentFit: 0.20, competitiveSignal: 0.35 },
-            };
-            // A/B override by explicit variant name if provided
-            if (weightsVariant && weightsMap[weightsVariant]) {
-                const wv = weightsMap[weightsVariant];
-                const weighted = rubric.reach * wv.reach + rubric.nicheFit * wv.nicheFit + rubric.contentFit * wv.contentFit + rubric.competitiveSignal * wv.competitiveSignal;
-                const score = Math.max(1, Math.min(5, Math.round(weighted)));
-                return { score, rubric };
-            }
-            let sectorKey = sectorsForWeight && sectorsForWeight.length ? (sectorsForWeight[0] as keyof typeof weightsMap) : 'default';
-            // Heuristic: if idea matches big consumer social keywords, use consumer_social weights
-            const ideaLower = (content || '').toLowerCase();
-            const socialKeywords = ['facebook', 'instagram', 'tiktok', 'snapchat', 'twitter', 'x ', 'x(', 'social network', 'social media app'];
-            if (socialKeywords.some(k => ideaLower.includes(k))) {
-                sectorKey = 'consumer_social' as any;
-            }
-            const w = weightsMap[sectorKey] || weightsMap.default;
-            const weighted = rubric.reach * w.reach + rubric.nicheFit * w.nicheFit + rubric.contentFit * w.contentFit + rubric.competitiveSignal * w.competitiveSignal;
-            const score = Math.max(1, Math.min(5, Math.round(weighted)));
-            return { score, rubric };
-        };
-
-        const enforceLanguageOnObjectStrings = (obj: any, expected: 'English'|'Turkish'|undefined): { ok: boolean; offending: string | undefined } => {
-            const traverse = (o: any): string | null => {
-                if (o == null) return null;
-                if (typeof o === 'string') {
-                    return null;
-                }
-                if (Array.isArray(o)) {
-                    for (const v of o) { const r = traverse(v); if (r) return r; }
-                    return null;
-                }
-                if (typeof o === 'object') {
-                    for (const k of Object.keys(o)) { const r = traverse(o[k]); if (r) return r; }
-                }
-                return null;
-            };
-            const off = traverse(obj) || undefined;
-            return { ok: !off, offending: off };
-        };
-        const cleanResult: any = {
-            idea: parsedResult.idea || content,
-            demandScore: Math.max(0, Math.min(100, parsedResult.demandScore || 65)),
-            scoreJustification: parsedResult.scoreJustification || 'Market analysis completed',
+    } catch (error) {
+        console.error('❌ AI analysis failed:', error);
+        
+        // Return fallback response
+        const fallbackResponse = {
+            idea: content,
+            demandScore: 50,
+            scoreJustification: expectedLanguage === 'Turkish' ? 'Analiz başarısız, yedek yanıt kullanıldı' : 'Analysis failed, fallback used',
             language: expectedLanguage,
-            fallbackUsed: Boolean(parsedResult.fallbackUsed ?? false),
+            fallbackUsed: true,
             platformAnalyses: {
-                twitter: (()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.twitter, sectors); return {
+                twitter: {
                     platformName: 'X',
-                    score: c.score,
-                    summary: parsedResult.platformAnalyses?.twitter?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.twitter?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.twitter?.contentSuggestion || '',
-                    rubric: c.rubric
-                }; })(),
+                    score: 3,
+                    summary: expectedLanguage === 'Turkish' ? 'Orta düzey potansiyel' : 'Medium potential',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
+                    contentSuggestion: expectedLanguage === 'Turkish' ? 'Fikrinizi X\'te paylaşın' : 'Share your idea on X'
+                },
                 reddit: {
                     platformName: 'Reddit',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.reddit, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.reddit?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.reddit?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.reddit?.contentSuggestion || ''
+                    score: 3,
+                    summary: expectedLanguage === 'Turkish' ? 'Orta düzey topluluk ilgisi' : 'Medium community interest',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate community fit'],
+                    contentSuggestion: expectedLanguage === 'Turkish' ? 'İlgili subreddit\'lerde paylaşın' : 'Post in relevant subreddits'
                 },
                 linkedin: {
                     platformName: 'LinkedIn',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.linkedin, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.linkedin?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.linkedin?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.linkedin?.contentSuggestion || ''
-                },
-                instagram: {
-                    platformName: 'Instagram',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.instagram, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.instagram?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.instagram?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.instagram?.contentSuggestion || ''
-                },
-                tiktok: {
-                    platformName: 'TikTok',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.tiktok, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.tiktok?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.tiktok?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.tiktok?.contentSuggestion || ''
-                },
-                youtube: {
-                    platformName: 'YouTube',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.youtube, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.youtube?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.youtube?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.youtube?.contentSuggestion || ''
-                },
-                facebook: {
-                    platformName: 'Facebook',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.facebook, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.facebook?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.facebook?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.facebook?.contentSuggestion || ''
-                },
-                producthunt: {
-                    platformName: 'Product Hunt',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.producthunt, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.producthunt?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.producthunt?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.producthunt?.contentSuggestion || ''
-                },
-                hackernews: {
-                    platformName: 'Hacker News',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.hackernews, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.hackernews?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.hackernews?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.hackernews?.contentSuggestion || ''
-                },
-                medium: {
-                    platformName: 'Medium',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.medium, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.medium?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.medium?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.medium?.contentSuggestion || ''
-                },
-                discord: {
-                    platformName: 'Discord',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.discord, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.discord?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.discord?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.discord?.contentSuggestion || ''
-                },
-                github: {
-                    platformName: 'GitHub',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.github, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.github?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.github?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.github?.contentSuggestion || ''
-                },
-                dribbble: {
-                    platformName: 'Dribbble',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.dribbble, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.dribbble?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.dribbble?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.dribbble?.contentSuggestion || ''
-                },
-                angellist: {
-                    platformName: 'AngelList',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.angellist, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.angellist?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.angellist?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.angellist?.contentSuggestion || ''
-                },
-                crunchbase: {
-                    platformName: 'Crunchbase',
-                    ...(()=>{ const c = computePlatformScore(parsedResult.platformAnalyses?.crunchbase, sectors); return { score: c.score, rubric: c.rubric }; })(),
-                    summary: parsedResult.platformAnalyses?.crunchbase?.summary || '',
-                    keyFindings: parsedResult.platformAnalyses?.crunchbase?.keyFindings || [],
-                    contentSuggestion: parsedResult.platformAnalyses?.crunchbase?.contentSuggestion || ''
+                    score: 3,
+                    summary: expectedLanguage === 'Turkish' ? 'Orta düzey iş potansiyeli' : 'Medium business potential',
+                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                    contentSuggestion: expectedLanguage === 'Turkish' ? 'Profesyonel ağınızla paylaşın' : 'Share with your professional network'
                 }
             },
-            tweetSuggestion: parsedResult.tweetSuggestion || '',
-            redditTitleSuggestion: parsedResult.redditTitleSuggestion || '',
-            redditBodySuggestion: parsedResult.redditBodySuggestion || '',
-            linkedinSuggestion: parsedResult.linkedinSuggestion || '',
-
-            // Add comprehensive analysis with fallbacks
-            marketIntelligence: parsedResult.marketIntelligence,
-            competitiveLandscape: parsedResult.competitiveLandscape,
-            revenueModel: parsedResult.revenueModel,
-            targetAudience: parsedResult.targetAudience,
-            riskAssessment: parsedResult.riskAssessment,
-            goToMarket: parsedResult.goToMarket,
-            developmentRoadmap: parsedResult.developmentRoadmap,
-            productMarketFit: parsedResult.productMarketFit,
-            vcReview: parsedResult.vcReview,
-            communityMatch: {
-                subreddits: Array.isArray((parsedResult as any)?.communityMatch?.subreddits)
-                    ? ((parsedResult as any).communityMatch.subreddits as any[]).slice(0, 20).map((it: any) => ({
-                        name: typeof it?.name === 'string' ? it.name : '',
-                        url: typeof it?.url === 'string' ? it.url : undefined,
-                        members: typeof it?.members === 'string' ? it.members : undefined,
-                        fitReason: typeof it?.fitReason === 'string' ? it.fitReason : '',
-                        rulesSummary: typeof it?.rulesSummary === 'string' ? it.rulesSummary : '',
-                        entryMessage: typeof it?.entryMessage === 'string' ? it.entryMessage : ''
-                    }))
-                    : [],
-                discordServers: Array.isArray((parsedResult as any)?.communityMatch?.discordServers)
-                    ? ((parsedResult as any).communityMatch.discordServers as any[]).slice(0, 10).map((it: any) => ({
-                        name: typeof it?.name === 'string' ? it.name : '',
-                        url: typeof it?.url === 'string' ? it.url : undefined,
-                        members: typeof it?.members === 'string' ? it.members : undefined,
-                        fitReason: typeof it?.fitReason === 'string' ? it.fitReason : '',
-                        rulesSummary: typeof it?.rulesSummary === 'string' ? it.rulesSummary : '',
-                        entryMessage: typeof it?.entryMessage === 'string' ? it.entryMessage : ''
-                    }))
-                    : [],
-                linkedinGroups: Array.isArray((parsedResult as any)?.communityMatch?.linkedinGroups)
-                    ? ((parsedResult as any).communityMatch.linkedinGroups as any[]).slice(0, 10).map((it: any) => ({
-                        name: typeof it?.name === 'string' ? it.name : '',
-                        url: typeof it?.url === 'string' ? it.url : undefined,
-                        members: typeof it?.members === 'string' ? it.members : undefined,
-                        fitReason: typeof it?.fitReason === 'string' ? it.fitReason : '',
-                        rulesSummary: typeof it?.rulesSummary === 'string' ? it.rulesSummary : '',
-                        entryMessage: typeof it?.entryMessage === 'string' ? it.entryMessage : ''
-                    }))
-                    : []
-            }
+            tweetSuggestion: expectedLanguage === 'Turkish' ? 
+                `🚀 Yeni bir fikir üzerinde çalışıyorum: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} Ne düşünüyorsunuz? #startup #girişim` :
+                `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
+            redditTitleSuggestion: expectedLanguage === 'Turkish' ? 'Startup fikrimi için geri bildirim arıyorum' : 'Looking for feedback on my startup idea',
+            redditBodySuggestion: expectedLanguage === 'Turkish' ?
+                `Bu konsept üzerinde çalışıyorum: ${content}. Topluluktan düşüncelerinizi ve geri bildirimlerinizi almak isterim.` :
+                `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
+            linkedinSuggestion: expectedLanguage === 'Turkish' ?
+                `Yeni bir iş fırsatı keşfediyorum: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Bu alanda başkalarıyla bağlantı kurmakla ilgileniyorum.` :
+                `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`
         };
 
-        // Simple score validation and stabilization
-        try {
-            // Use AI's score directly, just validate it's reasonable
-            let finalScore = Math.max(0, Math.min(100, Number(parsedResult.demandScore || 50)));
-            
-            // Apply clone penalty if needed (simplified)
-            const ideaLower = (content || cleanResult.idea || '').toLowerCase();
-            const cloneKeywords = [
-                'facebook', 'instagram', 'tiktok', 'snapchat', 'twitter', 'x ', ' x(', 
-                'linkedin', 'reddit', 'discord', 'clubhouse', 'social network', 'social media app'
-            ];
-            const isCloneIdea = cloneKeywords.some(k => ideaLower.includes(k));
-            
-            if (isCloneIdea) {
-                finalScore = Math.min(finalScore, 40);
-                const note = expectedLanguage === 'Turkish'
-                    ? 'Sosyal medya klonu - muhafazakâr skor.'
-                    : 'Social media clone - conservative score.';
-                cleanResult.scoreJustification = `${cleanResult.scoreJustification} ${note}`;
-            }
-            
-            cleanResult.demandScore = finalScore;
-            console.log(`📊 Final score: ${finalScore}/100 (clone penalty: ${isCloneIdea})`);
-        } catch {}
-
-        // Clone penalty already applied above - no need for duplicate logic
-
-        // Language post-check: if English expected but Turkish chars found anywhere, do a tiny repair call
-        const langCheck = enforceLanguageOnObjectStrings(cleanResult, undefined);
-        if (!langCheck.ok) {
-            try {
-                const aiInstance2 = getAI();
-                const repair = await aiInstance2.models.generateContent({
-                    model: runtimeModel,
-                    contents: `Your JSON response contained stray text outside of valid JSON or invalid mixed-language artifacts. Rewrite ONLY the text fields to be in the SAME LANGUAGE as the user's input. Keep the structure and numeric values unchanged. Return ONLY valid JSON.\n\nSample:\n${(langCheck.offending||'').slice(0, 500)}`,
-                    config: {
-                        systemInstruction: 'You are a strict JSON and language repair assistant. Output valid JSON only.',
-                        responseMimeType: 'application/json',
-                        temperature: 0,
-                        maxOutputTokens: 512
-                    }
-                });
-                const repaired = safeJsonParse(repair.text?.trim() || '');
-                console.log('🩹 Repair length:', repair.text ? repair.text.length : 0);
-                if (repaired && typeof repaired === 'object') {
-                    // shallow merge of text fields if compatible; otherwise keep original
-                    cleanResult.scoreJustification = repaired.scoreJustification || cleanResult.scoreJustification;
-                    // best-effort replace summaries/suggestions if present
-                    const rp = repaired.platformAnalyses || {};
-                    for (const key of Object.keys(cleanResult.platformAnalyses)) {
-                        const cur = (cleanResult.platformAnalyses as any)[key];
-                        const nr = rp[key];
-                        if (nr) {
-                            cur.summary = nr.summary || cur.summary;
-                            cur.contentSuggestion = nr.contentSuggestion || cur.contentSuggestion;
-                        }
-                    }
-                }
-            } catch {}
-        }
-
-        console.log('✅ Single AI call analysis completed');
-        return cleanResult;
-
-    } catch (error) {
-        console.log('❌ Platform analysis failed, using fallback...', error);
-
-        // Detect language for fallback (respect forcedLang)
-        // Note: Do NOT include plain 'I' in the character class to avoid false Turkish detection for English text
-        const isTurkish = forcedLang === 'tr' ? true : forcedLang === 'en' ? false : /[çğıöşüÇĞİÖŞÜ]/.test(content) ||
-            /\b(bir|bu|şu|için|ile|olan|var|yok|çok|az|büyük|küçük|iyi|kötü|yeni|eski)\b/i.test(content);
-
-        // GROQ bridge fallback (model-based, avoids static placeholders)
-        try {
-            const groqKey = process.env.GROQ_API_KEY;
-            if (groqKey) {
-                const groqBody: any = {
-                    model: 'llama3-70b-8192',
-                    messages: [
-                        { role: 'system', content: `${systemInstruction}\n\nSTRICT: Output VALID JSON only.` },
-                        { role: 'user', content: `ANALYZE THIS STARTUP IDEA: "${content}"\n\nReturn ONLY JSON. Keep strings concise. Include a 'platformAnalyses' object for up to 6 relevant platforms (X, Reddit, LinkedIn, etc). Each platform: summary (<=200 chars), keyFindings (3 items), contentSuggestion (<=160 chars), score (1-5).` }
-                    ],
-                    temperature: 0,
-                    max_tokens: 2048
-                };
-                const resp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${groqKey}`,
-                    },
-                    body: JSON.stringify(groqBody)
-                });
-                if (resp.ok) {
-                    const jr: any = await resp.json();
-                    const text: string = (jr.choices?.[0]?.message?.content || '').trim();
-                    const groqParsed = safeJsonParse(text);
-                    if (groqParsed && typeof groqParsed === 'object') {
-                        // Map minimal fields expected by UI
-                        const pa = groqParsed.platformAnalyses || {};
-                        return {
-                            idea: content,
-                            demandScore: Math.max(0, Math.min(100, groqParsed.demandScore || 65)),
-                            scoreJustification: groqParsed.scoreJustification || (isTurkish ? 'Model tabanlı değerlendirme' : 'Model-based assessment'),
-                            language: isTurkish ? 'Turkish' : 'English',
-                            fallbackUsed: false,
-                            platformAnalyses: pa,
-                            tweetSuggestion: groqParsed.tweetSuggestion || '',
-                            redditTitleSuggestion: groqParsed.redditTitleSuggestion || '',
-                            redditBodySuggestion: groqParsed.redditBodySuggestion || '',
-                            linkedinSuggestion: groqParsed.linkedinSuggestion || ''
-                        } as any;
-                    }
-                }
-            }
-        } catch (e) {
-            console.warn('GROQ bridge failed:', e);
-        }
-
-        // Rescue fallback: try a minimal Gemini JSON response before static placeholders
-        try {
-            const aiRescue = getAI();
-            const rescueModel = process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash';
-            const sys = 'Respond ONLY with valid JSON. Keep fields short. No extra text.';
-            const r2 = await aiRescue.models.generateContent({
-                model: rescueModel,
-                contents: `MINIMAL ANALYSIS FOR: "${content}"
-Return JSON with keys: idea, demandScore, scoreJustification, platformAnalyses{ twitter|reddit|linkedin each: { platformName, score(1-5), summary, keyFindings[], contentSuggestion } }, tweetSuggestion, redditTitleSuggestion, redditBodySuggestion, linkedinSuggestion.`,
-                config: { systemInstruction: sys, responseMimeType: 'application/json', temperature: 0.2, maxOutputTokens: 1024 }
-            });
-            const txt2 = (r2.text || '').trim();
-            try {
-                const parsed2 = JSON.parse(txt2);
-                if (parsed2 && typeof parsed2 === 'object') {
-                    return parsed2 as any;
-                }
-            } catch {}
-        } catch {}
-
-        if (isTurkish) {
-            // Turkish fallback
-            return {
-                idea: content,
-                demandScore: 65,
-                scoreJustification: 'Sınırlı veri ile analiz tamamlandı',
-                language: 'Turkish',
-                fallbackUsed: true,
-                platformAnalyses: {
-                    twitter: {
-                        platformName: 'X',
-                        score: 3,
-                        summary: 'Twitter analizi geçici olarak kullanılamıyor. Orta düzey potansiyel tahmin ediliyor.',
-                        keyFindings: ['Analiz kullanılamıyor', 'Yedek değerlendirme', 'Orta potansiyel'],
-                        contentSuggestion: 'Fikrinizi X\'te paylaşarak geri bildirim alın.'
-                    },
-                    reddit: {
-                        platformName: 'Reddit',
-                        score: 3,
-                        summary: 'Reddit analizi geçici olarak kullanılamıyor. Topluluk ilgisi orta düzey olarak tahmin ediliyor.',
-                        keyFindings: ['Analiz kullanılamıyor', 'Yedek değerlendirme', 'Orta topluluk uyumu'],
-                        contentSuggestion: 'İlgili subreddit\'lerde topluluk geri bildirimi için paylaşın.'
-                    },
-                    linkedin: {
-                        platformName: 'LinkedIn',
-                        score: 3,
-                        summary: 'LinkedIn analizi geçici olarak kullanılamıyor. Profesyonel uygunluk orta düzey olarak tahmin ediliyor.',
-                        keyFindings: ['Analiz kullanılamıyor', 'Yedek değerlendirme', 'Orta iş potansiyeli'],
-                        contentSuggestion: 'Profesyonel ağınızla LinkedIn\'de paylaşın.'
-                    }
-                },
-                tweetSuggestion: `🚀 Yeni bir fikir üzerinde çalışıyorum: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} Ne düşünüyorsunuz? #startup #girişim`,
-                redditTitleSuggestion: 'Startup fikrimi için geri bildirim arıyorum',
-                redditBodySuggestion: `Bu konsept üzerinde çalışıyorum: ${content}. Topluluktan düşüncelerinizi ve geri bildirimlerinizi almak isterim.`,
-                linkedinSuggestion: `Yeni bir iş fırsatı keşfediyorum: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Bu alanda başkalarıyla bağlantı kurmakla ilgileniyorum.`
-            };
-        } else {
-            // English fallback
-            return {
-                idea: content,
-                demandScore: 65,
-                scoreJustification: 'Analysis completed with limited data',
-                language: 'English',
-                fallbackUsed: true,
-                platformAnalyses: {
-                    twitter: {
-                        platformName: 'X',
-                        score: 3,
-                        summary: 'Twitter analysis temporarily unavailable. Moderate potential estimated.',
-                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
-                        contentSuggestion: 'Share your idea on X to get feedback.'
-                    },
-                    reddit: {
-                        platformName: 'Reddit',
-                        score: 3,
-                        summary: 'Reddit analysis temporarily unavailable. Community interest estimated as moderate.',
-                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate community fit'],
-                        contentSuggestion: 'Post in relevant subreddits for community feedback.'
-                    },
-                    linkedin: {
-                        platformName: 'LinkedIn',
-                        score: 3,
-                        summary: 'LinkedIn analysis temporarily unavailable. Professional relevance estimated as moderate.',
-                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
-                        contentSuggestion: 'Share with your professional network on LinkedIn.'
-                    }
-                },
-                tweetSuggestion: `🚀 Working on a new idea: ${content.substring(0, 100)}${content.length > 100 ? '...' : ''} What do you think? #startup #innovation`,
-                redditTitleSuggestion: 'Looking for feedback on my startup idea',
-                redditBodySuggestion: `I've been working on this concept: ${content}. Would love to get your thoughts and feedback from the community.`,
-                linkedinSuggestion: `Exploring a new business opportunity: ${content.substring(0, 200)}${content.length > 200 ? '...' : ''} Interested in connecting with others in this space.`,
-                
-                // 8 Analysis Components with fallback data
-                marketIntelligence: {
-                    tam: '$2.5B Global Market',
-                    sam: '$450M Addressable Market',
-                    som: '$12M Realistic Target',
-                    growthRate: '15% YoY',
-                    marketTiming: 4,
-                    keyTrends: ['AI adoption', 'Remote work growth', 'Digital transformation']
-                },
-                
-                competitiveLandscape: {
-                    directCompetitors: ['Competitor A', 'Competitor B', 'Competitor C'],
-                    indirectCompetitors: ['Alternative 1', 'Alternative 2'],
-                    marketPosition: 'Blue Ocean Opportunity',
-                    differentiationScore: 8,
-                    competitiveMoat: 'AI-powered features',
-                    entryBarriers: 'Technical expertise required'
-                },
-                
-                revenueModel: {
-                    primaryModel: 'Freemium SaaS',
-                    pricePoint: '$29/month',
-                    revenueStreams: ['Subscriptions', 'Premium features', 'Enterprise plans'],
-                    breakEvenTimeline: '18 months',
-                    ltvCacRatio: '4.2x',
-                    projectedMrr: '$25K by Year 1'
-                },
-                
-                targetAudience: {
-                    primarySegment: 'Small business owners (40%)',
-                    secondarySegment: 'Freelancers (35%)',
-                    tertiarySegment: 'Enterprise teams (25%)',
-                    painPoints: ['Time management', 'Cost efficiency', 'Scalability'],
-                    willingnessToPay: 'High ($25-50/month)',
-                    customerAcquisitionChannels: ['Content marketing', 'Social media', 'Referrals']
-                },
-                
-                riskAssessment: {
-                    technicalRisk: 'Low',
-                    marketRisk: 'Medium',
-                    financialRisk: 'Low',
-                    regulatoryRisk: 'Low',
-                    overallRiskLevel: 'Medium',
-                    mitigationStrategies: ['MVP validation', 'Market research', 'Financial planning']
-                },
-                
-                goToMarket: {
-                    phase1: 'MVP launch + early adopters',
-                    phase2: 'Product-market fit + scaling',
-                    phase3: 'Market expansion + partnerships',
-                    timeline: '12-month rollout',
-                    budgetNeeded: '$100K initial',
-                    keyChannels: ['Digital marketing', 'Content strategy', 'Community building']
-                },
-                
-                developmentRoadmap: {
-                    mvpTimeline: '3 months',
-                    betaLaunch: '5 months',
-                    publicLaunch: '8 months',
-                    keyFeatures: ['Core functionality', 'User dashboard', 'Analytics'],
-                    teamNeeded: ['Developer', 'Designer', 'Marketer'],
-                    techStack: ['React', 'Node.js', 'PostgreSQL']
-                },
-                
-                productMarketFit: {
-                    problemSolutionFit: 75,
-                    solutionMarketFit: 68,
-                    earlyAdopterSignals: 'Strong interest from target users',
-                    retentionPrediction: '70% monthly retention',
-                    viralCoefficient: '1.2x organic growth',
-                    pmfIndicators: ['User engagement', 'Retention rates', 'Referral growth']
-                }
-            };
+        console.log('⚠️ Using fallback response, score:', fallbackResponse.demandScore);
+        return fallbackResponse;
     }
-}
-
-// === Simple fusion of multiple results (majority/most-informative) ===
-function fuseResults(results: any[]): any {
-    if (!Array.isArray(results) || results.length === 0) return results?.[0];
-    const first = results[0] || {};
-    const avg = (nums: number[]) => Math.round(nums.reduce((s, n) => s + (Number.isFinite(n) ? n : 0), 0) / Math.max(1, nums.length));
-    const demandScore = avg(results.map(r => Number(r?.demandScore || 0)));
-    const scoreJustification = results.map(r => r?.scoreJustification || '').sort((a, b) => b.length - a.length)[0] || first.scoreJustification;
-
-    const platformKeys = Array.from(new Set(results.flatMap(r => Object.keys(r?.platformAnalyses || {}))));
-    const platformAnalyses: any = {};
-    for (const k of platformKeys) {
-        const candidates = results.map(r => r?.platformAnalyses?.[k]).filter(Boolean);
-        if (candidates.length === 0) continue;
-        const best = candidates.reduce((best: any, cur: any) => {
-            if (!best) return cur;
-            const bs = Number(best.score || 0), cs = Number(cur.score || 0);
-            const bl = (best.summary || '').length, cl = (cur.summary || '').length;
-            if (cs > bs) return cur;
-            if (cs === bs && cl > bl) return cur;
-            return best;
-        }, null);
-        platformAnalyses[k] = best;
-    }
-
-    const pickLongest = (key: string) => results.map(r => r?.[key]).filter(Boolean).sort((a: any, b: any) => JSON.stringify(b).length - JSON.stringify(a).length)[0] || first[key];
-    const assumptions = Array.from(new Set(results.flatMap(r => r?.assumptions || []))).slice(0, 5);
-    const confidence = Math.max(0, Math.min(100, avg(results.map(r => Number(r?.confidence || 0)))));
-    const nextTestsRaw = results.flatMap(r => r?.nextTests || []);
-    const seen = new Set<string>();
-    const nextTests: any[] = [];
-    for (const t of nextTestsRaw) {
-        const key = `${t?.hypothesis || ''}|${t?.channel || ''}|${t?.metric || ''}`;
-        if (!seen.has(key)) { seen.add(key); nextTests.push(t); }
-        if (nextTests.length >= 3) break;
-    }
-
-    return {
-        ...first,
-        demandScore,
-        scoreJustification,
-        platformAnalyses,
-        marketIntelligence: pickLongest('marketIntelligence'),
-        competitiveLandscape: pickLongest('competitiveLandscape'),
-        revenueModel: pickLongest('revenueModel'),
-        targetAudience: pickLongest('targetAudience'),
-        riskAssessment: pickLongest('riskAssessment'),
-        goToMarket: pickLongest('goToMarket'),
-        developmentRoadmap: pickLongest('developmentRoadmap'),
-        productMarketFit: pickLongest('productMarketFit'),
-        assumptions: assumptions.length ? assumptions : first.assumptions,
-        confidence: confidence || first.confidence,
-        nextTests: nextTests.length ? nextTests : first.nextTests
-    };
 }
