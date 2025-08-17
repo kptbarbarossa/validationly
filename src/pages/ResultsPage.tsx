@@ -159,7 +159,33 @@ const ResultsPage: React.FC = () => {
         return null;
     }
 
-    const isTR = result.scoreJustification?.includes('Türk') || result.scoreJustification?.includes('pazar') || false;
+    // Smart language detection based on input language
+    const isTR = (() => {
+        // Check if the original idea input was in Turkish
+        const turkishWords = ['ve', 'bir', 'bu', 'ile', 'için', 'olarak', 'gibi', 'kadar', 'sonra', 'önce', 'üzerinde', 'altında', 'yanında', 'karşısında'];
+        const englishWords = ['and', 'the', 'a', 'an', 'for', 'with', 'in', 'on', 'at', 'to', 'of', 'by', 'from', 'about'];
+        
+        const ideaText = result.idea?.toLowerCase() || '';
+        const justificationText = result.scoreJustification?.toLowerCase() || '';
+        
+        // Count Turkish vs English words
+        let turkishCount = 0;
+        let englishCount = 0;
+        
+        turkishWords.forEach(word => {
+            if (ideaText.includes(word) || justificationText.includes(word)) turkishCount++;
+        });
+        
+        englishWords.forEach(word => {
+            if (ideaText.includes(word) || justificationText.includes(word)) englishCount++;
+        });
+        
+        // If more Turkish words found, return true
+        if (turkishCount > englishCount) return true;
+        
+        // Default to English for better international experience
+        return false;
+    })();
 
     const getScoreStatus = (score: number) => {
         if (score >= 80) return { text: isTR ? 'Yüksek' : 'High', icon: '🟢', color: 'text-green-400' };
