@@ -13,37 +13,65 @@ interface ValidationResult {
     redditTitleSuggestion: string;
     redditBodySuggestion: string;
     linkedinSuggestion: string;
+    realWorldData?: {
+        socialMediaSignals: {
+            twitter: { trending: boolean; sentiment: string; volume: string };
+            facebook: { groupActivity: string; engagement: string };
+            tiktok: { viralPotential: string; userReaction: string };
+        };
+        forumInsights: {
+            reddit: { discussionVolume: string; painPoints: string[] };
+            quora: { questionFrequency: string; topics: string[] };
+        };
+        marketplaceData: {
+            amazon: { similarProducts: number; avgRating: number; reviewCount: number };
+            appStore: { competitorApps: number; avgRating: number; downloads: string };
+        };
+        consumerSentiment: {
+            overallSentiment: string;
+            keyComplaints: string[];
+            positiveFeedback: string[];
+        };
+    };
+    dataConfidence?: string;
+    lastDataUpdate?: string;
     platformAnalyses?: {
         LinkedIn?: {
             score: number;
             summary: string;
             keyFindings?: string[];
+            dataSource?: string;
         };
         X?: {
             score: number;
             summary: string;
             keyFindings?: string[];
+            dataSource?: string;
         };
         Reddit?: {
             score: number;
             summary: string;
             keyFindings?: string[];
+            dataSource?: string;
         };
         // Legacy support
         linkedin?: {
             score: number;
             summary: string;
             keyFindings?: string[];
+            dataSource?: string;
         };
         twitter?: {
             score: number;
             summary: string;
             keyFindings?: string[];
+            dataSource?: string;
         };
         reddit?: {
             score: number;
             summary: string;
             keyFindings?: string[];
+            dataSource?: string;
         };
     };
     socialMomentum?: {
