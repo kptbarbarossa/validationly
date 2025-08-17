@@ -347,34 +347,11 @@ const ResultsPage: React.FC = () => {
                 <div className="pointer-events-none absolute top-20 -right-20 h-80 w-80 rounded-full bg-blue-400/15 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl" />
 
-                <div className="relative flex" style={{minHeight: 'calc(100vh - 120px)'}}>
-                    {/* Left Sidebar */}
-                    <aside className="w-20 flex-shrink-0 flex flex-col items-center py-6 bg-white/5 backdrop-blur border-r border-white/10">
-                        <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center mb-8">
-                            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                </div>
-                        
-                        <nav className="flex flex-col gap-4">
-                            <div className="w-10 h-10 bg-purple-500/20 rounded-xl flex items-center justify-center">
-                                <svg className="w-5 h-5 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/>
-                                </svg>
-                </div>
-                            <div className="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center hover:bg-white/10 cursor-pointer transition-colors">
-                                <svg className="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
-                                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                                    <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm2.5 7a1.5 1.5 0 100-3 1.5 1.5 0 000 3zm2.45.75a2.5 2.5 0 00-4.9 0h4.9zM12 9a1 1 0 100 2h3a1 1 0 100-2h-3zm-1 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" clipRule="evenodd"/>
-                                </svg>
-            </div>
-                        </nav>
-                    </aside>
-
+                <div className="relative" style={{minHeight: 'calc(100vh - 120px)'}}>
                     {/* Main Content */}
-                    <main className="flex-1 flex">
+                    <main className="w-full">
                         {/* Center Content */}
-                        <div className="flex-1 p-8">
+                        <div className="p-8">
                             {/* Header */}
                             <header className="flex items-center justify-between mb-8">
                 <div>
@@ -1243,48 +1220,7 @@ const ResultsPage: React.FC = () => {
                                         </div>
                                         </div>
 
-                        {/* Right Sidebar */}
-                        <aside className="w-80 p-8 bg-white/5 backdrop-blur border-l border-white/10">
-                            <div className="space-y-6">
-                                {/* Quick Stats */}
-                                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                    <h3 className="font-semibold text-white mb-4">{isTR ? 'Hızlı İstatistikler' : 'Quick Stats'}</h3>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-slate-400 text-sm">{isTR ? 'Analiz Süresi' : 'Analysis Time'}</span>
-                                            <span className="text-white font-medium">~30s</span>
-                                            </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-slate-400 text-sm">{isTR ? 'Platform Sayısı' : 'Platforms'}</span>
-                                            <span className="text-white font-medium">3</span>
-                                    </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-slate-400 text-sm">{isTR ? 'Güvenilirlik' : 'Confidence'}</span>
-                                            <span className="text-green-400 font-medium">{status.text}</span>
-                            </div>
-                        </div>
-                                </div>
-
-                                {/* Action Items */}
-                                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                    <h3 className="font-semibold text-white mb-4">{isTR ? 'Önerilen Adımlar' : 'Next Steps'}</h3>
-                                    <div className="space-y-3">
-                                        <button className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10">
-                                            <div className="text-sm font-medium text-white">{isTR ? 'MVP Geliştir' : 'Build MVP'}</div>
-                                            <div className="text-xs text-slate-400 mt-1">{isTR ? 'Minimum ürün geliştir' : 'Create minimum viable product'}</div>
-                                        </button>
-                                        <button className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10">
-                                            <div className="text-sm font-medium text-white">{isTR ? 'Pazar Araştırması' : 'Market Research'}</div>
-                                            <div className="text-xs text-slate-400 mt-1">{isTR ? 'Derinlemesine analiz yap' : 'Conduct deeper analysis'}</div>
-                                        </button>
-                                        <button className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10">
-                                            <div className="text-sm font-medium text-white">{isTR ? 'Sosyal Medyada Test' : 'Social Media Test'}</div>
-                                            <div className="text-xs text-slate-400 mt-1">{isTR ? 'Postları paylaş ve geri bildirim al' : 'Share posts and get feedback'}</div>
-                            </button>
-                    </div>
-                                </div>
-                            </div>
-                        </aside>
+                                                </div>
                     </main>
                 </div>
             </div>

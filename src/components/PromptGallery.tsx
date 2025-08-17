@@ -16,280 +16,280 @@ type PromptTemplate = {
 };
 
 const TEMPLATES: PromptTemplate[] = [
-    // === BASİT VE HIZLI PROMPT'LAR ===
+    // === SIMPLE & QUICK PROMPTS ===
     { 
         id: 'simple-1', 
-        category: 'Basit', 
-        title: 'Pazar talebi', 
-        description: 'Fikrin pazar talebini değerlendir', 
-        content: 'Bu fikrin pazar talebini değerlendir ve 0-100 arası skor ver', 
-        tags: ['basit', 'skor'] 
+        category: 'Simple', 
+        title: 'Market Demand', 
+        description: 'Evaluate market demand for your idea', 
+        content: 'Evaluate the market demand for this idea and give a score from 0-100', 
+        tags: ['simple', 'score'] 
     },
     { 
         id: 'simple-2', 
-        category: 'Basit', 
-        title: 'Hedef müşteri', 
-        description: 'Hedef müşteri segmentini tanımla', 
-        content: 'Bu fikrin hedef müşteri segmentini tanımla ve neden bu segmenti seçtiğini açıkla', 
-        tags: ['basit', 'müşteri'] 
+        category: 'Simple', 
+        title: 'Target Customer', 
+        description: 'Define target customer segment', 
+        content: 'Define the target customer segment for this idea and explain why you chose this segment', 
+        tags: ['simple', 'customer'] 
     },
     { 
         id: 'simple-3', 
-        category: 'Basit', 
-        title: 'Rakip analizi', 
-        description: 'Ana rakipleri listele', 
-        content: 'Bu fikrin ana rakiplerini listele ve farklılaşma noktalarını belirt', 
-        tags: ['basit', 'rakip'] 
+        category: 'Simple', 
+        title: 'Competitor Analysis', 
+        description: 'List main competitors', 
+        content: 'List the main competitors for this idea and identify differentiation points', 
+        tags: ['simple', 'competitor'] 
     },
     { 
         id: 'simple-4', 
-        category: 'Basit', 
-        title: 'Gelir modeli', 
-        description: 'Gelir modelini öner', 
-        content: 'Bu fikir için en uygun gelir modelini öner ve fiyatlandırma stratejisini açıkla', 
-        tags: ['basit', 'gelir'] 
+        category: 'Simple', 
+        title: 'Revenue Model', 
+        description: 'Suggest revenue model', 
+        content: 'Suggest the most suitable revenue model for this idea and explain pricing strategy', 
+        tags: ['simple', 'revenue'] 
     },
     { 
         id: 'simple-5', 
-        category: 'Basit', 
-        title: 'Risk değerlendirmesi', 
-        content: 'Bu fikrin ana risklerini değerlendir ve nasıl azaltılabileceğini öner', 
-        description: 'Ana riskleri belirle', 
-        tags: ['basit', 'risk'] 
+        category: 'Simple', 
+        title: 'Risk Assessment', 
+        content: 'Assess main risks and suggest mitigation strategies', 
+        description: 'Identify main risks', 
+        tags: ['simple', 'risk'] 
     },
 
-    // === SAAS & B2B PROMPT'LARI ===
+    // === SAAS & B2B PROMPTS ===
     { 
         id: 'saas-1', 
         category: 'SaaS & B2B', 
-        title: 'SaaS validasyonu', 
-        description: 'SaaS fikrini hızlıca değerlendir', 
-        content: 'Bu SaaS fikrinin pazar potansiyelini değerlendir: hedef müşteri, ağrı noktası, çözüm, fiyatlandırma', 
-        tags: ['saas', 'b2b', 'validasyon'] 
+        title: 'SaaS Validation', 
+        description: 'Quickly evaluate SaaS idea', 
+        content: 'Evaluate the market potential of this SaaS idea: target customer, pain point, solution, pricing', 
+        tags: ['saas', 'b2b', 'validation'] 
     },
     { 
         id: 'saas-2', 
         category: 'SaaS & B2B', 
-        title: 'B2B satış stratejisi', 
-        description: 'B2B satış yaklaşımını planla', 
-        content: 'Bu B2B ürünü için satış stratejisi öner: hedef müşteri, satış kanalları, fiyatlandırma, dönüşüm', 
-        tags: ['saas', 'b2b', 'satış'] 
+        title: 'B2B Sales Strategy', 
+        description: 'Plan B2B sales approach', 
+        content: 'Suggest sales strategy for this B2B product: target customer, sales channels, pricing, conversion', 
+        tags: ['saas', 'b2b', 'sales'] 
     },
     { 
         id: 'saas-3', 
         category: 'SaaS & B2B', 
-        title: 'Enterprise özellikleri', 
-        description: 'Enterprise müşteriler için özellikler', 
-        content: 'Bu SaaS ürününe enterprise müşteriler için hangi özellikleri eklemeliyim?', 
-        tags: ['saas', 'enterprise', 'özellik'] 
+        title: 'Enterprise Features', 
+        description: 'Features for enterprise customers', 
+        content: 'What features should I add to this SaaS product for enterprise customers?', 
+        tags: ['saas', 'enterprise', 'features'] 
     },
 
-    // === E-TİCARET PROMPT'LARI ===
+    // === E-COMMERCE PROMPTS ===
     { 
         id: 'ecom-1', 
-        category: 'E-ticaret', 
-        title: 'Ürün validasyonu', 
-        description: 'E-ticaret ürününü değerlendir', 
-        content: 'Bu e-ticaret ürününün pazar potansiyelini değerlendir: hedef kitle, rekabet, fiyatlandırma, pazarlama', 
-        tags: ['e-ticaret', 'ürün', 'validasyon'] 
+        category: 'E-commerce', 
+        title: 'Product Validation', 
+        description: 'Evaluate e-commerce product', 
+        content: 'Evaluate the market potential of this e-commerce product: target audience, competition, pricing, marketing', 
+        tags: ['e-commerce', 'product', 'validation'] 
     },
     { 
         id: 'ecom-2', 
-        category: 'E-ticaret', 
-        title: 'Pazarlama kanalları', 
-        description: 'En etkili pazarlama kanallarını bul', 
-        content: 'Bu e-ticaret ürünü için en etkili pazarlama kanallarını öner ve neden bu kanalları seçtiğini açıkla', 
-        tags: ['e-ticaret', 'pazarlama', 'kanal'] 
+        category: 'E-commerce', 
+        title: 'Marketing Channels', 
+        description: 'Find most effective marketing channels', 
+        content: 'Suggest the most effective marketing channels for this e-commerce product and explain why you chose these channels', 
+        tags: ['e-commerce', 'marketing', 'channels'] 
     },
     { 
         id: 'ecom-3', 
-        category: 'E-ticaret', 
-        title: 'Müşteri deneyimi', 
-        description: 'Müşteri deneyimini iyileştir', 
-        content: 'Bu e-ticaret sitesinin müşteri deneyimini nasıl iyileştirebilirim? Satın alma sürecini optimize et', 
-        tags: ['e-ticaret', 'müşteri', 'deneyim'] 
+        category: 'E-commerce', 
+        title: 'Customer Experience', 
+        description: 'Improve customer experience', 
+        content: 'How can I improve the customer experience of this e-commerce site? Optimize the purchase process', 
+        tags: ['e-commerce', 'customer', 'experience'] 
     },
 
-    // === MOBİL UYGULAMA PROMPT'LARI ===
+    // === MOBILE APP PROMPTS ===
     { 
         id: 'mobile-1', 
-        category: 'Mobil Uygulama', 
-        title: 'App validasyonu', 
-        description: 'Mobil uygulama fikrini değerlendir', 
-        content: 'Bu mobil uygulama fikrinin pazar potansiyelini değerlendir: hedef kullanıcı, özellikler, gelir modeli', 
-        tags: ['mobil', 'uygulama', 'validasyon'] 
+        category: 'Mobile App', 
+        title: 'App Validation', 
+        description: 'Evaluate mobile app idea', 
+        content: 'Evaluate the market potential of this mobile app idea: target users, features, revenue model', 
+        tags: ['mobile', 'app', 'validation'] 
     },
     { 
         id: 'mobile-2', 
-        category: 'Mobil Uygulama', 
-        title: 'Kullanıcı tutma', 
-        description: 'Kullanıcı tutma stratejisini geliştir', 
-        content: 'Bu mobil uygulamada kullanıcı tutma oranını nasıl artırabilirim? Gamification ve ödül sistemleri öner', 
-        tags: ['mobil', 'kullanıcı', 'tutma'] 
+        category: 'Mobile App', 
+        title: 'User Retention', 
+        description: 'Develop user retention strategy', 
+        content: 'How can I increase user retention rate in this mobile app? Suggest gamification and reward systems', 
+        tags: ['mobile', 'user', 'retention'] 
     },
     { 
         id: 'mobile-3', 
-        category: 'Mobil Uygulama', 
-        title: 'ASO optimizasyonu', 
-        description: 'App Store optimizasyonu yap', 
-        content: 'Bu mobil uygulama için App Store optimizasyonu öner: anahtar kelimeler, açıklama, ekran görüntüleri', 
-        tags: ['mobil', 'aso', 'optimizasyon'] 
+        category: 'Mobile App', 
+        title: 'ASO Optimization', 
+        description: 'Optimize App Store', 
+        content: 'Suggest App Store optimization for this mobile app: keywords, description, screenshots', 
+        tags: ['mobile', 'aso', 'optimization'] 
     },
 
-    // === FİNANS & FİNTECH PROMPT'LARI ===
+    // === FINANCE & FINTECH PROMPTS ===
     { 
         id: 'fintech-1', 
-        category: 'Finans & Fintech', 
-        title: 'Fintech validasyonu', 
-        description: 'Fintech fikrini değerlendir', 
-        content: 'Bu fintech fikrinin pazar potansiyelini değerlendir: düzenleme, güven, kullanıcı benimsemesi', 
-        tags: ['fintech', 'finans', 'validasyon'] 
+        category: 'Finance & Fintech', 
+        title: 'Fintech Validation', 
+        description: 'Evaluate fintech idea', 
+        content: 'Evaluate the market potential of this fintech idea: regulation, security, user adoption', 
+        tags: ['fintech', 'finance', 'validation'] 
     },
     { 
         id: 'fintech-2', 
-        category: 'Finans & Fintech', 
-        title: 'Ödeme sistemi', 
-        description: 'Ödeme sistemi entegrasyonu', 
-        content: 'Bu fintech ürününe hangi ödeme sistemlerini entegre etmeliyim? Güvenlik ve kullanıcı deneyimi odaklı', 
-        tags: ['fintech', 'ödeme', 'entegrasyon'] 
+        category: 'Finance & Fintech', 
+        title: 'Payment System', 
+        description: 'Payment system integration', 
+        content: 'Which payment systems should I integrate into this fintech product? Focus on security and user experience', 
+        tags: ['fintech', 'payment', 'integration'] 
     },
     { 
         id: 'fintech-3', 
-        category: 'Finans & Fintech', 
-        title: 'KYC/AML süreci', 
-        description: 'KYC/AML sürecini planla', 
-        content: 'Bu fintech ürünü için KYC/AML sürecini nasıl tasarlamalıyım? Düzenleyici gereksinimleri karşıla', 
+        category: 'Finance & Fintech', 
+        title: 'KYC/AML Process', 
+        description: 'Plan KYC/AML process', 
+        content: 'How should I design the KYC/AML process for this fintech product? Meet regulatory requirements', 
         tags: ['fintech', 'kyc', 'aml'] 
     },
 
-    // === YAPAY ZEKA & AI PROMPT'LARI ===
+    // === ARTIFICIAL INTELLIGENCE & AI PROMPTS ===
     { 
         id: 'ai-1', 
-        category: 'Yapay Zeka & AI', 
-        title: 'AI ürün validasyonu', 
-        description: 'AI ürün fikrini değerlendir', 
-        content: 'Bu AI ürün fikrinin pazar potansiyelini değerlendir: teknoloji, veri, kullanım senaryoları', 
-        tags: ['ai', 'yapay zeka', 'validasyon'] 
+        category: 'AI & Machine Learning', 
+        title: 'AI Product Validation', 
+        description: 'Evaluate AI product idea', 
+        content: 'Evaluate the market potential of this AI product idea: technology, data, use cases', 
+        tags: ['ai', 'machine learning', 'validation'] 
     },
     { 
         id: 'ai-2', 
-        category: 'Yapay Zeka & AI', 
-        title: 'Veri stratejisi', 
-        description: 'Veri toplama ve işleme stratejisi', 
-        content: 'Bu AI ürünü için veri toplama ve işleme stratejisini nasıl geliştirmeliyim? Gizlilik ve kalite odaklı', 
-        tags: ['ai', 'veri', 'strateji'] 
+        category: 'AI & Machine Learning', 
+        title: 'Data Strategy', 
+        description: 'Data collection and processing strategy', 
+        content: 'How should I develop data collection and processing strategy for this AI product? Focus on privacy and quality', 
+        tags: ['ai', 'data', 'strategy'] 
     },
     { 
         id: 'ai-3', 
-        category: 'Yapay Zeka & AI', 
-        title: 'AI etik kuralları', 
-        description: 'AI etik kurallarını belirle', 
-        content: 'Bu AI ürünü için hangi etik kuralları ve sınırlar belirlemeliyim? Şeffaflık ve adalet odaklı', 
-        tags: ['ai', 'etik', 'kurallar'] 
+        category: 'AI & Machine Learning', 
+        title: 'AI Ethics Guidelines', 
+        description: 'Define AI ethics guidelines', 
+        content: 'What ethical guidelines and boundaries should I set for this AI product? Focus on transparency and fairness', 
+        tags: ['ai', 'ethics', 'guidelines'] 
     },
 
-    // === SAĞLIK & WELLNESS PROMPT'LARI ===
+    // === HEALTH & WELLNESS PROMPTS ===
     { 
         id: 'health-1', 
-        category: 'Sağlık & Wellness', 
-        title: 'Sağlık ürün validasyonu', 
-        description: 'Sağlık ürün fikrini değerlendir', 
-        content: 'Bu sağlık ürün fikrinin pazar potansiyelini değerlendir: düzenleme, güvenlik, kullanıcı ihtiyacı', 
-        tags: ['sağlık', 'wellness', 'validasyon'] 
+        category: 'Health & Wellness', 
+        title: 'Health Product Validation', 
+        description: 'Evaluate health product idea', 
+        content: 'Evaluate the market potential of this health product idea: regulation, safety, user need', 
+        tags: ['health', 'wellness', 'validation'] 
     },
     { 
         id: 'health-2', 
-        category: 'Sağlık & Wellness', 
-        title: 'HIPAA uyumluluğu', 
-        description: 'HIPAA uyumluluğunu sağla', 
-        content: 'Bu sağlık ürününde HIPAA uyumluluğunu nasıl sağlamalıyım? Veri güvenliği ve gizlilik odaklı', 
-        tags: ['sağlık', 'hipaa', 'uyumluluk'] 
+        category: 'Health & Wellness', 
+        title: 'HIPAA Compliance', 
+        description: 'Ensure HIPAA compliance', 
+        content: 'How should I ensure HIPAA compliance in this health product? Focus on data security and privacy', 
+        tags: ['health', 'hipaa', 'compliance'] 
     },
     { 
         id: 'health-3', 
-        category: 'Sağlık & Wellness', 
-        title: 'Klinik validasyon', 
-        description: 'Klinik validasyon sürecini planla', 
-        content: 'Bu sağlık ürünü için klinik validasyon sürecini nasıl planlamalıyım? Araştırma ve test odaklı', 
-        tags: ['sağlık', 'klinik', 'validasyon'] 
+        category: 'Health & Wellness', 
+        title: 'Clinical Validation', 
+        description: 'Plan clinical validation process', 
+        content: 'How should I plan the clinical validation process for this health product? Focus on research and testing', 
+        tags: ['health', 'clinical', 'validation'] 
     },
 
-    // === EĞİTİM & E-LEARNING PROMPT'LARI ===
+    // === EDUCATION & E-LEARNING PROMPTS ===
     { 
         id: 'education-1', 
-        category: 'Eğitim & E-Learning', 
-        title: 'Eğitim ürün validasyonu', 
-        description: 'Eğitim ürün fikrini değerlendir', 
-        content: 'Bu eğitim ürün fikrinin pazar potansiyelini değerlendir: hedef öğrenci, müfredat, ölçme', 
-        tags: ['eğitim', 'e-learning', 'validasyon'] 
+        category: 'Education & E-Learning', 
+        title: 'Education Product Validation', 
+        description: 'Evaluate education product idea', 
+        content: 'Evaluate the market potential of this education product idea: target students, curriculum, assessment', 
+        tags: ['education', 'e-learning', 'validation'] 
     },
     { 
         id: 'education-2', 
-        category: 'Eğitim & E-Learning', 
-        title: 'Öğrenme analitikleri', 
-        description: 'Öğrenme analitiklerini tasarla', 
-        content: 'Bu eğitim ürününde hangi öğrenme analitiklerini kullanmalıyım? Performans ve ilerleme odaklı', 
-        tags: ['eğitim', 'analitik', 'öğrenme'] 
+        category: 'Education & E-Learning', 
+        title: 'Learning Analytics', 
+        description: 'Design learning analytics', 
+        content: 'What learning analytics should I use in this education product? Focus on performance and progress', 
+        tags: ['education', 'analytics', 'learning'] 
     },
     { 
         id: 'education-3', 
-        category: 'Eğitim & E-Learning', 
-        title: 'Sertifikasyon sistemi', 
-        description: 'Sertifikasyon sistemini tasarla', 
-        content: 'Bu eğitim ürünü için nasıl bir sertifikasyon sistemi tasarlamalıyım? Güvenilirlik ve tanınırlık odaklı', 
-        tags: ['eğitim', 'sertifikasyon', 'sistem'] 
+        category: 'Education & E-Learning', 
+        title: 'Certification System', 
+        description: 'Design certification system', 
+        content: 'How should I design a certification system for this education product? Focus on credibility and recognition', 
+        tags: ['education', 'certification', 'system'] 
     },
 
-    // === İÇERİK & MEDYA PROMPT'LARI ===
+    // === CONTENT & MEDIA PROMPTS ===
     { 
         id: 'content-1', 
-        category: 'İçerik & Medya', 
-        title: 'İçerik ürün validasyonu', 
-        description: 'İçerik ürün fikrini değerlendir', 
-        content: 'Bu içerik ürün fikrinin pazar potansiyelini değerlendir: hedef kitle, format, dağıtım', 
-        tags: ['içerik', 'medya', 'validasyon'] 
+        category: 'Content & Media', 
+        title: 'Content Product Validation', 
+        description: 'Evaluate content product idea', 
+        content: 'Evaluate the market potential of this content product idea: target audience, format, distribution', 
+        tags: ['content', 'media', 'validation'] 
     },
     { 
         id: 'content-2', 
-        category: 'İçerik & Medya', 
-        title: 'İçerik takvimi', 
-        description: 'İçerik takvimini planla', 
-        content: 'Bu içerik ürünü için nasıl bir içerik takvimi planlamalıyım? Tutarlılık ve kalite odaklı', 
-        tags: ['içerik', 'takvim', 'planlama'] 
+        category: 'Content & Media', 
+        title: 'Content Calendar', 
+        description: 'Plan content calendar', 
+        content: 'How should I plan a content calendar for this content product? Focus on consistency and quality', 
+        tags: ['content', 'calendar', 'planning'] 
     },
     { 
         id: 'content-3', 
-        category: 'İçerik & Medya', 
-        title: 'Monetizasyon stratejisi', 
-        description: 'İçerik monetizasyon stratejisini geliştir', 
-        content: 'Bu içerik ürünü için nasıl bir monetizasyon stratejisi geliştirmeliyim? Abonelik ve reklam odaklı', 
-        tags: ['içerik', 'monetizasyon', 'strateji'] 
+        category: 'Content & Media', 
+        title: 'Monetization Strategy', 
+        description: 'Develop content monetization strategy', 
+        content: 'How should I develop a monetization strategy for this content product? Focus on subscriptions and advertising', 
+        tags: ['content', 'monetization', 'strategy'] 
     },
 
-    // === HARDWARE & IOT PROMPT'LARI ===
+    // === HARDWARE & IOT PROMPTS ===
     { 
         id: 'hardware-1', 
         category: 'Hardware & IoT', 
-        title: 'Hardware ürün validasyonu', 
-        description: 'Hardware ürün fikrini değerlendir', 
-        content: 'Bu hardware ürün fikrinin pazar potansiyelini değerlendir: üretim, maliyet, dağıtım', 
-        tags: ['hardware', 'iot', 'validasyon'] 
+        title: 'Hardware Product Validation', 
+        description: 'Evaluate hardware product idea', 
+        content: 'Evaluate the market potential of this hardware product idea: manufacturing, cost, distribution', 
+        tags: ['hardware', 'iot', 'validation'] 
     },
     { 
         id: 'hardware-2', 
         category: 'Hardware & IoT', 
-        title: 'Üretim süreci', 
-        description: 'Üretim sürecini planla', 
-        content: 'Bu hardware ürünü için nasıl bir üretim süreci planlamalıyım? Kalite ve maliyet odaklı', 
-        tags: ['hardware', 'üretim', 'süreç'] 
+        title: 'Manufacturing Process', 
+        description: 'Plan manufacturing process', 
+        content: 'How should I plan the manufacturing process for this hardware product? Focus on quality and cost', 
+        tags: ['hardware', 'manufacturing', 'process'] 
     },
     { 
         id: 'hardware-3', 
         category: 'Hardware & IoT', 
-        title: 'IoT entegrasyonu', 
-        description: 'IoT özelliklerini tasarla', 
-        content: 'Bu hardware ürününe hangi IoT özelliklerini eklemeliyim? Bağlantı ve veri odaklı', 
-        tags: ['hardware', 'iot', 'entegrasyon'] 
+        title: 'IoT Integration', 
+        description: 'Design IoT features', 
+        content: 'What IoT features should I add to this hardware product? Focus on connectivity and data', 
+        tags: ['hardware', 'iot', 'integration'] 
     }
 ];
 
