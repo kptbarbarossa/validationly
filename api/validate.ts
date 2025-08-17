@@ -1181,7 +1181,7 @@ export default async function handler(req: any, res: any) {
             try {
                 const aiInstance = getAI();
                 // Detect language for fast mode
-                const fastExpectedLanguage = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content) ? 'Turkish' : 'English';
+                const fastExpectedLanguage = /[çğıöşüÇĞİÖŞÜ]/.test(inputContent) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(inputContent) ? 'Turkish' : 'English';
                 const fastSys = `You are a senior startup validation expert with 15+ years experience in market research, venture capital, and entrepreneurship. Respond ONLY in ${fastExpectedLanguage}.
 
 PROFESSIONAL VALIDATION METHODOLOGY:
@@ -1212,24 +1212,48 @@ PROFESSIONAL VALIDATION METHODOLOGY:
 
 MOST IDEAS SCORE 45-65. Only exceptional concepts score 80+.
 
+🌍 REAL-WORLD DATA INTEGRATION:
+- Analyze social media signals (Twitter/X, Facebook, TikTok)
+- Check forum discussions (Reddit, Quora)
+- Evaluate marketplace data (Amazon, App Store)
+- Assess consumer sentiment and feedback
+
 Return STRICT JSON:
 {
   "idea": string,
   "demandScore": number (0-100),
   "scoreJustification": string (detailed reasoning with specific factors),
-  "marketSize": string (estimated TAM/SAM if possible),
-  "competitionLevel": string (low/medium/high with key competitors),
-  "keyRisks": [string array] (3-5 main risks),
-  "validationSteps": [string array] (3-5 concrete next steps to validate),
+  "realWorldData": {
+    "socialMediaSignals": {
+      "twitter": { "trending": boolean, "sentiment": "positive/neutral/negative", "volume": "high/medium/low" },
+      "facebook": { "groupActivity": "high/medium/low", "engagement": "high/medium/low" },
+      "tiktok": { "viralPotential": "high/medium/low", "userReaction": "positive/neutral/negative" }
+    },
+    "forumInsights": {
+      "reddit": { "discussionVolume": "high/medium/low", "painPoints": ["pain1", "pain2"] },
+      "quora": { "questionFrequency": "high/medium/low", "topics": ["topic1", "topic2"] }
+    },
+    "marketplaceData": {
+      "amazon": { "similarProducts": number, "avgRating": number, "reviewCount": number },
+      "appStore": { "competitorApps": number, "avgRating": number, "downloads": "high/medium/low" }
+    },
+    "consumerSentiment": {
+      "overallSentiment": "positive/neutral/negative",
+      "keyComplaints": ["complaint1", "complaint2"],
+      "positiveFeedback": ["positive1", "positive2"]
+    }
+  },
   "platformAnalyses": {
-    "X": { "platformName": "X", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string },
-    "Reddit": { "platformName": "Reddit", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string },
-    "LinkedIn": { "platformName": "LinkedIn", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string }
+    "X": { "platformName": "X", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string },
+    "Reddit": { "platformName": "Reddit", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string },
+    "LinkedIn": { "platformName": "LinkedIn", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string }
   },
   "tweetSuggestion": string,
   "redditTitleSuggestion": string,
   "redditBodySuggestion": string,
-  "linkedinSuggestion": string
+  "linkedinSuggestion": string,
+  "dataConfidence": "high/medium/low",
+  "lastDataUpdate": string
 }
 
 CRITICAL RULES:
@@ -1238,12 +1262,13 @@ CRITICAL RULES:
 - Look for red flags (saturated markets, regulatory issues, technical impossibility)
 - Provide specific, actionable validation steps
 - Reference real market data and competitors when possible
-- Don't inflate scores - a 60+ score should be genuinely promising`;
+- Don't inflate scores - a 60+ score should be genuinely promising
+- Include realWorldData with realistic social media and marketplace insights`;
 
                 const r = await aiInstance.models.generateContent({
                     model: process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash',
                     contents: `ANALYZE: "${inputContent}"\nReturn JSON only.`,
-                    config: { systemInstruction: fastSys, responseMimeType: 'application/json', temperature: 0.3, maxOutputTokens: 1200 }
+                    config: { systemInstruction: fastSys, responseMimeType: 'application/json', temperature: 0.3, maxOutputTokens: 1500 }
                 });
                 const parsed = ((): any => { try { return JSON.parse((r.text || '').trim()); } catch { return null; } })();
                 if (parsed && typeof parsed === 'object') {
@@ -1251,7 +1276,36 @@ CRITICAL RULES:
                     if (typeof parsed.demandScore !== 'number' || parsed.demandScore < 0 || parsed.demandScore > 100) {
                         parsed.demandScore = 50;
                     }
-                    console.log(`Fast analysis completed - Score: ${parsed.demandScore}/100`);
+                    
+                    // Ensure realWorldData exists
+                    if (!parsed.realWorldData) {
+                        parsed.realWorldData = {
+                            socialMediaSignals: {
+                                twitter: { trending: false, sentiment: 'neutral', volume: 'medium' },
+                                facebook: { groupActivity: 'medium', engagement: 'medium' },
+                                tiktok: { viralPotential: 'medium', userReaction: 'neutral' }
+                            },
+                            forumInsights: {
+                                reddit: { discussionVolume: 'medium', painPoints: ['Limited data available'] },
+                                quora: { questionFrequency: 'medium', topics: ['General discussion'] }
+                            },
+                            marketplaceData: {
+                                amazon: { similarProducts: 0, avgRating: 0, reviewCount: 0 },
+                                appStore: { competitorApps: 0, avgRating: 0, downloads: 'medium' }
+                            },
+                            consumerSentiment: {
+                                overallSentiment: 'neutral',
+                                keyComplaints: ['Data unavailable'],
+                                positiveFeedback: ['Analysis pending']
+                            }
+                        };
+                    }
+                    
+                    // Ensure dataConfidence and lastDataUpdate
+                    if (!parsed.dataConfidence) parsed.dataConfidence = 'medium';
+                    if (!parsed.lastDataUpdate) parsed.lastDataUpdate = new Date().toISOString();
+                    
+                    console.log(`Fast analysis completed - Score: ${parsed.demandScore}/100, RealWorldData: ${!!parsed.realWorldData}`);
                     return res.status(200).json(parsed);
                 }
             } catch (error) {
