@@ -224,8 +224,9 @@ const ResultsPage: React.FC = () => {
                 <div className="pointer-events-none absolute top-20 -right-20 h-80 w-80 rounded-full bg-blue-400/15 blur-3xl" />
                 <div className="pointer-events-none absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl" />
 
-                <div className="relative" style={{minHeight: 'calc(100vh - 120px)'}}>
-                    <div className="p-8">
+                <div className="relative flex" style={{minHeight: 'calc(100vh - 120px)'}}>
+                    {/* Main Content */}
+                    <div className="flex-1 p-8">
                         {/* Header */}
                         <header className="flex items-center justify-between mb-8">
                             <div>
@@ -611,6 +612,90 @@ const ResultsPage: React.FC = () => {
                             </div>
                         </div>
                     </div>
+
+                    {/* Right Sidebar - Tools */}
+                    <aside className="w-80 p-8 bg-white/5 backdrop-blur border-l border-white/10">
+                        <div className="space-y-6">
+                            {/* Quick Stats */}
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                <h3 className="font-semibold text-white mb-4">{isTR ? 'Hızlı İstatistikler' : 'Quick Stats'}</h3>
+                                <div className="space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-slate-400 text-sm">{isTR ? 'Analiz Süresi' : 'Analysis Time'}</span>
+                                        <span className="text-white font-medium">~30s</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-slate-400 text-sm">{isTR ? 'Platform Sayısı' : 'Platforms'}</span>
+                                        <span className="text-white font-medium">3</span>
+                                    </div>
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-slate-400 text-sm">{isTR ? 'Güvenilirlik' : 'Confidence'}</span>
+                                        <span className="text-green-400 font-medium">{status.text}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Tools Section */}
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                    <span className="text-lg">🛠️</span>
+                                    {isTR ? 'Araçlar' : 'Tools'}
+                                </h3>
+                                <div className="space-y-3">
+                                    <button 
+                                        onClick={() => navigate('/tools')}
+                                        className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10"
+                                    >
+                                        <div className="text-sm font-medium text-white">{isTR ? 'Tüm Araçlar' : 'All Tools'}</div>
+                                        <div className="text-xs text-slate-400 mt-1">{isTR ? 'Trend Hunter, X Generator ve daha fazlası' : 'Trend Hunter, X Generator and more'}</div>
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => navigate('/trend-hunter')}
+                                        className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10"
+                                    >
+                                        <div className="text-sm font-medium text-white">🔍 Trend Hunter</div>
+                                        <div className="text-xs text-slate-400 mt-1">{isTR ? 'Viral trendlerden startup fikirleri' : 'Startup ideas from viral trends'}</div>
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => navigate('/ai-tweet-generator')}
+                                        className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10"
+                                    >
+                                        <div className="text-sm font-medium text-white">📱 X Content Generator</div>
+                                        <div className="text-xs text-slate-400 mt-1">{isTR ? 'AI ile tweet serileri oluştur' : 'Generate tweet series with AI'}</div>
+                                    </button>
+                                    
+                                    <button 
+                                        onClick={() => navigate('/trend-to-startup')}
+                                        className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10"
+                                    >
+                                        <div className="text-sm font-medium text-white">🚀 Trend → Startup</div>
+                                        <div className="text-xs text-slate-400 mt-1">{isTR ? 'Detaylı startup planları' : 'Detailed startup plans'}</div>
+                                    </button>
+                                </div>
+                            </div>
+
+                            {/* Action Items */}
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                                <h3 className="font-semibold text-white mb-4">{isTR ? 'Önerilen Adımlar' : 'Next Steps'}</h3>
+                                <div className="space-y-3">
+                                    <button className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10">
+                                        <div className="text-sm font-medium text-white">{isTR ? 'MVP Geliştir' : 'Build MVP'}</div>
+                                        <div className="text-xs text-slate-400 mt-1">{isTR ? 'Minimum ürün geliştir' : 'Create minimum viable product'}</div>
+                                    </button>
+                                    <button className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10">
+                                        <div className="text-sm font-medium text-white">{isTR ? 'Pazar Araştırması' : 'Market Research'}</div>
+                                        <div className="text-xs text-slate-400 mt-1">{isTR ? 'Derinlemesine analiz yap' : 'Conduct deeper analysis'}</div>
+                                    </button>
+                                    <button className="w-full text-left p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors border border-white/10">
+                                        <div className="text-sm font-medium text-white">{isTR ? 'Sosyal Medyada Test' : 'Social Media Test'}</div>
+                                        <div className="text-xs text-slate-400 mt-1">{isTR ? 'Postları paylaş ve geri bildirim al' : 'Share posts and get feedback'}</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
             </div>
         </>
