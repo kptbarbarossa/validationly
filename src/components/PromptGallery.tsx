@@ -16,128 +16,281 @@ type PromptTemplate = {
 };
 
 const TEMPLATES: PromptTemplate[] = [
-    { id: 'ol-en-1', category: 'Quick', title: 'Demand summary', description: 'One sentence', content: 'Summarize market demand in one sentence for: {idea}', tags: ['one-liner'] },
-    { id: 'ol-en-2', category: 'Quick', title: 'Value proposition', description: 'One sentence', content: 'Write a one‑sentence value proposition for this idea', tags: ['one-liner'] },
-    { id: 'ol-en-3', category: 'Quick', title: 'Target segments', description: 'One sentence', content: 'List 3 target customer segments in one line', tags: ['one-liner'] },
-    { id: 'ol-en-4', category: 'Quick', title: 'First 30‑day metrics', description: 'One sentence', content: 'Give 3 metrics to validate in the first 30 days', tags: ['one-liner'] },
-    { id: 'ol-en-5', category: 'Quick', title: 'Acquisition channels', description: 'One sentence', content: 'Suggest 3 high‑impact acquisition channels', tags: ['one-liner'] },
-    { id: 'ol-en-6', category: 'Quick', title: 'Investor pitch', description: 'One sentence', content: 'Write a one‑sentence investor pitch for this idea', tags: ['one-liner'] },
-    { id: 'ol-en-7', category: 'Quick', title: 'Risks', description: 'One sentence', content: 'List 3 primary risks in one line', tags: ['one-liner'] },
-    { id: 'ol-tr-1', category: 'Hızlı', title: 'Talep özeti', description: 'Tek cümle', content: 'Bu fikrin pazar talebini tek cümlede özetle: {fikir}', tags: ['tek-cumle'] },
-    { id: 'ol-tr-2', category: 'Hızlı', title: 'Değer önerisi', description: 'Tek cümle', content: 'Bu fikrin 1 cümlelik değer önerisini yaz', tags: ['tek-cumle'] },
-    { id: 'ol-tr-3', category: 'Hızlı', title: 'Hedef segmentler', description: 'Tek cümle', content: '3 hedef müşteri segmentini tek cümlede listele', tags: ['tek-cumle'] },
-    { id: 'ol-tr-4', category: 'Hızlı', title: 'İlk 30 gün metrikleri', description: 'Tek cümle', content: 'İlk 30 günde test edilmesi gereken 3 metriği yaz', tags: ['tek-cumle'] },
-    { id: 'ol-tr-5', category: 'Hızlı', title: 'Edinim kanalları', description: 'Tek cümle', content: 'En yüksek etkili 3 edinim kanalını tek cümlede öner', tags: ['tek-cumle'] },
-    { id: 'ol-tr-6', category: 'Hızlı', title: 'Yatırımcı pitch', description: 'Tek cümle', content: 'Bu fikir için 1 cümlelik yatırımcı pitch yaz', tags: ['tek-cumle'] },
-    { id: 'ol-tr-7', category: 'Hızlı', title: 'Riskler', description: 'Tek cümle', content: 'Bu fikrin 3 ana riskini tek cümlede yaz', tags: ['tek-cumle'] },
-	{
-		id: 'saas-b2b-basic',
-		category: 'SaaS & B2B',
-		title: 'SaaS validation brief',
-		description: 'Concise SaaS idea brief for fast market validation.',
-		content:
-			"SaaS idea: {what it does}\nTarget ICP: {role, company size, vertical}\nPain: {top-1 painful workflow}\nValue prop: {clear outcome, quantified if possible}\nPrice point: {starter price}\nChannels: {X, Reddit, LinkedIn}\nSuccess metric (24h): {reply rate OR CTR OR signups}",
-		tags: ['saas', 'b2b', 'validation']
-	},
-	{
-		id: 'ecom-d2c',
-		category: 'E-commerce',
-		title: 'D2C product validation',
-		description: 'Quick D2C brief focused on hooks and visuals.',
-		content:
-			"Product: {what makes it unique}\nAudience: {niche persona}\nUse-case: {when they use it}\nHook ideas: {3 hooks}\nPrice anchor: {range}\nChannels: {Instagram, TikTok, Pinterest}\nSuccess metric (24h): {adds to cart OR link clicks}",
-		tags: ['ecommerce', 'd2c']
-	},
-	{
-		id: 'mobile-b2c',
-		category: 'Mobile App',
-		title: 'Consumer app brief',
-		description: 'Short B2C app brief optimized for social tests.',
-		content:
-			"App: {category}\nUser: {who}\nMoment: {when}\nCore loop: {habit / trigger}\nDifferentiator: {unlike X, we}\nMonetization: {ads/subscription}\nSuccess metric (24h): {waitlist OR CTR}",
-		tags: ['mobile', 'b2c']
-	},
-	{
-		id: 'fintech',
-		category: 'Fintech',
-		title: 'Fintech validation brief',
-		description: 'Fintech brief with trust and compliance notes.',
-		content:
-			"Product: {what}\nUser: {who}\nProblem: {fees, time, risk}\nTrust signal: {data source, security}\nRegulatory note: {if any}\nMonetization: {fee/spread/subscription}\nSuccess metric (24h): {lead DMs OR signups}",
-		tags: ['fintech']
-	},
-	{
-		id: 'marketplace',
-		category: 'Marketplace',
-		title: 'Marketplace brief',
-		description: 'Two-sided marketplace hypothesis and tests.',
-		content:
-			"Supply: {who}\nDemand: {who}\nCold start: {how}\nUnique value: {for both sides}\nTake rate: {x%}\nChannels: {supply ch., demand ch.}\nSuccess metric (24h): {supply signups OR demand CTR}",
-		tags: ['marketplace']
-	},
-	{
-		id: 'ai-agent',
-		category: 'AI & Agents',
-		title: 'AI agent validation brief',
-		description: 'Agent task, context window, tools, success metric.',
-		content:
-			"Agent task: {what it automates}\nUser: {who benefits}\nContext: {data sources}\nTools: {apis, browser, docs}\nGuardrails: {limits}\nPricing: {per task / monthly}\nSuccess metric (24h): {task completions OR leads}",
-		tags: ['ai', 'agent']
-	},
-	{
-		id: 'content-creator',
-		category: 'Creator & Media',
-		title: 'Content product brief',
-		description: 'Audience, problem, offer, funnel, KPI.',
-		content:
-			"Audience: {who}\nProblem: {what they lack}\nOffer: {format}\nDistribution: {channels}\nCTA: {soft vs hard}\nMonetization: {sponsorship/course}\nSuccess metric (24h): {email signups OR CTR}",
-		tags: ['content', 'media']
-	},
-	{
-		id: 'open-source-dev',
-		category: 'Developer Tools',
-		title: 'Dev tool validation brief',
-		description: 'Problem, workflow, integration, DX, KPI.',
-		content:
-			"Problem: {dev pain}\nWorkflow: {where it fits}\nIntegration: {IDE/CI/CD}\nDX: {api, cli}\nOSS hook: {stars, templates}\nCommunity: {Dev.to, GitHub, X}\nSuccess metric (24h): {stars OR signups}",
-		tags: ['developer', 'oss']
-	},
-	{
-		id: 'health-wellness',
-		category: 'Health & Wellness',
-		title: 'Wellness app brief',
-		description: 'Habit loop, motivation, safety, KPI.',
-		content:
-			"User: {who}\nGoal: {what outcome}\nHabit loop: {trigger/action/reward}\nSafety: {medical disclaimer}\nChannels: {TikTok, Instagram}\nMonetization: {subscription}\nSuccess metric (24h): {waitlist OR CTR}",
-		tags: ['health', 'wellness']
-	},
-	{
-		id: 'education',
-		category: 'Education',
-		title: 'Edu course brief',
-		description: 'Outcome-based curriculum, social proof, pre-sale.',
-		content:
-			"Learner: {who}\nOutcome: {job-to-be-done}\nCurriculum: {modules}\nProof: {case/results}\nPre-sale: {pilot cohort}\nChannels: {LinkedIn, Reddit}\nSuccess metric (24h): {email waitlist}",
-		tags: ['education']
-	},
-	{
-		id: 'local-service',
-		category: 'Local Service',
-		title: 'Local service brief',
-		description: 'Niche, geo, offer, proof, channel, KPI.',
-		content:
-			"Niche: {what service}\nGeo: {city/area}\nOffer: {bundle}\nProof: {before/after}\nChannel: {shorts + local groups}\nPricing: {package}\nSuccess metric (24h): {inquiries}",
-		tags: ['local', 'service']
-	},
-	{
-		id: 'b2b-outbound',
-		category: 'B2B Outbound',
-		title: 'Outbound brief',
-		description: 'ICP, trigger event, opener, CTA, KPI.',
-		content:
-			"ICP: {role, size, vertical}\nTrigger: {event}\nOpener: {personalized}\nProof: {numbers}\nCTA: {calendar vs reply}\nChannel: {LinkedIn/X}\nSuccess metric (24h): {reply rate}",
-		tags: ['b2b', 'outbound']
-	}
+    // === BASİT VE HIZLI PROMPT'LAR ===
+    { 
+        id: 'simple-1', 
+        category: 'Basit', 
+        title: 'Pazar talebi', 
+        description: 'Fikrin pazar talebini değerlendir', 
+        content: 'Bu fikrin pazar talebini değerlendir ve 0-100 arası skor ver', 
+        tags: ['basit', 'skor'] 
+    },
+    { 
+        id: 'simple-2', 
+        category: 'Basit', 
+        title: 'Hedef müşteri', 
+        description: 'Hedef müşteri segmentini tanımla', 
+        content: 'Bu fikrin hedef müşteri segmentini tanımla ve neden bu segmenti seçtiğini açıkla', 
+        tags: ['basit', 'müşteri'] 
+    },
+    { 
+        id: 'simple-3', 
+        category: 'Basit', 
+        title: 'Rakip analizi', 
+        description: 'Ana rakipleri listele', 
+        content: 'Bu fikrin ana rakiplerini listele ve farklılaşma noktalarını belirt', 
+        tags: ['basit', 'rakip'] 
+    },
+    { 
+        id: 'simple-4', 
+        category: 'Basit', 
+        title: 'Gelir modeli', 
+        description: 'Gelir modelini öner', 
+        content: 'Bu fikir için en uygun gelir modelini öner ve fiyatlandırma stratejisini açıkla', 
+        tags: ['basit', 'gelir'] 
+    },
+    { 
+        id: 'simple-5', 
+        category: 'Basit', 
+        title: 'Risk değerlendirmesi', 
+        content: 'Bu fikrin ana risklerini değerlendir ve nasıl azaltılabileceğini öner', 
+        description: 'Ana riskleri belirle', 
+        tags: ['basit', 'risk'] 
+    },
+
+    // === SAAS & B2B PROMPT'LARI ===
+    { 
+        id: 'saas-1', 
+        category: 'SaaS & B2B', 
+        title: 'SaaS validasyonu', 
+        description: 'SaaS fikrini hızlıca değerlendir', 
+        content: 'Bu SaaS fikrinin pazar potansiyelini değerlendir: hedef müşteri, ağrı noktası, çözüm, fiyatlandırma', 
+        tags: ['saas', 'b2b', 'validasyon'] 
+    },
+    { 
+        id: 'saas-2', 
+        category: 'SaaS & B2B', 
+        title: 'B2B satış stratejisi', 
+        description: 'B2B satış yaklaşımını planla', 
+        content: 'Bu B2B ürünü için satış stratejisi öner: hedef müşteri, satış kanalları, fiyatlandırma, dönüşüm', 
+        tags: ['saas', 'b2b', 'satış'] 
+    },
+    { 
+        id: 'saas-3', 
+        category: 'SaaS & B2B', 
+        title: 'Enterprise özellikleri', 
+        description: 'Enterprise müşteriler için özellikler', 
+        content: 'Bu SaaS ürününe enterprise müşteriler için hangi özellikleri eklemeliyim?', 
+        tags: ['saas', 'enterprise', 'özellik'] 
+    },
+
+    // === E-TİCARET PROMPT'LARI ===
+    { 
+        id: 'ecom-1', 
+        category: 'E-ticaret', 
+        title: 'Ürün validasyonu', 
+        description: 'E-ticaret ürününü değerlendir', 
+        content: 'Bu e-ticaret ürününün pazar potansiyelini değerlendir: hedef kitle, rekabet, fiyatlandırma, pazarlama', 
+        tags: ['e-ticaret', 'ürün', 'validasyon'] 
+    },
+    { 
+        id: 'ecom-2', 
+        category: 'E-ticaret', 
+        title: 'Pazarlama kanalları', 
+        description: 'En etkili pazarlama kanallarını bul', 
+        content: 'Bu e-ticaret ürünü için en etkili pazarlama kanallarını öner ve neden bu kanalları seçtiğini açıkla', 
+        tags: ['e-ticaret', 'pazarlama', 'kanal'] 
+    },
+    { 
+        id: 'ecom-3', 
+        category: 'E-ticaret', 
+        title: 'Müşteri deneyimi', 
+        description: 'Müşteri deneyimini iyileştir', 
+        content: 'Bu e-ticaret sitesinin müşteri deneyimini nasıl iyileştirebilirim? Satın alma sürecini optimize et', 
+        tags: ['e-ticaret', 'müşteri', 'deneyim'] 
+    },
+
+    // === MOBİL UYGULAMA PROMPT'LARI ===
+    { 
+        id: 'mobile-1', 
+        category: 'Mobil Uygulama', 
+        title: 'App validasyonu', 
+        description: 'Mobil uygulama fikrini değerlendir', 
+        content: 'Bu mobil uygulama fikrinin pazar potansiyelini değerlendir: hedef kullanıcı, özellikler, gelir modeli', 
+        tags: ['mobil', 'uygulama', 'validasyon'] 
+    },
+    { 
+        id: 'mobile-2', 
+        category: 'Mobil Uygulama', 
+        title: 'Kullanıcı tutma', 
+        description: 'Kullanıcı tutma stratejisini geliştir', 
+        content: 'Bu mobil uygulamada kullanıcı tutma oranını nasıl artırabilirim? Gamification ve ödül sistemleri öner', 
+        tags: ['mobil', 'kullanıcı', 'tutma'] 
+    },
+    { 
+        id: 'mobile-3', 
+        category: 'Mobil Uygulama', 
+        title: 'ASO optimizasyonu', 
+        description: 'App Store optimizasyonu yap', 
+        content: 'Bu mobil uygulama için App Store optimizasyonu öner: anahtar kelimeler, açıklama, ekran görüntüleri', 
+        tags: ['mobil', 'aso', 'optimizasyon'] 
+    },
+
+    // === FİNANS & FİNTECH PROMPT'LARI ===
+    { 
+        id: 'fintech-1', 
+        category: 'Finans & Fintech', 
+        title: 'Fintech validasyonu', 
+        description: 'Fintech fikrini değerlendir', 
+        content: 'Bu fintech fikrinin pazar potansiyelini değerlendir: düzenleme, güven, kullanıcı benimsemesi', 
+        tags: ['fintech', 'finans', 'validasyon'] 
+    },
+    { 
+        id: 'fintech-2', 
+        category: 'Finans & Fintech', 
+        title: 'Ödeme sistemi', 
+        description: 'Ödeme sistemi entegrasyonu', 
+        content: 'Bu fintech ürününe hangi ödeme sistemlerini entegre etmeliyim? Güvenlik ve kullanıcı deneyimi odaklı', 
+        tags: ['fintech', 'ödeme', 'entegrasyon'] 
+    },
+    { 
+        id: 'fintech-3', 
+        category: 'Finans & Fintech', 
+        title: 'KYC/AML süreci', 
+        description: 'KYC/AML sürecini planla', 
+        content: 'Bu fintech ürünü için KYC/AML sürecini nasıl tasarlamalıyım? Düzenleyici gereksinimleri karşıla', 
+        tags: ['fintech', 'kyc', 'aml'] 
+    },
+
+    // === YAPAY ZEKA & AI PROMPT'LARI ===
+    { 
+        id: 'ai-1', 
+        category: 'Yapay Zeka & AI', 
+        title: 'AI ürün validasyonu', 
+        description: 'AI ürün fikrini değerlendir', 
+        content: 'Bu AI ürün fikrinin pazar potansiyelini değerlendir: teknoloji, veri, kullanım senaryoları', 
+        tags: ['ai', 'yapay zeka', 'validasyon'] 
+    },
+    { 
+        id: 'ai-2', 
+        category: 'Yapay Zeka & AI', 
+        title: 'Veri stratejisi', 
+        description: 'Veri toplama ve işleme stratejisi', 
+        content: 'Bu AI ürünü için veri toplama ve işleme stratejisini nasıl geliştirmeliyim? Gizlilik ve kalite odaklı', 
+        tags: ['ai', 'veri', 'strateji'] 
+    },
+    { 
+        id: 'ai-3', 
+        category: 'Yapay Zeka & AI', 
+        title: 'AI etik kuralları', 
+        description: 'AI etik kurallarını belirle', 
+        content: 'Bu AI ürünü için hangi etik kuralları ve sınırlar belirlemeliyim? Şeffaflık ve adalet odaklı', 
+        tags: ['ai', 'etik', 'kurallar'] 
+    },
+
+    // === SAĞLIK & WELLNESS PROMPT'LARI ===
+    { 
+        id: 'health-1', 
+        category: 'Sağlık & Wellness', 
+        title: 'Sağlık ürün validasyonu', 
+        description: 'Sağlık ürün fikrini değerlendir', 
+        content: 'Bu sağlık ürün fikrinin pazar potansiyelini değerlendir: düzenleme, güvenlik, kullanıcı ihtiyacı', 
+        tags: ['sağlık', 'wellness', 'validasyon'] 
+    },
+    { 
+        id: 'health-2', 
+        category: 'Sağlık & Wellness', 
+        title: 'HIPAA uyumluluğu', 
+        description: 'HIPAA uyumluluğunu sağla', 
+        content: 'Bu sağlık ürününde HIPAA uyumluluğunu nasıl sağlamalıyım? Veri güvenliği ve gizlilik odaklı', 
+        tags: ['sağlık', 'hipaa', 'uyumluluk'] 
+    },
+    { 
+        id: 'health-3', 
+        category: 'Sağlık & Wellness', 
+        title: 'Klinik validasyon', 
+        description: 'Klinik validasyon sürecini planla', 
+        content: 'Bu sağlık ürünü için klinik validasyon sürecini nasıl planlamalıyım? Araştırma ve test odaklı', 
+        tags: ['sağlık', 'klinik', 'validasyon'] 
+    },
+
+    // === EĞİTİM & E-LEARNING PROMPT'LARI ===
+    { 
+        id: 'education-1', 
+        category: 'Eğitim & E-Learning', 
+        title: 'Eğitim ürün validasyonu', 
+        description: 'Eğitim ürün fikrini değerlendir', 
+        content: 'Bu eğitim ürün fikrinin pazar potansiyelini değerlendir: hedef öğrenci, müfredat, ölçme', 
+        tags: ['eğitim', 'e-learning', 'validasyon'] 
+    },
+    { 
+        id: 'education-2', 
+        category: 'Eğitim & E-Learning', 
+        title: 'Öğrenme analitikleri', 
+        description: 'Öğrenme analitiklerini tasarla', 
+        content: 'Bu eğitim ürününde hangi öğrenme analitiklerini kullanmalıyım? Performans ve ilerleme odaklı', 
+        tags: ['eğitim', 'analitik', 'öğrenme'] 
+    },
+    { 
+        id: 'education-3', 
+        category: 'Eğitim & E-Learning', 
+        title: 'Sertifikasyon sistemi', 
+        description: 'Sertifikasyon sistemini tasarla', 
+        content: 'Bu eğitim ürünü için nasıl bir sertifikasyon sistemi tasarlamalıyım? Güvenilirlik ve tanınırlık odaklı', 
+        tags: ['eğitim', 'sertifikasyon', 'sistem'] 
+    },
+
+    // === İÇERİK & MEDYA PROMPT'LARI ===
+    { 
+        id: 'content-1', 
+        category: 'İçerik & Medya', 
+        title: 'İçerik ürün validasyonu', 
+        description: 'İçerik ürün fikrini değerlendir', 
+        content: 'Bu içerik ürün fikrinin pazar potansiyelini değerlendir: hedef kitle, format, dağıtım', 
+        tags: ['içerik', 'medya', 'validasyon'] 
+    },
+    { 
+        id: 'content-2', 
+        category: 'İçerik & Medya', 
+        title: 'İçerik takvimi', 
+        description: 'İçerik takvimini planla', 
+        content: 'Bu içerik ürünü için nasıl bir içerik takvimi planlamalıyım? Tutarlılık ve kalite odaklı', 
+        tags: ['içerik', 'takvim', 'planlama'] 
+    },
+    { 
+        id: 'content-3', 
+        category: 'İçerik & Medya', 
+        title: 'Monetizasyon stratejisi', 
+        description: 'İçerik monetizasyon stratejisini geliştir', 
+        content: 'Bu içerik ürünü için nasıl bir monetizasyon stratejisi geliştirmeliyim? Abonelik ve reklam odaklı', 
+        tags: ['içerik', 'monetizasyon', 'strateji'] 
+    },
+
+    // === HARDWARE & IOT PROMPT'LARI ===
+    { 
+        id: 'hardware-1', 
+        category: 'Hardware & IoT', 
+        title: 'Hardware ürün validasyonu', 
+        description: 'Hardware ürün fikrini değerlendir', 
+        content: 'Bu hardware ürün fikrinin pazar potansiyelini değerlendir: üretim, maliyet, dağıtım', 
+        tags: ['hardware', 'iot', 'validasyon'] 
+    },
+    { 
+        id: 'hardware-2', 
+        category: 'Hardware & IoT', 
+        title: 'Üretim süreci', 
+        description: 'Üretim sürecini planla', 
+        content: 'Bu hardware ürünü için nasıl bir üretim süreci planlamalıyım? Kalite ve maliyet odaklı', 
+        tags: ['hardware', 'üretim', 'süreç'] 
+    },
+    { 
+        id: 'hardware-3', 
+        category: 'Hardware & IoT', 
+        title: 'IoT entegrasyonu', 
+        description: 'IoT özelliklerini tasarla', 
+        content: 'Bu hardware ürününe hangi IoT özelliklerini eklemeliyim? Bağlantı ve veri odaklı', 
+        tags: ['hardware', 'iot', 'entegrasyon'] 
+    }
 ];
 
 const PromptGallery: React.FC<PromptGalleryProps> = ({ open, onClose, onUse }) => {
