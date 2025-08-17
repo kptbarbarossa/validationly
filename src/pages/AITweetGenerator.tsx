@@ -108,31 +108,7 @@ export default function AITweetGenerator() {
       />
       
       <div className="text-white">
-        {/* Header */}
-        <div className="border-b border-slate-700 bg-slate-900/50 backdrop-blur">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img src="/logo.png" alt="Validationly" className="w-8 h-8" />
-                <span className="text-lg font-semibold">Validationly</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => navigate('/')}
-                  className="text-sm px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg transition-colors"
-                >
-                  {isTurkish ? 'Ana Sayfa' : 'Home'}
-                </button>
-                <button
-                  onClick={() => navigate('/smart-results')}
-                  className="text-sm px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors"
-                >
-                  {isTurkish ? 'Analiz' : 'Analysis'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         <div className="container mx-auto px-4 py-8 max-w-6xl">
           {/* Hero Section */}
