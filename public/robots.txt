@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
 
+# Disallow API endpoints
+Disallow: /api/
+
+# Disallow results page (requires state)
+Disallow: /results
+
 Sitemap: https://validationly.com/sitemap.xml
