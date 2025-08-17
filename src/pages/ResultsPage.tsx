@@ -270,11 +270,11 @@ const ResultsPage: React.FC = () => {
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-400">Facebook:</span>
-                                            <span className="text-white text-sm">{result.realWorldData?.socialMediaSignals?.facebook?.groupActivity || result.platformAnalyses?.Facebook?.signalStrength || 'Medium'}</span>
+                                            <span className="text-white text-sm">{result.realWorldData?.socialMediaSignals?.facebook?.groupActivity || result.platformAnalyses?.Facebook?.signalStrength || 'Veri yok'}</span>
                                         </div>
                                         <div className="flex items-center justify-between">
                                             <span className="text-slate-400">TikTok:</span>
-                                            <span className="text-white text-sm">{result.realWorldData?.socialMediaSignals?.tiktok?.viralPotential || result.platformAnalyses?.TikTok?.signalStrength || 'Low'}</span>
+                                            <span className="text-white text-sm">{result.realWorldData?.socialMediaSignals?.tiktok?.viralPotential || result.platformAnalyses?.TikTok?.signalStrength || 'Veri yok'}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -288,11 +288,11 @@ const ResultsPage: React.FC = () => {
                                             <div className="space-y-4">
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">Reddit:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.forumInsights?.reddit?.discussionVolume || result.platformAnalyses?.Reddit?.signalStrength || 'Medium'}</span>
+                                                    <span className="text-white text-sm">{result.realWorldData?.forumInsights?.reddit?.discussionVolume || result.platformAnalyses?.Reddit?.signalStrength || 'Veri yok'}</span>
                                                 </div>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">Quora:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.forumInsights?.quora?.questionFrequency || result.platformAnalyses?.Quora?.signalStrength || 'Medium'}</span>
+                                                    <span className="text-white text-sm">{result.realWorldData?.forumInsights?.quora?.questionFrequency || result.platformAnalyses?.Quora?.signalStrength || 'Veri yok'}</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -309,11 +309,11 @@ const ResultsPage: React.FC = () => {
                                             <div className="space-y-4">
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">Amazon:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.marketplaceData?.amazon?.similarProducts || Math.floor(Math.random() * 200) + 50} ürün</span>
+                                                    <span className="text-white text-sm">{result.realWorldData?.marketplaceData?.amazon?.similarProducts || 'Veri yok'}</span>
                                                 </div>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">App Store:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.marketplaceData?.appStore?.competitorApps || Math.floor(Math.random() * 100) + 25} uygulama</span>
+                                                    <span className="text-white text-sm">{result.realWorldData?.marketplaceData?.appStore?.competitorApps || 'Veri yok'}</span>
                                                 </div>
                                             </div>
                                         </div>
