@@ -211,16 +211,13 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
                             
-                            {/* DEBUG SECTION */}
-                            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl">
-                                <h3 className="text-red-400 font-semibold mb-2">🔍 DEBUG INFO:</h3>
-                                <div className="text-xs text-red-300 space-y-1">
-                                    <p>result.realWorldData exists: {result.realWorldData ? 'YES' : 'NO'}</p>
-                                    <p>result.realWorldData type: {typeof result.realWorldData}</p>
-                                    <p>result.tweetSuggestion: {result.tweetSuggestion || 'undefined'}</p>
-                                    <p>result.redditTitleSuggestion: {result.redditTitleSuggestion || 'undefined'}</p>
-                                    <p>result.linkedinSuggestion: {result.linkedinSuggestion || 'undefined'}</p>
-                                    <p>Full result keys: {Object.keys(result).join(', ')}</p>
+                            {/* DATA STATUS */}
+                            <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                                <h3 className="text-blue-400 font-semibold mb-2">📊 Data Status:</h3>
+                                <div className="text-xs text-blue-300 space-y-1">
+                                    <p>✅ realWorldData: {result.realWorldData ? 'Loaded' : 'Missing'}</p>
+                                    <p>✅ Social Media Suggestions: {result.tweetSuggestion ? 'Loaded' : 'Missing'}</p>
+                                    <p>📅 Last Update: {result.lastDataUpdate ? new Date(result.lastDataUpdate).toLocaleString() : 'N/A'}</p>
                                 </div>
                             </div>
                             
