@@ -61,13 +61,13 @@ const TEMPLATES: PromptTemplate[] = [
     // === SAAS & B2B PROMPTS ===
     { 
         id: 'saas-1', 
-        category: 'SaaS & B2B', 
+		category: 'SaaS & B2B',
         title: 'SaaS Validation', 
         description: 'Quickly evaluate SaaS idea', 
         content: 'Evaluate the market potential of this SaaS idea: target customer, pain point, solution, pricing', 
-        tags: ['saas', 'b2b', 'validation'] 
-    },
-    { 
+		tags: ['saas', 'b2b', 'validation']
+	},
+	{
         id: 'saas-2', 
         category: 'SaaS & B2B', 
         title: 'B2B Sales Strategy', 
@@ -103,7 +103,7 @@ const TEMPLATES: PromptTemplate[] = [
     },
     { 
         id: 'ecom-3', 
-        category: 'E-commerce', 
+		category: 'E-commerce',
         title: 'Customer Experience', 
         description: 'Improve customer experience', 
         content: 'How can I improve the customer experience of this e-commerce site? Optimize the purchase process', 
@@ -129,7 +129,7 @@ const TEMPLATES: PromptTemplate[] = [
     },
     { 
         id: 'mobile-3', 
-        category: 'Mobile App', 
+		category: 'Mobile App',
         title: 'ASO Optimization', 
         description: 'Optimize App Store', 
         content: 'Suggest App Store optimization for this mobile app: keywords, description, screenshots', 
@@ -207,7 +207,7 @@ const TEMPLATES: PromptTemplate[] = [
     },
     { 
         id: 'health-3', 
-        category: 'Health & Wellness', 
+		category: 'Health & Wellness',
         title: 'Clinical Validation', 
         description: 'Plan clinical validation process', 
         content: 'How should I plan the clinical validation process for this health product? Focus on research and testing', 
@@ -290,7 +290,7 @@ const TEMPLATES: PromptTemplate[] = [
         description: 'Design IoT features', 
         content: 'What IoT features should I add to this hardware product? Focus on connectivity and data', 
         tags: ['hardware', 'iot', 'integration'] 
-    }
+	}
 ];
 
 const PromptGallery: React.FC<PromptGalleryProps> = ({ open, onClose, onUse }) => {

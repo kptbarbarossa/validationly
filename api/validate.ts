@@ -1,4 +1,6 @@
 import { GoogleGenAI, Type } from "@google/genai";
+import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 // Use local DynamicPromptResult definition in this file
 
 // Dynamic prompt-based AI analysis system
@@ -938,15 +940,30 @@ function validateInput(content: string): void {
 // AI instance
 let ai: GoogleGenAI | null = null;
 
-function getAI(): GoogleGenAI {
-    if (!ai) {
-        const apiKey = process.env.GOOGLE_API_KEY || process.env.API_KEY;
-        if (!apiKey) {
-            throw new Error("Google API key is not set. Please define GOOGLE_API_KEY or API_KEY in environment.");
-        }
-        ai = new GoogleGenAI({ apiKey });
+function getAI(useAI: string = 'gemini'): any {
+    switch (useAI) {
+        case 'openai':
+            if (!process.env.OPENAI_API_KEY) {
+                throw new Error("OpenAI API key is not set. Please define OPENAI_API_KEY in environment.");
+            }
+            return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        
+        case 'groq':
+            if (!process.env.GROQ_API_KEY) {
+                throw new Error("Groq API key is not set. Please define GROQ_API_KEY in environment.");
+            }
+            return new Groq({ apiKey: process.env.GROQ_API_KEY });
+        
+        default: // gemini
+            if (!ai) {
+                const apiKey = process.env.GOOGLE_API_KEY || process.env.API_KEY;
+                if (!apiKey) {
+                    throw new Error("Google API key is not set. Please define GOOGLE_API_KEY or API_KEY in environment.");
+                }
+                ai = new GoogleGenAI({ apiKey });
+            }
+            return ai;
     }
-    return ai;
 }
 
 // Ensure module context for TypeScript
@@ -1021,6 +1038,15 @@ export default async function handler(req: any, res: any) {
         }
 
         const { idea, content, lang, model, evidence, weightsVariant, enhance, vcReview, fast } = req.body;
+        
+        // Auto-select AI model based on availability and performance
+        let useAI = 'gemini';
+        if (process.env.OPENAI_API_KEY && Math.random() < 0.3) {
+            useAI = 'openai'; // 30% chance to use OpenAI
+        } else if (process.env.GROQ_API_KEY && Math.random() < 0.2) {
+            useAI = 'groq'; // 20% chance to use Groq
+        }
+        // 50% chance to use Gemini (default)
         const inputContent = idea || content;
 
         // Input validation
@@ -1033,7 +1059,7 @@ export default async function handler(req: any, res: any) {
 
         // Lightweight enhance mode: return enriched prompt text in same language
         if (enhance === true) {
-            const aiInstance = getAI();
+            const aiInstance = getAI(useAI);
             const baseText = (inputContent || '').toString().slice(0, 2000);
             const enhanceSystem = `You are a prompt enhancer. Rewrite the user's idea into a richer, structured brief in the SAME LANGUAGE as the input. Keep it concise, actionable, and specific. Avoid generic claims. Output PLAIN TEXT only (no markdown, no JSON).`;
             try {
@@ -1430,23 +1456,75 @@ CRITICAL RULES:
             // fallback to normal path if fast failed
         }
 
-        // Simplified AI Analysis - use only Gemini 2.0 for now
+        // Simplified AI Analysis - use selected AI model
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         async function getAIAnalysis(content: string, systemPrompt: string): Promise<any> {
-            console.log('🎯 Using Gemini 2.0 Flash Experimental...');
+            console.log(`🎯 Using ${useAI.toUpperCase()} for analysis...`);
 
             try {
-                const aiInstance = getAI();
-                const result = await aiInstance.models.generateContent({
-                    model: "gemini-2.0-flash-exp",
-                    contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                    config: {
-                        systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
-                        responseMimeType: "application/json",
+                const aiInstance = getAI(useAI);
+                
+                // Use different models based on selection
+                if (useAI === 'openai') {
+                    const openai = aiInstance as OpenAI;
+                    const completion = await openai.chat.completions.create({
+                        model: 'gpt-4',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
+                            },
+                            {
+                                role: 'user',
+                                content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
+                            }
+                        ],
                         temperature: 0.3,
-                        maxOutputTokens: 1792,
-                    }
-                });
+                        max_tokens: 1792
+                    });
+                    
+                    return {
+                        model: 'gpt-4',
+                        result: completion.choices[0]?.message?.content?.trim(),
+                        success: true,
+                        fallbackUsed: false
+                    };
+                } else if (useAI === 'groq') {
+                    const groq = aiInstance as Groq;
+                    const completion = await groq.chat.completions.create({
+                        model: 'llama3-70b-8192',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
+                            },
+                            {
+                                role: 'user',
+                                content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
+                            }
+                        ],
+                        temperature: 0.3,
+                        max_tokens: 1792
+                    });
+                    
+                    return {
+                        model: 'llama3-70b-8192',
+                        result: completion.choices[0]?.message?.content?.trim(),
+                        success: true,
+                        fallbackUsed: false
+                    };
+                } else {
+                    // Default Gemini
+                    const result = await aiInstance.models.generateContent({
+                        model: "gemini-2.0-flash-exp",
+                        contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                        config: {
+                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
+                            responseMimeType: "application/json",
+                            temperature: 0.3,
+                            maxOutputTokens: 1792,
+                        }
+                    });
 
                 return {
                     model: 'gemini-2.0-flash-exp',
@@ -1457,28 +1535,76 @@ CRITICAL RULES:
             } catch (error) {
                 console.log('❌ Gemini 2.0 failed, trying Gemini 1.5...', error);
 
-                // Fallback to Gemini 1.5
+                // Fallback to other models if primary fails
                 try {
-                    const aiInstance = getAI();
-                    const result = await aiInstance.models.generateContent({
-                        model: "gemini-1.5-flash",
-                        contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                        config: {
-                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
-                            responseMimeType: "application/json",
+                    if (useAI === 'gemini') {
+                        // Try OpenAI as fallback
+                        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+                        const completion = await openai.chat.completions.create({
+                            model: 'gpt-4',
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
+                                },
+                                {
+                                    role: 'user',
+                                    content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
+                                }
+                            ],
                             temperature: 0.3,
-                            maxOutputTokens: 1792,
-                        }
-                    });
-
-                    return {
-                        model: 'gemini-1.5-flash',
-                        result: result.text?.trim(),
-                        success: true,
-                        fallbackUsed: true
-                    };
+                            max_tokens: 1792
+                        });
+                        
+                        return {
+                            model: 'gpt-4 (fallback)',
+                            result: completion.choices[0]?.message?.content?.trim(),
+                            success: true,
+                            fallbackUsed: true
+                        };
+                    } else if (useAI === 'openai') {
+                        // Try Gemini as fallback
+                        const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY || '');
+                        const result = await gemini.models.generateContent({
+                            model: "gemini-1.5-flash",
+                            contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                            config: {
+                                systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
+                                responseMimeType: "application/json",
+                                temperature: 0.3,
+                                maxOutputTokens: 1792,
+                            }
+                        });
+                        
+                        return {
+                            model: 'gemini-1.5-flash (fallback)',
+                            result: result.text?.trim(),
+                            success: true,
+                            fallbackUsed: true
+                        };
+                    } else {
+                        // Try Gemini as fallback for Groq
+                        const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY || '');
+                        const result = await gemini.models.generateContent({
+                            model: "gemini-1.5-flash",
+                            contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                            config: {
+                                systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
+                                responseMimeType: "application/json",
+                                temperature: 0.3,
+                                maxOutputTokens: 1792,
+                            }
+                        });
+                        
+                        return {
+                            model: 'gemini-1.5-flash (fallback)',
+                            result: result.text?.trim(),
+                            success: true,
+                            fallbackUsed: true
+                        };
+                    }
                 } catch (fallbackError) {
-                    console.error('❌ Both Gemini models failed:', fallbackError);
+                    console.error('❌ All AI models failed:', fallbackError);
                     throw new Error('All AI models failed to respond');
                 }
             }
@@ -1890,7 +2016,7 @@ async function getSimplifiedAIAnalysis(
 
     try {
         console.log('🎯 Using enhanced AI analysis with real-world data...');
-        
+
         // Language detection
         const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content);
         const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
@@ -1949,16 +2075,16 @@ async function getSimplifiedAIAnalysis(
                         "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
                         "contentSuggestion": "içerik önerisi",
                         "dataSource": "Twitter API + AI analizi"
-                    },
-                    "reddit": {
+                      },
+                      "reddit": {
                         "platformName": "Reddit", 
                         "score": 1-5 arası (veri tabanlı),
                         "summary": "veri destekli analiz",
                         "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
                         "contentSuggestion": "içerik önerisi",
                         "dataSource": "Reddit API + AI analizi"
-                    },
-                    "linkedin": {
+                      },
+                      "linkedin": {
                         "platformName": "LinkedIn",
                         "score": 1-5 arası (veri tabanlı), 
                         "summary": "veri destekli analiz",
@@ -2059,9 +2185,9 @@ async function getSimplifiedAIAnalysis(
         console.log(`🎯 Using enhanced model: ${runtimeModel}`);
         
         const result = await aiInstance.models.generateContent({
-            model: runtimeModel,
+                    model: runtimeModel,
             contents: enhancedPrompt,
-            config: {
+                    config: {
                 temperature: 0.3,
                 maxOutputTokens: 1500,
             }
@@ -2075,11 +2201,11 @@ async function getSimplifiedAIAnalysis(
             if (parsed && typeof parsed === 'object') {
                 // Validate and clean the enhanced response
                 const cleaned = {
-                    idea: content,
+                            idea: content,
                     demandScore: Math.max(0, Math.min(100, parsed.demandScore || 50)),
                     scoreJustification: parsed.scoreJustification || 'Data-driven analysis completed',
                     language: expectedLanguage,
-                    fallbackUsed: false,
+                            fallbackUsed: false,
                     realWorldData: parsed.realWorldData || {},
                     platformAnalyses: parsed.platformAnalyses || {},
                     tweetSuggestion: parsed.tweetSuggestion || '',
@@ -2103,11 +2229,11 @@ async function getSimplifiedAIAnalysis(
         
         // Return enhanced fallback response
         const fallbackResponse = {
-            idea: content,
+                idea: content,
             demandScore: 50,
             scoreJustification: expectedLanguage === 'Turkish' ? 'Gelişmiş analiz başarısız, yedek yanıt kullanıldı' : 'Enhanced analysis failed, fallback used',
             language: expectedLanguage,
-            fallbackUsed: true,
+                fallbackUsed: true,
             realWorldData: {
                 socialMediaSignals: {
                     twitter: { trending: false, sentiment: 'neutral', volume: 'medium' },
@@ -2128,28 +2254,28 @@ async function getSimplifiedAIAnalysis(
                     positiveFeedback: ['Analysis pending']
                 }
             },
-            platformAnalyses: {
-                twitter: {
-                    platformName: 'X',
-                    score: 3,
+                platformAnalyses: {
+                    twitter: {
+                        platformName: 'X',
+                        score: 3,
                     summary: expectedLanguage === 'Turkish' ? 'Orta düzey potansiyel (veri eksik)' : 'Medium potential (data limited)',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
+                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate potential'],
                     contentSuggestion: expectedLanguage === 'Turkish' ? 'Fikrinizi X\'te paylaşın' : 'Share your idea on X',
                     dataSource: 'Fallback analysis'
-                },
-                reddit: {
-                    platformName: 'Reddit',
-                    score: 3,
+                    },
+                    reddit: {
+                        platformName: 'Reddit',
+                        score: 3,
                     summary: expectedLanguage === 'Turkish' ? 'Orta düzey topluluk ilgisi (veri eksik)' : 'Medium community interest (data limited)',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate community fit'],
+                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate community fit'],
                     contentSuggestion: expectedLanguage === 'Turkish' ? 'İlgili subreddit\'lerde paylaşın' : 'Post in relevant subreddits',
                     dataSource: 'Fallback analysis'
-                },
-                linkedin: {
-                    platformName: 'LinkedIn',
-                    score: 3,
+                    },
+                    linkedin: {
+                        platformName: 'LinkedIn',
+                        score: 3,
                     summary: expectedLanguage === 'Turkish' ? 'Orta düzey iş potansiyeli (veri eksik)' : 'Medium business potential (data limited)',
-                    keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
+                        keyFindings: ['Analysis unavailable', 'Fallback assessment', 'Moderate business potential'],
                     contentSuggestion: expectedLanguage === 'Turkish' ? 'Profesyonel ağınızla paylaşın' : 'Share with your professional network',
                     dataSource: 'Fallback analysis'
                 }

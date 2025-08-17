@@ -127,7 +127,7 @@ const ResultsPage: React.FC = () => {
     console.log('redditBodySuggestion:', result.redditBodySuggestion);
     console.log('linkedinSuggestion:', result.linkedinSuggestion);
 
-    return (
+        return (
         <>
             <SEOHead
                 title={`${result.idea} - Validation Results | Validationly`}
@@ -145,13 +145,13 @@ const ResultsPage: React.FC = () => {
                     <div className="flex-1 p-8">
                         {/* Header */}
                         <header className="flex items-center justify-between mb-8">
-                            <div>
+                <div>
                                 <h1 className="text-3xl font-bold flex items-center gap-3">
                                     {isTR ? 'Analiz Sonuçları' : 'Analysis Results'} 
                                     <span className="text-2xl">🚀</span>
                                 </h1>
                                 <p className="text-slate-400 mt-1">{isTR ? 'Fikrinizin pazar potansiyeli' : 'Market potential of your idea'}</p>
-                            </div>
+                </div>
                             <button
                                 onClick={() => navigate('/')}
                                 className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-2xl text-white font-medium transition-colors"
@@ -163,25 +163,25 @@ const ResultsPage: React.FC = () => {
                         {/* Score Card */}
                         <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
                             <div className="flex items-center justify-between mb-6">
-                                <div>
+                <div>
                                     <h2 className="text-xl font-semibold text-white mb-2">{isTR ? 'Talep Skoru' : 'Demand Score'}</h2>
                                     <p className="text-slate-400 text-sm">{isTR ? 'Pazardaki potansiyel' : 'Market potential'}</p>
-                                </div>
+                </div>
                                 <div className="text-right">
                                     <div className="text-4xl font-bold text-white mb-1">{result.demandScore}</div>
                                     <div className="text-slate-400 text-sm">/ 100</div>
-                                </div>
-                            </div>
+            </div>
+                </div>
                             
                             <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
                                 <div 
                                     className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000 ease-out rounded-full" 
                                     style={{ width: `${Math.max(2, progress)}%` }} 
                                 />
-                            </div>
+                    </div>
                             
                             <p className="text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
-                        </div>
+                    </div>
 
                         {/* Real-World Data Analysis - ALWAYS SHOW */}
                         <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
@@ -202,15 +202,15 @@ const ResultsPage: React.FC = () => {
                                             (result.dataConfidence === 'high' || result.dataConfidence === 'yüksek' ? 'High Confidence' :
                                              result.dataConfidence === 'medium' || result.dataConfidence === 'orta' ? 'Medium Confidence' : 'Low Confidence')
                                         }
-                                    </div>
+                        </div>
                                     {result.lastDataUpdate && (
                                         <div className="text-xs text-slate-400">
                                             📅 {new Date(result.lastDataUpdate).toLocaleDateString()}
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            
+                    </div>
+                    )}
+                    </div>
+                    </div>
+
                             {/* DATA STATUS */}
                             <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
                                 <h3 className="text-blue-400 font-semibold mb-2">📊 Data Status:</h3>
@@ -218,9 +218,9 @@ const ResultsPage: React.FC = () => {
                                     <p>✅ realWorldData: {result.realWorldData ? 'Loaded' : 'Missing'}</p>
                                     <p>✅ Social Media Suggestions: {result.tweetSuggestion ? 'Loaded' : 'Missing'}</p>
                                     <p>📅 Last Update: {result.lastDataUpdate ? new Date(result.lastDataUpdate).toLocaleString() : 'N/A'}</p>
-                                </div>
-                            </div>
-                            
+                    </div>
+                        </div>
+
                             {result.realWorldData ? (
                                 <>
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -238,17 +238,17 @@ const ResultsPage: React.FC = () => {
                                                     }`}>
                                                         {result.realWorldData.socialMediaSignals?.twitter?.trending ? '🔥 Trending' : 'Normal'}
                                                     </span>
-                                                </div>
+                                        </div>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">Facebook:</span>
                                                     <span className="text-white text-sm">{result.realWorldData.socialMediaSignals?.facebook?.groupActivity || 'N/A'}</span>
-                                                </div>
+                                    </div>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">TikTok:</span>
                                                     <span className="text-white text-sm">{result.realWorldData.socialMediaSignals?.tiktok?.viralPotential || 'N/A'}</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                                         {/* Forum Insights */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
@@ -260,14 +260,14 @@ const ResultsPage: React.FC = () => {
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">Reddit:</span>
                                                     <span className="text-white text-sm">{result.realWorldData.forumInsights?.reddit?.discussionVolume || 'N/A'}</span>
-                                                </div>
+                                        </div>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">Quora:</span>
                                                     <span className="text-white text-sm">{result.realWorldData.forumInsights?.quora?.questionFrequency || 'N/A'}</span>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
+                                    </div>
+                                </div>
+                            </div>
 
                                     {/* Marketplace Data & Consumer Sentiment */}
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
@@ -281,13 +281,13 @@ const ResultsPage: React.FC = () => {
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">Amazon:</span>
                                                     <span className="text-white text-sm">{result.realWorldData.marketplaceData?.amazon?.similarProducts || 0} ürün</span>
-                                                </div>
+                                        </div>
                                                 <div className="flex items-center justify-between">
                                                     <span className="text-slate-400">App Store:</span>
                                                     <span className="text-white text-sm">{result.realWorldData.marketplaceData?.appStore?.competitorApps || 0} uygulama</span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                    </div>
+                            </div>
+                        </div>
 
                                         {/* Consumer Sentiment */}
                                         <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
@@ -304,11 +304,11 @@ const ResultsPage: React.FC = () => {
                                                         'bg-yellow-500/20 text-yellow-400'
                                                     }`}>
                                                         {result.realWorldData.consumerSentiment?.overallSentiment || 'N/A'}
-                                                    </span>
-                                                </div>
-                                            </div>
+                                                </span>
                                         </div>
-                                    </div>
+                                        </div>
+                                                    </div>
+                                            </div>
                                 </>
                             ) : (
                                 <div className="text-center py-8">
@@ -319,9 +319,9 @@ const ResultsPage: React.FC = () => {
                                     <p className="text-slate-500 text-sm mt-2">
                                         {isTR ? 'API yanıtı bekleniyor...' : 'Waiting for API response...'}
                                     </p>
-                                </div>
-                            )}
-                        </div>
+                                            </div>
+                                        )}
+                                    </div>
 
                         {/* Social Media Post Suggestions */}
                         <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
@@ -337,25 +337,25 @@ const ResultsPage: React.FC = () => {
                                             </svg>
                                         </div>
                                         <h3 className="font-semibold text-white">X (Twitter)</h3>
-                                    </div>
+                                        </div>
                                     <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px]">
                                         {result.tweetSuggestion || (isTR ? 'Tweet önerisi yükleniyor...' : 'Loading tweet suggestion...')}
-                                    </div>
+                                            </div>
                                     <div className="flex gap-2">
-                                        <button
+                                            <button
                                             onClick={() => postToTwitter(result.tweetSuggestion)} 
                                             className="flex-1 px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-xl text-white text-sm font-medium transition-colors"
                                         >
                                             {isTR ? 'Post' : 'Post'}
-                                        </button>
-                                        <button
+                                            </button>
+                                            <button
                                             onClick={() => copyText(result.tweetSuggestion, 0)} 
                                             className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===0 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
-                                        >
+                                            >
                                             {copiedIndex===0 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
-                                        </button>
-                                    </div>
-                                </div>
+                                            </button>
+                                        </div>
+                                            </div>
 
                                 {/* Reddit */}
                                 <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
@@ -366,36 +366,36 @@ const ResultsPage: React.FC = () => {
                                             </svg>
                                         </div>
                                         <h3 className="font-semibold text-white">Reddit</h3>
-                                    </div>
+                                        </div>
                                     <div className="space-y-3 mb-4">
                                         <div>
                                             <div className="text-xs text-slate-400 mb-2">{isTR ? 'Başlık:' : 'Title:'}</div>
                                             <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300">
                                                 {result.redditTitleSuggestion || (isTR ? 'Reddit başlık önerisi yükleniyor...' : 'Loading Reddit title suggestion...')}
                                             </div>
-                                        </div>
+                                    </div>
                                         <div>
                                             <div className="text-xs text-slate-400 mb-2">{isTR ? 'İçerik:' : 'Body:'}</div>
                                             <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300 max-h-20 overflow-y-auto">
                                                 {result.redditBodySuggestion || (isTR ? 'Reddit içerik önerisi yükleniyor...' : 'Loading Reddit body suggestion...')}
-                                            </div>
                                         </div>
-                                    </div>
+                                        </div>
+                                            </div>
                                     <div className="flex gap-2">
-                                        <button
+                                            <button
                                             onClick={() => postToReddit(result.redditTitleSuggestion, result.redditBodySuggestion)} 
                                             className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-xl text-white text-sm font-medium transition-colors"
                                         >
                                             {isTR ? 'Post' : 'Post'}
-                                        </button>
-                                        <button
+                                            </button>
+                                            <button
                                             onClick={() => copyText(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 1)} 
                                             className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===1 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
-                                        >
+                                            >
                                             {copiedIndex===1 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
-                                        </button>
-                                    </div>
-                                </div>
+                                            </button>
+                                        </div>
+                                            </div>
 
                                 {/* LinkedIn */}
                                 <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
@@ -406,27 +406,27 @@ const ResultsPage: React.FC = () => {
                                             </svg>
                                         </div>
                                         <h3 className="font-semibold text-white">LinkedIn</h3>
-                                    </div>
+                                        </div>
                                     <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px] overflow-y-auto">
                                         {result.linkedinSuggestion || (isTR ? 'LinkedIn önerisi yükleniyor...' : 'Loading LinkedIn suggestion...')}
-                                    </div>
+                                            </div>
                                     <div className="flex gap-2">
-                                        <button
+                                            <button
                                             onClick={() => postToLinkedIn(result.linkedinSuggestion)} 
                                             className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-white text-sm font-medium transition-colors"
                                         >
                                             {isTR ? 'Post' : 'Post'}
-                                        </button>
-                                        <button
+                                            </button>
+                                            <button
                                             onClick={() => copyText(result.linkedinSuggestion, 2)} 
                                             className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===2 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
-                                        >
+                                            >
                                             {copiedIndex===2 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
-                                        </button>
+                                            </button>
+                                        </div>
+                                            </div>
                                     </div>
-                                </div>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -435,3 +435,4 @@ const ResultsPage: React.FC = () => {
 };
 
 export default ResultsPage;
+
