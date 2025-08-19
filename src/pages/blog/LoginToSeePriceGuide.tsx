@@ -214,7 +214,7 @@ const LoginToSeePriceGuide: React.FC = () => {
                                 Join thousands of Shopify store owners who are already using Login to See Price to increase their customer base and improve conversion rates.
                             </p>
                             <a 
-                                href="https://apps.shopify.com/login-to-see-price" 
+                                href="https://apps.shopify.com/shhhh-pricing" 
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="inline-block px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-2xl text-white font-semibold text-lg transition-all transform hover:scale-105"
