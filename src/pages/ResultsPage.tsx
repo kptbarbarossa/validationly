@@ -57,11 +57,26 @@ const ResultsPage: React.FC = () => {
 
     // Helper function to extract content from specific sections
     const extractSectionContent = (rawAnalysis: string, sectionName: string): string => {
-        const sectionRegex = new RegExp(`\\*\\*${sectionName}:\\*\\*\\s*([^*]+?)(?=\\*\\*|$)`, 's');
-        const match = rawAnalysis.match(sectionRegex);
-        if (match && match[1]) {
-            return match[1].trim();
+        console.log('Extracting section:', sectionName);
+        console.log('Raw analysis:', rawAnalysis);
+        
+        // Try different regex patterns
+        const patterns = [
+            new RegExp(`\\*\\*${sectionName}:\\*\\*\\s*([^*]+?)(?=\\*\\*|$)`, 's'),
+            new RegExp(`${sectionName}:\\s*([^\\n]+(?:\\n[^\\n]+)*)`, 'i'),
+            new RegExp(`${sectionName}\\s*([^\\n]+(?:\\n[^\\n]+)*)`, 'i')
+        ];
+        
+        for (const pattern of patterns) {
+            const match = rawAnalysis.match(pattern);
+            if (match && match[1]) {
+                const content = match[1].trim();
+                console.log('Found content for', sectionName, ':', content);
+                return content;
+            }
         }
+        
+        console.log('No content found for section:', sectionName);
         return 'Content not available for this section.';
     };
 
@@ -366,6 +381,14 @@ const ResultsPage: React.FC = () => {
                                                 {extractSectionContent(result.rawAnalysis, 'Actionable Steps')}
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                                
+                                {/* Raw Analysis Fallback */}
+                                <div className="mt-6 bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                                    <h4 className="text-lg font-semibold text-white mb-4">📄 Raw AI Analysis</h4>
+                                    <div className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
+                                        {result.rawAnalysis}
                                     </div>
                                 </div>
                             )}
