@@ -106,7 +106,7 @@ const HomePage: React.FC = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: ideaPayload, fast: true })
+                body: JSON.stringify({ content: ideaPayload, fast: true })
             });
 
             if (!response.ok) {
