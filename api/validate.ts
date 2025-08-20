@@ -25,7 +25,7 @@ async function enhanceTrendsWithGemini(trendsData: any, idea: string): Promise<a
 
     console.log('🤖 Enhancing trends data with Gemini AI...');
     
-    const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+    const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
     
     const analysisPrompt = `You are an expert market analyst and trend interpreter.
 
@@ -99,114 +99,7 @@ Keep the original trends data intact and add these AI-enhanced fields.`;
     return trendsData; // Return original data if enhancement fails
   }
 }
-// Use local DynamicPromptResult definition in this file
-
-// Dynamic prompt-based AI analysis system
-
-// Enhanced Analysis System - Integrated Components
-import type { 
-  CriticAnalysis, 
-  QualityIssue, 
-  EvidenceAnalysis, 
-  EvidenceSource, 
-  EnhancedConfidence, 
-  ConfidenceFactors,
-  RetryStrategy,
-  FallbackConfig,
-  ErrorContext
-} from '../src/types';
-
-// Critic Agent - Quality Control System
-class CriticAgent {
-  private language: string;
-
-  constructor(language: string = 'en') {
-    this.language = language;
-  }
-
-  async analyzeQuality(result: any): Promise<CriticAnalysis> {
-    const issues: QualityIssue[] = [];
-    let completenessScore = 100;
-    let consistencyScore = 100;
-
-    // Check for missing critical fields
-    const requiredFields = ['idea', 'demandScore', 'scoreJustification', 'platformAnalyses'];
-
-    for (const field of requiredFields) {
-      if (!result[field]) {
-        issues.push({
-          type: 'missing_field',
-          field,
-          severity: 'high',
-          description: `Critical field '${field}' is missing`,
-          suggestion: `Add ${field} to the analysis result`
-        });
-        completenessScore -= 20;
-      }
-    }
-
-    // Check platform analyses completeness
-    if (result.platformAnalyses) {
-      const platforms = Object.keys(result.platformAnalyses);
-      for (const platform of platforms) {
-        const analysis = result.platformAnalyses[platform];
-        if (!analysis.summary || analysis.summary.length < 10) {
-          issues.push({
-            type: 'low_quality',
-            field: `platformAnalyses.${platform}.summary`,
-            severity: 'medium',
-            description: `Platform summary for ${platform} is too short or missing`,
-            suggestion: 'Provide a more detailed platform analysis summary'
-          });
-          completenessScore -= 5;
-        }
-
-        if (!analysis.keyFindings || analysis.keyFindings.length < 3) {
-          issues.push({
-            type: 'missing_field',
-            field: `platformAnalyses.${platform}.keyFindings`,
-            severity: 'medium',
-            description: `Key findings for ${platform} are incomplete`,
-            suggestion: 'Provide at least 3 key findings for each platform'
-          });
-          completenessScore -= 5;
-        }
-      }
-    }
-
-    // Check for unrealistic numbers
-    if (result.demandScore && (result.demandScore < 0 || result.demandScore > 100)) {
-      issues.push({
-        type: 'unrealistic_numbers',
-        field: 'demandScore',
-        severity: 'high',
-        description: 'Demand score is outside valid range (0-100)',
-        suggestion: 'Ensure demand score is between 0 and 100'
-      });
-      consistencyScore -= 30;
-    }
-
-    const overallQuality = Math.round((completenessScore + consistencyScore) / 2);
-    const needsRepair = issues.some(issue => issue.severity === 'high') || overallQuality < 70;
-
-    return {
-      overallQuality,
-      issues,
-      suggestions: ['Analysis quality assessment completed'],
-      completenessScore: Math.max(0, completenessScore),
-      consistencyScore: Math.max(0, consistencyScore),
-      needsRepair
-    };
-  }
-
-  async repairAnalysis(result: any, issues: QualityIssue[]): Promise<any> {
-    return {
-      ...result,
-      _repairAttempted: true,
-      _repairInstructions: issues.map(i => i.suggestion)
-    };
-  }
-}
+// Enhanced Analysis System - Core Components
 
 // Evidence-Based Analysis System
 class EvidenceAnalyzer {
@@ -277,7 +170,7 @@ async function enhancePromptWithAI(inputContent: string): Promise<string> {
         // Try Gemini first (most reliable for enhancement)
         if (process.env.GOOGLE_API_KEY) {
             try {
-                const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+                const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
                 const enhancePrompt = `You are an expert business analyst and startup consultant. 
 
 ENHANCE THIS IDEA: "${inputContent}"
@@ -1112,118 +1005,9 @@ PRODUCT HUNT LAUNCH PATTERNS:
 
 const promptManager = new PromptManager();
 
-// === Simple fusion of multiple results (majority/most-informative) ===
-function fuseResults(results: any[]): any {
-    if (!Array.isArray(results) || results.length === 0) return results?.[0];
-    const first = results[0] || {};
-    const avg = (nums: number[]) => Math.round(nums.reduce((s, n) => s + (Number.isFinite(n) ? n : 0), 0) / Math.max(1, nums.length));
-    const demandScore = avg(results.map(r => Number(r?.demandScore || 0)));
-    const scoreJustification = results.map(r => r?.scoreJustification || '').sort((a, b) => b.length - a.length)[0] || first.scoreJustification;
 
-    const platformKeys = Array.from(new Set(results.flatMap(r => Object.keys(r?.platformAnalyses || {}))));
-    const platformAnalyses: any = {};
-    for (const k of platformKeys) {
-        const candidates = results.map(r => r?.platformAnalyses?.[k]).filter(Boolean);
-        if (candidates.length === 0) continue;
-        const best = candidates.reduce((best: any, cur: any) => {
-            if (!best) return cur;
-            const bs = Number(best.score || 0), cs = Number(cur.score || 0);
-            const bl = (best.summary || '').length, cl = (cur.summary || '').length;
-            if (cs > bs) return cur;
-            if (cs === bs && cl > bl) return cur;
-            return best;
-        }, null);
-        platformAnalyses[k] = best;
-    }
 
-    const pickLongest = (key: string) => results.map(r => r?.[key]).filter(Boolean).sort((a: any, b: any) => JSON.stringify(b).length - JSON.stringify(a).length)[0] || first[key];
-    const assumptions = Array.from(new Set(results.flatMap(r => r?.assumptions || []))).slice(0, 5);
-    const confidence = Math.max(0, Math.min(100, avg(results.map(r => Number(r?.confidence || 0)))));
-    const nextTestsRaw = results.flatMap(r => r?.nextTests || []);
-    const seen = new Set<string>();
-    const nextTests: any[] = [];
-    for (const t of nextTestsRaw) {
-        const key = `${t?.hypothesis || ''}|${t?.channel || ''}|${t?.metric || ''}`;
-        if (!seen.has(key)) { seen.add(key); nextTests.push(t); }
-        if (nextTests.length >= 3) break;
-    }
 
-    return {
-        ...first,
-        demandScore,
-        scoreJustification,
-        platformAnalyses,
-        marketIntelligence: pickLongest('marketIntelligence'),
-        competitiveLandscape: pickLongest('competitiveLandscape'),
-        revenueModel: pickLongest('revenueModel'),
-        targetAudience: pickLongest('targetAudience'),
-        riskAssessment: pickLongest('riskAssessment'),
-        goToMarket: pickLongest('goToMarket'),
-        developmentRoadmap: pickLongest('developmentRoadmap'),
-        productMarketFit: pickLongest('productMarketFit'),
-        assumptions: assumptions.length ? assumptions : first.assumptions,
-        confidence: confidence || first.confidence,
-        nextTests: nextTests.length ? nextTests : first.nextTests
-    };
-}
-
-// fuseResults is defined above
-
-// Community Match local types (runtime usage only)
-interface CommunityItem {
-    name: string;
-    url?: string;
-    members?: string;
-    fitReason: string;
-    rulesSummary: string;
-    entryMessage: string;
-}
-
-interface CommunityMatch {
-    subreddits: CommunityItem[];
-    discordServers: CommunityItem[];
-    linkedinGroups: CommunityItem[];
-}
-
-// Dynamic Prompt System Result type comes from src/types
-
-interface PlatformAnalysis {
-    platformName: string;
-    score: number; // 1-5 simple score
-    summary: string; // 2-3 sentence simple explanation
-    keyFindings: string[]; // 2-3 key findings
-    contentSuggestion: string; // Platform-specific content suggestion
-        rubric?: {
-            reach: number; // 1-5
-            nicheFit: number; // 1-5
-            contentFit: number; // 1-5
-            competitiveSignal: number; // 1-5
-        };
-}
-
-// Legacy interface for backward compatibility
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface ValidationResult {
-    idea: string;
-    content?: string;
-    demandScore: number;
-    scoreJustification: string;
-    signalSummary: Array<{
-        platform: string;
-        summary: string;
-    }>;
-    scoreBreakdown?: {
-        marketSize: number;
-        competition: number;
-        trendMomentum: number;
-        feasibility: number;
-    };
-    tweetSuggestion: string;
-    redditTitleSuggestion: string;
-    redditBodySuggestion: string;
-    linkedinSuggestion: string;
-
-}
 
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
@@ -1248,15 +1032,7 @@ function checkRateLimit(ip: string): boolean {
     return true;
 }
 
-// API key güvenlik kontrolü
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function validateApiKey(): string {
-    const apiKey = process.env.API_KEY;
-    if (!apiKey) {
-        throw new Error("API_KEY environment variable is not set");
-    }
-    return apiKey;
-}
+
 
 // Input validation
 function validateInput(content: string): void {
@@ -1305,31 +1081,7 @@ function getAI(useAI: string = 'gemini'): any {
 // Ensure module context for TypeScript
 export {};
 
-// Legacy response schema for backward compatibility
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const legacyResponseSchema = {
-    type: Type.OBJECT,
-    properties: {
-        idea: { type: Type.STRING, description: "The original idea analyzed" },
-        demandScore: { type: Type.INTEGER, description: "A score from 0-100 representing market demand." },
-        scoreJustification: { type: Type.STRING, description: "A short phrase justifying the score." },
-        signalSummary: {
-            type: Type.ARRAY,
-            items: {
-                type: Type.OBJECT,
-                properties: {
-                    platform: { type: Type.STRING },
-                    summary: { type: Type.STRING }
-                }
-            }
-        },
-        tweetSuggestion: { type: Type.STRING, description: "An optimized X (Twitter) post version." },
-        redditTitleSuggestion: { type: Type.STRING, description: "A compelling title for Reddit." },
-        redditBodySuggestion: { type: Type.STRING, description: "A detailed body for Reddit post." },
-        linkedinSuggestion: { type: Type.STRING, description: "A professional LinkedIn post version." }
-    },
-    required: ["idea", "demandScore", "scoreJustification", "signalSummary", "tweetSuggestion", "redditTitleSuggestion", "redditBodySuggestion", "linkedinSuggestion"]
-};
+
 
 export default async function handler(req: any, res: any) {
     // CORS headers
@@ -1373,10 +1125,9 @@ export default async function handler(req: any, res: any) {
             });
         }
 
-        const { idea, content, lang, model, evidence, weightsVariant, enhance, vcReview, fast } = req.body;
+        const { idea, content, lang, model, evidence, enhance, fast } = req.body;
         
-        // NEW: Parallel AI Model Execution - All 3 models run simultaneously
-        const parallelExecution = true; // Enable parallel AI model comparison
+
         
         // Check available models
         const availableModels = {
@@ -1425,7 +1176,7 @@ export default async function handler(req: any, res: any) {
 
         // Dynamic prompt selection based on input
         const promptSelection = await promptManager.selectPrompts(inputContent);
-        const systemInstruction = promptManager.combinePrompts(promptSelection);
+
 
         // NEW: Parallel AI Model Execution Function
         async function executeParallelAI() {
@@ -1952,41 +1703,7 @@ CRITICAL RULES:
             // fallback to normal path if fast failed
         }
 
-        // Simplified AI Analysis - use selected AI model
-        // NEW: Parallel AI Model Execution
-        async function getAIAnalysis(content: string, systemPrompt: string): Promise<any> {
-            console.log('🚀 Executing Parallel AI Model Analysis...');
-            
-            try {
-                // Execute all available models in parallel
-                const parallelResults = await executeParallelAI();
-                
-                // Find the best successful result
-                const successfulResults = parallelResults.filter(r => r.success && r.result);
-                
-                if (successfulResults.length === 0) {
-                    throw new Error('All AI models failed to respond');
-                }
-                
-                // Select the best result based on confidence
-                const bestResult = successfulResults.reduce((best, current) => 
-                    current.confidence > best.confidence ? current : best
-                );
-                
-                // Return enhanced result with model comparison data
-                return {
-                    ...bestResult,
-                    modelComparison: parallelResults,
-                    ensembleScore: successfulResults.reduce((sum, r) => sum + r.confidence, 0) / successfulResults.length,
-                    totalModels: parallelResults.length,
-                    successfulModels: successfulResults.length
-                };
-                
-            } catch (error) {
-                console.error('❌ Parallel AI execution failed:', error);
-                throw new Error('AI analysis failed');
-            }
-        }
+
 
         // Optional runtime model selection (whitelist)
         const allowedModels = [
@@ -2001,127 +1718,39 @@ CRITICAL RULES:
         // Initialize enhanced analysis components (detect language locally)
         const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(inputContent) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(inputContent);
         const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
-        const criticAgent = new CriticAgent(expectedLanguage);
-        const evidenceAnalyzer = new EvidenceAnalyzer();
-        const confidenceCalculator = new ConfidenceCalculator();
-        const errorManager = new ErrorManager();
 
         // Use enhanced analysis approach with quality control
-        const baseRun = () => getEnhancedAIAnalysis(
-            inputContent, 
-            finalSystemInstruction, 
-            lang, 
-            preferredModel, 
-            weightsVariant, 
-            { 
-                morePlatforms: Boolean(req.body?.morePlatforms),
-                evidenceMode: Boolean(req.body?.evidence),
-                sectors: promptManager.detectSector(inputContent)
-            },
-            errorManager,
-            criticAgent,
-            evidenceAnalyzer,
-            confidenceCalculator
-        );
+        const baseRun = async () => {
+            try {
+                const ai = getAI(useAI);
+                const result = await ai.models.generateContent({
+                    model: preferredModel || "gemini-1.5-flash",
+                    contents: finalSystemInstruction,
+                    config: {
+                        temperature: 0.3,
+                        maxOutputTokens: 2048,
+                    }
+                });
+                
+                const content = result.text?.trim();
+                if (!content) throw new Error('AI response empty');
+                
+                return JSON.parse(content);
+            } catch (error) {
+                console.error('AI analysis failed:', error);
+                throw error;
+            }
+        };
 
         let result = await baseRun();
         
-        if (req.body?.ensemble === true) {
-            try {
-                const extra = await Promise.all([baseRun(), baseRun()]);
-                result = fuseResults([result, ...extra]);
-            } catch {}
-        }
+
 
         console.log('✅ Enhanced dynamic prompt analysis completed successfully');
         console.log('📊 Result structure:', Object.keys(result));
         console.log('🎯 Quality score:', result.analysisMetadata?.qualityScore || 'N/A');
         
-        // Add social momentum analysis if enabled
-        try {
-            if (req.body?.includeMomentum !== false) { // Default to true
-                console.log('🎯 Adding social momentum analysis...');
-                
-                // Call internal momentum analysis
-                const momentumResponse = await fetch(`${req.headers.host ? `https://${req.headers.host}` : 'http://localhost:3000'}/api/social-momentum`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        idea: result.idea,
-                        originalScore: result.demandScore,
-                        language: result.language?.toLowerCase().includes('turkish') ? 'tr' : 'en'
-                    })
-                });
 
-                if (momentumResponse.ok) {
-                    const momentumData = await momentumResponse.json();
-                    
-                    // Enhance result with momentum data
-                    result.socialMomentum = momentumData.analysis;
-                    
-                    // Update demand score if momentum suggests it
-                    if (momentumData.analysis?.enhancedValidationScore && 
-                        Math.abs(momentumData.analysis.enhancedValidationScore - result.demandScore) <= 20) {
-                        result.originalDemandScore = result.demandScore;
-                        result.demandScore = momentumData.analysis.enhancedValidationScore;
-                        result.momentumAdjusted = true;
-                    }
-                    
-                    console.log(`🚀 Momentum analysis added - Score: ${result.demandScore}/100 (${result.momentumAdjusted ? 'adjusted' : 'unchanged'})`);
-                } else {
-                    console.log('⚠️ Momentum analysis failed, continuing without it');
-                }
-            }
-        } catch (momentumError) {
-            console.error('⚠️ Momentum analysis error (non-critical):', momentumError);
-            // Continue without momentum - it's an enhancement, not critical
-        }
-        
-        // Add Early Signal Mode analysis if enabled
-        try {
-            if (req.body?.includeEarlySignal !== false) { // Default to true
-                console.log('🎯 Adding Early Signal Mode analysis...');
-                
-                // Call internal early signal analysis
-                const earlySignalResponse = await fetch(`${req.headers.host ? `https://${req.headers.host}` : 'http://localhost:3000'}/api/early-signal`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        idea: result.idea,
-                        originalScore: result.demandScore,
-                        socialMomentum: result.socialMomentum,
-                        language: result.language?.toLowerCase().includes('turkish') ? 'tr' : 'en'
-                    })
-                });
-
-                if (earlySignalResponse.ok) {
-                    const earlySignalData = await earlySignalResponse.json();
-                    
-                    // Enhance result with early signal data
-                    result.earlySignal = earlySignalData.analysis;
-                    
-                    // Update demand score if early signal suggests significant enhancement
-                    if (earlySignalData.analysis?.enhancedScore && 
-                        Math.abs(earlySignalData.analysis.enhancedScore - result.demandScore) <= 25 &&
-                        earlySignalData.analysis.confidence >= 70) {
-                        result.originalDemandScore = result.originalDemandScore || result.demandScore;
-                        result.demandScore = earlySignalData.analysis.enhancedScore;
-                        result.earlySignalAdjusted = true;
-                    }
-                    
-                    console.log(`🚀 Early Signal analysis added - Score: ${result.demandScore}/100 (${result.earlySignalAdjusted ? 'enhanced' : 'unchanged'})`);
-                } else {
-                    console.log('⚠️ Early Signal analysis failed, continuing without it');
-                }
-            }
-        } catch (earlySignalError) {
-            console.error('⚠️ Early Signal analysis error (non-critical):', earlySignalError);
-            // Continue without early signal - it's an enhancement, not critical
-        }
 
         // Add Trends data to the result with Gemini analysis
         try {
@@ -2236,105 +1865,7 @@ CRITICAL RULES:
 
 // Single AI call analysis - no separate platform functions needed
 
-// Enhanced AI analysis with quality control and evidence gathering
-async function getEnhancedAIAnalysis(
-    content: string,
-    systemInstruction: string,
-    forcedLang?: 'tr'|'en',
-    preferredModel?: string,
-    weightsVariant?: string,
-    options?: { morePlatforms?: boolean; evidenceMode?: boolean; sectors?: string[] },
-    errorManager?: ErrorManager,
-    criticAgent?: CriticAgent,
-    evidenceAnalyzer?: EvidenceAnalyzer,
-    confidenceCalculator?: ConfidenceCalculator
-): Promise<any> {
-    const startTime = Date.now();
-    let retryCount = 0;
-    let evidenceAnalysis;
-    let criticAnalysis;
 
-    // Gather evidence if enabled
-    if (options?.evidenceMode && evidenceAnalyzer && options.sectors) {
-        try {
-            console.log('🔍 Gathering market evidence...');
-            evidenceAnalysis = await evidenceAnalyzer.gatherEvidence(content, options.sectors);
-            console.log(`📊 Evidence quality: ${evidenceAnalysis.evidenceQuality}/100`);
-        } catch (error) {
-            console.warn('⚠️ Evidence gathering failed:', error);
-        }
-    }
-
-    // Enhanced system instruction with evidence
-    let enhancedSystemInstruction = systemInstruction;
-    if (evidenceAnalysis && evidenceAnalysis.sources.length > 0) {
-        const evidenceContext = evidenceAnalysis.sources
-            .map(source => `${source.platform}: ${source.content}`)
-            .join('\n');
-        
-        enhancedSystemInstruction += `\n\nMARKET EVIDENCE:\n${evidenceContext}\n\nUse this evidence to support your analysis where relevant.`;
-    }
-
-    // Execute analysis with error management
-    const executeAnalysis = async (): Promise<any> => {
-        retryCount++;
-        return await getSimplifiedAIAnalysis(
-            content,
-            enhancedSystemInstruction,
-            forcedLang,
-            preferredModel,
-            weightsVariant,
-            options
-        );
-    };
-
-    let result;
-    if (errorManager) {
-        result = await errorManager.executeWithRetry(executeAnalysis, {
-            model: preferredModel || 'gemini-2.0-flash-exp',
-            inputLength: content.length,
-            promptVersion: '2.0'
-        });
-    } else {
-        result = await executeAnalysis();
-    }
-
-    // Quality control with critic agent
-    if (criticAgent) {
-        try {
-            console.log('🔍 Running quality analysis...');
-            criticAnalysis = await criticAgent.analyzeQuality(result);
-            console.log(`📊 Quality score: ${criticAnalysis.overallQuality}/100`);
-
-            // Attempt repair if needed
-            if (criticAnalysis.needsRepair && criticAnalysis.overallQuality < 60) {
-                console.log('🔧 Attempting analysis repair...');
-                result = await criticAgent.repairAnalysis(result, criticAnalysis.issues);
-                
-                // Re-analyze after repair
-                criticAnalysis = await criticAgent.analyzeQuality(result);
-                console.log(`📊 Post-repair quality: ${criticAnalysis.overallQuality}/100`);
-            }
-        } catch (error) {
-            console.warn('⚠️ Quality analysis failed:', error);
-        }
-    }
-
-    // Enhanced confidence calculation
-    let enhancedConfidence;
-    if (confidenceCalculator) {
-        try {
-            enhancedConfidence = confidenceCalculator.calculateEnhancedConfidence(
-                result,
-                options?.sectors || [],
-                evidenceAnalysis,
-                criticAnalysis
-            );
-            console.log(`🎯 Enhanced confidence: ${enhancedConfidence.overall}/100`);
-        } catch (error) {
-            console.warn('⚠️ Confidence calculation failed:', error);
-        }
-    }
 
     // Add enhanced metadata
     const processingTime = Date.now() - startTime;
@@ -2364,106 +1895,7 @@ async function getEnhancedAIAnalysis(
     return enhancedResult;
 }
 
-// Original simplified AI analysis (kept for compatibility and fallback)
-async function getSimplifiedAIAnalysis(
-    content: string,
-    systemInstruction: string,
-    forcedLang?: 'tr'|'en',
-    preferredModel?: string,
-    weightsVariant?: string,
-    options?: { morePlatforms?: boolean }
-): Promise<any> {
-    // Helper: robust JSON parsing with light repairs
-    const safeJsonParse = (rawText: string): any => {
-        const tryParse = (txt: string) => {
-            try { return JSON.parse(txt); } catch { return null; }
-        };
 
-        if (!rawText) return null;
-
-        // Strip common wrappers (markdown fences)
-        let text = rawText
-            .replace(/^```\s*json\s*/i, '')
-            .replace(/^```/i, '')
-            .replace(/```\s*$/i, '')
-            .replace(/```/g, '')
-            .trim();
-
-        // First naive parse
-        let parsed = tryParse(text);
-        if (parsed) return parsed;
-
-        // Extract first JSON object block
-        const first = text.indexOf('{');
-        const last = text.lastIndexOf('}');
-        if (first !== -1 && last !== -1 && last > first) {
-            text = text.substring(first, last + 1);
-        }
-
-        // Replace smart quotes and remove trailing commas
-        text = text
-            .replace(/[""]/g, '"')
-            .replace(/['']/g, "'")
-            .replace(/,(\s*[}\]])/g, '$1');
-
-        parsed = tryParse(text);
-        return parsed;
-    };
-
-    try {
-        console.log('🎯 Using enhanced AI analysis with real-world data...');
-
-        // Language detection
-        const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content);
-        const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
-        
-        // Enhanced Social Arbitrage Theory prompt - OUTPUT IN SAME LANGUAGE AS INPUT
-        const enhancedPrompt = expectedLanguage === 'Turkish' ? 
-            `Bu startup fikrini Social Arbitrage Theory çerçevesinde analiz et: "${content}"
-            
-            🚀 SOCIAL ARBITRAGE THEORY ANALİZİ:
-            - Micro → Macro: Küçük topluluklardan ana akıma geçiş potansiyeli
-            - Geographic & Demographic: Coğrafi ve demografik kültürel transfer
-            - Timing Factor: Trend timing ve market entry zamanlaması
-            - Platform Dynamics: Platform özel dinamikler ve arbitraj fırsatları
-            - Cultural Leap: Kültürler arası sıçrama potansiyeli
-            
-            🌍 KÜLTÜREL ARBITRAJ ANALİZİ:
-            - Hangi kültürel boşlukları dolduruyor?
-            - Hangi topluluklardan hangi topluluklara transfer edilebilir?
-            - Timing açısından optimal entry point nedir?
-            - Platform dynamics nasıl değişiyor?
-            - Early adopter avantajı nedir?
-            
-            📊 VERİ TABANLI SKORLAMA:
-            - Demand Score: 0-100 arası (kültürel arbitraj potansiyeli)
-            - Trend Phase: emerging/growing/peak/declining
-            - Cultural Transfer Score: 0-100 arası
-            - Platform Signal Strength: Strong/Moderate/Weak
-            
-            ⚠️ ÖNEMLİ: TÜM ÇIKTIYI TÜRKÇE VER! JSON içindeki tüm metinler Türkçe olmalı.
-            
-            Sadece JSON döndür. Şu yapıyı kullan:
-            {
-                "idea": "fikir",
-                "demandScore": 0-100 arası sayı (kültürel arbitraj potansiyeli),
-                "scoreJustification": "social arbitrage theory çerçevesinde skor gerekçesi",
-                "socialArbitrageInsights": {
-                    "microToMacro": "micro to macro transfer analizi",
-                    "geographicDemographic": "coğrafi ve demografik analiz",
-                    "timingFactor": "timing analizi",
-                    "platformDynamics": "platform dinamikleri",
-                    "culturalLeap": "kültürel sıçrama potansiyeli"
-                },
-                "trendPhase": "emerging/growing/peak/declining",
-                "culturalTransferScore": 0-100 arası sayı,
-                "earlyAdopterAdvantage": "early adopter avantajı açıklaması",
-                "platformAnalyses": [
-                    {
-                        "platform": "platform adı",
-                        "signalStrength": "Strong/Moderate/Weak",
-                        "analysis": "platform özel analiz"
-                    }
                 ],
                 "tweetSuggestion": "X/Twitter için öneri",
                 "redditTitleSuggestion": "Reddit başlık önerisi",

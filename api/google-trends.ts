@@ -1,14 +1,16 @@
-import { NextRequest, NextResponse } from 'next/server';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 // Google Trends API endpoint
-export async function GET(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const keyword = searchParams.get('keyword');
-    const timeframe = searchParams.get('timeframe') || 'today 12-m'; // Default: last 12 months
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method !== 'GET') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
 
-    if (!keyword) {
-      return NextResponse.json({ error: 'Keyword is required' }, { status: 400 });
+  try {
+    const { keyword, timeframe = '90d' } = req.query;
+
+    if (!keyword || typeof keyword !== 'string') {
+      return res.status(400).json({ error: 'Keyword is required' });
     }
 
     console.log('🔍 Google Trends analysis for:', keyword);
@@ -16,7 +18,7 @@ export async function GET(request: NextRequest) {
     // Simulate Google Trends data (in real implementation, you'd use Google Trends API)
     const trendData = await getGoogleTrendsData(keyword, timeframe);
 
-    return NextResponse.json({
+    return res.status(200).json({
       success: true,
       keyword,
       timeframe,
@@ -25,15 +27,12 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     console.error('❌ Google Trends API error:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch trend data' },
-      { status: 500 }
-    );
+    return res.status(500).json({ error: 'Failed to fetch trend data' });
   }
 }
 
 // Simulated Google Trends data function
-async function getGoogleTrendsData(keyword: string, timeframe: string): Promise<any> {
+async function getGoogleTrendsData(keyword: string, timeframe?: string): Promise<any> {
   // In real implementation, this would call Google Trends API
   // For now, we'll simulate realistic trend data
   
@@ -92,7 +91,7 @@ async function getGoogleTrendsData(keyword: string, timeframe: string): Promise<
   const relatedTopics = generateRelatedTopics(keyword);
   
   // Generate geographic interest (simulated)
-  const geographicInterest = generateGeographicInterest(keyword);
+  const geographicInterest = generateGeographicInterest();
 
   return {
     trendData,
@@ -129,7 +128,7 @@ function generateRelatedTopics(keyword: string): Array<{topic: string, score: nu
     .sort((a, b) => b.score - a.score);
 }
 
-function generateGeographicInterest(keyword: string): Array<{country: string, score: number, trend: string}> {
+function generateGeographicInterest(): Array<{country: string, score: number, trend: string}> {
   const countries = [
     'United States', 'United Kingdom', 'Canada', 'Australia', 'Germany',
     'France', 'India', 'Brazil', 'Japan', 'South Korea'

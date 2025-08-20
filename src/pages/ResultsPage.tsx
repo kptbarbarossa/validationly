@@ -73,8 +73,8 @@ const ResultsPage: React.FC = () => {
             <EnhancedResultsDisplay result={result} />
 
             {/* Action Buttons */}
-            <div className="mt-8 text-center">
-              <div className="flex flex-wrap justify-center gap-4 mb-6">
+            <div className="mt-4 text-center">
+              <div className="flex flex-wrap justify-center gap-4 mb-3">
                 <button
                   onClick={() => navigate('/')}
                   className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-2xl text-white font-semibold transition-all transform hover:scale-105"
