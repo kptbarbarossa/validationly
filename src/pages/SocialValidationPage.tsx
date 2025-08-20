@@ -31,7 +31,7 @@ const SocialValidationPage: React.FC = () => {
   const [idea, setIdea] = useState('');
   const [useAI, setUseAI] = useState<'gemini' | 'openai' | 'groq'>('gemini');
   const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState<SocialArbitrageResult | null>(null);
+  const [result, setResult] = useState<SocialValidationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {

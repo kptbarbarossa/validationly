@@ -576,6 +576,3 @@ const ResultsPage: React.FC = () => {
 };
 
 export default ResultsPage;
-
-/ /   F o r c e   n e w   d e p l o y m e n t  
- 
