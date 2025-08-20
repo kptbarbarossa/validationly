@@ -67,15 +67,7 @@ const ResultsPage: React.FC = () => {
         <div className="relative">
           <div className="container mx-auto px-6 py-12">
             
-            {/* Back Button */}
-            <div className="mb-8">
-                                        <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 rounded-2xl transition-colors backdrop-blur-sm"
-        >
-          ← Back to Analysis
-                                        </button>
-                                    </div>
+
 
             {/* Enhanced Results Display */}
             <EnhancedResultsDisplay result={result} />
@@ -108,7 +100,7 @@ const ResultsPage: React.FC = () => {
                   <img
                     src="/buymeacoffee.gif"
                     alt="Buy Me a Coffee"
-                    className="w-96 h-96 rounded-2xl hover:scale-105 transition-transform duration-300"
+                    className="w-96 h-96 rounded-2xl"
                   />
                 </a>
               </div>

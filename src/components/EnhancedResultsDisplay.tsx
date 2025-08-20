@@ -161,25 +161,25 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
       {/* Header Section */}
       <div className="text-center mb-12">
         <div className="mb-6">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
+          <h1 className="text-2xl md:text-3xl font-bold mb-4 bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
             Social Trend Analysis
           </h1>
-          <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+          <p className="text-base text-slate-300 max-w-2xl mx-auto">
             {result.idea}
           </p>
         </div>
 
         {/* Compact Score Card */}
-        <div className="max-w-md mx-auto bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 mb-8">
+        <div className="max-w-sm mx-auto bg-white/5 backdrop-blur rounded-xl p-4 border border-white/10 mb-6">
           <div className="text-center">
-            <div className="text-4xl mb-3">
+            <div className="text-2xl mb-2">
               {getScoreEmoji(result.demandScore)}
             </div>
-            <div className="text-3xl font-bold mb-3">
+            <div className="text-2xl font-bold mb-2">
               <span className={getScoreColor(result.demandScore)}>{result.demandScore}</span>
-              <span className="text-slate-400 text-xl">/100</span>
+              <span className="text-slate-400 text-base">/100</span>
             </div>
-            <div className={`inline-block px-4 py-2 rounded-full text-sm font-medium border ${getScoreBgColor(result.demandScore)}`}>
+            <div className={`inline-block px-3 py-1.5 rounded-full text-xs font-medium border ${getScoreBgColor(result.demandScore)}`}>
               {getScoreMessage(result.demandScore)}
             </div>
           </div>
