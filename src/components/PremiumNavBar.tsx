@@ -95,7 +95,11 @@ const PremiumNavBar: React.FC = () => {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
             >
-              <span className="text-base">☕</span>
+              <img 
+                src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDZ1dm4yaTBvbDdhdnBmaHhtcXFnY2M0ZWVyaXo3YzZwcnN5aXJ5ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/7kZE0z52Sd9zSESzDA/giphy.gif" 
+                alt="Coffee GIF" 
+                className="w-5 h-5 rounded-full"
+              />
               <span className="hidden sm:inline font-medium text-xs sm:text-sm">Buy me a coffee</span>
             </a>
 
