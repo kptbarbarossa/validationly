@@ -96,11 +96,11 @@ const PremiumNavBar: React.FC = () => {
               className="inline-flex items-center justify-center p-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
               title="Buy me a coffee"
             >
-              <img 
-                src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDZ1dm4yaTBvbDdhdnBmaHhtcXFnY2M0ZWVyaXo3YzZwcnN5aXJ5ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/7kZE0z52Sd9zSESzDA/giphy.gif" 
-                alt="Coffee GIF" 
-                className="w-5 h-5 rounded-full"
-              />
+                             <img 
+                 src="/buymeacoffee.gif" 
+                 alt="Coffee GIF" 
+                 className="w-5 h-5 rounded-full"
+               />
             </a>
 
             {/* Mobile menu button */}
@@ -180,11 +180,11 @@ const PremiumNavBar: React.FC = () => {
                  onClick={() => setIsOpen(false)}
                  title="Buy me a coffee"
                >
-                 <img 
-                   src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDZ1dm4yaTBvbDdhdnBmaHhtcXFnY2M0ZWVyaXo3YzZwcnN5aXJ5ZyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/7kZE0z52Sd9zSESzDA/giphy.gif" 
-                   alt="Coffee GIF" 
-                   className="w-6 h-6 rounded-full"
-                 />
+                                   <img 
+                    src="/buymeacoffee.gif" 
+                    alt="Coffee GIF" 
+                    className="w-6 h-6 rounded-full"
+                  />
                </a>
             </nav>
           </div>
