@@ -169,17 +169,17 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
           </p>
         </div>
 
-        {/* Score Card */}
-        <div className="max-w-2xl mx-auto bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
+        {/* Compact Score Card */}
+        <div className="max-w-md mx-auto bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 mb-8">
           <div className="text-center">
-            <div className="text-8xl mb-4">
+            <div className="text-4xl mb-3">
               {getScoreEmoji(result.demandScore)}
             </div>
-            <div className="text-6xl font-bold mb-4">
+            <div className="text-3xl font-bold mb-3">
               <span className={getScoreColor(result.demandScore)}>{result.demandScore}</span>
-              <span className="text-slate-400 text-4xl">/100</span>
+              <span className="text-slate-400 text-xl">/100</span>
             </div>
-            <div className={`inline-block px-6 py-3 rounded-full text-lg font-medium border ${getScoreBgColor(result.demandScore)}`}>
+            <div className={`inline-block px-4 py-2 rounded-full text-sm font-medium border ${getScoreBgColor(result.demandScore)}`}>
               {getScoreMessage(result.demandScore)}
             </div>
           </div>

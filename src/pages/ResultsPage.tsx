@@ -97,28 +97,20 @@ const ResultsPage: React.FC = () => {
                 </button>
               </div>
               
-              {/* Buy Me a Coffee Section */}
+              {/* Buy Me a Coffee Section - GIF Only */}
               <div className="mt-12 text-center">
-                <div className="inline-flex items-center gap-4 p-6 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-3xl border border-amber-500/20">
+                <a
+                  href="https://buymeacoffee.com/kptbarbarossa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block"
+                >
                   <img
                     src="/buymeacoffee.gif"
-                    alt="Coffee GIF"
-                    className="w-16 h-16 rounded-full"
+                    alt="Buy Me a Coffee"
+                    className="w-32 h-32 rounded-2xl hover:scale-105 transition-transform duration-300"
                   />
-                  <div className="text-left">
-                    <h3 className="text-lg font-semibold text-amber-200 mb-2">Support the Project</h3>
-                    <p className="text-slate-300 text-sm mb-3">Help us keep building amazing tools for entrepreneurs</p>
-                    <a
-                      href="https://buymeacoffee.com/kptbarbarossa"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded-xl text-white font-medium transition-colors"
-                    >
-                      <span>☕</span>
-                      <span>Buy @kptbarbarossa a coffee</span>
-                    </a>
-                  </div>
-                </div>
+                </a>
               </div>
             </div>
                     </div>
