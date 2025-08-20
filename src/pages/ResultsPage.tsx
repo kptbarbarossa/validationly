@@ -36,13 +36,22 @@ interface ValidationResult {
     dataConfidence?: string;
     lastDataUpdate?: string;
     platformAnalyses?: any;
+    marketIntelligence?: any;
+    competitiveLandscape?: any;
+    revenueModel?: any;
+    targetAudience?: any;
+    riskAssessment?: any;
+    goToMarket?: any;
+    developmentRoadmap?: any;
+    productMarketFit?: any;
 }
 
 const ResultsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [progress, setProgress] = useState(0);
-    const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+    const [copiedIndex, setCopiedIndex>(null);
+    const [activeTab, setActiveTab] = useState('overview');
 
     // Extract result from location state
     const result = (location.state as any)?.result as ValidationResult;
@@ -100,351 +109,466 @@ const ResultsPage: React.FC = () => {
             setCopiedIndex(index);
             setTimeout(() => setCopiedIndex(null), 2000);
         } catch (err) {
-            console.error('Failed to copy text:', err);
+            console.error('Failed to copy text: ', err);
         }
     };
 
-    const postToTwitter = (text: string) => {
-        const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
+    const getScoreColor = (score: number) => {
+        if (score >= 80) return 'text-green-400';
+        if (score >= 60) return 'text-yellow-400';
+        if (score >= 40) return 'text-orange-400';
+        return 'text-red-400';
     };
 
-    const postToLinkedIn = (text: string) => {
-        const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&summary=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
+    const getScoreBgColor = (score: number) => {
+        if (score >= 80) return 'bg-green-500/20 border-green-500/30';
+        if (score >= 60) return 'bg-yellow-500/20 border-yellow-500/30';
+        if (score >= 40) return 'bg-orange-500/20 border-orange-500/30';
+        return 'bg-red-500/20 border-red-500/30';
     };
 
-    const postToReddit = (title: string, body: string) => {
-        const url = `https://www.reddit.com/submit?title=${encodeURIComponent(title)}&text=${encodeURIComponent(body)}`;
-        window.open(url, '_blank');
+    const getConfidenceColor = (confidence: string) => {
+        if (confidence === 'high' || confidence === 'yüksek') return 'bg-green-500/20 text-green-400 border-green-500/30';
+        if (confidence === 'medium' || confidence === 'orta') return 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30';
+        return 'bg-red-500/20 text-red-400 border-red-500/30';
     };
 
-    // Debug logging
-    console.log('ResultsPage data:', result);
-    console.log('realWorldData:', result.realWorldData);
-    console.log('tweetSuggestion:', result.tweetSuggestion);
-    console.log('redditTitleSuggestion:', result.redditTitleSuggestion);
-    console.log('redditBodySuggestion:', result.redditBodySuggestion);
-    console.log('linkedinSuggestion:', result.linkedinSuggestion);
+    const getSentimentColor = (sentiment: string) => {
+        if (sentiment === 'positive' || sentiment === 'olumlu') return 'bg-green-500/20 text-green-400';
+        if (sentiment === 'negative' || sentiment === 'olumsuz') return 'bg-red-500/20 text-red-400';
+        return 'bg-slate-500/20 text-slate-400';
+    };
 
-        return (
+    const tabs = [
+        { id: 'overview', label: isTR ? 'Genel Bakış' : 'Overview', icon: '📊' },
+        { id: 'platforms', label: isTR ? 'Platform Analizleri' : 'Platform Analysis', icon: '🌐' },
+        { id: 'market', label: isTR ? 'Pazar Analizi' : 'Market Analysis', icon: '📈' },
+        { id: 'content', label: isTR ? 'İçerik Önerileri' : 'Content Suggestions', icon: '✍️' },
+        { id: 'data', label: isTR ? 'Veri Detayları' : 'Data Details', icon: '🔍' }
+    ];
+
+    return (
         <>
             <SEOHead
-                title={`${result.idea} - Validation Results | Validationly`}
-                description={`Market validation results for "${result.idea}". Score: ${result.demandScore}/100. ${result.scoreJustification}`}
+                title={`Validation Results: ${result.idea} | Validationly`}
+                description={`AI-powered validation analysis for: ${result.idea}. Demand score: ${result.demandScore}/100. Get actionable insights and platform-specific recommendations.`}
+                keywords="startup validation, idea validation, demand analysis, market research, AI analysis"
             />
             
-            <div className="relative text-white overflow-hidden">
-                {/* Decorative Background Shapes */}
-                <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
-                <div className="pointer-events-none absolute top-20 -right-20 h-80 w-80 rounded-full bg-blue-400/15 blur-3xl" />
-                <div className="pointer-events-none absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl" />
-
-                <div className="relative flex" style={{minHeight: 'calc(100vh - 120px)'}}>
-                    {/* Main Content */}
-                    <div className="flex-1 p-8">
-                        {/* Header */}
-                        <header className="flex items-center justify-between mb-8">
-                <div>
-                                <h1 className="text-3xl font-bold flex items-center gap-3">
-                                    {isTR ? 'Analiz Sonuçları' : 'Analysis Results'} 
-                                    <span className="text-2xl">🚀</span>
-                                </h1>
-                                <p className="text-slate-400 mt-1">{isTR ? 'Fikrinizin pazar potansiyeli' : 'Market potential of your idea'}</p>
-                </div>
-                            <button
-                                onClick={() => navigate('/')}
-                                className="px-6 py-3 bg-purple-600 hover:bg-purple-700 rounded-2xl text-white font-medium transition-colors"
-                            >
-                                {isTR ? 'Yeni Analiz' : 'New Analysis'}
-                            </button>
-                        </header>
+            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+                {/* Header Section */}
+                <div className="relative overflow-hidden">
+                    <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-cyan-500/10 blur-3xl"></div>
+                    <div className="relative container mx-auto px-6 py-12">
+                        <div className="text-center mb-8">
+                            <h1 className="text-3xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
+                                {isTR ? 'Validasyon Sonuçları' : 'Validation Results'}
+                            </h1>
+                            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+                                {result.idea}
+                            </p>
+                        </div>
 
                         {/* Score Card */}
-                        <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
-                            <div className="flex items-center justify-between mb-6">
-                <div>
-                                    <h2 className="text-xl font-semibold text-white mb-2">{isTR ? 'Talep Skoru' : 'Demand Score'}</h2>
-                                    <p className="text-slate-400 text-sm">{isTR ? 'Pazardaki potansiyel' : 'Market potential'}</p>
-                </div>
-                                <div className="text-right">
-                                    <div className="text-4xl font-bold text-white mb-1">{result.demandScore}</div>
-                                    <div className="text-slate-400 text-sm">/ 100</div>
-            </div>
-                </div>
+                        <div className="max-w-2xl mx-auto bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
+                            <div className="text-center">
+                                <div className="text-6xl font-bold mb-4">
+                                    <span className={getScoreColor(result.demandScore)}>{result.demandScore}</span>
+                                    <span className="text-slate-400 text-4xl">/100</span>
+                                </div>
+                                <div className={`inline-block px-4 py-2 rounded-full text-sm font-medium border ${getScoreBgColor(result.demandScore)}`}>
+                                    {result.demandScore >= 80 ? (isTR ? 'Yüksek Potansiyel' : 'High Potential') :
+                                     result.demandScore >= 60 ? (isTR ? 'Orta Potansiyel' : 'Medium Potential') :
+                                     result.demandScore >= 40 ? (isTR ? 'Düşük Potansiyel' : 'Low Potential') :
+                                     (isTR ? 'Çok Düşük Potansiyel' : 'Very Low Potential')}
+                                </div>
+                            </div>
                             
-                            <div className="w-full h-4 bg-white/10 rounded-full overflow-hidden mb-4">
-                                <div 
-                                    className="h-full bg-gradient-to-r from-purple-500 to-blue-500 transition-all duration-1000 ease-out rounded-full" 
-                                    style={{ width: `${Math.max(2, progress)}%` }} 
-                                />
+                            {/* Progress Bar */}
+                            <div className="mt-6">
+                                <div className="flex justify-between text-sm text-slate-400 mb-2">
+                                    <span>0</span>
+                                    <span>50</span>
+                                    <span>100</span>
+                                </div>
+                                <div className="w-full bg-slate-700 rounded-full h-3">
+                                    <div 
+                                        className={`h-3 rounded-full transition-all duration-1000 ease-out ${
+                                            result.demandScore >= 80 ? 'bg-gradient-to-r from-green-500 to-emerald-500' :
+                                            result.demandScore >= 60 ? 'bg-gradient-to-r from-yellow-500 to-orange-500' :
+                                            result.demandScore >= 40 ? 'bg-gradient-to-r from-orange-500 to-red-500' :
+                                            'bg-gradient-to-r from-red-500 to-pink-500'
+                                        }`}
+                                        style={{ width: `${result.demandScore}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Score Justification */}
+                        <div className="max-w-4xl mx-auto bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
+                            <h2 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+                                <span className="text-2xl">💡</span>
+                                {isTR ? 'Skor Gerekçesi' : 'Score Justification'}
+                            </h2>
+                            <p className="text-slate-300 leading-relaxed">{result.scoreJustification}</p>
+                        </div>
                     </div>
-                            
-                                                        <p className="text-sm text-slate-300 leading-relaxed">{result.scoreJustification}</p>
-                            
+                </div>
+
+                {/* Navigation Tabs */}
+                <div className="container mx-auto px-6 mb-8">
+                    <div className="flex flex-wrap justify-center gap-2">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id)}
+                                className={`px-6 py-3 rounded-2xl font-medium transition-all flex items-center gap-2 ${
+                                    activeTab === tab.id
+                                        ? 'bg-purple-600 text-white shadow-lg shadow-purple-600/25'
+                                        : 'bg-white/5 text-slate-300 hover:bg-white/10 border border-white/10'
+                                }`}
+                            >
+                                <span>{tab.icon}</span>
+                                {tab.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Tab Content */}
+                <div className="container mx-auto px-6 pb-16">
+                    {/* Overview Tab */}
+                    {activeTab === 'overview' && (
+                        <div className="space-y-8">
                             {/* Signal Summary */}
-                            <div className="mt-6 p-4 bg-white/5 rounded-2xl border border-white/10">
-                                <h3 className="font-semibold text-white mb-3 flex items-center gap-2">
-                                    <span className="text-lg">📊</span>
+                            <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+                                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
+                                    <span className="text-2xl">📊</span>
                                     {isTR ? 'Sinyal Özeti' : 'Signal Summary'}
                                 </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-blue-400 mb-1">
+                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div className="text-center p-6 bg-white/5 rounded-2xl border border-white/10">
+                                        <div className="text-3xl mb-3">🐦</div>
+                                        <div className="text-2xl font-bold text-blue-400 mb-2">
                                             {result.platformAnalyses?.X?.signalStrength || 'N/A'}
                                         </div>
-                                        <div className="text-xs text-slate-400">X (Twitter) Signal</div>
+                                        <div className="text-sm text-slate-400">X (Twitter)</div>
                                     </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-orange-400 mb-1">
+                                    <div className="text-center p-6 bg-white/5 rounded-2xl border border-white/10">
+                                        <div className="text-3xl mb-3">🤖</div>
+                                        <div className="text-2xl font-bold text-orange-400 mb-2">
                                             {result.platformAnalyses?.Reddit?.signalStrength || 'N/A'}
                                         </div>
-                                        <div className="text-xs text-slate-400">Reddit Signal</div>
+                                        <div className="text-sm text-slate-400">Reddit</div>
                                     </div>
-                                    <div className="text-center">
-                                        <div className="text-2xl font-bold text-blue-600 mb-1">
+                                    <div className="text-center p-6 bg-white/5 rounded-2xl border border-white/10">
+                                        <div className="text-3xl mb-3">💼</div>
+                                        <div className="text-2xl font-bold text-blue-600 mb-2">
                                             {result.platformAnalyses?.LinkedIn?.signalStrength || 'N/A'}
                                         </div>
-                                        <div className="text-xs text-slate-400">LinkedIn Signal</div>
+                                        <div className="text-sm text-slate-400">LinkedIn</div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        {/* Real-World Data Analysis - ALWAYS SHOW */}
-                        <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
-                            <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                            {/* Quick Stats */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 text-center">
+                                    <div className="text-3xl mb-2">🎯</div>
+                                    <div className="text-2xl font-bold text-white mb-1">
+                                        {result.dataConfidence ? (isTR ? 
+                                            (result.dataConfidence === 'high' ? 'Yüksek' : 
+                                             result.dataConfidence === 'medium' ? 'Orta' : 'Düşük') :
+                                            (result.dataConfidence === 'high' ? 'High' : 
+                                             result.dataConfidence === 'medium' ? 'Medium' : 'Low')
+                                        ) : 'N/A'}
+                                    </div>
+                                    <div className="text-sm text-slate-400">{isTR ? 'Veri Güveni' : 'Data Confidence'}</div>
+                                </div>
+                                <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 text-center">
+                                    <div className="text-3xl mb-2">📅</div>
+                                    <div className="text-2xl font-bold text-white mb-1">
+                                        {result.lastDataUpdate ? new Date(result.lastDataUpdate).toLocaleDateString() : 'N/A'}
+                                    </div>
+                                    <div className="text-sm text-slate-400">{isTR ? 'Son Güncelleme' : 'Last Update'}</div>
+                                </div>
+                                <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 text-center">
+                                    <div className="text-3xl mb-2">🌐</div>
+                                    <div className="text-2xl font-bold text-white mb-1">
+                                        {result.platformAnalyses ? Object.keys(result.platformAnalyses).length : 0}
+                                    </div>
+                                    <div className="text-sm text-slate-400">{isTR ? 'Platform Analizi' : 'Platforms Analyzed'}</div>
+                                </div>
+                                <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 text-center">
+                                    <div className="text-3xl mb-2">📊</div>
+                                    <div className="text-2xl font-bold text-white mb-1">
+                                        {result.realWorldData ? '✅' : '❌'}
+                                    </div>
+                                    <div className="text-sm text-slate-400">{isTR ? 'Gerçek Dünya Verisi' : 'Real-World Data'}</div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Platform Analysis Tab */}
+                    {activeTab === 'platforms' && (
+                        <div className="space-y-8">
+                            {result.platformAnalyses && Object.entries(result.platformAnalyses).map(([platform, analysis]: [string, any]) => (
+                                <div key={platform} className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xl font-semibold text-white flex items-center gap-2">
+                                            <span className="text-2xl">
+                                                {platform === 'X' ? '🐦' : 
+                                                 platform === 'Reddit' ? '🤖' : 
+                                                 platform === 'LinkedIn' ? '💼' : 
+                                                 platform === 'Instagram' ? '📸' : 
+                                                 platform === 'TikTok' ? '🎵' : 
+                                                 platform === 'YouTube' ? '📺' : 
+                                                 platform === 'Facebook' ? '👥' : '🌐'}
+                                            </span>
+                                            {analysis.platformName || platform}
+                                        </h3>
+                                        <div className="flex items-center gap-3">
+                                            <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                                analysis.score >= 4 ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                                                analysis.score >= 3 ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                                'bg-red-500/20 text-red-400 border border-red-500/30'
+                                            }`}>
+                                                Score: {analysis.score || 'N/A'}/5
+                                            </div>
+                                            {analysis.signalStrength && (
+                                                <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                                    analysis.signalStrength === 'exceptional' || analysis.signalStrength === 'olağanüstü' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' :
+                                                    analysis.signalStrength === 'strong' || analysis.signalStrength === 'güçlü' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
+                                                    analysis.signalStrength === 'moderate' || analysis.signalStrength === 'orta' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
+                                                    'bg-red-500/20 text-red-400 border border-red-500/30'
+                                                }`}>
+                                                    {analysis.signalStrength}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                        <div>
+                                            <h4 className="font-semibold text-white mb-3">{isTR ? 'Özet' : 'Summary'}</h4>
+                                            <p className="text-slate-300 text-sm leading-relaxed">{analysis.summary || 'N/A'}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-white mb-3">{isTR ? 'Ana Bulgular' : 'Key Findings'}</h4>
+                                            <ul className="space-y-2">
+                                                {analysis.keyFindings?.map((finding: string, index: number) => (
+                                                    <li key={index} className="flex items-start gap-2 text-sm text-slate-300">
+                                                        <span className="text-blue-400 mt-1">•</span>
+                                                        {finding}
+                                                    </li>
+                                                )) || <li className="text-slate-400 text-sm">No findings available</li>}
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    
+                                    {analysis.contentSuggestion && (
+                                        <div className="mt-6 p-4 bg-white/5 rounded-2xl border border-white/10">
+                                            <h4 className="font-semibold text-white mb-2">{isTR ? 'İçerik Önerisi' : 'Content Suggestion'}</h4>
+                                            <p className="text-slate-300 text-sm">{analysis.contentSuggestion}</p>
+                                        </div>
+                                    )}
+                                    
+                                    <div className="mt-4 text-xs text-slate-400">
+                                        {isTR ? 'Veri Kaynağı' : 'Data Source'}: {analysis.dataSource || 'AI Analysis'}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+
+                    {/* Market Analysis Tab */}
+                    {activeTab === 'market' && (
+                        <div className="space-y-8">
+                            {/* Real-World Data Analysis */}
+                            <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+                                <h3 className="text-xl font-semibold text-white mb-6 flex items-center gap-2">
                                     <span className="text-2xl">🌍</span>
                                     {isTR ? 'Gerçek Dünya Veri Analizi' : 'Real-World Data Analysis'}
-                                </h2>
-                                <div className="flex items-center gap-3">
-                                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                                        result.dataConfidence === 'high' || result.dataConfidence === 'yüksek' ? 'bg-green-500/20 text-green-400 border border-green-500/30' :
-                                        result.dataConfidence === 'medium' || result.dataConfidence === 'orta' ? 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' :
-                                        'bg-red-500/20 text-red-400 border border-red-500/30'
-                                    }`}>
-                                        {isTR ?
-                                            (result.dataConfidence === 'high' || result.dataConfidence === 'yüksek' ? 'Yüksek Güven' :
-                                             result.dataConfidence === 'medium' || result.dataConfidence === 'orta' ? 'Orta Güven' : 'Düşük Güven') :
-                                            (result.dataConfidence === 'high' || result.dataConfidence === 'yüksek' ? 'High Confidence' :
-                                             result.dataConfidence === 'medium' || result.dataConfidence === 'orta' ? 'Medium Confidence' : 'Low Confidence')
-                                        }
-                        </div>
-                                    {result.lastDataUpdate && (
-                                        <div className="text-xs text-slate-400">
-                                            📅 {new Date(result.lastDataUpdate).toLocaleDateString()}
-                    </div>
-                    )}
-                    </div>
-                    </div>
-
-                                                        {/* DATA STATUS */}
-                            <div className="mb-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                                <h3 className="text-blue-400 font-semibold mb-2">📊 Data Status:</h3>
-                                <div className="text-xs text-blue-300 space-y-1">
-                                    <p>✅ realWorldData: {result.realWorldData ? 'Loaded' : 'Missing'}</p>
-                                    <p>✅ Social Media Suggestions: {result.tweetSuggestion ? 'Loaded' : 'Missing'}</p>
-                                    <p>✅ Platform Analyses: {result.platformAnalyses ? 'Loaded' : 'Missing'}</p>
-                                    <p>📅 Last Update: {result.lastDataUpdate ? new Date(result.lastDataUpdate).toLocaleString() : 'N/A'}</p>
-                                    <p>🔍 Available Keys: {Object.keys(result).join(', ')}</p>
-                                </div>
-                            </div>
-
-                            {/* Real-World Data Analysis - Always show with fallback */}
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                {/* Social Media Signals */}
-                                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                    <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                                        <span className="text-lg">📱</span>
-                                        {isTR ? 'Sosyal Medya Sinyalleri' : 'Social Media Signals'}
-                                    </h3>
-                                    <div className="space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-slate-400">Twitter:</span>
-                                            <span className={`px-2 py-1 rounded text-xs ${
-                                                (result.realWorldData?.socialMediaSignals?.twitter?.trending || result.platformAnalyses?.X?.signalStrength > 70) ? 'bg-green-500/20 text-green-400' : 'bg-slate-500/20 text-slate-400'
-                                            }`}>
-                                                {(result.realWorldData?.socialMediaSignals?.twitter?.trending || result.platformAnalyses?.X?.signalStrength > 70) ? '🔥 Trending' : 'Normal'}
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-slate-400">Facebook:</span>
-                                            <span className="text-white text-sm">{result.realWorldData?.socialMediaSignals?.facebook?.groupActivity || result.platformAnalyses?.Facebook?.signalStrength || 'Veri yok'}</span>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-slate-400">TikTok:</span>
-                                            <span className="text-white text-sm">{result.realWorldData?.socialMediaSignals?.tiktok?.viralPotential || result.platformAnalyses?.TikTok?.signalStrength || 'Veri yok'}</span>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                        {/* Forum Insights */}
-                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                                                <span className="text-lg">💬</span>
-                                                {isTR ? 'Forum İçgörüleri' : 'Forum Insights'}
-                                            </h3>
+                                </h3>
+                                
+                                {result.realWorldData ? (
+                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                        {/* Social Media Signals */}
+                                        <div>
+                                            <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-lg">📱</span>
+                                                {isTR ? 'Sosyal Medya Sinyalleri' : 'Social Media Signals'}
+                                            </h4>
                                             <div className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-slate-400">Reddit:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.forumInsights?.reddit?.discussionVolume || result.platformAnalyses?.Reddit?.signalStrength || 'Veri yok'}</span>
-                                                </div>
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-slate-400">Quora:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.forumInsights?.quora?.questionFrequency || result.platformAnalyses?.Quora?.signalStrength || 'Veri yok'}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Marketplace Data & Consumer Sentiment */}
-                                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-                                        {/* Marketplace Data */}
-                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                                                <span className="text-lg">🛒</span>
-                                                {isTR ? 'Pazar Yeri Verileri' : 'Marketplace Data'}
-                                            </h3>
-                                            <div className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-slate-400">Amazon:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.marketplaceData?.amazon?.similarProducts || 'Veri yok'}</span>
-                                                </div>
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-slate-400">App Store:</span>
-                                                    <span className="text-white text-sm">{result.realWorldData?.marketplaceData?.appStore?.competitorApps || 'Veri yok'}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                                                                {/* Consumer Sentiment */}
-                                        <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                            <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
-                                                <span className="text-lg">😊</span>
-                                                {isTR ? 'Tüketici Duyguları' : 'Consumer Sentiment'}
-                                            </h3>
-                                            <div className="space-y-4">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-slate-400">Genel:</span>
-                                                    <span className={`px-2 py-1 rounded text-xs ${
-                                                        (result.realWorldData?.consumerSentiment?.overallSentiment === 'positive' || result.demandScore > 70) ? 'bg-green-500/20 text-green-400' :
-                                                        (result.realWorldData?.consumerSentiment?.overallSentiment === 'negative' || result.demandScore < 40) ? 'bg-red-500/20 text-red-400' :
-                                                        'bg-yellow-500/20 text-yellow-400'
-                                                    }`}>
-                                                        {result.realWorldData?.consumerSentiment?.overallSentiment || (result.demandScore > 70 ? 'Positive' : result.demandScore < 40 ? 'Negative' : 'Neutral')}
+                                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                                                    <span className="text-slate-400">Twitter:</span>
+                                                    <span className={`px-2 py-1 rounded text-xs ${getSentimentColor(result.realWorldData.socialMediaSignals.twitter.sentiment)}`}>
+                                                        {result.realWorldData.socialMediaSignals.twitter.trending ? '🔥 Trending' : 'Normal'}
                                                     </span>
                                                 </div>
+                                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                                                    <span className="text-slate-400">Facebook:</span>
+                                                    <span className="text-white text-sm">{result.realWorldData.socialMediaSignals.facebook.groupActivity}</span>
+                                                </div>
+                                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                                                    <span className="text-slate-400">TikTok:</span>
+                                                    <span className="text-white text-sm">{result.realWorldData.socialMediaSignals.tiktok.viralPotential}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    </div>
 
-                        {/* Social Media Post Suggestions */}
-                        <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10 mb-8">
-                            <h2 className="text-xl font-semibold text-white mb-6">{isTR ? 'Sosyal Medya Post Önerileri' : 'Social Media Post Suggestions'}</h2>
-                            
-                            <div className="space-y-6">
-                                {/* X (Twitter) */}
-                                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-8 h-8 bg-slate-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                            </svg>
-                                        </div>
-                                        <h3 className="font-semibold text-white">X (Twitter)</h3>
-                                        </div>
-                                    <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px]">
-                                        {result.tweetSuggestion || (isTR ? 'Tweet önerisi yükleniyor...' : 'Loading tweet suggestion...')}
-                                            </div>
-                                    <div className="flex gap-2">
-                                            <button
-                                            onClick={() => postToTwitter(result.tweetSuggestion)} 
-                                            className="flex-1 px-4 py-2 bg-slate-600 hover:bg-slate-700 rounded-xl text-white text-sm font-medium transition-colors"
-                                        >
-                                            {isTR ? 'Post' : 'Post'}
-                                            </button>
-                                            <button
-                                            onClick={() => copyText(result.tweetSuggestion, 0)} 
-                                            className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===0 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
-                                            >
-                                            {copiedIndex===0 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
-                                            </button>
-                                        </div>
-                                            </div>
-
-                                {/* Reddit */}
-                                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-8 h-8 bg-orange-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-orange-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm5.01 4.744c.688 0 1.25.561 1.25 1.249a1.25 1.25 0 0 1-2.498.056l-2.597-.547-.8 3.747c1.824.07 3.48.632 4.674 1.488.308-.309.73-.491 1.208-.491.968 0 1.754.786 1.754 1.754 0 .716-.435 1.333-1.01 1.614a3.111 3.111 0 0 1 .042.52c0 2.694-3.13 4.87-7.004 4.87-3.874 0-7.004-2.176-7.004-4.87 0-.183.015-.366.043-.534A1.748 1.748 0 0 1 4.028 12c0-.968.786-1.754 1.754-1.754.463 0 .898.196 1.207.491 1.207-.883 2.878-1.43 4.744-1.487l.885-4.182a.342.342 0 0 1 .14-.197.35.35 0 0 1 .31 0c.1.047.18.096.25.146l2.594.547c.712-.19 1.25-.8 1.25-1.496 0-.688-.561-1.25-1.249-1.25a1.25 1.25 0 0 0-1.249 1.25l-.747.365a.75.75 0 0 1-.23-.565.75.75 0 0 1 .75-.75zM9.25 12C8.561 12 8 12.562 8 13.25c0 .687.561 1.248 1.25 1.248.687 0 1.248-.561 1.248-1.249 0-.688-.561-1.249-1.249-1.249zm5.5 0c-.687 0-1.248.561-1.248 1.25 0 .687.561 1.248 1.249 1.248.688 0 1.249-.561 1.249-1.249 0-.687-.562-1.249-1.25-1.249zm-5.5 1.5c.275 0 .5.224.5.5s-.225.5-.5.5-.5-.224-.5-.5.225-.5.5-.5zm5.5 0c.275 0 .5.224.5.5s-.225.5-.5.5-.5-.224-.5-.5.225-.5.5-.5z"/>
-                                            </svg>
-                                        </div>
-                                        <h3 className="font-semibold text-white">Reddit</h3>
-                                        </div>
-                                    <div className="space-y-3 mb-4">
+                                        {/* Forum Insights */}
                                         <div>
-                                            <div className="text-xs text-slate-400 mb-2">{isTR ? 'Başlık:' : 'Title:'}</div>
-                                            <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300">
-                                                {result.redditTitleSuggestion || (isTR ? 'Reddit başlık önerisi yükleniyor...' : 'Loading Reddit title suggestion...')}
+                                            <h4 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                                <span className="text-lg">💬</span>
+                                                {isTR ? 'Forum İçgörüleri' : 'Forum Insights'}
+                                            </h4>
+                                            <div className="space-y-4">
+                                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                                                    <span className="text-slate-400">Reddit:</span>
+                                                    <span className="text-white text-sm">{result.realWorldData.forumInsights.reddit.discussionVolume}</span>
+                                                </div>
+                                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                                                    <span className="text-slate-400">Quora:</span>
+                                                    <span className="text-white text-sm">{result.realWorldData.forumInsights.quora.questionFrequency}</span>
+                                                </div>
                                             </div>
+                                        </div>
                                     </div>
-                                        <div>
-                                            <div className="text-xs text-slate-400 mb-2">{isTR ? 'İçerik:' : 'Body:'}</div>
-                                            <div className="bg-slate-900/50 rounded-xl p-3 font-mono text-sm text-slate-300 max-h-20 overflow-y-auto">
-                                                {result.redditBodySuggestion || (isTR ? 'Reddit içerik önerisi yükleniyor...' : 'Loading Reddit body suggestion...')}
-                                        </div>
-                                        </div>
-                                            </div>
-                                    <div className="flex gap-2">
-                                            <button
-                                            onClick={() => postToReddit(result.redditTitleSuggestion, result.redditBodySuggestion)} 
-                                            className="flex-1 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-xl text-white text-sm font-medium transition-colors"
-                                        >
-                                            {isTR ? 'Post' : 'Post'}
-                                            </button>
-                                            <button
-                                            onClick={() => copyText(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 1)} 
-                                            className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===1 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
-                                            >
-                                            {copiedIndex===1 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
-                                            </button>
-                                        </div>
-                                            </div>
-
-                                {/* LinkedIn */}
-                                <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                    <div className="flex items-center gap-3 mb-4">
-                                        <div className="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
-                                            <svg className="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                                            </svg>
-                                        </div>
-                                        <h3 className="font-semibold text-white">LinkedIn</h3>
-                                        </div>
-                                    <div className="bg-slate-900/50 rounded-xl p-4 font-mono text-sm text-slate-300 mb-4 min-h-[100px] overflow-y-auto">
-                                        {result.linkedinSuggestion || (isTR ? 'LinkedIn önerisi yükleniyor...' : 'Loading LinkedIn suggestion...')}
-                                            </div>
-                                    <div className="flex gap-2">
-                                            <button
-                                            onClick={() => postToLinkedIn(result.linkedinSuggestion)} 
-                                            className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-white text-sm font-medium transition-colors"
-                                        >
-                                            {isTR ? 'Post' : 'Post'}
-                                            </button>
-                                            <button
-                                            onClick={() => copyText(result.linkedinSuggestion, 2)} 
-                                            className={`flex-1 px-4 py-2 rounded-xl text-white text-sm font-medium transition-colors ${copiedIndex===2 ? 'bg-emerald-600' : 'bg-white/10 hover:bg-white/20'}`}
-                                            >
-                                            {copiedIndex===2 ? (isTR ? 'Kopyalandı' : 'Copied') : (isTR ? 'Kopyala' : 'Copy')}
-                                            </button>
-                                        </div>
-                                            </div>
+                                ) : (
+                                    <div className="text-center py-12">
+                                        <div className="text-4xl mb-4">📊</div>
+                                        <p className="text-slate-400 mb-4">{isTR ? 'Gerçek dünya verisi mevcut değil' : 'Real-world data not available'}</p>
+                                        <p className="text-slate-500 text-sm">{isTR ? 'AI analizi kullanılarak tahmin edildi' : 'Estimated using AI analysis'}</p>
                                     </div>
+                                )}
                             </div>
-                    </div>
+
+                            {/* Market Intelligence Cards */}
+                            {result.marketIntelligence && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
+                                        <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                                            <span className="text-lg">📈</span>
+                                            {isTR ? 'Pazar Büyüklüğü' : 'Market Size'}
+                                        </h4>
+                                        <p className="text-slate-300 text-sm">{result.marketIntelligence.marketSize || 'N/A'}</p>
+                                    </div>
+                                    <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
+                                        <h4 className="font-semibold text-white mb-3 flex items-center gap-2">
+                                            <span className="text-lg">🚀</span>
+                                            {isTR ? 'Büyüme Hızı' : 'Growth Rate'}
+                                        </h4>
+                                        <p className="text-slate-300 text-sm">{result.marketIntelligence.growthRate || 'N/A'}</p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Content Suggestions Tab */}
+                    {activeTab === 'content' && (
+                        <div className="space-y-8">
+                            {/* Social Media Content */}
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                                    <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                        <span className="text-lg">🐦</span>
+                                        X (Twitter) Tweet
+                                    </h3>
+                                    <p className="text-slate-300 mb-4 text-sm leading-relaxed">{result.tweetSuggestion}</p>
+                                    <button
+                                        onClick={() => copyText(result.tweetSuggestion, 0)}
+                                        className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-white text-sm font-medium transition-colors"
+                                    >
+                                        {copiedIndex === 0 ? '✅ Copied!' : '📋 Copy Tweet'}
+                                    </button>
+                                </div>
+
+                                <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                                    <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                        <span className="text-lg">🤖</span>
+                                        Reddit Post
+                                    </h3>
+                                    <div className="mb-4">
+                                        <h4 className="font-medium text-white mb-2 text-sm">Title:</h4>
+                                        <p className="text-slate-300 text-sm mb-3">{result.redditTitleSuggestion}</p>
+                                        <h4 className="font-medium text-white mb-2 text-sm">Content:</h4>
+                                        <p className="text-slate-300 text-sm leading-relaxed">{result.redditBodySuggestion}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => copyText(`${result.redditTitleSuggestion}\n\n${result.redditBodySuggestion}`, 1)}
+                                        className="w-full px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-xl text-white text-sm font-medium transition-colors"
+                                    >
+                                        {copiedIndex === 1 ? '✅ Copied!' : '📋 Copy Post'}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                    <span className="text-lg">💼</span>
+                                    LinkedIn Post
+                                </h3>
+                                <p className="text-slate-300 mb-4 text-sm leading-relaxed">{result.linkedinSuggestion}</p>
+                                <button
+                                    onClick={() => copyText(result.linkedinSuggestion, 2)}
+                                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 rounded-xl text-white text-sm font-medium transition-colors"
+                                >
+                                    {copiedIndex === 2 ? '✅ Copied!' : '📋 Copy LinkedIn Post'}
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Data Details Tab */}
+                    {activeTab === 'data' && (
+                        <div className="space-y-8">
+                            {/* Data Status */}
+                            <div className="bg-blue-500/10 border border-blue-500/20 rounded-3xl p-6">
+                                <h3 className="text-blue-400 font-semibold mb-4 flex items-center gap-2">
+                                    <span className="text-lg">📊</span>
+                                    {isTR ? 'Veri Durumu' : 'Data Status'}
+                                </h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                    <div className="space-y-2">
+                                        <p className="text-blue-300">
+                                            ✅ realWorldData: {result.realWorldData ? 'Loaded' : 'Missing'}
+                                        </p>
+                                        <p className="text-blue-300">
+                                            ✅ Social Media Suggestions: {result.tweetSuggestion ? 'Loaded' : 'Missing'}
+                                        </p>
+                                        <p className="text-blue-300">
+                                            ✅ Platform Analyses: {result.platformAnalyses ? 'Loaded' : 'Missing'}
+                                        </p>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <p className="text-blue-300">
+                                            📅 Last Update: {result.lastDataUpdate ? new Date(result.lastDataUpdate).toLocaleString() : 'N/A'}
+                                        </p>
+                                        <p className="text-blue-300">
+                                            🔍 Available Keys: {Object.keys(result).join(', ')}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Raw Data Structure */}
+                            <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                                <h3 className="font-semibold text-white mb-4 flex items-center gap-2">
+                                    <span className="text-lg">🔍</span>
+                                    {isTR ? 'Veri Yapısı' : 'Data Structure'}
+                                </h3>
+                                <div className="bg-slate-800 rounded-xl p-4 overflow-x-auto">
+                                    <pre className="text-xs text-slate-300">
+                                        {JSON.stringify(result, null, 2)}
+                                    </pre>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         </>
