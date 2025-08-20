@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 interface EnhancedLoadingSpinnerProps {
   idea?: string;
+  isLoading: boolean;
 }
 
-const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({ idea }) => {
+const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({ idea, isLoading }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
 
@@ -19,6 +20,15 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({ idea })
   ];
 
   useEffect(() => {
+    // Reset progress when loading starts
+    if (isLoading) {
+      setProgress(0);
+      setCurrentStep(0);
+    }
+
+    // Don't start animation if not loading
+    if (!isLoading) return;
+
     const totalDuration = steps.reduce((sum, step) => sum + step.duration, 0);
     let currentTime = 0;
 
@@ -39,11 +49,23 @@ const EnhancedLoadingSpinner: React.FC<EnhancedLoadingSpinnerProps> = ({ idea })
 
       if (newProgress >= 100) {
         clearInterval(interval);
+        // Auto-hide after completion
+        setTimeout(() => {
+          if (!isLoading) {
+            setProgress(0);
+            setCurrentStep(0);
+          }
+        }, 1000);
       }
     }, 100);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [isLoading]);
+
+  // Don't render if not loading
+  if (!isLoading) {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50">
