@@ -1270,9 +1270,9 @@ Return STRICT JSON:
     }
   },
   "platformAnalyses": {
-    "X": { "platformName": "X", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string },
-    "Reddit": { "platformName": "Reddit", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string },
-    "LinkedIn": { "platformName": "LinkedIn", "score": number(1-5), "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string }
+    "X": { "platformName": "X", "score": number(1-5), "signalStrength": "weak/moderate/strong/exceptional", "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string },
+    "Reddit": { "platformName": "Reddit", "score": number(1-5), "signalStrength": "weak/moderate/strong/exceptional", "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string },
+    "LinkedIn": { "platformName": "LinkedIn", "score": number(1-5), "signalStrength": "weak/moderate/strong/exceptional", "summary": string, "keyFindings": [string array], "contentSuggestion": string, "dataSource": string }
   },
   "tweetSuggestion": string,
   "redditTitleSuggestion": string,
@@ -1328,6 +1328,7 @@ CRITICAL RULES:
                             X: { 
                                 platformName: "X", 
                                 score: 3, 
+                                signalStrength: "moderate",
                                 summary: "Analysis completed", 
                                 keyFindings: ["Ready for social media testing"], 
                                 contentSuggestion: "Share your idea on X to gather feedback", 
@@ -1336,6 +1337,7 @@ CRITICAL RULES:
                             Reddit: { 
                                 platformName: "Reddit", 
                                 score: 3, 
+                                signalStrength: "moderate",
                                 summary: "Analysis completed", 
                                 keyFindings: ["Ready for community feedback"], 
                                 contentSuggestion: "Post on relevant subreddits", 
@@ -1344,6 +1346,7 @@ CRITICAL RULES:
                             LinkedIn: { 
                                 platformName: "LinkedIn", 
                                 score: 3, 
+                                signalStrength: "moderate",
                                 summary: "Analysis completed", 
                                 keyFindings: ["Ready for professional feedback"], 
                                 contentSuggestion: "Share with professional network", 
@@ -2068,25 +2071,28 @@ async function getSimplifiedAIAnalysis(
                     }
                 },
                 "platformAnalyses": {
-                    "twitter": {
+                    "X": {
                         "platformName": "X",
                         "score": 1-5 arası (veri tabanlı),
+                        "signalStrength": "zayıf/orta/güçlü/olağanüstü",
                         "summary": "veri destekli analiz",
                         "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
                         "contentSuggestion": "içerik önerisi",
                         "dataSource": "Twitter API + AI analizi"
                       },
-                      "reddit": {
+                      "Reddit": {
                         "platformName": "Reddit", 
                         "score": 1-5 arası (veri tabanlı),
+                        "signalStrength": "zayıf/orta/güçlü/olağanüstü",
                         "summary": "veri destekli analiz",
                         "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
                         "contentSuggestion": "içerik önerisi",
                         "dataSource": "Reddit API + AI analizi"
                       },
-                      "linkedin": {
+                      "LinkedIn": {
                         "platformName": "LinkedIn",
                         "score": 1-5 arası (veri tabanlı), 
+                        "signalStrength": "zayıf/orta/güçlü/olağanüstü",
                         "summary": "veri destekli analiz",
                         "keyFindings": ["bulgu1", "bulgu2", "bulgu3"],
                         "contentSuggestion": "içerik önerisi",
@@ -2144,26 +2150,29 @@ async function getSimplifiedAIAnalysis(
                         "positiveFeedback": ["positive1", "positive2"]
                     }
                 },
-                "platformAnalyses": {
-                    "twitter": {
+                                "platformAnalyses": {
+                    "X": {
                         "platformName": "X",
                         "score": number 1-5 (data-driven),
+                        "signalStrength": "weak/moderate/strong/exceptional",
                         "summary": "data-supported analysis",
                         "keyFindings": ["finding1", "finding2", "finding3"],
                         "contentSuggestion": "content suggestion",
                         "dataSource": "Twitter API + AI analysis"
                     },
-                    "reddit": {
-                        "platformName": "Reddit",
+                    "Reddit": {
+                        "platformName": "Reddit", 
                         "score": number 1-5 (data-driven),
+                        "signalStrength": "weak/moderate/strong/exceptional",
                         "summary": "data-supported analysis",
                         "keyFindings": ["finding1", "finding2", "finding3"],
                         "contentSuggestion": "content suggestion",
                         "dataSource": "Reddit API + AI analysis"
                     },
-                    "linkedin": {
+                    "LinkedIn": {
                         "platformName": "LinkedIn",
-                        "score": number 1-5 (data-driven),
+                        "score": number 1-5 (data-driven), 
+                        "signalStrength": "weak/moderate/strong/exceptional",
                         "summary": "data-supported analysis",
                         "keyFindings": ["finding1", "finding2", "finding3"],
                         "contentSuggestion": "content suggestion",
