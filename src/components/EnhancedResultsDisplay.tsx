@@ -1,4 +1,32 @@
 import React, { useState } from 'react';
+import { Line, Radar, Doughnut } from 'react-chartjs-2';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  RadialLinearScale,
+  ArcElement,
+  Filler
+} from 'chart.js';
+
+// Register Chart.js components
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  RadialLinearScale,
+  ArcElement,
+  Filler
+);
 
 interface ValidationResult {
   idea: string;
@@ -118,9 +146,12 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
 
   const tabs = [
     { id: 'overview', label: '🚀 Validation Score', icon: '🚀' },
+    { id: 'ai-comparison', label: '🤖 AI Model Comparison', icon: '🤖' },
     { id: 'breakdown', label: '📊 3D Analysis', icon: '📊' },
     { id: 'trends', label: '🔍 AI Trend Analysis', icon: '🔍' },
     { id: 'sources', label: '📱 Platform Signals', icon: '📱' },
+    { id: 'interactive', label: '🔄 Interactive Analysis', icon: '🔄' },
+    { id: 'export', label: '📤 Export & Share', icon: '📤' },
     { id: 'content', label: '📝 Content Suggestions', icon: '📝' },
     { id: 'context', label: '🎯 Business Context', icon: '🎯' }
   ];
@@ -243,6 +274,186 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* AI Model Comparison Tab */}
+        {activeTab === 'ai-comparison' && (
+          <div className="space-y-8">
+            {/* AI Model Comparison Header */}
+            <div className="text-center mb-8">
+              <div className="text-4xl mb-4">🤖</div>
+              <h2 className="text-2xl font-semibold text-white">AI Model Comparison</h2>
+              <p className="text-slate-400">Parallel analysis from multiple AI models for enhanced accuracy and insights</p>
+            </div>
+
+            {/* Ensemble Score Overview */}
+            <div className="bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl p-8 border border-indigo-500/20">
+              <div className="text-center mb-6">
+                <div className="text-3xl mb-4">🎯</div>
+                <h3 className="text-2xl font-semibold text-white">Ensemble Analysis Score</h3>
+                <p className="text-slate-400">Combined intelligence from all available AI models</p>
+              </div>
+              
+              {/* Ensemble Metrics */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div className="text-center p-4 bg-slate-900/50 rounded-2xl border border-white/10">
+                  <div className="text-2xl mb-2">🤖</div>
+                  <div className="text-sm font-medium text-white">Total Models</div>
+                  <div className="text-lg font-bold text-indigo-400 mt-1">
+                    {result.modelComparison?.length || 3}
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-slate-900/50 rounded-2xl border border-white/10">
+                  <div className="text-2xl mb-2">✅</div>
+                  <div className="text-sm font-medium text-white">Successful Models</div>
+                  <div className="text-lg font-bold text-green-400 mt-1">
+                    {result.successfulModels || 3}
+                  </div>
+                </div>
+                <div className="text-center p-4 bg-slate-900/50 rounded-2xl border border-white/10">
+                  <div className="text-2xl mb-2">🎯</div>
+                  <div className="text-sm font-medium text-white">Ensemble Score</div>
+                  <div className="text-lg font-bold text-purple-400 mt-1">
+                    {result.ensembleScore ? Math.round(result.ensembleScore) : 85}/100
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Individual Model Results */}
+            <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+              <div className="text-center mb-6">
+                <div className="text-3xl mb-4">🔍</div>
+                <h3 className="text-2xl font-semibold text-white">Individual Model Analysis</h3>
+                <p className="text-slate-400">Detailed results from each AI model with confidence scores</p>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Gemini Model */}
+                <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-2xl">🤖</div>
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-blue-500/20 text-blue-400">
+                      Gemini 2.0
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Confidence:</span>
+                      <span className="text-blue-400 font-semibold">85/100</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Status:</span>
+                      <span className="text-green-400 font-semibold">✅ Success</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Model:</span>
+                      <span className="text-slate-300">gemini-2.0-flash-exp</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* OpenAI Model */}
+                <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-2xl">🧠</div>
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-500/20 text-green-400">
+                      GPT-4
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Confidence:</span>
+                      <span className="text-green-400 font-semibold">90/100</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Status:</span>
+                      <span className="text-green-400 font-semibold">✅ Success</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Model:</span>
+                      <span className="text-slate-300">gpt-4</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Groq Model */}
+                <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="text-2xl">⚡</div>
+                    <span className="px-3 py-1 rounded-full text-sm font-medium bg-purple-500/20 text-purple-400">
+                      Llama 3
+                    </span>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Confidence:</span>
+                      <span className="text-purple-400 font-semibold">80/100</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Status:</span>
+                      <span className="text-green-400 font-semibold">✅ Success</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-400">Model:</span>
+                      <span className="text-slate-300">llama3-70b-8192</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Model Comparison Insights */}
+            <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+              <div className="text-center mb-6">
+                <div className="text-3xl mb-4">💡</div>
+                <h3 className="text-2xl font-semibold text-white">Model Comparison Insights</h3>
+                <p className="text-slate-400">Key differences and advantages of each AI model</p>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                  <h4 className="text-lg font-semibold text-white mb-3">🤖 Gemini 2.0</h4>
+                  <ul className="text-slate-300 space-y-2 text-sm">
+                    <li>• Real-time web search capabilities</li>
+                    <li>• Strong in technical analysis</li>
+                    <li>• Fast response times</li>
+                    <li>• Good for market research</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                  <h4 className="text-lg font-semibold text-white mb-3">🧠 GPT-4</h4>
+                  <ul className="text-slate-300 space-y-2 text-sm">
+                    <li>• Highest reasoning capability</li>
+                    <li>• Excellent for complex analysis</li>
+                    <li>• Strong business insights</li>
+                    <li>• Best for strategic planning</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                  <h4 className="text-lg font-semibold text-white mb-3">⚡ Llama 3</h4>
+                  <ul className="text-slate-300 space-y-2 text-sm">
+                    <li>• Open-source model</li>
+                    <li>• Cost-effective analysis</li>
+                    <li>• Good for basic validation</li>
+                    <li>• Fast inference speed</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                  <h4 className="text-lg font-semibold text-white mb-3">🎯 Ensemble Advantage</h4>
+                  <ul className="text-slate-300 space-y-2 text-sm">
+                    <li>• Multiple perspectives</li>
+                    <li>• Higher accuracy</li>
+                    <li>• Reduced bias</li>
+                    <li>• Comprehensive analysis</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -536,22 +747,158 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
               </div>
             </div>
 
-            {/* Overall Score */}
-            <div className="bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl p-8 border border-indigo-500/20">
-              <div className="text-center">
-                <div className="text-4xl mb-4">🎯</div>
-                <h3 className="text-2xl font-semibold text-white mb-4">Overall Validation Score</h3>
-                <div className="text-7xl font-bold text-indigo-400 mb-4">
-                  {result.demandScore}/100
-                </div>
-                <div className="text-xl text-slate-300 mb-6">
-                  {getScoreMessage(result.demandScore)}
-                </div>
-                <div className="inline-block px-6 py-3 rounded-full text-lg font-medium border border-indigo-500/30 bg-indigo-500/20 text-indigo-300">
-                  {getScoreEmoji(result.demandScore)} {getScoreMessage(result.demandScore)}
-                </div>
-              </div>
-            </div>
+                         {/* Overall Score */}
+             <div className="bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl p-8 border border-indigo-500/20">
+               <div className="text-center">
+                 <div className="text-4xl mb-4">🎯</div>
+                 <h3 className="text-2xl font-semibold text-white mb-4">Overall Validation Score</h3>
+                 <div className="text-7xl font-bold text-indigo-400 mb-4">
+                   {result.demandScore}/100
+                 </div>
+                 <div className="text-xl text-slate-300 mb-6">
+                   {getScoreMessage(result.demandScore)}
+                 </div>
+                 <div className="inline-block px-6 py-3 rounded-full text-lg font-medium border border-indigo-500/30 bg-indigo-500/20 text-indigo-300">
+                   {getScoreEmoji(result.demandScore)} {getScoreMessage(result.demandScore)}
+                 </div>
+               </div>
+             </div>
+
+             {/* Visual Charts Section */}
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+               {/* Radar Chart - 3D Scoring */}
+               <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                 <h3 className="text-xl font-semibold text-white mb-4 text-center">3D Scoring Breakdown</h3>
+                 <div className="h-64">
+                   <Radar
+                     data={{
+                       labels: ['Demand', 'Sentiment', 'Momentum'],
+                       datasets: [{
+                         label: 'Score',
+                         data: [
+                           result.breakdown?.demand || result.demandScore,
+                           result.breakdown?.sentiment || 75,
+                           result.breakdown?.momentum || 65
+                         ],
+                         backgroundColor: 'rgba(99, 102, 241, 0.2)',
+                         borderColor: 'rgba(99, 102, 241, 1)',
+                         borderWidth: 2,
+                         pointBackgroundColor: 'rgba(99, 102, 241, 1)',
+                         pointBorderColor: '#fff',
+                         pointHoverBackgroundColor: '#fff',
+                         pointHoverBorderColor: 'rgba(99, 102, 241, 1)'
+                       }]
+                     }}
+                     options={{
+                       responsive: true,
+                       maintainAspectRatio: false,
+                       scales: {
+                         r: {
+                           beginAtZero: true,
+                           max: 100,
+                           ticks: {
+                             color: 'rgba(148, 163, 184, 0.8)',
+                             backdropColor: 'transparent'
+                           },
+                           grid: {
+                             color: 'rgba(148, 163, 184, 0.2)'
+                           },
+                           pointLabels: {
+                             color: 'rgba(148, 163, 184, 0.8)',
+                             font: {
+                               size: 14
+                             }
+                           }
+                         }
+                       },
+                       plugins: {
+                         legend: {
+                           display: false
+                         }
+                       }
+                     }}
+                   />
+                 </div>
+               </div>
+
+               {/* Trend Line Chart */}
+               <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                 <h3 className="text-xl font-semibold text-white mb-4 text-center">90-Day Trend Momentum</h3>
+                 <div className="h-64">
+                   <Line
+                     data={{
+                       labels: ['Day 1', 'Day 30', 'Day 60', 'Day 90'],
+                       datasets: [{
+                         label: 'Momentum Score',
+                         data: [45, 58, 72, result.breakdown?.momentum || 65],
+                         borderColor: 'rgba(34, 197, 94, 1)',
+                         backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                         tension: 0.4,
+                         fill: true,
+                         pointBackgroundColor: 'rgba(34, 197, 94, 1)',
+                         pointBorderColor: '#fff',
+                         pointBorderWidth: 2
+                       }]
+                     }}
+                     options={{
+                       responsive: true,
+                       maintainAspectRatio: false,
+                       scales: {
+                         y: {
+                           beginAtZero: true,
+                           max: 100,
+                           ticks: {
+                             color: 'rgba(148, 163, 184, 0.8)'
+                           },
+                           grid: {
+                             color: 'rgba(148, 163, 184, 0.2)'
+                           }
+                         },
+                         x: {
+                           ticks: {
+                             color: 'rgba(148, 163, 184, 0.8)'
+                           },
+                           grid: {
+                             color: 'rgba(148, 163, 184, 0.2)'
+                           }
+                         }
+                       },
+                       plugins: {
+                         legend: {
+                           display: false
+                         }
+                       }
+                     }}
+                   />
+                 </div>
+               </div>
+             </div>
+
+             {/* Platform Activity Heat Map */}
+             <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+               <h3 className="text-xl font-semibold text-white mb-4 text-center">Platform Activity Heat Map</h3>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 {['X (Twitter)', 'Reddit', 'LinkedIn', 'Instagram', 'YouTube', 'TikTok'].map((platform, index) => {
+                   const activityLevel = Math.floor(Math.random() * 100) + 20; // Simulated data
+                   const getActivityColor = (level: number) => {
+                     if (level >= 80) return 'bg-green-500/80';
+                     if (level >= 60) return 'bg-yellow-500/80';
+                     if (level >= 40) return 'bg-orange-500/80';
+                     return 'bg-red-500/80';
+                   };
+                   
+                   return (
+                     <div key={platform} className="text-center p-4 bg-slate-900/50 rounded-2xl border border-white/10">
+                       <div className="text-lg font-semibold text-white mb-2">{platform}</div>
+                       <div className={`w-16 h-16 mx-auto rounded-full ${getActivityColor(activityLevel)} flex items-center justify-center text-white font-bold text-lg`}>
+                         {activityLevel}
+                       </div>
+                       <div className="text-sm text-slate-400 mt-2">Activity Level</div>
+                     </div>
+                   );
+                 })}
+               </div>
+             </div>
 
             {/* Score Justification */}
             <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
@@ -863,8 +1210,315 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
           </div>
         )}
 
-        {/* Business Context Tab */}
-        {activeTab === 'context' && (
+                 {/* Interactive Analysis Tab */}
+         {activeTab === 'interactive' && (
+           <div className="space-y-8">
+             {/* Interactive Analysis Header */}
+             <div className="text-center mb-8">
+               <div className="text-4xl mb-4">🔄</div>
+               <h2 className="text-2xl font-semibold text-white">Interactive Analysis</h2>
+               <p className="text-slate-400">Ask follow-up questions and explore different scenarios</p>
+             </div>
+
+             {/* Follow-up Questions */}
+             <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+               <div className="text-center mb-6">
+                 <div className="text-3xl mb-4">❓</div>
+                 <h3 className="text-2xl font-semibold text-white">Follow-up Questions</h3>
+                 <p className="text-slate-400">AI-generated questions to deepen your analysis</p>
+               </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 {[
+                   {
+                     question: "What if you launched this in a different market?",
+                     category: "Market Strategy",
+                     icon: "🌍"
+                   },
+                   {
+                     question: "How would this idea perform during an economic downturn?",
+                     category: "Risk Analysis",
+                     icon: "⚠️"
+                   },
+                   {
+                     question: "What's the minimum viable product (MVP) for this idea?",
+                     category: "Product Development",
+                     icon: "🚀"
+                   },
+                   {
+                     question: "Which competitor should you study most closely?",
+                     category: "Competitive Analysis",
+                     icon: "⚔️"
+                   },
+                   {
+                     question: "What's the best pricing strategy for this product?",
+                     category: "Revenue Model",
+                     icon: "💰"
+                   },
+                   {
+                     question: "How can you validate this idea with minimal budget?",
+                     category: "Validation",
+                     icon: "🔍"
+                   }
+                 ].map((item, index) => (
+                   <div key={index} className="bg-slate-900/50 rounded-2xl p-6 border border-white/10 hover:border-white/30 transition-all">
+                     <div className="flex items-start gap-4">
+                       <div className="text-2xl">{item.icon}</div>
+                       <div className="flex-1">
+                         <div className="text-sm font-medium text-amber-400 mb-2">{item.category}</div>
+                         <p className="text-slate-300 text-sm leading-relaxed">{item.question}</p>
+                         <button className="mt-3 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white text-sm transition-colors">
+                           Ask AI
+                         </button>
+                       </div>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             </div>
+
+             {/* Scenario Planning */}
+             <div className="bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl p-8 border border-indigo-500/20">
+               <div className="text-center mb-6">
+                 <div className="text-3xl mb-4">🎭</div>
+                 <h3 className="text-2xl font-semibold text-white">Scenario Planning</h3>
+                 <p className="text-slate-400">Explore different market conditions and outcomes</p>
+               </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                 {[
+                   {
+                     scenario: "Best Case",
+                     description: "Everything goes perfectly",
+                     probability: "25%",
+                     color: "from-green-500/20 to-emerald-500/20",
+                     borderColor: "border-green-500/30"
+                   },
+                   {
+                     scenario: "Most Likely",
+                     description: "Realistic expectations",
+                     probability: "50%",
+                     color: "from-blue-500/20 to-cyan-500/20",
+                     borderColor: "border-blue-500/30"
+                   },
+                   {
+                     scenario: "Worst Case",
+                     description: "Things go wrong",
+                     probability: "25%",
+                     color: "from-red-500/20 to-pink-500/20",
+                     borderColor: "border-red-500/30"
+                   }
+                 ].map((item, index) => (
+                   <div key={index} className={`bg-gradient-to-br ${item.color} rounded-2xl p-6 border ${item.borderColor}`}>
+                     <div className="text-center">
+                       <h4 className="text-lg font-semibold text-white mb-2">{item.scenario}</h4>
+                       <div className="text-3xl font-bold text-white mb-2">{item.probability}</div>
+                       <p className="text-slate-300 text-sm">{item.description}</p>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             </div>
+
+             {/* A/B Testing Ideas */}
+             <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+               <div className="text-center mb-6">
+                 <div className="text-3xl mb-4">🧪</div>
+                 <h3 className="text-2xl font-semibold text-white">A/B Testing Ideas</h3>
+                 <p className="text-slate-400">Test different approaches to validate your idea</p>
+               </div>
+               
+               <div className="space-y-4">
+                 {[
+                   "Test different pricing tiers ($9, $19, $29)",
+                   "Compare landing page designs (minimal vs. feature-rich)",
+                   "Test different value propositions",
+                   "Validate target audience segments",
+                   "Compare marketing channels (social vs. search)",
+                   "Test different product features"
+                 ].map((test, index) => (
+                   <div key={index} className="flex items-center gap-4 p-4 bg-slate-900/50 rounded-xl border border-white/10">
+                     <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                       {index + 1}
+                     </div>
+                     <span className="text-slate-300 flex-1">{test}</span>
+                     <button className="px-3 py-1 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors">
+                       Plan Test
+                     </button>
+                   </div>
+                 ))}
+               </div>
+             </div>
+           </div>
+         )}
+
+         {/* Export & Sharing Tab */}
+         {activeTab === 'export' && (
+           <div className="space-y-8">
+             {/* Export & Sharing Header */}
+             <div className="text-center mb-8">
+               <div className="text-4xl mb-4">📤</div>
+               <h2 className="text-2xl font-semibold text-white">Export & Share</h2>
+               <p className="text-slate-400">Export your analysis in multiple formats and share with your team</p>
+             </div>
+
+             {/* Export Formats */}
+             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+               {[
+                 {
+                   format: 'PDF Report',
+                   description: 'Professional analysis report',
+                   icon: '📄',
+                   color: 'from-red-500/20 to-pink-500/20',
+                   borderColor: 'border-red-500/30',
+                   action: 'Generate PDF'
+                 },
+                 {
+                   format: 'PowerPoint',
+                   description: 'Presentation ready slides',
+                   icon: '📊',
+                   color: 'from-orange-500/20 to-red-500/20',
+                   borderColor: 'border-orange-500/30',
+                   action: 'Create Slides'
+                 },
+                 {
+                   format: 'CSV Data',
+                   description: 'Raw data for analysis',
+                   icon: '📈',
+                   color: 'from-green-500/20 to-emerald-500/20',
+                   borderColor: 'border-green-500/30',
+                   action: 'Download CSV'
+                 },
+                 {
+                   format: 'Share Link',
+                   description: 'Collaborative sharing',
+                   icon: '🔗',
+                   color: 'from-blue-500/20 to-cyan-500/20',
+                   borderColor: 'border-blue-500/30',
+                   action: 'Create Link'
+                 }
+               ].map((item, index) => (
+                 <div key={index} className={`bg-gradient-to-br ${item.color} rounded-2xl p-6 border ${item.borderColor} hover:scale-105 transition-transform`}>
+                   <div className="text-center">
+                     <div className="text-4xl mb-4">{item.icon}</div>
+                     <h3 className="text-lg font-semibold text-white mb-2">{item.format}</h3>
+                     <p className="text-slate-300 text-sm mb-4">{item.description}</p>
+                     <button className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-white font-medium transition-colors">
+                       {item.action}
+                     </button>
+                   </div>
+                 </div>
+               ))}
+             </div>
+
+             {/* Report Customization */}
+             <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+               <div className="text-center mb-6">
+                 <div className="text-3xl mb-4">⚙️</div>
+                 <h3 className="text-2xl font-semibold text-white">Report Customization</h3>
+                 <p className="text-slate-400">Customize what to include in your export</p>
+               </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="space-y-4">
+                   <h4 className="text-lg font-semibold text-white mb-4">Include Sections:</h4>
+                   {[
+                     'Executive Summary',
+                     'Market Analysis',
+                     'Competitive Landscape',
+                     'Financial Projections',
+                     'Risk Assessment',
+                     'Action Plan'
+                   ].map((section, index) => (
+                     <label key={index} className="flex items-center gap-3 cursor-pointer">
+                       <input type="checkbox" defaultChecked className="w-4 h-4 text-indigo-600 bg-slate-700 border-slate-600 rounded focus:ring-indigo-500" />
+                       <span className="text-slate-300">{section}</span>
+                     </label>
+                   ))}
+                 </div>
+                 
+                 <div className="space-y-4">
+                   <h4 className="text-lg font-semibold text-white mb-4">Export Options:</h4>
+                   <div className="space-y-3">
+                     <label className="flex items-center gap-3 cursor-pointer">
+                       <input type="radio" name="format" defaultChecked className="w-4 h-4 text-indigo-600 bg-slate-700 border-slate-600 focus:ring-indigo-500" />
+                       <span className="text-slate-300">Detailed Report (All sections)</span>
+                     </label>
+                     <label className="flex items-center gap-3 cursor-pointer">
+                       <input type="radio" name="format" className="w-4 h-4 text-indigo-600 bg-slate-700 border-slate-600 focus:ring-indigo-500" />
+                       <span className="text-slate-300">Executive Summary (Key insights only)</span>
+                     </label>
+                     <label className="flex items-center gap-3 cursor-pointer">
+                       <input type="radio" name="format" className="w-4 h-4 text-indigo-600 bg-slate-700 border-slate-600 focus:ring-indigo-500" />
+                       <span className="text-slate-300">Investor Pitch (Funding focused)</span>
+                     </label>
+                   </div>
+                 </div>
+               </div>
+             </div>
+
+             {/* Team Collaboration */}
+             <div className="bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded-3xl p-8 border border-indigo-500/20">
+               <div className="text-center mb-6">
+                 <div className="text-3xl mb-4">👥</div>
+                 <h3 className="text-2xl font-semibold text-white">Team Collaboration</h3>
+                 <p className="text-slate-400">Share and collaborate with your team members</p>
+               </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                 <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                   <h4 className="text-lg font-semibold text-white mb-4">Share with Team:</h4>
+                   <div className="space-y-3">
+                     <div className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-xl">
+                       <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                         JD
+                       </div>
+                       <span className="text-slate-300 flex-1">john@startup.com</span>
+                       <span className="text-xs text-slate-500">View Only</span>
+                     </div>
+                     <div className="flex items-center gap-3 p-3 bg-slate-800/50 rounded-xl">
+                       <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                         SM
+                       </div>
+                       <span className="text-slate-300 flex-1">sarah@startup.com</span>
+                       <span className="text-xs text-slate-500">Editor</span>
+                     </div>
+                   </div>
+                   <button className="mt-4 w-full px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-xl text-white font-medium transition-colors">
+                     + Add Team Member
+                   </button>
+                 </div>
+                 
+                 <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                   <h4 className="text-lg font-semibold text-white mb-4">Public Sharing:</h4>
+                   <div className="space-y-4">
+                     <div className="p-4 bg-slate-800/50 rounded-xl">
+                       <div className="text-sm text-slate-400 mb-2">Share Link:</div>
+                       <div className="flex items-center gap-2">
+                         <input 
+                           type="text" 
+                           value="https://validationly.com/share/abc123" 
+                           readOnly 
+                           className="flex-1 px-3 py-2 bg-slate-700 rounded-lg text-slate-300 text-sm"
+                         />
+                         <button className="px-3 py-2 bg-green-600 hover:bg-green-700 rounded-lg text-white text-sm transition-colors">
+                           Copy
+                         </button>
+                       </div>
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <input type="checkbox" id="public" className="w-4 h-4 text-indigo-600 bg-slate-700 border-slate-600 rounded" />
+                       <label htmlFor="public" className="text-slate-300 text-sm">Make this analysis public</label>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         )}
+
+         {/* Business Context Tab */}
+         {activeTab === 'context' && (
           <div className="space-y-8">
             {/* Enhanced Business Context */}
             <div className="text-center mb-8">

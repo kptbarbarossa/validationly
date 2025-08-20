@@ -83,20 +83,44 @@ const ResultsPage: React.FC = () => {
             {/* Action Buttons */}
             <div className="mt-16 text-center">
               <div className="flex flex-wrap justify-center gap-4">
-                                        <button
+                <button
                   onClick={() => navigate('/')}
                   className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-2xl text-white font-semibold transition-all transform hover:scale-105"
-                                        >
+                >
                   🔍 Analyze Another Idea
-                                        </button>
-                                        <button
+                </button>
+                <button
                   onClick={() => window.print()}
                   className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/20 rounded-2xl text-white font-semibold transition-colors backdrop-blur-sm"
-                                        >
+                >
                   🖨️ Print Report
-                                        </button>
-                                    </div>
-                                </div>
+                </button>
+              </div>
+              
+              {/* Buy Me a Coffee Section */}
+              <div className="mt-12 text-center">
+                <div className="inline-flex items-center gap-4 p-6 bg-gradient-to-r from-amber-500/10 to-orange-500/10 rounded-3xl border border-amber-500/20">
+                  <img
+                    src="/buymeacoffee.gif"
+                    alt="Coffee GIF"
+                    className="w-16 h-16 rounded-full"
+                  />
+                  <div className="text-left">
+                    <h3 className="text-lg font-semibold text-amber-200 mb-2">Support the Project</h3>
+                    <p className="text-slate-300 text-sm mb-3">Help us keep building amazing tools for entrepreneurs</p>
+                    <a
+                      href="https://buymeacoffee.com/kptbarbarossa"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-700 rounded-xl text-white font-medium transition-colors"
+                    >
+                      <span>☕</span>
+                      <span>Buy @kptbarbarossa a coffee</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
                     </div>
                 </div>
             </div>

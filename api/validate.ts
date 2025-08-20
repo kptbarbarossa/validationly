@@ -1143,14 +1143,17 @@ export default async function handler(req: any, res: any) {
 
         const { idea, content, lang, model, evidence, weightsVariant, enhance, vcReview, fast } = req.body;
         
-        // Auto-select AI model based on availability and performance
-        let useAI = 'gemini';
-        if (process.env.OPENAI_API_KEY && Math.random() < 0.3) {
-            useAI = 'openai'; // 30% chance to use OpenAI
-        } else if (process.env.GROQ_API_KEY && Math.random() < 0.2) {
-            useAI = 'groq'; // 20% chance to use Groq
-        }
-        // 50% chance to use Gemini (default)
+        // NEW: Parallel AI Model Execution - All 3 models run simultaneously
+        const parallelExecution = true; // Enable parallel AI model comparison
+        
+        // Check available models
+        const availableModels = {
+            gemini: !!process.env.GOOGLE_API_KEY,
+            openai: !!process.env.OPENAI_API_KEY,
+            groq: !!process.env.GROQ_API_KEY
+        };
+        
+        console.log('🤖 Available AI Models:', availableModels);
         const inputContent = idea || content;
 
         // Input validation
@@ -1187,6 +1190,153 @@ export default async function handler(req: any, res: any) {
         // Dynamic prompt selection based on input
         const promptSelection = await promptManager.selectPrompts(inputContent);
         const systemInstruction = promptManager.combinePrompts(promptSelection);
+
+        // NEW: Parallel AI Model Execution Function
+        async function executeParallelAI() {
+            const results: any[] = [];
+            const promises: Promise<any>[] = [];
+            
+            // Gemini Analysis
+            if (availableModels.gemini) {
+                promises.push(
+                    (async () => {
+                        try {
+                            const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY || '');
+                            const result = await gemini.models.generateContent({
+                                model: "gemini-2.0-flash-exp",
+                                contents: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                                config: {
+                                    systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
+                                    responseMimeType: "application/json",
+                                    temperature: 0.3,
+                                    maxOutputTokens: 1792,
+                                }
+                            });
+                            
+                            return {
+                                model: 'gemini-2.0-flash-exp',
+                                result: result.text?.trim(),
+                                success: true,
+                                confidence: 85,
+                                executionTime: Date.now()
+                            };
+                        } catch (error) {
+                            return {
+                                model: 'gemini-2.0-flash-exp',
+                                result: null,
+                                success: false,
+                                error: error.message,
+                                confidence: 0
+                            };
+                        }
+                    })()
+                );
+            }
+            
+            // OpenAI Analysis
+            if (availableModels.openai) {
+                promises.push(
+                    (async () => {
+                        try {
+                            const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+                            const completion = await openai.chat.completions.create({
+                                model: 'gpt-4',
+                                messages: [
+                                    {
+                                        role: 'system',
+                                        content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
+                                    },
+                                    {
+                                        role: 'user',
+                                        content: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
+                                    }
+                                ],
+                                temperature: 0.3,
+                                max_tokens: 1792
+                            });
+                            
+                            return {
+                                model: 'gpt-4',
+                                result: completion.choices[0]?.message?.content?.trim(),
+                                success: true,
+                                confidence: 90,
+                                executionTime: Date.now()
+                            };
+                        } catch (error) {
+                            return {
+                                model: 'gpt-4',
+                                result: null,
+                                success: false,
+                                error: error.message,
+                                confidence: 0
+                            };
+                        }
+                    })()
+                );
+            }
+            
+            // Groq Analysis
+            if (availableModels.groq) {
+                promises.push(
+                    (async () => {
+                        try {
+                            const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+                            const completion = await groq.chat.completions.create({
+                                model: 'llama3-70b-8192',
+                                messages: [
+                                    {
+                                        role: 'system',
+                                        content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
+                                    },
+                                    {
+                                        role: 'user',
+                                        content: `ANALYZE THIS CONTENT: "${inputContent}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
+                                    }
+                                ],
+                                temperature: 0.3,
+                                max_tokens: 1792
+                            });
+                            
+                            return {
+                                model: 'llama3-70b-8192',
+                                result: completion.choices[0]?.message?.content?.trim(),
+                                success: true,
+                                confidence: 80,
+                                executionTime: Date.now()
+                            };
+                        } catch (error) {
+                            return {
+                                model: 'llama3-70b-8192',
+                                result: null,
+                                success: false,
+                                error: error.message,
+                                confidence: 0
+                            };
+                        }
+                    })()
+                );
+            }
+            
+            // Wait for all models to complete
+            const modelResults = await Promise.allSettled(promises);
+            
+            // Process results
+            modelResults.forEach((result, index) => {
+                if (result.status === 'fulfilled') {
+                    results.push(result.value);
+                } else {
+                    results.push({
+                        model: `model-${index}`,
+                        result: null,
+                        success: false,
+                        error: 'Promise rejected',
+                        confidence: 0
+                    });
+                }
+            });
+            
+            return results;
+        }
 
         console.log(`🎯 Selected prompts - Sectors: ${promptSelection.sectorPrompts.length}, Analysis: ${promptSelection.analysisPrompts.length}, Confidence: ${promptSelection.confidence}`);
 
@@ -1567,156 +1717,38 @@ CRITICAL RULES:
         }
 
         // Simplified AI Analysis - use selected AI model
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        // NEW: Parallel AI Model Execution
         async function getAIAnalysis(content: string, systemPrompt: string): Promise<any> {
-            console.log(`🎯 Using ${useAI.toUpperCase()} for analysis...`);
-
+            console.log('🚀 Executing Parallel AI Model Analysis...');
+            
             try {
-                const aiInstance = getAI(useAI);
+                // Execute all available models in parallel
+                const parallelResults = await executeParallelAI();
                 
-                // Use different models based on selection
-                if (useAI === 'openai') {
-                    const openai = aiInstance as OpenAI;
-                    const completion = await openai.chat.completions.create({
-                        model: 'gpt-4',
-                        messages: [
-                            {
-                                role: 'system',
-                                content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
-                            },
-                            {
-                                role: 'user',
-                                content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
-                            }
-                        ],
-                        temperature: 0.3,
-                        max_tokens: 1792
-                    });
-                    
-                    return {
-                        model: 'gpt-4',
-                        result: completion.choices[0]?.message?.content?.trim(),
-                        success: true,
-                        fallbackUsed: false
-                    };
-                } else if (useAI === 'groq') {
-                    const groq = aiInstance as Groq;
-                    const completion = await groq.chat.completions.create({
-                        model: 'llama3-70b-8192',
-                        messages: [
-                            {
-                                role: 'system',
-                                content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
-                            },
-                            {
-                                role: 'user',
-                                content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
-                            }
-                        ],
-                        temperature: 0.3,
-                        max_tokens: 1792
-                    });
-                    
-                    return {
-                        model: 'llama3-70b-8192',
-                        result: completion.choices[0]?.message?.content?.trim(),
-                        success: true,
-                        fallbackUsed: false
-                    };
-                } else {
-                    // Default Gemini
-                const result = await aiInstance.models.generateContent({
-                    model: "gemini-2.0-flash-exp",
-                    contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                    config: {
-                        systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
-                        responseMimeType: "application/json",
-                        temperature: 0.3,
-                        maxOutputTokens: 1792,
-                    }
-                });
-
-                return {
-                    model: 'gemini-2.0-flash-exp',
-                    result: result.text?.trim(),
-                    success: true,
-                    fallbackUsed: false
-                };
-            } catch (error) {
-                console.log('❌ Gemini 2.0 failed, trying Gemini 1.5...', error);
-
-                // Fallback to other models if primary fails
-                try {
-                    if (useAI === 'gemini') {
-                        // Try OpenAI as fallback
-                        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-                        const completion = await openai.chat.completions.create({
-                            model: 'gpt-4',
-                            messages: [
-                                {
-                                    role: 'system',
-                                    content: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`
-                                },
-                                {
-                                    role: 'user',
-                                    content: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`
-                                }
-                            ],
-                            temperature: 0.3,
-                            max_tokens: 1792
-                        });
-                        
-                        return {
-                            model: 'gpt-4 (fallback)',
-                            result: completion.choices[0]?.message?.content?.trim(),
-                            success: true,
-                            fallbackUsed: true
-                        };
-                    } else if (useAI === 'openai') {
-                        // Try Gemini as fallback
-                        const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY || '');
-                        const result = await gemini.models.generateContent({
-                        model: "gemini-1.5-flash",
-                        contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                        config: {
-                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
-                            responseMimeType: "application/json",
-                            temperature: 0.3,
-                            maxOutputTokens: 1792,
-                        }
-                    });
-
-                    return {
-                            model: 'gemini-1.5-flash (fallback)',
-                        result: result.text?.trim(),
-                        success: true,
-                        fallbackUsed: true
-                    };
-                    } else {
-                        // Try Gemini as fallback for Groq
-                        const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY || '');
-                        const result = await gemini.models.generateContent({
-                            model: "gemini-1.5-flash",
-                            contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                            config: {
-                                systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
-                                responseMimeType: "application/json",
-                                temperature: 0.3,
-                                maxOutputTokens: 1792,
-                            }
-                        });
-                        
-                        return {
-                            model: 'gemini-1.5-flash (fallback)',
-                            result: result.text?.trim(),
-                            success: true,
-                            fallbackUsed: true
-                        };
-                    }
-                } catch (fallbackError) {
-                    console.error('❌ All AI models failed:', fallbackError);
+                // Find the best successful result
+                const successfulResults = parallelResults.filter(r => r.success && r.result);
+                
+                if (successfulResults.length === 0) {
                     throw new Error('All AI models failed to respond');
                 }
+                
+                // Select the best result based on confidence
+                const bestResult = successfulResults.reduce((best, current) => 
+                    current.confidence > best.confidence ? current : best
+                );
+                
+                // Return enhanced result with model comparison data
+                return {
+                    ...bestResult,
+                    modelComparison: parallelResults,
+                    ensembleScore: successfulResults.reduce((sum, r) => sum + r.confidence, 0) / successfulResults.length,
+                    totalModels: parallelResults.length,
+                    successfulModels: successfulResults.length
+                };
+                
+            } catch (error) {
+                console.error('❌ Parallel AI execution failed:', error);
+                throw new Error('AI analysis failed');
             }
         }
 

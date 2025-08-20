@@ -93,14 +93,10 @@ const PremiumNavBar: React.FC = () => {
               href="https://buymeacoffee.com/kptbarbarossa"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center p-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
-              title="Buy me a coffee"
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
             >
-                             <img 
-                 src="/buymeacoffee.gif" 
-                 alt="Coffee GIF" 
-                 className="w-5 h-5 rounded-full"
-               />
+              <span className="text-base">☕</span>
+              <span className="hidden sm:inline font-medium text-xs sm:text-sm">Buy me a coffee</span>
             </a>
 
             {/* Mobile menu button */}
@@ -172,20 +168,16 @@ const PremiumNavBar: React.FC = () => {
               >
                 Feedback
               </a>
-                             <a
-                 href="https://buymeacoffee.com/kptbarbarossa"
-                 target="_blank"
-                 rel="noopener noreferrer"
-                 className="mt-2 mb-2 inline-flex items-center justify-center p-3 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10"
-                 onClick={() => setIsOpen(false)}
-                 title="Buy me a coffee"
-               >
-                                   <img 
-                    src="/buymeacoffee.gif" 
-                    alt="Coffee GIF" 
-                    className="w-6 h-6 rounded-full"
-                  />
-               </a>
+              <a
+                href="https://buymeacoffee.com/kptbarbarossa"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 mb-2 inline-flex items-center justify-center gap-2 px-3 py-3 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10"
+                onClick={() => setIsOpen(false)}
+              >
+                <span className="text-lg">☕</span>
+                <span className="font-medium">Buy me a coffee</span>
+              </a>
             </nav>
           </div>
         </div>
