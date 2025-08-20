@@ -99,12 +99,12 @@ const SocialValidationPage: React.FC = () => {
         <div className="relative p-8">
           {/* Header */}
           <header className="text-center mb-12">
-                                    <h1 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3">
+            <h1 className="text-4xl font-bold mb-4 flex items-center justify-center gap-3">
                           🚀 Social Validation Analysis
-                        </h1>
-                        <p className="text-xl text-slate-300 max-w-3xl mx-auto">
-                          Discover early trend opportunities and market timing advantages using AI-powered social media trend analysis
-                        </p>
+            </h1>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Discover early trend opportunities and market timing advantages using AI-powered social media trend analysis
+            </p>
           </header>
 
           {/* Input Form */}

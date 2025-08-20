@@ -145,15 +145,15 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
   };
 
   const tabs = [
-    { id: 'overview', label: '🚀 Validation Score', icon: '🚀' },
-    { id: 'ai-comparison', label: '🤖 AI Model Comparison', icon: '🤖' },
-    { id: 'breakdown', label: '📊 3D Analysis', icon: '📊' },
-    { id: 'trends', label: '🔍 AI Trend Analysis', icon: '🔍' },
-    { id: 'sources', label: '📱 Platform Signals', icon: '📱' },
-    { id: 'interactive', label: '🔄 Interactive Analysis', icon: '🔄' },
-    { id: 'export', label: '📤 Export & Share', icon: '📤' },
-    { id: 'content', label: '📝 Content Suggestions', icon: '📝' },
-    { id: 'context', label: '🎯 Business Context', icon: '🎯' }
+    { id: 'overview', label: 'Validation Score' },
+    { id: 'ai-comparison', label: 'AI Model Comparison' },
+    { id: 'breakdown', label: '3D Analysis' },
+    { id: 'trends', label: 'AI Trend Analysis' },
+    { id: 'sources', label: 'Platform Signals' },
+    { id: 'interactive', label: 'Interactive Analysis' },
+    { id: 'export', label: 'Export & Share' },
+    { id: 'content', label: 'Content Suggestions' },
+    { id: 'context', label: 'Business Context' }
   ];
 
   return (
@@ -162,7 +162,7 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
       <div className="text-center mb-12">
         <div className="mb-6">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
-            🔮 Social Trend Analysis
+            Social Trend Analysis
           </h1>
           <p className="text-xl text-slate-300 max-w-3xl mx-auto">
             {result.idea}
@@ -198,7 +198,6 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
                 : 'bg-slate-900/50 border-white/20 text-slate-300 hover:border-white/40'
             }`}
           >
-            <span className="mr-2">{tab.icon}</span>
             {tab.label}
           </button>
         ))}
