@@ -22,7 +22,7 @@ const HomePage: React.FC = () => {
         errorMessage: '' as unknown as string // exactOptionalPropertyTypes workaround
     });
     const [isLoading, setIsLoading] = useState(false); // analysis submit loading
-    const [galleryOpen, setGalleryOpen] = useState(false);
+
     const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
@@ -222,15 +222,7 @@ const HomePage: React.FC = () => {
                             {/* Enhanced action bar: Submit + Enhance + Gallery */}
                             <div className="absolute bottom-3 right-3 flex items-center gap-2">
                                 {/* fast mode removed by request */}
-                                <button
-                                    type="button"
-                                    onClick={() => setGalleryOpen(true)}
-                                    className="text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10"
-                                    aria-label="Open prompt gallery"
-                                    title="Open prompt gallery"
-                                >
-                                    📚
-                                </button>
+
                                 <button
                                     type="button"
                                     onClick={async () => {
@@ -291,16 +283,12 @@ const HomePage: React.FC = () => {
                 {isLoading && <EnhancedLoadingSpinner idea={userInput.idea} isLoading={isLoading} />}
             </form>
 
-            {/* Prompt Gallery Modal */}
+            {/* Simple Prompt Gallery */}
             <PromptGallery
-                open={galleryOpen}
-                onClose={() => setGalleryOpen(false)}
                 onUse={(text) => {
                     const validation = validateInput(text);
                     setUserInput(validation);
-                    setGalleryOpen(false);
                     textareaRef.current?.focus();
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
             />
 
