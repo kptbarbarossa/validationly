@@ -75,7 +75,7 @@ const App: React.FC = () => {
           <Analytics />
           <PremiumNavBar />
           
-          <main className="container mx-auto px-0 py-0 sm:py-0">
+          <main className="container mx-auto px-0 pt-24 sm:pt-24">
             <Routes>
               <Route path="/" element={<HomePage />} />
 

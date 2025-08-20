@@ -19,7 +19,7 @@ const PremiumNavBar: React.FC = () => {
   const isActive = (to: string) => (to === '/' ? location.pathname === '/' : location.pathname.startsWith(to));
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="fixed top-0 left-0 right-0 z-50">
       {/* Gradient divider line */}
       <div className="h-px w-full bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent" />
 

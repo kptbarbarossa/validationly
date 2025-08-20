@@ -63,22 +63,22 @@ const ResultsPage: React.FC = () => {
         keywords="social arbitrage, trend analysis, cultural transfer, market timing, startup validation"
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 text-white">
         <div className="relative overflow-hidden">
           {/* Animated Background */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-cyan-500/10 blur-3xl"></div>
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent_50%)]"></div>
           
           <div className="relative container mx-auto px-6 py-12">
             
             {/* Back Button */}
             <div className="mb-8">
-              <button
-                onClick={() => navigate('/')}
-                className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 rounded-xl transition-colors"
-              >
-                ← Back to Analysis
-              </button>
+                      <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 rounded-2xl transition-colors backdrop-blur-sm"
+        >
+          ← Back to Analysis
+        </button>
             </div>
 
             {/* Enhanced Results Display */}
@@ -89,13 +89,13 @@ const ResultsPage: React.FC = () => {
               <div className="flex flex-wrap justify-center gap-4">
                 <button
                   onClick={() => navigate('/')}
-                  className="px-8 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-2xl text-white font-semibold transition-all transform hover:scale-105"
+                  className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-2xl text-white font-semibold transition-all transform hover:scale-105"
                 >
                   🔍 Analyze Another Idea
                 </button>
                 <button
                   onClick={() => window.print()}
-                  className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/20 rounded-2xl text-white font-semibold transition-colors"
+                  className="px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/20 rounded-2xl text-white font-semibold transition-colors backdrop-blur-sm"
                 >
                   🖨️ Print Report
                 </button>
