@@ -114,10 +114,9 @@ const AnalysisPage: React.FC = () => {
         keywords="AI analysis, business validation, startup analysis, market research, AI insights"
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-        <div className="relative overflow-hidden">
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-cyan-500/10 blur-3xl"></div>
-          <div className="relative container mx-auto px-6 py-12">
+      <div className="min-h-screen text-white">
+        <div className="relative">
+          <div className="container mx-auto px-6 py-12">
             
             {/* Header */}
             <div className="text-center mb-12">

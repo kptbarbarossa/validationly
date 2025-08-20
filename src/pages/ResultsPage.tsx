@@ -63,13 +63,9 @@ const ResultsPage: React.FC = () => {
         keywords="social arbitrage, trend analysis, cultural transfer, market timing, startup validation"
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 text-white">
-        <div className="relative overflow-hidden">
-          {/* Animated Background */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent_50%)]"></div>
-          
-          <div className="relative container mx-auto px-6 py-12">
+      <div className="min-h-screen text-white">
+        <div className="relative">
+          <div className="container mx-auto px-6 py-12">
             
             {/* Back Button */}
             <div className="mb-8">
