@@ -100,14 +100,14 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Use raw validation API for better insights
+            // Use original validation API with 3 AI models
             const ideaPayload = userInput.idea;
-            const response = await fetch('/api/raw-validate', {
+            const response = await fetch('/api/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: ideaPayload, useAI: 'gemini' })
+                body: JSON.stringify({ idea: ideaPayload, fast: true })
             });
 
             if (!response.ok) {

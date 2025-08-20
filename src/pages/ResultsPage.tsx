@@ -55,31 +55,6 @@ const ResultsPage: React.FC = () => {
     const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
 
-    // Helper function to extract content from specific sections
-    const extractSectionContent = (rawAnalysis: string, sectionName: string): string => {
-        console.log('Extracting section:', sectionName);
-        console.log('Raw analysis:', rawAnalysis);
-        
-        // Try different regex patterns
-        const patterns = [
-            new RegExp(`\\*\\*${sectionName}:\\*\\*\\s*([^*]+?)(?=\\*\\*|$)`, 's'),
-            new RegExp(`${sectionName}:\\s*([^\\n]+(?:\\n[^\\n]+)*)`, 'i'),
-            new RegExp(`${sectionName}\\s*([^\\n]+(?:\\n[^\\n]+)*)`, 'i')
-        ];
-        
-        for (const pattern of patterns) {
-            const match = rawAnalysis.match(pattern);
-            if (match && match[1]) {
-                const content = match[1].trim();
-                console.log('Found content for', sectionName, ':', content);
-                return content;
-            }
-        }
-        
-        console.log('No content found for section:', sectionName);
-        return 'Content not available for this section.';
-    };
-
     // Extract result from location state
     const result = (location.state as any)?.result as ValidationResult;
 
@@ -299,96 +274,21 @@ const ResultsPage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Raw AI Analysis Cards - Show if available */}
-                            {result.rawAnalysis && (
+                            {/* Simple AI Analysis Display */}
+                            {result.scoreJustification && (
                                 <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
                                     <div className="flex items-center justify-between mb-6">
                                         <h3 className="text-xl font-semibold text-white flex items-center gap-2">
-                                            <span className="text-2xl">🔥</span>
-                                            {isTR ? 'AI Analiz Kartları' : 'AI Analysis Cards'}
+                                            <span className="text-2xl">🤖</span>
+                                            {isTR ? 'AI Analizi' : 'AI Analysis'}
                                         </h3>
-                                        {result.aiModel && (
-                                            <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm border border-purple-500/30">
-                                                {result.aiModel.toUpperCase()}
-                                            </span>
-                                        )}
                                     </div>
                                     
-                                    {/* Analysis Cards Grid */}
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {/* Market Potential Card */}
-                                        <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="text-2xl">📊</div>
-                                                <h4 className="text-lg font-semibold text-white">Market Potential</h4>
-                                            </div>
-                                            <div className="text-slate-300 text-sm leading-relaxed">
-                                                {extractSectionContent(result.rawAnalysis, 'Market Potential')}
-                                            </div>
+                                    {/* Simple Analysis Display */}
+                                    <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                                        <div className="text-slate-300 leading-relaxed whitespace-pre-wrap">
+                                            {result.scoreJustification}
                                         </div>
-
-                                        {/* Competition Card */}
-                                        <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="text-2xl">🏆</div>
-                                                <h4 className="text-lg font-semibold text-white">Competition</h4>
-                                            </div>
-                                            <div className="text-slate-300 text-sm leading-relaxed">
-                                                {extractSectionContent(result.rawAnalysis, 'Competition')}
-                                            </div>
-                                        </div>
-
-                                        {/* Challenges Card */}
-                                        <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="text-2xl">⚠️</div>
-                                                <h4 className="text-lg font-semibold text-white">Challenges</h4>
-                                            </div>
-                                            <div className="text-slate-300 text-sm leading-relaxed">
-                                                {extractSectionContent(result.rawAnalysis, 'Challenges')}
-                                            </div>
-                                        </div>
-
-                                        {/* Opportunities Card */}
-                                        <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="text-2xl">💡</div>
-                                                <h4 className="text-lg font-semibold text-white">Opportunities</h4>
-                                            </div>
-                                            <div className="text-slate-300 text-sm leading-relaxed">
-                                                {extractSectionContent(result.rawAnalysis, 'Opportunities')}
-                                            </div>
-                                        </div>
-
-                                        {/* Social Media Trends Card */}
-                                        <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="text-2xl">📱</div>
-                                                <h4 className="text-lg font-semibold text-white">Social Media Trends</h4>
-                                            </div>
-                                            <div className="text-slate-300 text-sm leading-relaxed">
-                                                {extractSectionContent(result.rawAnalysis, 'Social Media Trends')}
-                                            </div>
-                                        </div>
-
-                                        {/* Actionable Steps Card */}
-                                        <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                            <div className="flex items-center gap-3 mb-4">
-                                                <div className="text-2xl">🚀</div>
-                                                <h4 className="text-lg font-semibold text-white">Actionable Steps</h4>
-                                            </div>
-                                            <div className="text-slate-300 text-sm leading-relaxed">
-                                                {extractSectionContent(result.rawAnalysis, 'Actionable Steps')}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                {/* Raw Analysis Fallback */}
-                                <div className="mt-6 bg-slate-900/50 rounded-2xl p-6 border border-white/10">
-                                    <h4 className="text-lg font-semibold text-white mb-4">📄 Raw AI Analysis</h4>
-                                    <div className="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap">
-                                        {result.rawAnalysis}
                                     </div>
                                 </div>
                             )}
