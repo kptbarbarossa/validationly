@@ -1,4 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 
@@ -1349,7 +1349,7 @@ export default async function handler(req: any, res: any) {
             ? `\n\nREFINEMENT DIRECTIVE: Improve ONLY the section "${(refine.section||'').toString()}" according to: "${(refine.feedback||'').toString()}". Still return the FULL JSON with ALL sections present. Keep other sections consistent.`
             : '';
 
-        const finalSystemInstruction = `${systemInstruction}${refineInstruction}
+        const finalSystemInstruction = `${promptSelection.analysisPrompts.join('\n\n')}${refineInstruction}
 
         🌍 CRITICAL LANGUAGE REQUIREMENT: 
         - The user's input language has been detected and specified above
