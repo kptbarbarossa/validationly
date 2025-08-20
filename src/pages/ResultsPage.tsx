@@ -108,7 +108,7 @@ const ResultsPage: React.FC = () => {
                   <img
                     src="/buymeacoffee.gif"
                     alt="Buy Me a Coffee"
-                    className="w-32 h-32 rounded-2xl hover:scale-105 transition-transform duration-300"
+                    className="w-96 h-96 rounded-2xl hover:scale-105 transition-transform duration-300"
                   />
                 </a>
               </div>
