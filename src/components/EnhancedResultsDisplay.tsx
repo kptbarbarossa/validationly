@@ -149,6 +149,7 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
     { id: 'ai-comparison', label: 'AI Model Comparison' },
     { id: 'breakdown', label: '3D Analysis' },
     { id: 'trends', label: 'AI Trend Analysis' },
+    { id: 'google-trends', label: 'Google Trends' },
     { id: 'sources', label: 'Platform Signals' },
     { id: 'interactive', label: 'Interactive Analysis' },
     { id: 'export', label: 'Export & Share' },
@@ -997,6 +998,159 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
                 <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                   <p className="text-slate-300 text-lg leading-relaxed">{result.aiInsights.marketOpportunity}</p>
                 </div>
+              </div>
+            )}
+
+            {/* Google Trends Tab */}
+            {activeTab === 'google-trends' && (
+              <div className="space-y-8">
+                {/* Google Trends Header */}
+                <div className="text-center mb-8">
+                  <div className="text-4xl mb-4">📊</div>
+                  <h2 className="text-2xl font-semibold text-white">Google Trends Analysis</h2>
+                  <p className="text-slate-400">Real-time search interest and trend momentum from Google</p>
+                </div>
+
+                {/* Google Trends Data */}
+                {result.googleTrends ? (
+                  <div className="space-y-6">
+                    {/* Trend Metrics Overview */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 text-center">
+                        <div className="text-3xl mb-2">📈</div>
+                        <div className="text-2xl font-bold text-green-400">{result.googleTrends.metrics.currentScore}</div>
+                        <div className="text-sm text-slate-400">Current Interest</div>
+                      </div>
+                      <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 text-center">
+                        <div className="text-3xl mb-2">📊</div>
+                        <div className="text-2xl font-bold text-blue-400">{result.googleTrends.metrics.averageScore}</div>
+                        <div className="text-sm text-slate-400">Average Interest</div>
+                      </div>
+                      <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10 text-center">
+                        <div className="text-3xl mb-2">🚀</div>
+                        <div className={`text-2xl font-bold ${result.googleTrends.metrics.momentum > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {result.googleTrends.metrics.momentum > 0 ? '+' : ''}{result.googleTrends.metrics.momentum}%
+                        </div>
+                        <div className="text-sm text-slate-400">Momentum</div>
+                      </div>
+                    </div>
+
+                    {/* Trend Direction */}
+                    <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                      <div className="text-center mb-4">
+                        <h3 className="text-xl font-semibold text-white">Trend Direction</h3>
+                        <p className="text-slate-400">Search interest trajectory over the last 12 months</p>
+                      </div>
+                      <div className="text-center">
+                        <span className={`inline-block px-6 py-3 rounded-full text-lg font-medium border ${
+                          result.googleTrends.metrics.trendDirection === 'rising' ? 'text-green-400 bg-green-500/20 border-green-500/30' :
+                          result.googleTrends.metrics.trendDirection === 'declining' ? 'text-red-400 bg-red-500/20 border-red-500/30' :
+                          'text-blue-400 bg-blue-500/20 border-blue-500/30'
+                        }`}>
+                          {result.googleTrends.metrics.trendDirection === 'rising' ? '📈 Rising Trend' :
+                           result.googleTrends.metrics.trendDirection === 'declining' ? '📉 Declining Trend' :
+                           '➡️ Stable Trend'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Trend Chart */}
+                    <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                      <div className="text-center mb-6">
+                        <h3 className="text-xl font-semibold text-white">12-Month Trend Data</h3>
+                        <p className="text-slate-400">Monthly search interest progression</p>
+                      </div>
+                      <div className="h-64 bg-slate-900/50 rounded-2xl p-4 border border-white/10">
+                        <div className="flex items-end justify-between h-full space-x-1">
+                          {result.googleTrends.trendData.map((month: any, index: number) => (
+                            <div key={index} className="flex flex-col items-center">
+                              <div 
+                                className="w-8 bg-gradient-to-t from-indigo-500 to-cyan-500 rounded-t-sm"
+                                style={{ height: `${(month.score / 100) * 200}px` }}
+                              ></div>
+                              <div className="text-xs text-slate-400 mt-2 text-center">
+                                {month.month}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Related Topics */}
+                    {result.googleTrends.relatedTopics && result.googleTrends.relatedTopics.length > 0 && (
+                      <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-white">Related Topics</h3>
+                          <p className="text-slate-400">Search terms with similar interest patterns</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {result.googleTrends.relatedTopics.map((topic: any, index: number) => (
+                            <div key={index} className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-white font-medium">{topic.topic}</span>
+                                <span className={`text-sm px-2 py-1 rounded-full ${
+                                  topic.growth > 0 ? 'text-green-400 bg-green-500/20' : 'text-red-400 bg-red-500/20'
+                                }`}>
+                                  {topic.growth > 0 ? '+' : ''}{topic.growth}%
+                                </span>
+                              </div>
+                              <div className="text-slate-400 text-sm">Interest Score: {topic.score}/100</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Geographic Interest */}
+                    {result.googleTrends.geographicInterest && result.googleTrends.geographicInterest.length > 0 && (
+                      <div className="bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-white">Geographic Interest</h3>
+                          <p className="text-slate-400">Countries with highest search interest</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {result.googleTrends.geographicInterest.map((country: any, index: number) => (
+                            <div key={index} className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                              <div className="flex justify-between items-center mb-2">
+                                <span className="text-white font-medium">{country.country}</span>
+                                <span className={`text-sm px-2 py-1 rounded-full ${
+                                  country.trend === 'rising' ? 'text-green-400 bg-green-500/20' : 'text-blue-400 bg-blue-500/20'
+                                }`}>
+                                  {country.trend === 'rising' ? '📈 Rising' : '➡️ Stable'}
+                                </span>
+                              </div>
+                              <div className="text-slate-400 text-sm">Interest Score: {country.score}/100</div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Trend Insights */}
+                    {result.googleTrends.insights && result.googleTrends.insights.length > 0 && (
+                      <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-3xl p-6 border border-purple-500/20">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-white">Trend Insights</h3>
+                          <p className="text-slate-400">AI-generated analysis of trend patterns</p>
+                        </div>
+                        <div className="space-y-3">
+                          {result.googleTrends.insights.map((insight: string, index: number) => (
+                            <div key={index} className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                              <p className="text-slate-300">{insight}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">📊</div>
+                    <h3 className="text-xl font-semibold text-white mb-2">Google Trends Data Unavailable</h3>
+                    <p className="text-slate-400">Trend analysis data is not available for this idea at the moment.</p>
+                  </div>
+                )}
               </div>
             )}
 

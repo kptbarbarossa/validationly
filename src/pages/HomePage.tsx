@@ -190,8 +190,7 @@ const HomePage: React.FC = () => {
                         Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
                     </p>
 
-                    {/* Feature badges with dynamic platform count */}
-                    <HomeFeatureBadges />
+
                 </div>
             </div>
 
@@ -304,23 +303,4 @@ const HomePage: React.FC = () => {
 
 export default HomePage;
 
-// Local component to render feature badges with dynamic platform count
-const HomeFeatureBadges: React.FC = () => {
-    const platformCount = PLATFORM_COUNT;
-    return (
-        <div className="flex flex-wrap justify-center gap-3 mt-4 animate-slide-up delay-300">
-            <div className="px-4 py-2 bg-white/5 border border-white/10 text-slate-200 rounded-full text-sm inline-flex items-center gap-2">
-                <span className="inline-block w-2 h-2 bg-green-400 rounded-full"></span>
-                AI-Powered Analysis
-            </div>
-            <div className="px-4 py-2 bg-white/5 border border-white/10 text-slate-200 rounded-full text-sm inline-flex items-center gap-2">
-                <span className="inline-block w-2 h-2 bg-blue-400 rounded-full"></span>
-                {platformCount}+ Platforms
-            </div>
-            <div className="px-4 py-2 bg-white/5 border border-white/10 text-slate-200 rounded-full text-sm inline-flex items-center gap-2">
-                <span className="inline-block w-2 h-2 bg-purple-400 rounded-full"></span>
-                Instant Results
-            </div>
-        </div>
-    );
-};
+

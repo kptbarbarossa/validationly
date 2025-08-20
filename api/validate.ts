@@ -1,6 +1,19 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
+
+// Google Trends integration
+async function getGoogleTrendsData(keyword: string): Promise<any> {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/google-trends?keyword=${encodeURIComponent(keyword)}`);
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data.data;
+  } catch (error) {
+    console.error('Google Trends fetch error:', error);
+    return null;
+  }
+}
 // Use local DynamicPromptResult definition in this file
 
 // Dynamic prompt-based AI analysis system
@@ -2023,6 +2036,22 @@ CRITICAL RULES:
         } catch (earlySignalError) {
             console.error('⚠️ Early Signal analysis error (non-critical):', earlySignalError);
             // Continue without early signal - it's an enhancement, not critical
+        }
+
+        // Add Google Trends data to the result
+        try {
+            console.log('📊 Adding Google Trends analysis...');
+            const googleTrendsData = await getGoogleTrendsData(result.idea);
+            
+            if (googleTrendsData) {
+                result.googleTrends = googleTrendsData;
+                console.log('✅ Google Trends data added successfully');
+            } else {
+                console.log('⚠️ Google Trends data unavailable, continuing without it');
+            }
+        } catch (trendsError) {
+            console.error('⚠️ Google Trends analysis error (non-critical):', trendsError);
+            // Continue without Google Trends - it's an enhancement, not critical
         }
         
         return res.status(200).json(result);
