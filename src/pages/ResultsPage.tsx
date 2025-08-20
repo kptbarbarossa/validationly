@@ -50,7 +50,7 @@ const ResultsPage: React.FC = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [progress, setProgress] = useState(0);
-    const [copiedIndex, setCopiedIndex>(null);
+    const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
     const [activeTab, setActiveTab] = useState('overview');
 
     // Extract result from location state
