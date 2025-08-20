@@ -288,6 +288,14 @@ export default async function handler(req: any, res: any) {
   try {
     const { content, enhance, fast, model } = req.body;
     
+    // Check if content exists
+    if (!content || typeof content !== 'string') {
+      return res.status(400).json({
+        message: 'Content is required and must be a string.',
+        error: 'Missing content'
+      });
+    }
+    
     // Input validation
     if (!validateInput(content)) {
       return res.status(400).json({
