@@ -275,7 +275,7 @@ const ResultsPage: React.FC = () => {
                       Platform Signal Analysis
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {result.platformAnalyses.map((platform, index) => (
+                      {Array.isArray(result.platformAnalyses) ? result.platformAnalyses.map((platform, index) => (
                         <div key={index} className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
                           <div className="flex items-center justify-between mb-4">
                             <h3 className="text-lg font-semibold text-white">{platform.platform}</h3>
@@ -289,7 +289,11 @@ const ResultsPage: React.FC = () => {
                           </div>
                           <p className="text-slate-300 text-sm">{platform.analysis}</p>
                         </div>
-                      ))}
+                      )) : (
+                        <div className="col-span-2 text-center py-8">
+                          <p className="text-slate-400">Platform analysis data not available</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

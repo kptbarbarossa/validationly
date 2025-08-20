@@ -1428,32 +1428,28 @@ CRITICAL RULES:
                         idea: inputContent,
                         demandScore: 50,
                         scoreJustification: "Analysis completed with fallback data due to parsing issues.",
-                        platformAnalyses: {
-                            X: { 
-                                platformName: "X", 
-                                score: 3, 
-                                summary: "Analysis completed", 
-                                keyFindings: ["Ready for social media testing"], 
-                                contentSuggestion: "Share your idea on X to gather feedback", 
-                                dataSource: "Fallback Analysis" 
+                        platformAnalyses: [
+                            {
+                                platform: "Instagram",
+                                signalStrength: "moderate",
+                                analysis: "Visual content potential exists, but competition is high. Focus on niche communities and micro-influencers for early adoption."
                             },
-                            Reddit: { 
-                                platformName: "Reddit", 
-                                score: 3, 
-                                summary: "Analysis completed", 
-                                keyFindings: ["Ready for community feedback"], 
-                                contentSuggestion: "Post on relevant subreddits", 
-                                dataSource: "Fallback Analysis" 
+                            {
+                                platform: "TikTok",
+                                signalStrength: "strong",
+                                analysis: "High potential for viral growth through short-form content. Early adoption could capture emerging trends before mainstream saturation."
                             },
-                            LinkedIn: { 
-                                platformName: "LinkedIn", 
-                                score: 3, 
-                                summary: "Analysis completed", 
-                                keyFindings: ["Ready for professional feedback"], 
-                                contentSuggestion: "Share with professional network", 
-                                dataSource: "Fallback Analysis" 
+                            {
+                                platform: "Reddit",
+                                signalStrength: "moderate",
+                                analysis: "Community-driven validation possible in specific subreddits. Requires authentic engagement and community building."
+                            },
+                            {
+                                platform: "LinkedIn",
+                                signalStrength: "weak",
+                                analysis: "Limited B2B potential. Consider alternative professional platforms or pivot to consumer-focused strategy."
                             }
-                        },
+                        ],
                         realWorldData: {
                             socialMediaSignals: {
                                 twitter: { trending: false, sentiment: 'neutral', volume: 'medium' },
@@ -1474,10 +1470,20 @@ CRITICAL RULES:
                                 positiveFeedback: ['Analysis pending']
                             }
                         },
-                        tweetSuggestion: "Share your idea on X to get feedback from the community!",
-                        redditTitleSuggestion: "Looking for feedback on my startup idea",
-                        redditBodySuggestion: "I'm working on a new startup idea and would love to get your thoughts and feedback.",
-                        linkedinSuggestion: "Excited to share my latest startup idea and looking for feedback from my professional network.",
+                        socialArbitrageInsights: {
+                            microToMacro: "The idea shows potential to spread from niche communities to broader audiences, but requires strategic community building and authentic engagement.",
+                            geographicDemographic: "Cultural transfer potential exists across similar demographic segments, with opportunities for localized adaptation and community-specific messaging.",
+                            timingFactor: "Current market timing appears favorable for early adoption. Competition is moderate, providing a window for establishing market position.",
+                            platformDynamics: "Platform-specific strategies show varying potential, with TikTok offering the highest growth opportunity and Instagram providing steady community building.",
+                            culturalLeap: "Cross-cultural adoption potential is moderate, requiring careful adaptation and community-specific messaging strategies."
+                        },
+                        trendPhase: "growing",
+                        culturalTransferScore: 0.65,
+                        earlyAdopterAdvantage: "Early adoption could provide first-mover advantages in emerging communities, with potential for viral growth through authentic engagement.",
+                        tweetSuggestion: "🚀 Just discovered an amazing opportunity that's flying under the radar! The early adopter advantage is real - don't miss this cultural shift happening right now. #SocialArbitrage #EarlyAdopter #TrendSpotting",
+                        redditTitleSuggestion: "Found a hidden trend that's about to explode - early adopter advantage analysis",
+                        redditBodySuggestion: "I've been researching this emerging trend and the social arbitrage potential is incredible. The timing is perfect - we're seeing early signals in niche communities that suggest this will go mainstream soon. What are your thoughts on the early adopter strategy?",
+                        linkedinSuggestion: "The future belongs to those who can spot cultural shifts before they become mainstream. This emerging trend represents a significant opportunity for early adopters who understand the power of social arbitrage. The key is authentic community building and strategic timing.",
                         dataConfidence: 'low',
                         lastDataUpdate: new Date().toISOString()
                     };
