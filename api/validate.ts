@@ -1012,7 +1012,7 @@ const promptManager = new PromptManager();
 // Rate limiting için basit bir in-memory store
 const requestCounts = new Map<string, { count: number; resetTime: number }>();
 const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 dakika
-const MAX_REQUESTS_PER_WINDOW = 50; // Normal limit
+const MAX_REQUESTS_PER_WINDOW = 30; // Reduced for security
 
 // Rate limiting kontrolü
 function checkRateLimit(ip: string): boolean {
@@ -1034,7 +1034,7 @@ function checkRateLimit(ip: string): boolean {
 
 
 
-// Input validation
+// Input validation with security checks
 function validateInput(content: string): void {
     if (!content || typeof content !== 'string') {
         throw new Error("Content is required and must be a string");
@@ -1046,6 +1046,22 @@ function validateInput(content: string): void {
 
     if (content.length > 2000) {
         throw new Error("Content must be less than 2000 characters");
+    }
+
+    // Security: Block potentially dangerous content
+    const dangerousPatterns = [
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+        /javascript:/gi,
+        /on\w+\s*=/gi,
+        /data:text\/html/gi,
+        /vbscript:/gi,
+        /expression\s*\(/gi
+    ];
+
+    for (const pattern of dangerousPatterns) {
+        if (pattern.test(content)) {
+            throw new Error("Content contains potentially dangerous elements");
+        }
     }
 }
 
@@ -1087,9 +1103,7 @@ export default async function handler(req: any, res: any) {
     // CORS headers
     const headers = {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
-            ? 'https://validationly.com'
-            : '*',
+        'Access-Control-Allow-Origin': 'https://validationly.com',
         'Access-Control-Allow-Methods': 'POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'X-Content-Type-Options': 'nosniff',
@@ -1136,7 +1150,7 @@ export default async function handler(req: any, res: any) {
             groq: !!process.env.GROQ_API_KEY
         };
         
-        console.log('🤖 Available AI Models:', availableModels);
+        console.log('🤖 AI Models available:', Object.keys(availableModels).filter(key => availableModels[key as keyof typeof availableModels]).length);
         const inputContent = idea || content;
 
         // Input validation
@@ -1169,7 +1183,7 @@ export default async function handler(req: any, res: any) {
                 console.error('❌ Prompt enhancement failed:', error);
                 return res.status(500).json({ 
                     message: 'Enhancement failed',
-                    error: error instanceof Error ? error.message : 'Unknown error'
+                    error: 'Internal server error'
                 });
             }
         }
@@ -1212,7 +1226,7 @@ export default async function handler(req: any, res: any) {
                                 model: 'gemini-2.0-flash-exp',
                                 result: null,
                                 success: false,
-                                error: error.message,
+                                error: 'AI model error',
                                 confidence: 0
                             };
                         }
@@ -1254,7 +1268,7 @@ export default async function handler(req: any, res: any) {
                                 model: 'gpt-4',
                                 result: null,
                                 success: false,
-                                error: error.message,
+                                error: 'AI model error',
                                 confidence: 0
                             };
                         }
@@ -1294,9 +1308,8 @@ export default async function handler(req: any, res: any) {
                         } catch (error) {
                             return {
                                 model: 'llama3-70b-8192',
-                                result: null,
-                                success: false,
-                                error: error.message,
+                                result: false,
+                                error: 'AI model error',
                                 confidence: 0
                             };
                         }
@@ -1855,7 +1868,7 @@ CRITICAL RULES:
             // Final fallback - return error response
         return res.status(500).json({
                 message: 'Analysis system temporarily unavailable. Please try again later.',
-                error: process.env.NODE_ENV === 'development' ? error.message : undefined,
+                error: 'Internal server error',
                 fallbackAttempted: true,
                 retryRecommended: true
             });
