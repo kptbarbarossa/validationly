@@ -1,15 +1,11 @@
-import { NextApiRequest, NextApiResponse } from 'next';
+import type { NextRequest } from 'next/server';
 import { GoogleGenAI } from '@google/genai';
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+export async function POST(request: NextRequest) {
   try {
-    const { idea, useAI = 'gemini' } = req.body;
+    const { idea, useAI = 'gemini' } = await request.json();
 
     if (!idea) {
       return res.status(400).json({ error: 'Idea is required' });
@@ -80,6 +76,12 @@ Also, give me a 0-100 score for market demand and explain why.
 
     console.log('Raw AI analysis:', analysis);
 
+    if (!analysis) {
+      return Response.json({ 
+        error: 'AI analysis failed to generate content' 
+      }, { status: 500 });
+    }
+
     // Extract score from analysis (look for patterns like "score: 75" or "75/100")
     const scoreMatch = analysis.match(/(?:score|demand|rating)[:\s]*(\d{1,3})(?:\/100)?/i);
     const extractedScore = scoreMatch ? parseInt(scoreMatch[1]) : 65; // Default fallback
@@ -114,14 +116,14 @@ Also, give me a 0-100 score for market demand and explain why.
       }
     };
 
-    res.status(200).json(result);
+    return Response.json(result);
 
   } catch (error) {
     console.error('Raw validation error:', error);
-    res.status(500).json({ 
+    return Response.json({ 
       error: 'Analysis failed', 
       details: error instanceof Error ? error.message : 'Unknown error' 
-    });
+    }, { status: 500 });
   }
 }
 
