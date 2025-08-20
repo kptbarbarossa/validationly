@@ -47,12 +47,12 @@ const ToolsPage: React.FC = () => {
                 features: ['Trend phase analysis', 'Social media signals', 'Validation scoring', 'Strategic recommendations']
             },
             {
-                id: 'raw-analysis',
-                title: '🔥 Raw AI Analysis',
-                description: 'Get unfiltered AI insights without any schema constraints. Pure, raw analysis!',
-                icon: '🔥',
-                route: '/simple-analyze',
-                features: ['No schema constraints', 'Raw AI thoughts', 'Unfiltered insights', 'Natural language output']
+                id: 'ai-analysis',
+                title: '🤖 AI-Only Analysis',
+                description: 'Deep strategic analysis using only the AI\'s knowledge base. No external data, pure insights.',
+                icon: '🤖',
+                route: '/analysis',
+                features: ['Strategic insights', 'Risk analysis', 'Validation plan', 'GTM strategy']
             }
     ];
 
