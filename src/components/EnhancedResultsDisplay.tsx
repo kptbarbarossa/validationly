@@ -149,7 +149,7 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
     { id: 'ai-comparison', label: 'AI Model Comparison' },
     { id: 'breakdown', label: '3D Analysis' },
     { id: 'trends', label: 'AI Trend Analysis' },
-    { id: 'google-trends', label: 'Google Trends' },
+    { id: 'google-trends', label: 'Trends' },
     { id: 'sources', label: 'Platform Signals' },
     { id: 'interactive', label: 'Interactive Analysis' },
     { id: 'export', label: 'Export & Share' },
@@ -1001,14 +1001,14 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
               </div>
             )}
 
-            {/* Google Trends Tab */}
+            {/* Trends Tab */}
             {activeTab === 'google-trends' && (
               <div className="space-y-8">
-                {/* Google Trends Header */}
+                {/* Trends Header */}
                 <div className="text-center mb-8">
                   <div className="text-4xl mb-4">📊</div>
-                  <h2 className="text-2xl font-semibold text-white">Google Trends Analysis</h2>
-                  <p className="text-slate-400">Real-time search interest and trend momentum from Google</p>
+                  <h2 className="text-2xl font-semibold text-white">Trends Analysis</h2>
+                  <p className="text-slate-400">Real-time search interest and trend momentum analysis</p>
                 </div>
 
                 {/* Google Trends Data */}
@@ -1127,7 +1127,92 @@ const EnhancedResultsDisplay: React.FC<EnhancedResultsDisplayProps> = ({ result 
                       </div>
                     )}
 
-                    {/* Trend Insights */}
+                    {/* AI-Enhanced Trend Analysis */}
+                    {result.googleTrends.aiAnalysis && (
+                      <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-3xl p-6 border border-purple-500/20">
+                        <div className="text-center mb-6">
+                          <div className="text-4xl mb-4">🤖</div>
+                          <h3 className="text-xl font-semibold text-white">AI-Enhanced Trend Analysis</h3>
+                          <p className="text-slate-400">Gemini AI-powered interpretation of trend data</p>
+                        </div>
+                        
+                        {/* AI Analysis Grid */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {/* Trend Interpretation */}
+                          <div className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-3">📊 Trend Interpretation</h4>
+                            <p className="text-slate-300 text-sm">{result.googleTrends.aiAnalysis.trendInterpretation}</p>
+                          </div>
+                          
+                          {/* Market Timing */}
+                          <div className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-3">⏰ Market Timing</h4>
+                            <p className="text-slate-300 text-sm">{result.googleTrends.aiAnalysis.marketTiming}</p>
+                          </div>
+                          
+                          {/* Competitive Landscape */}
+                          <div className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-3">🏆 Competitive Landscape</h4>
+                            <p className="text-slate-300 text-sm">{result.googleTrends.aiAnalysis.competitiveLandscape}</p>
+                          </div>
+                          
+                          {/* Growth Potential */}
+                          <div className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-3">🚀 Growth Potential</h4>
+                            <p className="text-slate-300 text-sm">{result.googleTrends.aiAnalysis.growthPotential}</p>
+                          </div>
+                        </div>
+                        
+                        {/* Risk Factors */}
+                        {result.googleTrends.aiAnalysis.riskFactors && result.googleTrends.aiAnalysis.riskFactors.length > 0 && (
+                          <div className="mt-6 bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-3">⚠️ Risk Factors</h4>
+                            <div className="space-y-2">
+                              {result.googleTrends.aiAnalysis.riskFactors.map((risk: string, index: number) => (
+                                <div key={index} className="flex items-start gap-3">
+                                  <span className="text-red-400 mt-1">•</span>
+                                  <p className="text-slate-300 text-sm">{risk}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        {/* Strategic Recommendations */}
+                        {result.googleTrends.aiAnalysis.strategicRecommendations && result.googleTrends.aiAnalysis.strategicRecommendations.length > 0 && (
+                          <div className="mt-6 bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                            <h4 className="text-lg font-semibold text-white mb-3">💡 Strategic Recommendations</h4>
+                            <div className="space-y-2">
+                              {result.googleTrends.aiAnalysis.strategicRecommendations.map((rec: string, index: number) => (
+                                <div key={index} className="flex items-start gap-3">
+                                  <span className="text-green-400 mt-1">•</span>
+                                  <p className="text-slate-300 text-sm">{rec}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Enhanced Insights */}
+                    {result.googleTrends.enhancedInsights && result.googleTrends.enhancedInsights.length > 0 && (
+                      <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-3xl p-6 border border-blue-500/20">
+                        <div className="text-center mb-6">
+                          <h3 className="text-xl font-semibold text-white">Enhanced Insights</h3>
+                          <p className="text-slate-400">AI-powered additional insights and observations</p>
+                        </div>
+                        <div className="space-y-3">
+                          {result.googleTrends.enhancedInsights.map((insight: string, index: number) => (
+                            <div key={index} className="bg-slate-900/50 rounded-xl p-4 border border-white/10">
+                              <p className="text-slate-300">{insight}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Original Trend Insights */}
                     {result.googleTrends.insights && result.googleTrends.insights.length > 0 && (
                       <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 rounded-3xl p-6 border border-purple-500/20">
                         <div className="text-center mb-6">

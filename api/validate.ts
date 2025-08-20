@@ -2,7 +2,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 
-// Google Trends integration
+// Trends integration
 async function getGoogleTrendsData(keyword: string): Promise<any> {
   try {
     const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/google-trends?keyword=${encodeURIComponent(keyword)}`);
@@ -10,8 +10,93 @@ async function getGoogleTrendsData(keyword: string): Promise<any> {
     const data = await response.json();
     return data.data;
   } catch (error) {
-    console.error('Google Trends fetch error:', error);
+    console.error('Trends fetch error:', error);
     return null;
+  }
+}
+
+// Enhance trends data with Gemini AI analysis
+async function enhanceTrendsWithGemini(trendsData: any, idea: string): Promise<any> {
+  try {
+    if (!process.env.GOOGLE_API_KEY) {
+      console.log('⚠️ Gemini API key not available, returning raw trends data');
+      return trendsData;
+    }
+
+    console.log('🤖 Enhancing trends data with Gemini AI...');
+    
+    const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+    
+    const analysisPrompt = `You are an expert market analyst and trend interpreter.
+
+ANALYZE THIS TREND DATA for the business idea: "${idea}"
+
+TREND DATA:
+- Current Interest Score: ${trendsData.metrics.currentScore}/100
+- Average Interest: ${trendsData.metrics.averageScore}/100
+- Momentum: ${trendsData.metrics.momentum}%
+- Trend Direction: ${trendsData.metrics.trendDirection}
+- Volatility: ${trendsData.metrics.volatility}
+
+RELATED TOPICS: ${trendsData.relatedTopics.map((t: any) => `${t.topic} (${t.score}/100, ${t.growth > 0 ? '+' : ''}${t.growth}%)`).join(', ')}
+
+GEOGRAPHIC INTEREST: ${trendsData.geographicInterest.map((c: any) => `${c.country} (${c.score}/100, ${c.trend})`).join(', ')}
+
+Provide a comprehensive analysis in the following JSON format (NO markdown, ONLY valid JSON):
+
+{
+  "aiAnalysis": {
+    "trendInterpretation": "Detailed interpretation of what this trend data means for the business idea",
+    "marketTiming": "Assessment of whether this is good timing to enter the market",
+    "competitiveLandscape": "Analysis of competitive environment based on trend patterns",
+    "growthPotential": "Evaluation of growth potential and scalability",
+    "riskFactors": ["Risk factor 1", "Risk factor 2", "Risk factor 3"],
+    "strategicRecommendations": ["Recommendation 1", "Recommendation 2", "Recommendation 3"]
+  },
+  "enhancedInsights": [
+    "Enhanced insight 1 based on AI analysis",
+    "Enhanced insight 2 based on AI analysis",
+    "Enhanced insight 3 based on AI analysis"
+  ]
+}
+
+Keep the original trends data intact and add these AI-enhanced fields.`;
+
+    const result = await gemini.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: analysisPrompt,
+      config: {
+        temperature: 0.3,
+        maxOutputTokens: 1024,
+      }
+    });
+
+    const aiAnalysis = result.text?.trim();
+    
+    if (aiAnalysis) {
+      try {
+        // Try to parse the AI response
+        const parsedAnalysis = JSON.parse(aiAnalysis);
+        
+        // Merge AI analysis with original trends data
+        return {
+          ...trendsData,
+          aiAnalysis: parsedAnalysis.aiAnalysis,
+          enhancedInsights: parsedAnalysis.enhancedInsights,
+          geminiEnhanced: true
+        };
+      } catch (parseError) {
+        console.log('⚠️ Failed to parse Gemini response, returning raw trends data');
+        return trendsData;
+      }
+    } else {
+      console.log('⚠️ Gemini response empty, returning raw trends data');
+      return trendsData;
+    }
+
+  } catch (error) {
+    console.error('❌ Gemini trends enhancement failed:', error);
+    return trendsData; // Return original data if enhancement fails
   }
 }
 // Use local DynamicPromptResult definition in this file
@@ -2038,20 +2123,22 @@ CRITICAL RULES:
             // Continue without early signal - it's an enhancement, not critical
         }
 
-        // Add Google Trends data to the result
+        // Add Trends data to the result with Gemini analysis
         try {
-            console.log('📊 Adding Google Trends analysis...');
-            const googleTrendsData = await getGoogleTrendsData(result.idea);
+            console.log('📊 Adding Trends analysis...');
+            const trendsData = await getGoogleTrendsData(result.idea);
             
-            if (googleTrendsData) {
-                result.googleTrends = googleTrendsData;
-                console.log('✅ Google Trends data added successfully');
+            if (trendsData) {
+                // Enhance trends data with Gemini analysis
+                const enhancedTrendsData = await enhanceTrendsWithGemini(trendsData, result.idea);
+                result.googleTrends = enhancedTrendsData;
+                console.log('✅ Enhanced Trends data added successfully');
             } else {
-                console.log('⚠️ Google Trends data unavailable, continuing without it');
+                console.log('⚠️ Trends data unavailable, continuing without it');
             }
         } catch (trendsError) {
-            console.error('⚠️ Google Trends analysis error (non-critical):', trendsError);
-            // Continue without Google Trends - it's an enhancement, not critical
+            console.error('⚠️ Trends analysis error (non-critical):', trendsError);
+            // Continue without Trends - it's an enhancement, not critical
         }
         
         return res.status(200).json(result);
