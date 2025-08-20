@@ -988,14 +988,14 @@ function getAI(useAI: string = 'gemini'): any {
             return new Groq({ apiKey: process.env.GROQ_API_KEY });
         
         default: // gemini
-            if (!ai) {
-                const apiKey = process.env.GOOGLE_API_KEY || process.env.API_KEY;
-                if (!apiKey) {
-                    throw new Error("Google API key is not set. Please define GOOGLE_API_KEY or API_KEY in environment.");
-                }
-                ai = new GoogleGenAI({ apiKey });
-            }
-            return ai;
+    if (!ai) {
+        const apiKey = process.env.GOOGLE_API_KEY || process.env.API_KEY;
+        if (!apiKey) {
+            throw new Error("Google API key is not set. Please define GOOGLE_API_KEY or API_KEY in environment.");
+        }
+        ai = new GoogleGenAI({ apiKey });
+    }
+    return ai;
     }
 }
 
@@ -1554,16 +1554,16 @@ CRITICAL RULES:
                     };
                 } else {
                     // Default Gemini
-                    const result = await aiInstance.models.generateContent({
-                        model: "gemini-2.0-flash-exp",
-                        contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                        config: {
-                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
-                            responseMimeType: "application/json",
-                            temperature: 0.3,
-                            maxOutputTokens: 1792,
-                        }
-                    });
+                const result = await aiInstance.models.generateContent({
+                    model: "gemini-2.0-flash-exp",
+                    contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                    config: {
+                        systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
+                        responseMimeType: "application/json",
+                        temperature: 0.3,
+                        maxOutputTokens: 1792,
+                    }
+                });
 
                 return {
                     model: 'gemini-2.0-flash-exp',
@@ -1605,22 +1605,22 @@ CRITICAL RULES:
                         // Try Gemini as fallback
                         const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY || '');
                         const result = await gemini.models.generateContent({
-                            model: "gemini-1.5-flash",
-                            contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
-                            config: {
-                                systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
-                                responseMimeType: "application/json",
-                                temperature: 0.3,
-                                maxOutputTokens: 1792,
-                            }
-                        });
-                        
-                        return {
+                        model: "gemini-1.5-flash",
+                        contents: `ANALYZE THIS CONTENT: "${content}"\n\n🌍 LANGUAGE REMINDER: The user wrote in a specific language. You MUST respond in the EXACT SAME LANGUAGE for ALL fields in your JSON response.\n\nCRITICAL: Respond ONLY with valid JSON. No markdown, no explanations, no extra text. Start with { and end with }.`,
+                        config: {
+                            systemInstruction: finalSystemInstruction + `\n\nRESPONSE FORMAT: Return comprehensive JSON with ALL analysis fields including marketIntelligence, competitiveLandscape, revenueModel, targetAudience, riskAssessment, goToMarket, developmentRoadmap, productMarketFit`,
+                            responseMimeType: "application/json",
+                            temperature: 0.3,
+                            maxOutputTokens: 1792,
+                        }
+                    });
+
+                    return {
                             model: 'gemini-1.5-flash (fallback)',
-                            result: result.text?.trim(),
-                            success: true,
-                            fallbackUsed: true
-                        };
+                        result: result.text?.trim(),
+                        success: true,
+                        fallbackUsed: true
+                    };
                     } else {
                         // Try Gemini as fallback for Groq
                         const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY || '');
@@ -2060,44 +2060,59 @@ async function getSimplifiedAIAnalysis(
         const looksTurkish = /[çğıöşüÇĞİÖŞÜ]/.test(content) || /( bir | ve | için | ile | kadar | şöyle | çünkü | ancak )/i.test(content);
         const expectedLanguage = looksTurkish ? 'Turkish' : 'English';
         
-        // Enhanced prompt with real-world data integration - OUTPUT IN SAME LANGUAGE AS INPUT
+        // Enhanced Social Arbitrage Theory prompt - OUTPUT IN SAME LANGUAGE AS INPUT
         const enhancedPrompt = expectedLanguage === 'Turkish' ? 
-            `Bu startup fikrini analiz et: "${content}"
+            `Bu startup fikrini Social Arbitrage Theory çerçevesinde analiz et: "${content}"
             
-            🌍 GERÇEK DÜNYA VERİLERİNİ KULLAN:
-            - Twitter/X: Son 30 günlük tweet'leri, hashtag trendlerini, kullanıcı tepkilerini analiz et
-            - Facebook: Grup tartışmalarını, sayfa etkileşimlerini, reklam performansını değerlendir
-            - TikTok: Viral içerikleri, challenge'ları, kullanıcı yorumlarını incele
-            - Forumlar: Reddit, Quora, Stack Overflow'daki tartışmaları analiz et
-            - Mağaza rafları: Amazon, App Store, Google Play'deki benzer ürünleri ve yorumları değerlendir
-            - Tüketici yorumları: Trustpilot, Yelp, G2 gibi platformlardaki gerçek kullanıcı geri bildirimlerini analiz et
+            🚀 SOCIAL ARBITRAGE THEORY ANALİZİ:
+            - Micro → Macro: Küçük topluluklardan ana akıma geçiş potansiyeli
+            - Geographic & Demographic: Coğrafi ve demografik kültürel transfer
+            - Timing Factor: Trend timing ve market entry zamanlaması
+            - Platform Dynamics: Platform özel dinamikler ve arbitraj fırsatları
+            - Cultural Leap: Kültürler arası sıçrama potansiyeli
             
-            📊 VERİ TABANLI ANALİZ:
-            - Mevcut pazar verilerini kullan
-            - Gerçek rakip analizi yap
-            - Kullanıcı ağrı noktalarını tespit et
-            - Trend verilerini değerlendir
-            - Sosyal medya sinyallerini analiz et
+            🌍 KÜLTÜREL ARBITRAJ ANALİZİ:
+            - Hangi kültürel boşlukları dolduruyor?
+            - Hangi topluluklardan hangi topluluklara transfer edilebilir?
+            - Timing açısından optimal entry point nedir?
+            - Platform dynamics nasıl değişiyor?
+            - Early adopter avantajı nedir?
+            
+            📊 VERİ TABANLI SKORLAMA:
+            - Demand Score: 0-100 arası (kültürel arbitraj potansiyeli)
+            - Trend Phase: emerging/growing/peak/declining
+            - Cultural Transfer Score: 0-100 arası
+            - Platform Signal Strength: Strong/Moderate/Weak
             
             ⚠️ ÖNEMLİ: TÜM ÇIKTIYI TÜRKÇE VER! JSON içindeki tüm metinler Türkçe olmalı.
             
             Sadece JSON döndür. Şu yapıyı kullan:
             {
                 "idea": "fikir",
-                "demandScore": 0-100 arası sayı (veri tabanlı),
-                "scoreJustification": "veri destekli skor gerekçesi",
-                "realWorldData": {
-                    "socialMediaSignals": {
-                        "twitter": { "trending": boolean, "sentiment": "olumlu/nötr/olumsuz", "volume": "yüksek/orta/düşük" },
-                        "facebook": { "groupActivity": "yüksek/orta/düşük", "engagement": "yüksek/orta/düşük" },
-                        "tiktok": { "viralPotential": "yüksek/orta/düşük", "userReaction": "olumlu/nötr/olumsuz" }
-                    },
-                    "forumInsights": {
-                        "reddit": { "discussionVolume": "yüksek/orta/düşük", "painPoints": ["ağrı1", "ağrı2"] },
-                        "quora": { "questionFrequency": "yüksek/orta/düşük", "topics": ["konu1", "konu2"] }
-                    },
-                    "marketplaceData": {
-                        "amazon": { "similarProducts": number, "avgRating": number, "reviewCount": number },
+                "demandScore": 0-100 arası sayı (kültürel arbitraj potansiyeli),
+                "scoreJustification": "social arbitrage theory çerçevesinde skor gerekçesi",
+                "socialArbitrageInsights": {
+                    "microToMacro": "micro to macro transfer analizi",
+                    "geographicDemographic": "coğrafi ve demografik analiz",
+                    "timingFactor": "timing analizi",
+                    "platformDynamics": "platform dinamikleri",
+                    "culturalLeap": "kültürel sıçrama potansiyeli"
+                },
+                "trendPhase": "emerging/growing/peak/declining",
+                "culturalTransferScore": 0-100 arası sayı,
+                "earlyAdopterAdvantage": "early adopter avantajı açıklaması",
+                "platformAnalyses": [
+                    {
+                        "platform": "platform adı",
+                        "signalStrength": "Strong/Moderate/Weak",
+                        "analysis": "platform özel analiz"
+                    }
+                ],
+                "tweetSuggestion": "X/Twitter için öneri",
+                "redditTitleSuggestion": "Reddit başlık önerisi",
+                "redditBodySuggestion": "Reddit içerik önerisi",
+                "linkedinSuggestion": "LinkedIn post önerisi"
+            }
                         "appStore": { "competitorApps": number, "avgRating": number, "downloads": "yüksek/orta/düşük" }
                     },
                     "consumerSentiment": {
@@ -2106,7 +2121,7 @@ async function getSimplifiedAIAnalysis(
                         "positiveFeedback": ["olumlu1", "olumlu2"]
                     }
                 },
-                "platformAnalyses": {
+                    "platformAnalyses": {
                     "X": {
                         "platformName": "X",
                         "score": 1-5 arası (veri tabanlı),
@@ -2142,47 +2157,57 @@ async function getSimplifiedAIAnalysis(
                 "dataConfidence": "yüksek/orta/düşük (veri kalitesi)",
                 "lastDataUpdate": "son veri güncelleme zamanı"
             }` :
-            `Analyze this startup idea: "${content}"
+            `Analyze this startup idea using Social Arbitrage Theory: "${content}"
             
-            🌍 USE REAL-WORLD DATA:
-            - Twitter/X: Analyze last 30 days of tweets, hashtag trends, user reactions
-            - Facebook: Evaluate group discussions, page engagement, ad performance
-            - TikTok: Examine viral content, challenges, user comments
-            - Forums: Analyze discussions on Reddit, Quora, Stack Overflow
-            - Marketplace shelves: Evaluate similar products and reviews on Amazon, App Store, Google Play
-            - Consumer reviews: Analyze real user feedback on Trustpilot, Yelp, G2
+            🚀 SOCIAL ARBITRAGE THEORY ANALYSIS:
+            - Micro → Macro: Potential to move from small communities to mainstream
+            - Geographic & Demographic: Cultural transfer across geographies and demographics
+            - Timing Factor: Trend timing and optimal market entry timing
+            - Platform Dynamics: Platform-specific dynamics and arbitrage opportunities
+            - Cultural Leap: Cross-cultural jump potential
             
-            📊 DATA-DRIVEN ANALYSIS:
-            - Use existing market data
-            - Perform real competitor analysis
-            - Identify user pain points
-            - Evaluate trend data
-            - Analyze social media signals
+            🌍 CULTURAL ARBITRAGE ANALYSIS:
+            - What cultural gaps does it fill?
+            - Which communities can it transfer from/to?
+            - What's the optimal entry point timing-wise?
+            - How are platform dynamics changing?
+            - What's the early adopter advantage?
+            
+            📊 DATA-DRIVEN SCORING:
+            - Demand Score: 0-100 (cultural arbitrage potential)
+            - Trend Phase: emerging/growing/peak/declining
+            - Cultural Transfer Score: 0-100
+            - Platform Signal Strength: Strong/Moderate/Weak
             
             ⚠️ IMPORTANT: GIVE ALL OUTPUT IN ENGLISH! All text in JSON must be in English.
             
             Return only JSON. Use this structure:
             {
                 "idea": "idea",
-                "demandScore": number 0-100 (data-driven),
-                "scoreJustification": "data-supported score justification",
-                "realWorldData": {
-                    "socialMediaSignals": {
-                        "twitter": { "trending": boolean, "sentiment": "positive/neutral/negative", "volume": "high/medium/low" },
-                        "facebook": { "groupActivity": "high/medium/low", "engagement": "high/medium/low" },
-                        "tiktok": { "viralPotential": "high/medium/low", "userReaction": "positive/neutral/negative" }
-                    },
-                    "forumInsights": {
-                        "reddit": { "discussionVolume": "high/medium/low", "painPoints": ["pain1", "pain2"] },
-                        "quora": { "questionFrequency": "high/medium/low", "topics": ["topic1", "topic2"] }
-                    },
-                    "marketplaceData": {
-                        "amazon": { "similarProducts": number, "avgRating": number, "reviewCount": number },
-                        "appStore": { "competitorApps": number, "avgRating": number, "downloads": "high/medium/low" }
-                    },
-                    "consumerSentiment": {
-                        "overallSentiment": "positive/neutral/negative",
-                        "keyComplaints": ["complaint1", "complaint2"],
+                "demandScore": number 0-100 (cultural arbitrage potential),
+                "scoreJustification": "score justification within social arbitrage theory framework",
+                "socialArbitrageInsights": {
+                    "microToMacro": "micro to macro transfer analysis",
+                    "geographicDemographic": "geographic and demographic analysis",
+                    "timingFactor": "timing analysis",
+                    "platformDynamics": "platform dynamics",
+                    "culturalLeap": "cultural leap potential"
+                },
+                "trendPhase": "emerging/growing/peak/declining",
+                "culturalTransferScore": number 0-100,
+                "earlyAdopterAdvantage": "early adopter advantage explanation",
+                "platformAnalyses": [
+                    {
+                        "platform": "platform name",
+                        "signalStrength": "Strong/Moderate/Weak",
+                        "analysis": "platform-specific analysis"
+                    }
+                ],
+                "tweetSuggestion": "X/Twitter suggestion",
+                "redditTitleSuggestion": "Reddit title suggestion",
+                "redditBodySuggestion": "Reddit content suggestion",
+                "linkedinSuggestion": "LinkedIn post suggestion"
+            }
                         "positiveFeedback": ["positive1", "positive2"]
                     }
                 },
@@ -2249,7 +2274,7 @@ async function getSimplifiedAIAnalysis(
                             idea: content,
                     demandScore: Math.max(0, Math.min(100, parsed.demandScore || 50)),
                     scoreJustification: parsed.scoreJustification || 'Data-driven analysis completed',
-                    language: expectedLanguage,
+            language: expectedLanguage,
                             fallbackUsed: false,
                     realWorldData: parsed.realWorldData || {},
                     platformAnalyses: parsed.platformAnalyses || {},
@@ -2274,7 +2299,7 @@ async function getSimplifiedAIAnalysis(
         
         // Return enhanced fallback response
         const fallbackResponse = {
-                idea: content,
+                            idea: content,
             demandScore: 50,
             scoreJustification: expectedLanguage === 'Turkish' ? 'Gelişmiş analiz başarısız, yedek yanıt kullanıldı' : 'Enhanced analysis failed, fallback used',
             language: expectedLanguage,
