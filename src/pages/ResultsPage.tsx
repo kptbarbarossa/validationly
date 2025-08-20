@@ -9,6 +9,8 @@ interface ValidationResult {
     momentumAdjusted?: boolean;
     earlySignalAdjusted?: boolean;
     scoreJustification: string;
+    rawAnalysis?: string;
+    aiModel?: string;
     tweetSuggestion: string;
     redditTitleSuggestion: string;
     redditBodySuggestion: string;
@@ -271,6 +273,30 @@ const ResultsPage: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
+
+                            {/* Raw AI Analysis - Show if available */}
+                            {result.rawAnalysis && (
+                                <div className="bg-white/5 backdrop-blur rounded-3xl p-8 border border-white/10">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h3 className="text-xl font-semibold text-white flex items-center gap-2">
+                                            <span className="text-2xl">🔥</span>
+                                            {isTR ? 'Raw AI Analizi' : 'Raw AI Analysis'}
+                                        </h3>
+                                        {result.aiModel && (
+                                            <span className="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm border border-purple-500/30">
+                                                {result.aiModel.toUpperCase()}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div className="bg-slate-900/50 rounded-2xl p-6 border border-white/10">
+                                        <div className="prose prose-invert max-w-none">
+                                            <div className="whitespace-pre-wrap text-slate-300 leading-relaxed">
+                                                {result.rawAnalysis}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Quick Stats */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

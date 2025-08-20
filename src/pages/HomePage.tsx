@@ -25,6 +25,7 @@ const HomePage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false); // analysis submit loading
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
+    const [useRawAI, setUseRawAI] = useState(false);
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -100,14 +101,19 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Direct API call to our validate system with fast mode
+            // Choose API endpoint based on user preference
             const ideaPayload = userInput.idea;
-            const response = await fetch('/api/validate', {
+            const endpoint = useRawAI ? '/api/raw-validate' : '/api/validate';
+            const body = useRawAI 
+                ? { idea: ideaPayload, useAI: 'gemini' }
+                : { idea: ideaPayload, fast: true };
+                
+            const response = await fetch(endpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ idea: ideaPayload, fast: true })
+                body: JSON.stringify(body)
             });
 
             if (!response.ok) {
@@ -232,7 +238,7 @@ const HomePage: React.FC = () => {
                                 >
                                     📚
                                 </button>
-                            <button
+                                <button
                                     type="button"
                                     onClick={async () => {
                                         if (isLoading || isEnhancing) return;
@@ -261,34 +267,58 @@ const HomePage: React.FC = () => {
                                         '✨'
                                     )}
                                 </button>
-                            <button
-                                type="button"
-                                onClick={triggerValidation}
-                                disabled={!userInput.isValid || isLoading}
+                                <button
+                                    type="button"
+                                    onClick={triggerValidation}
+                                    disabled={!userInput.isValid || isLoading}
                                     className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 bg-white/5 border border-white/10 backdrop-blur-sm shadow-sm ${userInput.isValid && !isLoading
-                                    ? 'hover:scale-110 cursor-pointer opacity-100 hover:bg-white/10 hover:border-white/20'
-                                    : 'cursor-not-allowed opacity-50'
+                                        ? 'hover:scale-110 cursor-pointer opacity-100 hover:bg-white/10 hover:border-white/20'
+                                        : 'cursor-not-allowed opacity-50'
                                     }`}
-                                aria-label="Submit idea for validation"
-                            >
-                                <img
-                                    src="/logo.png"
-                                    alt="Submit"
-                                    className="w-6 h-6 object-contain"
-                                />
-                            </button>
+                                    aria-label="Submit idea for validation"
+                                >
+                                    <img
+                                        src="/logo.png"
+                                        alt="Submit"
+                                        className="w-6 h-6 object-contain"
+                                    />
+                                </button>
                             </div>
                         </div>
                     </div>
-                    {userInput.errorMessage && (
-                        <div id="error-message" className="text-red-400 text-sm mt-2 text-left">
-                            {userInput.errorMessage}
-                        </div>
-                    )}
-                    {isLoading && <EnhancedLoadingSpinner />}
+                    
+                    {/* Raw AI Toggle */}
+                    <div className="mt-4 text-center">
+                        <label className="flex items-center justify-center gap-3 cursor-pointer">
+                            <input
+                                type="checkbox"
+                                checked={useRawAI}
+                                onChange={(e) => setUseRawAI(e.target.checked)}
+                                className="sr-only"
+                            />
+                            <div className={`px-4 py-2 rounded-full border-2 transition-all ${
+                                useRawAI 
+                                    ? 'border-purple-500/50 bg-purple-500/10 text-purple-300' 
+                                    : 'border-white/20 bg-white/5 text-slate-300 hover:bg-white/10'
+                            }`}>
+                                <span className="flex items-center gap-2">
+                                    {useRawAI ? '🔥' : '🤖'} 
+                                    {useRawAI ? 'Raw AI Analysis' : 'Structured Analysis'}
+                                </span>
+                            </div>
+                        </label>
+                        <p className="text-xs text-slate-400 mt-2">
+                            {useRawAI ? 'Get unfiltered AI insights' : 'Get structured validation scores'}
+                        </p>
+                    </div>
                 </div>
-
-
+                
+                {userInput.errorMessage && (
+                    <div id="error-message" className="text-red-400 text-sm mt-2 text-left">
+                        {userInput.errorMessage}
+                    </div>
+                )}
+                {isLoading && <EnhancedLoadingSpinner />}
             </form>
 
             {/* Prompt Gallery Modal */}
