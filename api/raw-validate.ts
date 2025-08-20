@@ -8,7 +8,7 @@ export async function POST(request: NextRequest) {
     const { idea, useAI = 'gemini' } = await request.json();
 
     if (!idea) {
-      return res.status(400).json({ error: 'Idea is required' });
+      return Response.json({ error: 'Idea is required' }, { status: 400 });
     }
 
     console.log('Raw validation request:', { idea, useAI });
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     // Get AI instance
     const aiInstance = getAI(useAI);
     if (!aiInstance) {
-      return res.status(500).json({ error: 'AI service not available' });
+      return Response.json({ error: 'AI service not available' }, { status: 500 });
     }
 
     // Enhanced prompt for structured but natural analysis

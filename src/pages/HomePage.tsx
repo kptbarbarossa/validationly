@@ -25,7 +25,6 @@ const HomePage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false); // analysis submit loading
     const [galleryOpen, setGalleryOpen] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
-    const [useRawAI, setUseRawAI] = useState(false);
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -101,19 +100,14 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Choose API endpoint based on user preference
+            // Use raw validation API for better insights
             const ideaPayload = userInput.idea;
-            const endpoint = useRawAI ? '/api/raw-validate' : '/api/validate';
-            const body = useRawAI 
-                ? { idea: ideaPayload, useAI: 'gemini' }
-                : { idea: ideaPayload, fast: true };
-                
-            const response = await fetch(endpoint, {
+            const response = await fetch('/api/raw-validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(body)
+                body: JSON.stringify({ idea: ideaPayload, useAI: 'gemini' })
             });
 
             if (!response.ok) {
@@ -287,30 +281,7 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     
-                    {/* Raw AI Toggle */}
-                    <div className="mt-4 text-center">
-                        <label className="flex items-center justify-center gap-3 cursor-pointer">
-                            <input
-                                type="checkbox"
-                                checked={useRawAI}
-                                onChange={(e) => setUseRawAI(e.target.checked)}
-                                className="sr-only"
-                            />
-                            <div className={`px-4 py-2 rounded-full border-2 transition-all ${
-                                useRawAI 
-                                    ? 'border-purple-500/50 bg-purple-500/10 text-purple-300' 
-                                    : 'border-white/20 bg-white/5 text-slate-300 hover:bg-white/10'
-                            }`}>
-                                <span className="flex items-center gap-2">
-                                    {useRawAI ? '🔥' : '🤖'} 
-                                    {useRawAI ? 'Raw AI Analysis' : 'Structured Analysis'}
-                                </span>
-                            </div>
-                        </label>
-                        <p className="text-xs text-slate-400 mt-2">
-                            {useRawAI ? 'Get unfiltered AI insights' : 'Get structured validation scores'}
-                        </p>
-                    </div>
+
                 </div>
                 
                 {userInput.errorMessage && (
