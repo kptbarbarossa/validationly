@@ -16,6 +16,7 @@ import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
 import XContentGeneratorGuide from './pages/blog/XContentGeneratorGuide';
 import LoginToSeePriceGuide from './pages/blog/LoginToSeePriceGuide';
+import SimpleAnalyzePage from './pages/SimpleAnalyzePage';
 import UseCaseSaaSPage from './pages/UseCaseSaaSPage';
 import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
 import UseCasesIndexPage from './pages/UseCasesIndexPage';
@@ -84,6 +85,7 @@ const App: React.FC = () => {
               <Route path="/trend-to-startup" element={<TrendToStartupPage />} />
               <Route path="/market-signal-academy" element={<MarketSignalAcademyPage />} />
                                         <Route path="/social-validation" element={<SocialValidationPage />} />
+              <Route path="/simple-analyze" element={<SimpleAnalyzePage />} />
               <Route path="/tools" element={<ToolsPage />} />
 
               <Route path="/faq" element={<FAQPage />} />

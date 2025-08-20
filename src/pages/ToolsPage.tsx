@@ -38,14 +38,22 @@ const ToolsPage: React.FC = () => {
             route: '/market-signal-academy',
             features: ['Expert training', 'Real case studies', 'Practical tools', 'Market intelligence']
         },
-        {
-            id: 'social-validation',
-            title: 'Social Validation Analysis',
-            description: 'Discover early trend opportunities and market timing advantages using AI-powered social media trend analysis.',
-            icon: '🚀',
-            route: '/social-validation',
-            features: ['Trend phase analysis', 'Social media signals', 'Validation scoring', 'Strategic recommendations']
-        }
+                    {
+                id: 'social-validation',
+                title: 'Social Validation Analysis',
+                description: 'Discover early trend opportunities and market timing advantages using AI-powered social media trend analysis.',
+                icon: '🚀',
+                route: '/social-validation',
+                features: ['Trend phase analysis', 'Social media signals', 'Validation scoring', 'Strategic recommendations']
+            },
+            {
+                id: 'raw-analysis',
+                title: '🔥 Raw AI Analysis',
+                description: 'Get unfiltered AI insights without any schema constraints. Pure, raw analysis!',
+                icon: '🔥',
+                route: '/simple-analyze',
+                features: ['No schema constraints', 'Raw AI thoughts', 'Unfiltered insights', 'Natural language output']
+            }
     ];
 
     return (
