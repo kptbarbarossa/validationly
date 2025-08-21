@@ -1,8 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
-// Import enhanced analysis system
-import { performEnhancedValidation } from '../src/utils/enhancedAnalysis';
 
 // Import our enhanced prompt system
 interface IdeaClassification {
@@ -87,6 +85,294 @@ const classifyIdea = (idea: string): IdeaClassification => {
     industryContext: primaryCategory,
     keyTerms: idea.split(' ').filter(word => word.length > 3).slice(0, 5)
   };
+};
+
+// Enhanced Analysis Functions
+const identifyWeakAreas = (basicResult: any): string[] => {
+  const weakAreas = [];
+  
+  if (basicResult.dimensionScores?.marketOpportunity?.score < 70) {
+    weakAreas.push('market-opportunity');
+  }
+  if (basicResult.dimensionScores?.executionFeasibility?.score < 70) {
+    weakAreas.push('execution-feasibility');
+  }
+  if (basicResult.dimensionScores?.businessModelViability?.score < 70) {
+    weakAreas.push('business-model');
+  }
+  if (basicResult.dimensionScores?.goToMarketStrategy?.score < 70) {
+    weakAreas.push('go-to-market');
+  }
+  
+  return weakAreas;
+};
+
+const performDeepDiveAnalysis = async (
+  idea: string,
+  classification: IdeaClassification,
+  basicResult: any,
+  weakAreas: string[],
+  gemini: GoogleGenAI
+): Promise<any> => {
+  if (weakAreas.length === 0) {
+    return { message: "No weak areas identified - strong overall analysis" };
+  }
+
+  const deepDivePrompt = `You are a Senior ${classification.primaryCategory} Consultant conducting a DEEP DIVE analysis.
+
+ORIGINAL IDEA: "${idea}"
+CLASSIFICATION: ${classification.primaryCategory} | ${classification.businessModel} | ${classification.targetMarket}
+
+BASIC ANALYSIS RESULTS:
+- Overall Score: ${basicResult.demandScore}/100
+- Market Score: ${basicResult.dimensionScores?.marketOpportunity?.score || 'N/A'}
+- Execution Score: ${basicResult.dimensionScores?.executionFeasibility?.score || 'N/A'}
+- Business Model Score: ${basicResult.dimensionScores?.businessModelViability?.score || 'N/A'}
+- GTM Score: ${basicResult.dimensionScores?.goToMarketStrategy?.score || 'N/A'}
+
+WEAK AREAS IDENTIFIED: ${weakAreas.join(', ')}
+
+DEEP DIVE TASK: Provide detailed analysis and improvement strategies for the weak areas.
+
+RETURN JSON:
+{
+  "deepDiveInsights": {
+    ${weakAreas.map(area => `"${area}": {
+      "improvedScore": 0-100,
+      "keyImprovements": ["improvement1", "improvement2", "improvement3"],
+      "actionableSteps": ["step1", "step2", "step3"],
+      "successMetrics": ["metric1", "metric2"],
+      "timeframe": "estimated timeline",
+      "resourcesNeeded": ["resource1", "resource2"]
+    }`).join(',\n    ')}
+  },
+  "overallImprovementPotential": {
+    "scoreIncrease": "potential score increase",
+    "confidenceBoost": 0-100,
+    "keyLeverages": ["leverage1", "leverage2", "leverage3"]
+  },
+  "premiumRecommendations": {
+    "priorityActions": ["action1", "action2", "action3"],
+    "quickWins": ["win1", "win2"],
+    "longTermStrategy": ["strategy1", "strategy2"]
+  }
+}`;
+
+  try {
+    const result = await gemini.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: deepDivePrompt,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.4,
+        maxOutputTokens: 2500
+      }
+    });
+
+    return JSON.parse(result.text || '{}');
+  } catch (error) {
+    console.log('Deep dive analysis failed:', error);
+    return { error: 'Deep dive analysis failed' };
+  }
+};
+
+const performCompetitorAnalysis = async (
+  idea: string,
+  classification: IdeaClassification,
+  gemini: GoogleGenAI
+): Promise<any> => {
+  const competitorPrompt = `You are a Competitive Intelligence Expert specializing in ${classification.primaryCategory} market research.
+
+STARTUP IDEA: "${idea}"
+CATEGORY: ${classification.primaryCategory}
+BUSINESS MODEL: ${classification.businessModel}
+TARGET MARKET: ${classification.targetMarket}
+
+COMPETITIVE ANALYSIS TASK: Conduct comprehensive competitor research and provide strategic insights.
+
+RETURN JSON:
+{
+  "competitorAnalysis": {
+    "directCompetitors": [
+      {
+        "name": "competitor name",
+        "description": "what they do",
+        "strengths": ["strength1", "strength2"],
+        "weaknesses": ["weakness1", "weakness2"],
+        "marketShare": "estimated %",
+        "fundingLevel": "funding stage/amount"
+      }
+    ],
+    "indirectCompetitors": [
+      {
+        "name": "competitor name", 
+        "approach": "their solution approach",
+        "threatLevel": "Low/Medium/High"
+      }
+    ],
+    "marketGaps": [
+      {
+        "gap": "market gap description",
+        "opportunity": "opportunity description",
+        "difficulty": "Low/Medium/High"
+      }
+    ]
+  },
+  "competitiveStrategy": {
+    "differentiationStrategy": "recommended differentiation approach",
+    "competitiveAdvantages": ["advantage1", "advantage2", "advantage3"],
+    "marketPositioning": "recommended positioning",
+    "entryStrategy": "market entry approach",
+    "defensiveStrategies": ["defense1", "defense2"]
+  },
+  "competitiveScore": 0-100,
+  "competitiveRisks": ["risk1", "risk2", "risk3"],
+  "competitiveOpportunities": ["opportunity1", "opportunity2", "opportunity3"]
+}`;
+
+  try {
+    const result = await gemini.models.generateContent({
+      model: "gemini-1.5-flash", 
+      contents: competitorPrompt,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.4,
+        maxOutputTokens: 2500
+      }
+    });
+
+    return JSON.parse(result.text || '{}');
+  } catch (error) {
+    console.log('Competitor analysis failed:', error);
+    return { error: 'Competitor analysis failed' };
+  }
+};
+
+const performMarketTimingAnalysis = async (
+  idea: string,
+  classification: IdeaClassification,
+  gemini: GoogleGenAI
+): Promise<any> => {
+  const timingPrompt = `You are a Market Timing Expert and Trend Analyst specializing in ${classification.primaryCategory} industry.
+
+STARTUP IDEA: "${idea}"
+INDUSTRY: ${classification.primaryCategory}
+TARGET MARKET: ${classification.targetMarket}
+
+MARKET TIMING ANALYSIS: Analyze the optimal timing for launching this startup idea.
+
+RETURN JSON:
+{
+  "marketTiming": {
+    "overallTimingScore": 0-100,
+    "timingAssessment": "Perfect/Good/Fair/Poor",
+    "industryLifecycleStage": "Early/Growth/Mature/Declining",
+    "marketReadinessFactors": [
+      {
+        "factor": "factor name",
+        "status": "Supporting/Neutral/Hindering",
+        "impact": "High/Medium/Low"
+      }
+    ]
+  },
+  "timingRecommendations": {
+    "launchTiming": "Immediate/3-6 months/6-12 months/Wait",
+    "reasoningForTiming": "detailed explanation",
+    "preparationSteps": ["step1", "step2", "step3"],
+    "marketEntryStrategy": "timing-optimized strategy"
+  },
+  "trendAnalysis": {
+    "supportingTrends": ["trend1", "trend2", "trend3"],
+    "challengingTrends": ["challenge1", "challenge2"],
+    "emergingOpportunities": ["opportunity1", "opportunity2"],
+    "timingRisks": ["risk1", "risk2"]
+  },
+  "seasonalConsiderations": {
+    "bestLaunchMonths": ["month1", "month2"],
+    "seasonalFactors": "seasonal considerations",
+    "cyclicalPatterns": "industry cycles to consider"
+  }
+}`;
+
+  try {
+    const result = await gemini.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: timingPrompt,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.4,
+        maxOutputTokens: 2500
+      }
+    });
+
+    return JSON.parse(result.text || '{}');
+  } catch (error) {
+    console.log('Market timing analysis failed:', error);
+    return { error: 'Market timing analysis failed' };
+  }
+};
+
+const performEnhancedAnalysis = async (
+  idea: string,
+  classification: IdeaClassification,
+  basicResult: any,
+  userTier: 'pro' | 'business' | 'enterprise',
+  gemini: GoogleGenAI
+): Promise<any> => {
+  console.log('🚀 Starting enhanced analysis for', userTier, 'user');
+  
+  const weakAreas = identifyWeakAreas(basicResult);
+  console.log('📊 Weak areas identified:', weakAreas);
+  
+  const enhancedResult: any = {
+    basicAnalysis: basicResult,
+    overallEnhancement: {
+      confidenceBoost: 0,
+      additionalInsights: [],
+      premiumValue: []
+    }
+  };
+
+  // Step 1: Deep dive analysis (all tiers)
+  if (weakAreas.length > 0) {
+    console.log('🔍 Performing deep dive analysis...');
+    enhancedResult.deepDiveAnalysis = await performDeepDiveAnalysis(
+      idea, classification, basicResult, weakAreas, gemini
+    );
+    enhancedResult.overallEnhancement.confidenceBoost += 20;
+    enhancedResult.overallEnhancement.premiumValue.push('Deep dive analysis on weak areas');
+  }
+
+  // Step 2: Competitor analysis (business+ tiers)
+  if (userTier === 'business' || userTier === 'enterprise') {
+    console.log('🕵️ Performing competitor analysis...');
+    enhancedResult.competitorAnalysis = await performCompetitorAnalysis(
+      idea, classification, gemini
+    );
+    enhancedResult.overallEnhancement.confidenceBoost += 25;
+    enhancedResult.overallEnhancement.premiumValue.push('Comprehensive competitor intelligence');
+  }
+
+  // Step 3: Market timing analysis (enterprise tier)
+  if (userTier === 'enterprise') {
+    console.log('⏰ Performing market timing analysis...');
+    enhancedResult.marketTimingAnalysis = await performMarketTimingAnalysis(
+      idea, classification, gemini
+    );
+    enhancedResult.overallEnhancement.confidenceBoost += 15;
+    enhancedResult.overallEnhancement.premiumValue.push('Market timing optimization');
+  }
+
+  // Calculate additional insights
+  enhancedResult.overallEnhancement.additionalInsights = [
+    `Enhanced analysis completed with ${enhancedResult.overallEnhancement.confidenceBoost}% confidence boost`,
+    `Identified ${weakAreas.length} areas for improvement with specific action plans`,
+    ...(enhancedResult.competitorAnalysis ? ['Competitive landscape mapped with strategic recommendations'] : []),
+    ...(enhancedResult.marketTimingAnalysis ? ['Market timing optimized for maximum success probability'] : [])
+  ];
+
+  console.log('✅ Enhanced analysis completed');
+  return enhancedResult;
 };
 
 // Enhanced prompt generator
@@ -766,12 +1052,13 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
           if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
             try {
               console.log(`🚀 Performing enhanced analysis for ${userTier} user...`);
-              const enhancedResult = await performEnhancedValidation(
+              const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+              const enhancedResult = await performEnhancedAnalysis(
                 inputContent,
                 classification,
                 parsed,
                 userTier as 'pro' | 'business' | 'enterprise',
-                process.env.GOOGLE_API_KEY
+                gemini
               );
               
               // Merge enhanced results with basic analysis
@@ -1071,6 +1358,31 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
       // Add trends data if available
       if (trendsData) {
         parsed.googleTrends = trendsData;
+      }
+      
+      // Enhanced analysis for premium users (normal mode)
+      if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
+        try {
+          console.log(`🚀 Performing enhanced analysis for ${userTier} user (normal mode)...`);
+          const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+          const enhancedResult = await performEnhancedAnalysis(
+            inputContent,
+            classification,
+            parsed,
+            userTier as 'pro' | 'business' | 'enterprise',
+            gemini
+          );
+          
+          // Merge enhanced results with basic analysis
+          parsed.enhancedAnalysis = enhancedResult;
+          parsed.isPremiumAnalysis = true;
+          parsed.premiumTier = userTier;
+          
+          console.log(`✅ Enhanced ${userTier} analysis completed with ${enhancedResult.overallEnhancement.confidenceBoost}% confidence boost`);
+        } catch (enhancedError) {
+          console.log('⚠️ Enhanced analysis failed, continuing with basic analysis:', enhancedError);
+          // Continue with basic analysis if enhanced fails
+        }
       }
       
       // Ensure other required fields
