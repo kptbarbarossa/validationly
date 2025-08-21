@@ -10,6 +10,7 @@ interface ValidationResult {
     platform: string;
     signalStrength: string;
     analysis: string;
+    score?: number;
   }>;
   socialArbitrageInsights?: {
     microToMacro: string;
@@ -29,22 +30,17 @@ interface ValidationResult {
   goal?: string;
   industry?: string;
   stage?: string;
+  realWorldData?: any;
+  dataConfidence?: string;
+  lastDataUpdate?: string;
 }
 
 const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [showConfetti, setShowConfetti] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   
   const result: ValidationResult = location.state?.result;
-
-  useEffect(() => {
-    if (result) {
-      setShowConfetti(true);
-      setTimeout(() => setShowConfetti(false), 3000);
-    }
-  }, [result]);
 
   if (!result) {
     return (
@@ -85,6 +81,46 @@ const ResultsPage: React.FC = () => {
     }
   };
 
+  // Calculate real metrics from API data
+  const getMarketSize = () => {
+    if (result.realWorldData?.marketplaceData) {
+      const amazon = result.realWorldData.marketplaceData.amazon;
+      const appStore = result.realWorldData.marketplaceData.appStore;
+      
+      if (amazon.similarProducts > 0 || appStore.competitorApps > 0) {
+        const totalProducts = (amazon.similarProducts || 0) + (appStore.competitorApps || 0);
+        if (totalProducts > 100) return '$10B+';
+        if (totalProducts > 50) return '$5B+';
+        if (totalProducts > 20) return '$2B+';
+        if (totalProducts > 10) return '$1B+';
+        return '$500M+';
+      }
+    }
+    return 'TBD';
+  };
+
+  const getGrowthTrend = () => {
+    if (result.realWorldData?.socialMediaSignals) {
+      const twitter = result.realWorldData.socialMediaSignals.twitter;
+      const tiktok = result.realWorldData.socialMediaSignals.tiktok;
+      
+      if (twitter.trending || tiktok.viralPotential === 'high') return '500%+';
+      if (twitter.sentiment === 'positive' || tiktok.viralPotential === 'medium') return '200%+';
+      return '100%+';
+    }
+    return 'TBD';
+  };
+
+  const getTimingAssessment = () => {
+    if (result.realWorldData?.consumerSentiment) {
+      const sentiment = result.realWorldData.consumerSentiment.overallSentiment;
+      if (sentiment === 'positive') return 'Great timing';
+      if (sentiment === 'neutral') return 'Good timing';
+      return 'Needs research';
+    }
+    return 'TBD';
+  };
+
   return (
     <>
       <SEOHead
@@ -93,50 +129,31 @@ const ResultsPage: React.FC = () => {
         keywords="startup validation, idea validation, market research, startup tools"
       />
       
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-        {/* Confetti Effect */}
-        {showConfetti && (
-          <div className="fixed inset-0 pointer-events-none z-50">
-            {[...Array(50)].map((_, i) => (
-              <div
-                key={i}
-                className="absolute w-2 h-2 bg-gradient-to-r from-yellow-400 to-pink-500 rounded-full animate-bounce"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${Math.random() * 2}s`,
-                  animationDuration: `${1 + Math.random() * 2}s`
-                }}
-              />
-            ))}
-          </div>
-        )}
-
+      <div className="min-h-screen text-white">
+        {/* Same background as homepage */}
         <div className="relative">
-          <div className="container mx-auto px-6 py-8">
+          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
+          
+          <div className="container mx-auto px-6 py-8 relative z-10">
             
-            {/* 🎉 HOLY SHIT MOMENT - First 3 seconds */}
+            {/* 🎉 HOLY SHIT MOMENT - Smaller and cleaner */}
             <div className="text-center mb-12 animate-fade-in">
-              <div className="inline-block p-2 bg-gradient-to-r from-yellow-400 to-pink-500 rounded-full mb-6">
-                <span className="text-4xl">🎉</span>
-              </div>
-              
-              <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
+              <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
                 CONGRATULATIONS!
               </h1>
               
-              <div className="text-6xl md:text-8xl font-bold mb-6">
+              <div className="text-4xl md:text-6xl font-bold mb-6">
                 <span className={getScoreColor(result.demandScore)}>
                   {result.demandScore}%
                 </span>
-                <span className="text-4xl md:text-6xl ml-4">{getScoreEmoji(result.demandScore)}</span>
+                <span className="text-3xl md:text-5xl ml-4">{getScoreEmoji(result.demandScore)}</span>
               </div>
               
-              <p className="text-2xl md:text-3xl text-slate-300 mb-6 max-w-4xl mx-auto">
+              <p className="text-xl md:text-2xl text-slate-300 mb-6 max-w-4xl mx-auto">
                 Your idea has a <span className="font-bold text-yellow-400">VALIDATION SCORE</span> of {result.demandScore}%!
               </p>
               
-              <p className="text-xl text-slate-400 max-w-3xl mx-auto">
+              <p className="text-lg text-slate-400 max-w-3xl mx-auto">
                 {result.demandScore >= 80 
                   ? "🚀 You're onto something BIG! This idea has massive potential!"
                   : result.demandScore >= 60 
@@ -146,34 +163,34 @@ const ResultsPage: React.FC = () => {
               </p>
             </div>
 
-            {/* 💰 MONEY TALKS Section */}
+            {/* 💰 MONEY TALKS Section - Real data from API */}
             <div className="grid md:grid-cols-3 gap-6 mb-12">
               <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
                 <div className="text-4xl mb-3">💰</div>
                 <h3 className="text-xl font-bold mb-2 text-green-400">Market Opportunity</h3>
-                <p className="text-3xl font-bold text-white">$2.4B</p>
-                <p className="text-slate-400 text-sm">Potential market size</p>
+                <p className="text-3xl font-bold text-white">{getMarketSize()}</p>
+                <p className="text-slate-400 text-sm">Based on competitor analysis</p>
               </div>
               
               <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
                 <div className="text-4xl mb-3">📈</div>
                 <h3 className="text-xl font-bold mb-2 text-blue-400">Growth Trend</h3>
-                <p className="text-3xl font-bold text-white">340%</p>
-                <p className="text-slate-400 text-sm">Year-over-year growth</p>
+                <p className="text-3xl font-bold text-white">{getGrowthTrend()}</p>
+                <p className="text-slate-400 text-sm">Social media momentum</p>
               </div>
               
               <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
                 <div className="text-4xl mb-3">🎯</div>
                 <h3 className="text-xl font-bold mb-2 text-purple-400">Timing</h3>
                 <p className="text-2xl font-bold text-white">
-                  {result.trendPhase === 'emerging' ? 'Perfect!' : 
-                   result.trendPhase === 'growing' ? 'Great!' : 
-                   result.trendPhase === 'peak' ? 'Good' : 'Late'}
+                  {getTimingAssessment()}
                 </p>
                 <p className="text-slate-400 text-sm">
-                  {result.trendPhase === 'emerging' ? 'Early adopter advantage' :
-                   result.trendPhase === 'growing' ? 'Growing market' :
-                   result.trendPhase === 'peak' ? 'Peak market' : 'Declining market'}
+                  {result.realWorldData?.consumerSentiment?.overallSentiment === 'positive' 
+                    ? 'Positive market sentiment'
+                    : result.realWorldData?.consumerSentiment?.overallSentiment === 'neutral'
+                    ? 'Neutral market sentiment'
+                    : 'Market research needed'}
                 </p>
               </div>
             </div>
@@ -210,6 +227,225 @@ const ResultsPage: React.FC = () => {
                   <button className="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl font-semibold hover:scale-105 transition-transform">
                     Get List
                   </button>
+                </div>
+              </div>
+            </div>
+
+            {/* 📱 SOCIAL MEDIA POST SUGGESTIONS */}
+            <div className="glass glass-border p-8 rounded-3xl mb-12">
+              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                📱 Social Media Post Suggestions
+              </h2>
+              
+              <div className="grid md:grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Twitter Post */}
+                <div className="glass glass-border p-6 rounded-2xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="text-2xl">🐦</div>
+                    <h3 className="text-xl font-bold text-blue-400">Twitter/X Post</h3>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 p-4 rounded-xl mb-4 min-h-[120px]">
+                    <p className="text-slate-200 text-sm leading-relaxed">
+                      {result.tweetSuggestion || `🚀 Excited to share my new startup idea: "${result.idea}"
+
+💡 This could be the next big thing in the market!
+
+What do you think? Would you use this? 
+
+#Startup #Innovation #Tech`}
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        const text = result.tweetSuggestion || `🚀 Excited to share my new startup idea: "${result.idea}"
+
+💡 This could be the next big thing in the market!
+
+What do you think? Would you use this? 
+
+#Startup #Innovation #Tech`;
+                        navigator.clipboard.writeText(text);
+                        // Show success feedback
+                        const button = event?.target as HTMLButtonElement;
+                        const originalText = button.textContent;
+                        button.textContent = '✅ Copied!';
+                        button.className = 'px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold transition-all';
+                        setTimeout(() => {
+                          button.textContent = originalText;
+                          button.className = 'px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition-all';
+                        }, 2000);
+                      }}
+                      className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition-all flex-1"
+                    >
+                      📋 Copy
+                    </button>
+                    <button
+                      onClick={() => {
+                        const text = result.tweetSuggestion || `🚀 Excited to share my new startup idea: "${result.idea}"
+
+💡 This could be the next big thing in the market!
+
+What do you think? Would you use this? 
+
+#Startup #Innovation #Tech`;
+                        const encodedText = encodeURIComponent(text);
+                        window.open(`https://twitter.com/intent/tweet?text=${encodedText}`, '_blank');
+                      }}
+                      className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-semibold transition-all flex-1"
+                    >
+                      🐦 Post on X
+                    </button>
+                  </div>
+                </div>
+
+                {/* Reddit Post */}
+                <div className="glass glass-border p-6 rounded-2xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="text-2xl">🤖</div>
+                    <h3 className="text-xl font-bold text-orange-400">Reddit Post</h3>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 p-4 rounded-xl mb-4">
+                    <h4 className="font-bold text-slate-200 mb-2 text-sm">
+                      {result.redditTitleSuggestion || `Looking for feedback on my startup idea: "${result.idea}"`}
+                    </h4>
+                    <p className="text-slate-300 text-sm leading-relaxed">
+                      {result.redditBodySuggestion || `Hey r/startups! 👋
+
+I'm working on a new startup idea and would love your thoughts and feedback.
+
+**The Idea:** ${result.idea}
+
+**What I'm looking for:**
+• Honest feedback on the concept
+• Potential challenges you see
+• Would you actually use this?
+• Any suggestions for improvement?
+
+Thanks in advance for your insights! 🙏`}
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        const title = result.redditTitleSuggestion || `Looking for feedback on my startup idea: "${result.idea}"`;
+                        const body = result.redditBodySuggestion || `Hey r/startups! 👋
+
+I'm working on a new startup idea and would love your thoughts and feedback.
+
+**The Idea:** ${result.idea}
+
+**What I'm looking for:**
+• Honest feedback on the concept
+• Potential challenges you see
+• Would you actually use this?
+• Any suggestions for improvement?
+
+Thanks in advance for your insights! 🙏`;
+                        const fullText = `${title}\n\n${body}`;
+                        navigator.clipboard.writeText(fullText);
+                        // Show success feedback
+                        const button = event?.target as HTMLButtonElement;
+                        const originalText = button.textContent;
+                        button.textContent = '✅ Copied!';
+                        button.className = 'px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold transition-all';
+                        setTimeout(() => {
+                          button.textContent = originalText;
+                          button.className = 'px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition-all';
+                        }, 2000);
+                      }}
+                      className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition-all flex-1"
+                    >
+                      📋 Copy
+                    </button>
+                    <button
+                      onClick={() => {
+                        window.open('https://www.reddit.com/r/startups/submit', '_blank');
+                      }}
+                      className="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-semibold transition-all flex-1"
+                    >
+                      🤖 Post on Reddit
+                    </button>
+                  </div>
+                </div>
+
+                {/* LinkedIn Post */}
+                <div className="glass glass-border p-6 rounded-2xl">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="text-2xl">💼</div>
+                    <h3 className="text-xl font-bold text-blue-600">LinkedIn Post</h3>
+                  </div>
+                  
+                  <div className="bg-slate-800/50 p-4 rounded-xl mb-4 min-h-[120px]">
+                    <p className="text-slate-200 text-sm leading-relaxed">
+                      {result.linkedinSuggestion || `🚀 Excited to share my latest startup idea: "${result.idea}"
+
+As an entrepreneur, I'm always looking for ways to solve real problems and create value. This idea has been on my mind for a while, and I'd love to get your professional insights.
+
+**The Problem:** [Brief description of the problem]
+**The Solution:** ${result.idea}
+**The Opportunity:** [Market potential]
+
+What are your thoughts? Would this solve a pain point in your industry? Any feedback or suggestions would be greatly appreciated!
+
+#Startup #Innovation #Entrepreneurship #Business #Networking`}
+                    </p>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        const text = result.linkedinSuggestion || `🚀 Excited to share my latest startup idea: "${result.idea}"
+
+As an entrepreneur, I'm always looking for ways to solve real problems and create value. This idea has been on my mind for a while, and I'd love to get your professional insights.
+
+**The Problem:** [Brief description of the problem]
+**The Solution:** ${result.idea}
+**The Opportunity:** [Market potential]
+
+What are your thoughts? Would this solve a pain point in your industry? Any feedback or suggestions would be greatly appreciated!
+
+#Startup #Innovation #Entrepreneurship #Business #Networking`;
+                        navigator.clipboard.writeText(text);
+                        // Show success feedback
+                        const button = event?.target as HTMLButtonElement;
+                        const originalText = button.textContent;
+                        button.textContent = '✅ Copied!';
+                        button.className = 'px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-semibold transition-all';
+                        setTimeout(() => {
+                          button.textContent = originalText;
+                          button.className = 'px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition-all';
+                        }, 2000);
+                      }}
+                      className="px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white rounded-lg text-sm font-semibold transition-all flex-1"
+                    >
+                      📋 Copy
+                    </button>
+                    <button
+                      onClick={() => {
+                        const text = result.linkedinSuggestion || `🚀 Excited to share my latest startup idea: "${result.idea}"
+
+As an entrepreneur, I'm always looking for ways to solve real problems and create value. This idea has been on my mind for a while, and I'd love to get your professional insights.
+
+**The Problem:** [Brief description of the problem]
+**The Solution:** ${result.idea}
+**The Opportunity:** [Market potential]
+
+What are your thoughts? Would this solve a pain point in your industry? Any feedback or suggestions would be greatly appreciated!
+
+#Startup #Innovation #Entrepreneurship #Business #Networking`;
+                        const encodedText = encodeURIComponent(text);
+                        window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent('Startup Idea Validation')}&summary=${encodedText}`, '_blank');
+                      }}
+                      className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-all flex-1"
+                    >
+                      💼 Post on LinkedIn
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -251,6 +487,32 @@ const ResultsPage: React.FC = () => {
                     <div className="glass glass-border p-6 rounded-2xl">
                       <h3 className="text-xl font-bold mb-4 text-blue-400">Target Audience</h3>
                       <p className="text-slate-300">{result.audience}</p>
+                    </div>
+                  )}
+
+                  {result.realWorldData && (
+                    <div className="glass glass-border p-6 rounded-2xl">
+                      <h3 className="text-xl font-bold mb-4 text-purple-400">Real World Data</h3>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div>
+                          <h4 className="font-semibold text-slate-300 mb-2">Social Media Signals</h4>
+                          <p className="text-slate-400 text-sm">
+                            Twitter: {result.realWorldData.socialMediaSignals?.twitter?.trending ? '🔥 Trending' : 'Normal activity'}
+                          </p>
+                          <p className="text-slate-400 text-sm">
+                            TikTok: {result.realWorldData.socialMediaSignals?.tiktok?.viralPotential || 'Medium'} viral potential
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-slate-300 mb-2">Consumer Sentiment</h4>
+                          <p className="text-slate-400 text-sm">
+                            Overall: {result.realWorldData.consumerSentiment?.overallSentiment || 'Neutral'}
+                          </p>
+                          <p className="text-slate-400 text-sm">
+                            Confidence: {result.dataConfidence || 'Medium'}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -297,21 +559,21 @@ const ResultsPage: React.FC = () => {
                 <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-blue-500/10 to-purple-500/10">
                   <div className="text-4xl mb-3">📱</div>
                   <h3 className="text-xl font-bold mb-2">Notion</h3>
-                  <p className="text-slate-400 text-sm mb-3">Started with Reddit validation</p>
+                  <p className="text-slate-400 text-sm">Started with Reddit validation</p>
                   <p className="text-2xl font-bold text-green-400">$10B company</p>
                 </div>
                 
                 <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-green-500/10 to-blue-500/10">
                   <div className="text-4xl mb-3">⚡</div>
                   <h3 className="text-xl font-bold mb-2">Linear</h3>
-                  <p className="text-slate-400 text-sm mb-3">Validated on HN</p>
+                  <p className="text-slate-400 text-sm">Validated on HN</p>
                   <p className="text-2xl font-bold text-green-400">$400M valuation</p>
                 </div>
                 
                 <div className="text-center p-6 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10">
                   <div className="text-4xl mb-3">🚀</div>
                   <h3 className="text-xl font-bold mb-2">Your Idea</h3>
-                  <p className="text-slate-400 text-sm mb-3">Same pattern detected!</p>
+                  <p className="text-slate-400 text-sm">Same pattern detected!</p>
                   <p className="text-2xl font-bold text-yellow-400">Next big thing?</p>
                 </div>
               </div>
