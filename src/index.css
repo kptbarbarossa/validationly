@@ -227,6 +227,16 @@ body {
 .delay-550 { animation-delay: 550ms !important; }
 .delay-600 { animation-delay: 600ms !important; }
 
+/* Fade in animation for Results Page */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
 /* Subtle noise to reduce gradient banding */
 /* removed noise overlay */
 
