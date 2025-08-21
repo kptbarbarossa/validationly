@@ -24,6 +24,7 @@ const HomePage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false); // analysis submit loading
 
     const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
+    const [selectedTier, setSelectedTier] = useState<'free' | 'pro' | 'business' | 'enterprise'>('free');
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -99,14 +100,18 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Use original validation API with 3 AI models
+            // Use original validation API with enhanced analysis for premium tiers
             const ideaPayload = userInput.idea;
             const response = await fetch('/api/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ content: ideaPayload, fast: true })
+                body: JSON.stringify({ 
+                    content: ideaPayload, 
+                    fast: true,
+                    userTier: selectedTier !== 'free' ? selectedTier : undefined
+                })
             });
 
             if (!response.ok) {
@@ -291,6 +296,37 @@ const HomePage: React.FC = () => {
                     textareaRef.current?.focus();
                 }}
             />
+
+            {/* Premium Tier Selector (Test Mode) */}
+            <div className="mt-8 max-w-2xl mx-auto">
+                <div className="glass glass-border p-6 rounded-2xl">
+                    <h3 className="text-lg font-bold text-center mb-4 text-slate-300">🧪 Test Premium Features</h3>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        {[
+                            { tier: 'free', label: '🆓 Free', desc: 'Basic analysis' },
+                            { tier: 'pro', label: '💎 Pro', desc: 'Deep dive analysis' },
+                            { tier: 'business', label: '🚀 Business', desc: '+ Competitor intel' },
+                            { tier: 'enterprise', label: '👑 Enterprise', desc: '+ Market timing' }
+                        ].map(({ tier, label, desc }) => (
+                            <button
+                                key={tier}
+                                onClick={() => setSelectedTier(tier as any)}
+                                className={`p-3 rounded-xl text-center transition-all ${
+                                    selectedTier === tier
+                                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white'
+                                        : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                                }`}
+                            >
+                                <div className="font-semibold text-sm">{label}</div>
+                                <div className="text-xs opacity-75">{desc}</div>
+                            </button>
+                        ))}
+                    </div>
+                    <p className="text-center text-xs text-slate-500 mt-3">
+                        Select tier to test enhanced analysis features
+                    </p>
+                </div>
+            </div>
 
             {/* Removed sample ideas section (Prompt Gallery replaces it) */}
 

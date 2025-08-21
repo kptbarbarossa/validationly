@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import SignalSummary from '../components/results/SignalSummary';
+import EnhancedAnalysisDisplay from '../components/results/EnhancedAnalysisDisplay';
 
 interface ValidationResult {
   idea: string;
@@ -125,6 +126,11 @@ interface ValidationResult {
     analysisDepth?: string;
     confidence?: number;
   };
+  
+  // Enhanced analysis for premium users
+  enhancedAnalysis?: any;
+  isPremiumAnalysis?: boolean;
+  premiumTier?: 'pro' | 'business' | 'enterprise';
 }
 
 const ResultsPage: React.FC = () => {
@@ -399,6 +405,14 @@ const ResultsPage: React.FC = () => {
                   )}
                 </div>
               </div>
+            )}
+
+            {/* 💎 Enhanced Analysis Section (Premium Users) */}
+            {result.isPremiumAnalysis && result.enhancedAnalysis && result.premiumTier && (
+              <EnhancedAnalysisDisplay 
+                enhancedAnalysis={result.enhancedAnalysis}
+                premiumTier={result.premiumTier}
+              />
             )}
 
             {/* 📡 Signal Summary Section */}

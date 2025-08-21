@@ -1,6 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
+// Import enhanced analysis system
+import { performEnhancedValidation } from '../src/utils/enhancedAnalysis';
 
 // Import our enhanced prompt system
 interface IdeaClassification {
@@ -478,7 +480,7 @@ export default async function handler(req: any, res: any) {
   }
   
   try {
-    const { content, enhance, fast, model } = req.body;
+    const { content, enhance, fast, model, userTier } = req.body;
     
     // Check if content exists
     if (!content || typeof content !== 'string') {
@@ -758,6 +760,30 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
               analysisDepth: fast ? 'fast' : 'comprehensive',
               confidence: 75
             };
+          }
+          
+          // Enhanced analysis for premium users
+          if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
+            try {
+              console.log(`🚀 Performing enhanced analysis for ${userTier} user...`);
+              const enhancedResult = await performEnhancedValidation(
+                inputContent,
+                classification,
+                parsed,
+                userTier as 'pro' | 'business' | 'enterprise',
+                process.env.GOOGLE_API_KEY
+              );
+              
+              // Merge enhanced results with basic analysis
+              parsed.enhancedAnalysis = enhancedResult;
+              parsed.isPremiumAnalysis = true;
+              parsed.premiumTier = userTier;
+              
+              console.log(`✅ Enhanced ${userTier} analysis completed with ${enhancedResult.overallEnhancement.confidenceBoost}% confidence boost`);
+            } catch (enhancedError) {
+              console.log('⚠️ Enhanced analysis failed, continuing with basic analysis:', enhancedError);
+              // Continue with basic analysis if enhanced fails
+            }
           }
           
           console.log(`✅ Enhanced ${fast ? 'fast' : 'standard'} analysis completed - Score: ${parsed.demandScore}/100, Category: ${classification.primaryCategory}`);
