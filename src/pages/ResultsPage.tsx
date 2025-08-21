@@ -894,106 +894,9 @@ What are your thoughts? Would this solve a pain point in your industry? Any feed
               </div>
             </div>
 
-            {/* 💎 PREMIUM UPSELL */}
-            <div className="glass glass-border p-8 rounded-3xl mb-12 bg-gradient-to-r from-purple-500/10 to-pink-500/10">
-              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-                💎 UNLOCK PREMIUM
-              </h2>
-              
-              <div className="grid md:grid-cols-2 gap-8 items-center">
-                <div>
-                  <h3 className="text-2xl font-bold mb-4">Take Your Idea to the Next Level</h3>
-                  <ul className="space-y-3 text-slate-300">
-                    <li className="flex items-center gap-3">
-                      <span className="text-green-400">✓</span>
-                      1-on-1 strategy session
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <span className="text-green-400">✓</span>
-                      Custom market research
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <span className="text-green-400">✓</span>
-                      Investor pitch coaching
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <span className="text-green-400">✓</span>
-                      Technical architecture review
-                    </li>
-                  </ul>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-6xl mb-4">🚀</div>
-                  <p className="text-2xl font-bold mb-4 text-yellow-400">500+ founders used this</p>
-                  <button className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded-2xl text-xl hover:scale-105 transition-transform">
-                    Get Premium Access
-                  </button>
-                </div>
-              </div>
-            </div>
 
-            {/* ⏰ URGENCY & FOMO */}
-            <div className="glass glass-border p-8 rounded-3xl mb-12 bg-gradient-to-r from-red-500/10 to-orange-500/10">
-              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-red-400 to-orange-500 bg-clip-text text-transparent">
-                ⏰ LIMITED TIME OFFER
-              </h2>
-              
-              <div className="text-center">
-                <p className="text-2xl mb-6">Early bird pricing ends in <span className="text-3xl font-bold text-red-400">24h</span></p>
-                <div className="grid md:grid-cols-3 gap-6 mb-8">
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">🎯</div>
-                    <p className="text-lg font-bold">First 100 users</p>
-                    <p className="text-slate-400">Lifetime access</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">👥</div>
-                    <p className="text-lg font-bold">Exclusive community</p>
-                    <p className="text-slate-400">Founder network</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-4xl mb-2">💰</div>
-                    <p className="text-lg font-bold">Money-back guarantee</p>
-                    <p className="text-slate-400">1 week trial</p>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* 🔄 CONVERSION FUNNEL */}
-            <div className="glass glass-border p-8 rounded-3xl mb-12">
-              <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-blue-400 to-green-500 bg-clip-text text-transparent">
-                🔄 Your Startup Journey
-              </h2>
-              
-              <div className="space-y-6">
-                {[
-                  { step: 1, title: 'Idea Validation', status: 'done', icon: '✅', desc: 'COMPLETED' },
-                  { step: 2, title: 'Build MVP', status: 'current', icon: '🔄', desc: 'START HERE' },
-                  { step: 3, title: 'Launch & Test', status: 'pending', icon: '⏳', desc: 'Next step' },
-                  { step: 4, title: 'Scale & Fund', status: 'pending', icon: '⏳', desc: 'Future' },
-                  { step: 5, title: 'Exit Strategy', status: 'pending', icon: '⏳', desc: 'Future' }
-                ].map((item, index) => (
-                  <div key={index} className={`flex items-center gap-6 p-6 rounded-2xl ${
-                    item.status === 'done' ? 'bg-green-500/10 border border-green-500/20' :
-                    item.status === 'current' ? 'bg-blue-500/10 border border-blue-500/20' :
-                    'bg-white/5 border border-white/10'
-                  }`}>
-                    <div className="text-3xl">{item.icon}</div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold">{item.title}</h3>
-                      <p className="text-slate-400">{item.desc}</p>
-                    </div>
-                    {item.status === 'current' && (
-                      <button className="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl font-semibold hover:scale-105 transition-transform">
-                        Start Now
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+
 
             {/* 🎯 FINAL ACTION BUTTONS */}
             <div className="text-center mb-12">
@@ -1010,25 +913,6 @@ What are your thoughts? Would this solve a pain point in your industry? Any feed
                 >
                   🖨️ Print Report
                 </button>
-                <button className="px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-500 text-black font-bold rounded-2xl text-lg hover:scale-105 transition-transform">
-                  🚀 Get Premium Access
-                </button>
-              </div>
-              
-              {/* Buy Me a Coffee Section */}
-              <div className="text-center">
-                <a
-                  href="https://buymeacoffee.com/kptbarbarossa"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block"
-                >
-                  <img
-                    src="/buymeacoffee.gif"
-                    alt="Buy Me a Coffee"
-                    className="w-96 h-96 rounded-2xl"
-                  />
-                </a>
               </div>
             </div>
           </div>
