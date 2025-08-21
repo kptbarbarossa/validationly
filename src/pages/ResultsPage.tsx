@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
+import SignalSummary from '../components/results/SignalSummary';
 
 interface ValidationResult {
   idea: string;
@@ -400,6 +401,13 @@ const ResultsPage: React.FC = () => {
               </div>
             )}
 
+            {/* 📡 Signal Summary Section */}
+            <SignalSummary 
+              platformAnalyses={result.platformAnalyses}
+              socialMediaSignals={result.realWorldData?.socialMediaSignals}
+              overallScore={result.demandScore}
+            />
+
             {/* 🎯 ACTION PLAN - Next 48 hours */}
             <div className="glass glass-border p-8 rounded-3xl mb-12">
               <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
@@ -724,14 +732,77 @@ What are your thoughts? Would this solve a pain point in your industry? Any feed
               )}
               
               {activeTab === 'platforms' && (
-                <div className="grid md:grid-cols-2 gap-6">
-                  {result.platformAnalyses.map((platform, index) => (
-                    <div key={index} className="glass glass-border p-6 rounded-2xl">
-                      <h3 className="text-xl font-bold mb-3 text-purple-400">{platform.platform}</h3>
-                      <p className="text-slate-400 mb-3">Signal Strength: <span className="text-yellow-400">{platform.signalStrength}</span></p>
-                      <p className="text-slate-300 text-sm">{platform.analysis}</p>
-                    </div>
-                  ))}
+                <div className="space-y-6">
+                  <div className="text-center mb-6">
+                    <p className="text-slate-400">
+                      Detailed platform analysis is now available in the Signal Summary section above. 
+                      This tab shows additional platform-specific insights.
+                    </p>
+                  </div>
+                  
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {result.platformAnalyses.map((platform, index) => (
+                      <div key={index} className="glass glass-border p-6 rounded-2xl">
+                        <div className="flex items-center justify-between mb-4">
+                          <h3 className="text-xl font-bold text-purple-400">{platform.platform}</h3>
+                          <div className={`px-3 py-1 rounded-full text-sm font-semibold border ${
+                            platform.signalStrength === 'strong' ? 'text-green-400 bg-green-400/10 border-green-400/30' :
+                            platform.signalStrength === 'moderate' ? 'text-yellow-400 bg-yellow-400/10 border-yellow-400/30' :
+                            'text-red-400 bg-red-400/10 border-red-400/30'
+                          }`}>
+                            {platform.signalStrength === 'strong' ? '🟢' : 
+                             platform.signalStrength === 'moderate' ? '🟡' : '🔴'} 
+                            {platform.signalStrength}
+                          </div>
+                        </div>
+                        
+                        {platform.score && (
+                          <div className="mb-4">
+                            <div className="flex justify-between text-sm text-slate-400 mb-2">
+                              <span>Platform Score</span>
+                              <span>{platform.score}/5</span>
+                            </div>
+                            <div className="w-full bg-white/10 rounded-full h-2">
+                              <div 
+                                className="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full transition-all duration-500"
+                                style={{ width: `${(platform.score / 5) * 100}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        )}
+                        
+                        <p className="text-slate-300 text-sm leading-relaxed">{platform.analysis}</p>
+                        
+                        {/* Platform-specific recommendations */}
+                        <div className="mt-4 pt-4 border-t border-white/10">
+                          <h4 className="text-sm font-semibold text-slate-300 mb-2">Recommended Actions:</h4>
+                          <ul className="text-xs text-slate-400 space-y-1">
+                            {platform.platform === 'X' && (
+                              <>
+                                <li>• Post during peak hours (9-10 AM, 7-9 PM)</li>
+                                <li>• Use relevant hashtags and mention industry leaders</li>
+                                <li>• Share behind-the-scenes development updates</li>
+                              </>
+                            )}
+                            {platform.platform === 'Reddit' && (
+                              <>
+                                <li>• Find relevant subreddits for your target audience</li>
+                                <li>• Engage authentically before promoting</li>
+                                <li>• Share valuable insights, not just promotion</li>
+                              </>
+                            )}
+                            {platform.platform === 'LinkedIn' && (
+                              <>
+                                <li>• Write thought leadership articles</li>
+                                <li>• Connect with industry professionals</li>
+                                <li>• Share business insights and lessons learned</li>
+                              </>
+                            )}
+                          </ul>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
               
