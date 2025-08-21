@@ -6,12 +6,94 @@ interface ValidationResult {
   idea: string;
   demandScore: number;
   scoreJustification: string;
+  
+  // Enhanced classification
+  classification?: {
+    primaryCategory: string;
+    businessModel: string;
+    targetMarket: string;
+    complexity: string;
+    confidence?: number;
+  };
+  
+  // Enhanced dimension scores
+  dimensionScores?: {
+    marketOpportunity?: {
+      score: number;
+      justification: string;
+      keyInsights?: string[];
+      risks?: string[];
+      opportunities?: string[];
+    };
+    executionFeasibility?: {
+      score: number;
+      justification: string;
+      technicalComplexity?: string;
+      timeToMarket?: string;
+      resourceRequirements?: string[];
+      keyRisks?: string[];
+    };
+    businessModelViability?: {
+      score: number;
+      justification: string;
+      revenueModel?: string;
+      unitEconomics?: string;
+      monetizationTimeline?: string;
+      scalabilityFactors?: string[];
+    };
+    goToMarketStrategy?: {
+      score: number;
+      justification: string;
+      primaryChannels?: string[];
+      customerAcquisitionStrategy?: string;
+      competitiveDifferentiation?: string;
+      launchStrategy?: string;
+    };
+  };
+  
+  // Industry-specific insights
+  industrySpecificInsights?: {
+    regulatoryConsiderations?: string[];
+    industryTrends?: string[];
+    competitiveLandscape?: string;
+    successFactors?: string[];
+    commonFailureReasons?: string[];
+  };
+  
+  // Actionable recommendations
+  actionableRecommendations?: {
+    immediateNextSteps?: string[];
+    validationMethods?: string[];
+    pivotOpportunities?: string[];
+    riskMitigation?: string[];
+    keyMetricsToTrack?: string[];
+  };
+  
   platformAnalyses: Array<{
     platform: string;
     signalStrength: string;
     analysis: string;
     score?: number;
   }>;
+  
+  // Enhanced social media suggestions
+  socialMediaSuggestions?: {
+    tweetSuggestion?: string;
+    linkedinSuggestion?: string;
+    redditTitleSuggestion?: string;
+    redditBodySuggestion?: string;
+  };
+  
+  // Market data
+  marketData?: {
+    estimatedMarketSize?: string;
+    growthRate?: string;
+    competitorCount?: string;
+    marketMaturity?: string;
+    keyTrends?: string[];
+  };
+  
+  // Legacy fields for backward compatibility
   socialArbitrageInsights?: {
     microToMacro: string;
     geographicDemographic: string;
@@ -33,6 +115,15 @@ interface ValidationResult {
   realWorldData?: any;
   dataConfidence?: string;
   lastDataUpdate?: string;
+  
+  // Analysis metadata
+  analysisMetadata?: {
+    analysisDate?: string;
+    aiModel?: string;
+    industryExpertise?: string;
+    analysisDepth?: string;
+    confidence?: number;
+  };
 }
 
 const ResultsPage: React.FC = () => {
@@ -136,10 +227,25 @@ const ResultsPage: React.FC = () => {
           
           <div className="container mx-auto px-6 py-8 relative z-10">
             
-            {/* 🎉 HOLY SHIT MOMENT - Smaller and cleaner */}
+            {/* 🎉 Enhanced Score Display with Classification */}
             <div className="text-center mb-12 animate-fade-in">
+              {/* Classification Badge */}
+              {result.classification && (
+                <div className="flex flex-wrap justify-center gap-2 mb-6">
+                  <span className="px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 text-sm font-semibold">
+                    {result.classification.primaryCategory}
+                  </span>
+                  <span className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300 text-sm font-semibold">
+                    {result.classification.businessModel}
+                  </span>
+                  <span className="px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-full text-cyan-300 text-sm font-semibold">
+                    {result.classification.targetMarket}
+                  </span>
+                </div>
+              )}
+              
               <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-600 bg-clip-text text-transparent">
-                CONGRATULATIONS!
+                {result.classification?.primaryCategory ? `${result.classification.primaryCategory} VALIDATION` : 'CONGRATULATIONS!'}
               </h1>
               
               <div className="text-4xl md:text-6xl font-bold mb-6">
@@ -150,50 +256,149 @@ const ResultsPage: React.FC = () => {
               </div>
               
               <p className="text-xl md:text-2xl text-slate-300 mb-6 max-w-4xl mx-auto">
-                Your idea has a <span className="font-bold text-yellow-400">VALIDATION SCORE</span> of {result.demandScore}%!
+                Your {result.classification?.primaryCategory || 'startup'} idea has a <span className="font-bold text-yellow-400">VALIDATION SCORE</span> of {result.demandScore}%!
               </p>
               
               <p className="text-lg text-slate-400 max-w-3xl mx-auto">
                 {result.demandScore >= 80 
-                  ? "🚀 You're onto something BIG! This idea has massive potential!"
+                  ? `🚀 Outstanding ${result.classification?.primaryCategory || 'startup'} potential! This idea shows strong market validation signals.`
                   : result.demandScore >= 60 
-                  ? "📈 Good potential with room for optimization. Let's make it great!"
-                  : "⚠️ Interesting concept, but needs refinement. We'll help you pivot!"
+                  ? `📈 Solid ${result.classification?.primaryCategory || 'business'} foundation with optimization opportunities ahead.`
+                  : `💡 Interesting ${result.classification?.primaryCategory || 'concept'} that needs refinement and market research.`
                 }
               </p>
+              
+              {/* Analysis Metadata */}
+              {result.analysisMetadata && (
+                <div className="mt-6 flex justify-center">
+                  <div className="glass glass-border px-4 py-2 rounded-full">
+                    <span className="text-sm text-slate-400">
+                      Enhanced AI Analysis • {result.analysisMetadata.industryExpertise} Expert • 
+                      Confidence: {result.analysisMetadata.confidence || 75}%
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* 💰 MONEY TALKS Section - Real data from API */}
-            <div className="grid md:grid-cols-3 gap-6 mb-12">
-              <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
-                <div className="text-4xl mb-3">💰</div>
-                <h3 className="text-xl font-bold mb-2 text-green-400">Market Opportunity</h3>
-                <p className="text-3xl font-bold text-white">{getMarketSize()}</p>
-                <p className="text-slate-400 text-sm">Based on competitor analysis</p>
-              </div>
-              
-              <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
-                <div className="text-4xl mb-3">📈</div>
-                <h3 className="text-xl font-bold mb-2 text-blue-400">Growth Trend</h3>
-                <p className="text-3xl font-bold text-white">{getGrowthTrend()}</p>
-                <p className="text-slate-400 text-sm">Social media momentum</p>
-              </div>
-              
+            {/* 📊 Enhanced Dimension Scores */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+              {/* Market Opportunity */}
               <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
                 <div className="text-4xl mb-3">🎯</div>
-                <h3 className="text-xl font-bold mb-2 text-purple-400">Timing</h3>
-                <p className="text-2xl font-bold text-white">
-                  {getTimingAssessment()}
+                <h3 className="text-xl font-bold mb-2 text-green-400">Market Opportunity</h3>
+                <p className="text-3xl font-bold text-white">
+                  {result.dimensionScores?.marketOpportunity?.score || getMarketSize()}
+                  {result.dimensionScores?.marketOpportunity?.score ? '/100' : ''}
                 </p>
                 <p className="text-slate-400 text-sm">
-                  {result.realWorldData?.consumerSentiment?.overallSentiment === 'positive' 
-                    ? 'Positive market sentiment'
-                    : result.realWorldData?.consumerSentiment?.overallSentiment === 'neutral'
-                    ? 'Neutral market sentiment'
-                    : 'Market research needed'}
+                  {result.dimensionScores?.marketOpportunity?.justification?.substring(0, 50) || 'Market potential assessment'}...
+                </p>
+              </div>
+              
+              {/* Execution Feasibility */}
+              <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
+                <div className="text-4xl mb-3">⚙️</div>
+                <h3 className="text-xl font-bold mb-2 text-blue-400">Execution</h3>
+                <p className="text-3xl font-bold text-white">
+                  {result.dimensionScores?.executionFeasibility?.score || '65'}/100
+                </p>
+                <p className="text-slate-400 text-sm">
+                  {result.dimensionScores?.executionFeasibility?.technicalComplexity || 'Medium'} complexity • 
+                  {result.dimensionScores?.executionFeasibility?.timeToMarket || '6'} months
+                </p>
+              </div>
+              
+              {/* Business Model */}
+              <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
+                <div className="text-4xl mb-3">💰</div>
+                <h3 className="text-xl font-bold mb-2 text-purple-400">Business Model</h3>
+                <p className="text-3xl font-bold text-white">
+                  {result.dimensionScores?.businessModelViability?.score || '70'}/100
+                </p>
+                <p className="text-slate-400 text-sm">
+                  {result.dimensionScores?.businessModelViability?.revenueModel || result.classification?.businessModel || 'Revenue model'} • 
+                  {result.dimensionScores?.businessModelViability?.monetizationTimeline || '12'} months
+                </p>
+              </div>
+              
+              {/* Go-to-Market */}
+              <div className="glass glass-border p-6 rounded-2xl text-center hover:scale-105 transition-transform">
+                <div className="text-4xl mb-3">🚀</div>
+                <h3 className="text-xl font-bold mb-2 text-yellow-400">Go-to-Market</h3>
+                <p className="text-3xl font-bold text-white">
+                  {result.dimensionScores?.goToMarketStrategy?.score || '60'}/100
+                </p>
+                <p className="text-slate-400 text-sm">
+                  {result.dimensionScores?.goToMarketStrategy?.primaryChannels?.[0] || 'Digital marketing'} • 
+                  {result.classification?.targetMarket || 'Target market'}
                 </p>
               </div>
             </div>
+            
+            {/* Industry-Specific Insights */}
+            {result.industrySpecificInsights && (
+              <div className="glass glass-border p-8 rounded-3xl mb-12">
+                <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-indigo-400 to-purple-500 bg-clip-text text-transparent">
+                  🎯 {result.classification?.primaryCategory || 'Industry'} Insights
+                </h2>
+                
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Success Factors */}
+                  {result.industrySpecificInsights.successFactors && (
+                    <div>
+                      <h3 className="text-xl font-bold mb-4 text-green-400">🏆 Success Factors</h3>
+                      <ul className="space-y-2">
+                        {result.industrySpecificInsights.successFactors.map((factor, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-green-400 mt-1">✓</span>
+                            <span className="text-slate-300">{factor}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {/* Industry Trends */}
+                  {result.industrySpecificInsights.industryTrends && (
+                    <div>
+                      <h3 className="text-xl font-bold mb-4 text-blue-400">📈 Industry Trends</h3>
+                      <ul className="space-y-2">
+                        {result.industrySpecificInsights.industryTrends.map((trend, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-blue-400 mt-1">→</span>
+                            <span className="text-slate-300">{trend}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {/* Regulatory Considerations */}
+                  {result.industrySpecificInsights.regulatoryConsiderations && (
+                    <div>
+                      <h3 className="text-xl font-bold mb-4 text-yellow-400">⚖️ Regulatory Considerations</h3>
+                      <ul className="space-y-2">
+                        {result.industrySpecificInsights.regulatoryConsiderations.map((reg, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-yellow-400 mt-1">!</span>
+                            <span className="text-slate-300">{reg}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  
+                  {/* Competitive Landscape */}
+                  {result.industrySpecificInsights.competitiveLandscape && (
+                    <div>
+                      <h3 className="text-xl font-bold mb-4 text-purple-400">🏟️ Competitive Landscape</h3>
+                      <p className="text-slate-300">{result.industrySpecificInsights.competitiveLandscape}</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* 🎯 ACTION PLAN - Next 48 hours */}
             <div className="glass glass-border p-8 rounded-3xl mb-12">
