@@ -271,6 +271,41 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                     
+                    {/* Prompt Gallery and Enhance buttons below input field */}
+                    <div className="flex items-center justify-center gap-3 mt-4">
+                        <button
+                            type="button"
+                            onClick={() => {
+                                // This will show the prompt gallery
+                                const promptGalleryElement = document.querySelector('[data-prompt-gallery]');
+                                if (promptGalleryElement) {
+                                    promptGalleryElement.scrollIntoView({ behavior: 'smooth' });
+                                }
+                            }}
+                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur border border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20 transition-all duration-200 text-sm font-medium"
+                        >
+                            <span>⭐</span>
+                            Prompt Gallery
+                        </button>
+                        <button
+                            type="button"
+                            onClick={async () => {
+                                if (isLoading || isEnhancing) return;
+                                setIsEnhancing(true);
+                                const enhanced = await enhancePromptRemotely(userInput.idea);
+                                if (enhanced) {
+                                    const validation = validateInput(enhanced);
+                                    setUserInput(validation);
+                                }
+                                setIsEnhancing(false);
+                            }}
+                            disabled={isEnhancing || isLoading}
+                            className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur border border-white/10 text-slate-300 hover:bg-white/10 hover:border-white/20 transition-all duration-200 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                            <span>✨</span>
+                            Enhance
+                        </button>
+                    </div>
 
                 </div>
                 

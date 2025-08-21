@@ -55,7 +55,7 @@ const TEMPLATES: PromptTemplate[] = [
 
 const PromptGallery: React.FC<PromptGalleryProps> = ({ onUse }) => {
 	return (
-		<div className="mt-6">
+		<div className="mt-6" data-prompt-gallery>
 			<div className="text-center mb-4">
 				<p className="text-sm text-slate-400 mb-3">💡 Quick Analysis Templates</p>
 			</div>
