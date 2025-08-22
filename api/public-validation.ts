@@ -74,6 +74,89 @@ const fetchSubredditPosts = async (subreddit: string, limit: number = 25): Promi
   }
 };
 
+// AI-powered post relevance filtering
+const filterPostsByRelevance = async (posts: RedditPost[], query: string): Promise<RedditPost[]> => {
+  if (posts.length === 0) return [];
+  
+  // Fallback to keyword matching if AI fails
+  const keywordFilter = (posts: RedditPost[]) => {
+    const keywords = query.toLowerCase().split(' ').filter(word => word.length > 2);
+    return posts.filter(post => {
+      const text = (post.title + ' ' + post.content).toLowerCase();
+      return keywords.some(keyword => text.includes(keyword));
+    });
+  };
+
+  // If we have too many posts, use keyword pre-filtering first
+  let postsToAnalyze = posts;
+  if (posts.length > 50) {
+    postsToAnalyze = keywordFilter(posts);
+  }
+
+  // If still no relevant posts, return keyword results
+  if (postsToAnalyze.length === 0) {
+    return keywordFilter(posts);
+  }
+
+  try {
+    if (!process.env.GOOGLE_API_KEY) {
+      return keywordFilter(posts);
+    }
+
+    const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+    
+    const filterPrompt = `You are an expert content curator. Analyze these Reddit posts and determine which ones are relevant to the query: "${query}"
+
+Posts to analyze:
+${postsToAnalyze.slice(0, 20).map((post, index) => `
+${index + 1}. Title: ${post.title}
+   Content: ${post.content.substring(0, 200)}
+   Subreddit: r/${post.subreddit}
+`).join('\n')}
+
+Return a JSON array of post indices (1-based) that are relevant to the query. Only include posts that are directly related to the topic, discuss similar problems, or mention relevant solutions.
+
+Example: [1, 3, 7, 12]
+
+Be selective - only include posts with clear relevance.`;
+
+    const result = await gemini.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: filterPrompt,
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.3,
+        maxOutputTokens: 500
+      }
+    });
+
+    const relevantIndices = JSON.parse(result.text || '[]') as number[];
+    const filteredPosts = relevantIndices
+      .filter(index => index >= 1 && index <= postsToAnalyze.length)
+      .map(index => postsToAnalyze[index - 1]);
+
+    // If AI filtering returns too few results, supplement with keyword matching
+    if (filteredPosts.length < 3) {
+      const keywordResults = keywordFilter(posts);
+      const combined = [...filteredPosts];
+      
+      for (const post of keywordResults) {
+        if (!combined.find(p => p.title === post.title) && combined.length < 15) {
+          combined.push(post);
+        }
+      }
+      
+      return combined;
+    }
+
+    return filteredPosts;
+
+  } catch (error) {
+    console.error('AI filtering failed, using keyword fallback:', error);
+    return keywordFilter(posts);
+  }
+};
+
 // Search Reddit posts using RSS search
 const searchRedditPosts = async (query: string, subreddits: string[]): Promise<RedditPost[]> => {
   const allPosts: RedditPost[] = [];
@@ -83,12 +166,8 @@ const searchRedditPosts = async (query: string, subreddits: string[]): Promise<R
     try {
       const posts = await fetchSubredditPosts(subreddit, 20);
       
-      // Filter posts that contain query keywords
-      const keywords = query.toLowerCase().split(' ').filter(word => word.length > 2);
-      const relevantPosts = posts.filter(post => {
-        const text = (post.title + ' ' + post.content).toLowerCase();
-        return keywords.some(keyword => text.includes(keyword));
-      });
+      // Smart AI-powered filtering instead of simple keyword matching
+      const relevantPosts = await filterPostsByRelevance(posts, query);
       
       allPosts.push(...relevantPosts);
     } catch (error) {
@@ -133,16 +212,23 @@ ENGAGEMENT METRICS:
 - Average Engagement: ${avgEngagement.toFixed(1)} (score + comments)
 - Communities: ${[...new Set(postsData.map(p => p.subreddit))].join(', ')}
 
-REDDIT POSTS DATA:
-${postsData.map(post => `
-Subreddit: r/${post.subreddit}
+REDDIT POSTS DATA (AI-filtered for relevance):
+${postsData.map((post, index) => `
+Post ${index + 1} [r/${post.subreddit}]:
 Title: ${post.title}
 Content: ${post.content}
-Score: ${post.score} | Comments: ${post.comments}
+Engagement: ${post.score} upvotes, ${post.comments} comments
 `).join('\n---\n')}
 
 ANALYSIS TASK:
-Analyze these Reddit discussions to validate the startup idea: "${query}"
+Analyze these AI-filtered, highly relevant Reddit discussions to validate the startup idea: "${query}"
+
+Focus on extracting deep insights from the community conversations. Look for:
+1. Explicit mentions of problems or frustrations
+2. Discussions about existing solutions and their limitations  
+3. User behavior patterns and preferences
+4. Market gaps and unmet needs
+5. Community sentiment toward similar ideas
 
 Provide comprehensive insights in JSON format:
 
