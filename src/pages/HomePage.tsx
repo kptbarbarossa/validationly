@@ -195,21 +195,6 @@ const HomePage: React.FC = () => {
                         Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
                     </p>
 
-                    {/* Public Validation CTA */}
-                    <div className="mb-8 animate-slide-up delay-300">
-                        <button
-                            onClick={() => navigate('/public-validation')}
-                            className="glass glass-border inline-flex items-center gap-3 px-6 py-3 rounded-full text-slate-200 hover:text-white hover:border-purple-400/50 transition-all group"
-                        >
-                            <span className="text-lg">🔍</span>
-                            <span className="font-medium">Public Validation</span>
-                            <span className="text-xs text-slate-400 group-hover:text-slate-300">Reddit Communities</span>
-                        </button>
-                        <p className="text-sm text-slate-400 mt-2">
-                            Validate ideas using real community discussions
-                        </p>
-                    </div>
-
                 </div>
             </div>
 
@@ -301,6 +286,21 @@ const HomePage: React.FC = () => {
                 )}
                 {isLoading && <EnhancedLoadingSpinner idea={userInput.idea} isLoading={isLoading} />}
             </form>
+
+            {/* Public Validation CTA */}
+            <div className="mt-6 mb-8 text-center">
+                <button
+                    onClick={() => navigate('/public-validation')}
+                    className="glass glass-border inline-flex items-center gap-3 px-6 py-3 rounded-full text-slate-200 hover:text-white hover:border-purple-400/50 transition-all group"
+                >
+                    <span className="text-lg">🔍</span>
+                    <span className="font-medium">Public Validation</span>
+                    <span className="text-xs text-slate-400 group-hover:text-slate-300">Reddit Communities</span>
+                </button>
+                <p className="text-sm text-slate-400 mt-2">
+                    Validate ideas using real community discussions
+                </p>
+            </div>
 
             {/* Simple Prompt Gallery */}
             <PromptGallery

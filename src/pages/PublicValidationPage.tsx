@@ -264,7 +264,7 @@ ${window.location.origin}`;
                                             <button
                                                 key={example}
                                                 onClick={() => setSearchQuery(example)}
-                                                className="px-3 py-1 text-xs bg-white/5 text-slate-400 rounded-lg hover:bg-white/10 hover:text-slate-300 transition-colors"
+                                                className="glass glass-border px-3 py-1 text-xs text-slate-400 rounded-full hover:text-slate-300 hover:border-white/20 transition-colors"
                                             >
                                                 {example}
                                             </button>
@@ -283,9 +283,9 @@ ${window.location.origin}`;
                                         <button
                                             key={subreddit.name}
                                             onClick={() => handleSubredditToggle(subreddit.name)}
-                                            className={`p-3 rounded-xl text-sm font-semibold transition-all ${selectedSubreddits.includes(subreddit.name)
-                                                    ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white'
-                                                    : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                                            className={`glass glass-border px-4 py-2 rounded-full text-sm font-semibold transition-all ${selectedSubreddits.includes(subreddit.name)
+                                                    ? 'border-purple-400/50 bg-purple-500/20 text-purple-200'
+                                                    : 'text-slate-300 hover:text-white hover:border-white/20'
                                                 }`}
                                             title={subreddit.description}
                                         >
@@ -299,9 +299,9 @@ ${window.location.origin}`;
                             <button
                                 onClick={analyzePublicSentiment}
                                 disabled={!searchQuery.trim() || selectedSubreddits.length === 0 || isAnalyzing}
-                                className={`w-full py-4 rounded-xl font-bold text-lg transition-all ${!searchQuery.trim() || selectedSubreddits.length === 0 || isAnalyzing
-                                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                                        : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:scale-105'
+                                className={`glass glass-border w-full py-4 rounded-full font-bold text-lg transition-all ${!searchQuery.trim() || selectedSubreddits.length === 0 || isAnalyzing
+                                        ? 'text-gray-400 cursor-not-allowed border-gray-600/20'
+                                        : 'text-white hover:border-purple-400/50 hover:bg-purple-500/10'
                                     }`}
                             >
                                 {isAnalyzing ? (
@@ -333,7 +333,7 @@ ${window.location.origin}`;
                                 <p className="text-slate-300 mb-4">{error}</p>
                                 <button
                                     onClick={() => setError(null)}
-                                    className="px-4 py-2 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors"
+                                    className="glass glass-border px-4 py-2 text-red-400 rounded-full hover:border-red-400/50 hover:bg-red-500/10 transition-colors"
                                 >
                                     Dismiss
                                 </button>
@@ -353,13 +353,13 @@ ${window.location.origin}`;
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => shareResults()}
-                                                className="px-4 py-2 bg-blue-600/20 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors text-sm"
+                                                className="glass glass-border px-4 py-2 text-blue-400 rounded-full hover:border-blue-400/50 hover:bg-blue-500/10 transition-colors text-sm"
                                             >
                                                 📤 Share
                                             </button>
                                             <button
                                                 onClick={() => exportResults()}
-                                                className="px-4 py-2 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors text-sm"
+                                                className="glass glass-border px-4 py-2 text-purple-400 rounded-full hover:border-purple-400/50 hover:bg-purple-500/10 transition-colors text-sm"
                                             >
                                                 📄 Export
                                             </button>

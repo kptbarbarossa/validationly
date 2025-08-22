@@ -84,14 +84,14 @@ export const ValidationHistory: React.FC<ValidationHistoryProps> = ({ onCompare 
           {selectedForComparison.length >= 2 && (
             <button
               onClick={handleCompare}
-              className="px-3 py-1 bg-purple-600/20 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors text-sm"
+              className="glass glass-border px-3 py-1 text-purple-400 rounded-full hover:border-purple-400/50 hover:bg-purple-500/10 transition-colors text-sm"
             >
               Compare ({selectedForComparison.length})
             </button>
           )}
           <button
             onClick={clearHistory}
-            className="px-3 py-1 bg-red-600/20 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors text-sm"
+            className="glass glass-border px-3 py-1 text-red-400 rounded-full hover:border-red-400/50 hover:bg-red-500/10 transition-colors text-sm"
           >
             Clear
           </button>
