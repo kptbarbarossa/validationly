@@ -199,10 +199,11 @@ const HomePage: React.FC = () => {
                     <div className="mb-8 animate-slide-up delay-300">
                         <button
                             onClick={() => navigate('/public-validation')}
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl font-semibold hover:scale-105 transition-all shadow-lg hover:shadow-purple-500/25"
+                            className="glass glass-border inline-flex items-center gap-3 px-6 py-3 rounded-full text-slate-200 hover:text-white hover:border-purple-400/50 transition-all group"
                         >
-                            🔍 Try Public Validation
-                            <span className="text-sm opacity-90">- Analyze Reddit Communities</span>
+                            <span className="text-lg">🔍</span>
+                            <span className="font-medium">Public Validation</span>
+                            <span className="text-xs text-slate-400 group-hover:text-slate-300">Reddit Communities</span>
                         </button>
                         <p className="text-sm text-slate-400 mt-2">
                             Validate ideas using real community discussions

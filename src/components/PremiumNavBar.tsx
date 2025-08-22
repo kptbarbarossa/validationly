@@ -5,7 +5,6 @@ import Logo from './Logo';
 
 const navItems: Array<{ to: string; label: string; external?: boolean }> = [
   { to: '/', label: 'New Analysis' },
-  { to: '/public-validation', label: 'Public Validation' },
   { to: '/tools', label: 'Tools' },
   { to: '/faq', label: 'FAQ' },
   { to: '/blog', label: 'Blog' },
