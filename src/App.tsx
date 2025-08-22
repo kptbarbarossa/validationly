@@ -2,6 +2,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+import PublicValidationPage from './pages/PublicValidationPage';
 
 import ResultsPage from './pages/ResultsPage';
 import AITweetGenerator from './pages/AITweetGenerator';
@@ -80,6 +81,7 @@ const App: React.FC = () => {
               <Route path="/" element={<HomePage />} />
 
               <Route path="/results" element={<ResultsPage />} />
+              <Route path="/public-validation" element={<PublicValidationPage />} />
               <Route path="/tweet-generator" element={<AITweetGenerator />} />
               <Route path="/trend-hunter" element={<TrendHunterPage />} />
               <Route path="/trend-to-startup" element={<TrendToStartupPage />} />
