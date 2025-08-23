@@ -3,11 +3,52 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import SignalSummary from '../components/results/SignalSummary';
 import EnhancedAnalysisDisplay from '../components/results/EnhancedAnalysisDisplay';
+import MultiPlatformSummary from '../components/results/MultiPlatformSummary';
+import PlatformDetails from '../components/results/PlatformDetails';
 
 interface ValidationResult {
   idea: string;
   demandScore: number;
   scoreJustification: string;
+  
+  // Multi-platform validation results
+  multiPlatformData?: {
+    platforms: Array<{
+      platform: string;
+      items: any[];
+      error?: string;
+    }>;
+    summary: {
+      reddit: number;
+      hackernews: number;
+      producthunt: number;
+      googlenews: number;
+      github: number;
+      stackoverflow: number;
+      youtube: number;
+    };
+    totalItems: number;
+  };
+  
+  // Enhanced insights from multi-platform analysis
+  insights?: {
+    validationScore: number;
+    sentiment: 'positive' | 'negative' | 'neutral';
+    trendingTopics: string[];
+    keyInsights: string[];
+    painPoints: string[];
+    opportunities: string[];
+    popularSolutions: string[];
+    platformBreakdown?: {
+      reddit: number;
+      hackernews: number;
+      producthunt: number;
+      googlenews: number;
+      github: number;
+      stackoverflow: number;
+      youtube: number;
+    };
+  };
   
   // Enhanced classification
   classification?: {
@@ -415,12 +456,127 @@ const ResultsPage: React.FC = () => {
               />
             )}
 
-            {/* 📡 Signal Summary Section */}
-            <SignalSummary 
-              platformAnalyses={result.platformAnalyses}
-              socialMediaSignals={result.realWorldData?.socialMediaSignals}
-              overallScore={result.demandScore}
-            />
+            {/* 🌐 Multi-Platform Summary */}
+            {result.insights?.platformBreakdown && (
+              <MultiPlatformSummary 
+                platformBreakdown={result.insights.platformBreakdown}
+                totalItems={result.multiPlatformData?.totalItems || 0}
+              />
+            )}
+
+            {/* 📋 Platform Details */}
+            {result.multiPlatformData?.platforms && (
+              <PlatformDetails 
+                platformData={result.multiPlatformData.platforms}
+              />
+            )}
+
+            {/* 🎯 Enhanced Insights from Multi-Platform Analysis */}
+            {result.insights && (
+              <div className="glass glass-border p-8 rounded-3xl mb-12">
+                <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
+                  🧠 AI-Powered Cross-Platform Insights
+                </h2>
+                
+                <div className="grid md:grid-cols-2 gap-8">
+                  {/* Key Insights */}
+                  <div>
+                    <h3 className="text-xl font-bold mb-4 text-blue-400">💡 Key Insights</h3>
+                    <ul className="space-y-3">
+                      {result.insights.keyInsights.map((insight, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="text-blue-400 mt-1 text-sm">💡</span>
+                          <span className="text-slate-300 text-sm leading-relaxed">{insight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Pain Points */}
+                  <div>
+                    <h3 className="text-xl font-bold mb-4 text-red-400">⚠️ Pain Points Identified</h3>
+                    <ul className="space-y-3">
+                      {result.insights.painPoints.map((pain, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="text-red-400 mt-1 text-sm">⚠️</span>
+                          <span className="text-slate-300 text-sm leading-relaxed">{pain}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Opportunities */}
+                  <div>
+                    <h3 className="text-xl font-bold mb-4 text-green-400">🚀 Market Opportunities</h3>
+                    <ul className="space-y-3">
+                      {result.insights.opportunities.map((opportunity, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="text-green-400 mt-1 text-sm">🚀</span>
+                          <span className="text-slate-300 text-sm leading-relaxed">{opportunity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Popular Solutions */}
+                  <div>
+                    <h3 className="text-xl font-bold mb-4 text-purple-400">🛠️ Existing Solutions</h3>
+                    <ul className="space-y-3">
+                      {result.insights.popularSolutions.map((solution, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="text-purple-400 mt-1 text-sm">🛠️</span>
+                          <span className="text-slate-300 text-sm leading-relaxed">{solution}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Trending Topics */}
+                {result.insights.trendingTopics.length > 0 && (
+                  <div className="mt-8">
+                    <h3 className="text-xl font-bold mb-4 text-yellow-400">🔥 Trending Topics</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {result.insights.trendingTopics.map((topic, index) => (
+                        <span 
+                          key={index}
+                          className="px-3 py-1 bg-yellow-500/20 border border-yellow-500/30 rounded-full text-yellow-300 text-sm"
+                        >
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Sentiment Analysis */}
+                <div className="mt-8 text-center">
+                  <h3 className="text-xl font-bold mb-4">📊 Overall Sentiment</h3>
+                  <div className={`inline-flex items-center gap-2 px-6 py-3 rounded-full text-lg font-semibold ${
+                    result.insights.sentiment === 'positive' 
+                      ? 'bg-green-500/20 border border-green-500/30 text-green-400'
+                      : result.insights.sentiment === 'negative'
+                      ? 'bg-red-500/20 border border-red-500/30 text-red-400'
+                      : 'bg-yellow-500/20 border border-yellow-500/30 text-yellow-400'
+                  }`}>
+                    <span className="text-2xl">
+                      {result.insights.sentiment === 'positive' ? '😊' : 
+                       result.insights.sentiment === 'negative' ? '😟' : '😐'}
+                    </span>
+                    {result.insights.sentiment.charAt(0).toUpperCase() + result.insights.sentiment.slice(1)} Sentiment
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* 📡 Legacy Signal Summary Section (for backward compatibility) */}
+            {result.platformAnalyses && (
+              <SignalSummary 
+                platformAnalyses={result.platformAnalyses}
+                socialMediaSignals={result.realWorldData?.socialMediaSignals}
+                overallScore={result.demandScore}
+              />
+            )}
 
             {/* 🎯 ACTION PLAN - Next 48 hours */}
             <div className="glass glass-border p-8 rounded-3xl mb-12">

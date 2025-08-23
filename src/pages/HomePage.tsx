@@ -100,17 +100,16 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Use original validation API with enhanced analysis for premium tiers
+            // Use new multi-platform validation API
             const ideaPayload = userInput.idea;
-            const response = await fetch('/api/validate', {
+            const response = await fetch('/api/public-validation', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ 
-                    content: ideaPayload, 
-                    fast: true,
-                    userTier: selectedTier !== 'free' ? selectedTier : undefined
+                    query: ideaPayload,
+                    analysisType: 'comprehensive'
                 })
             });
 
@@ -119,12 +118,31 @@ const HomePage: React.FC = () => {
             }
 
             const result = await response.json();
-            console.log('API call successful', result);
+            console.log('Multi-platform API call successful', result);
+            
+            // Transform the new API response to match the expected format
+            const transformedResult = {
+                idea: ideaPayload,
+                demandScore: result.insights?.validationScore || 50,
+                scoreJustification: result.insights?.keyInsights?.[0] || 'Multi-platform analysis completed',
+                multiPlatformData: {
+                    platforms: result.platformData || [],
+                    summary: result.insights?.platformBreakdown || {},
+                    totalItems: result.metadata?.totalItemsAnalyzed || 0
+                },
+                insights: result.insights,
+                platformAnalyses: result.platformData?.map((platform: any) => ({
+                    platform: platform.platform,
+                    signalStrength: platform.items.length > 10 ? 'Strong' : platform.items.length > 5 ? 'Medium' : 'Weak',
+                    analysis: `Found ${platform.items.length} relevant items on ${platform.platform}`,
+                    score: Math.min(platform.items.length * 10, 100)
+                })) || []
+            };
             
             // Track successful validation
-            trackValidation(userInput.idea, result.demandScore || result.score);
+            trackValidation(userInput.idea, transformedResult.demandScore);
             
-                            navigate('/results', { state: { result, fastMode: true } });
+            navigate('/results', { state: { result: transformedResult, fastMode: true } });
         } catch (err) {
             console.error('API call failed:', err);
             
@@ -192,8 +210,33 @@ const HomePage: React.FC = () => {
                     </h1>
 
                     <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
-                        Get AI-driven market validation in seconds. Analyze demand across social platforms with actionable insights.
+                        Get AI-driven market validation across 7+ platforms in seconds. Comprehensive analysis with actionable insights.
                     </p>
+
+                    {/* Multi-Platform Badges */}
+                    <div className="flex flex-wrap justify-center gap-3 mb-8 animate-slide-up delay-300">
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-300 text-sm">
+                            <span>🤖</span> Reddit
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-300 text-sm">
+                            <span>📰</span> Hacker News
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-pink-500/10 border border-pink-500/20 rounded-full text-pink-300 text-sm">
+                            <span>🚀</span> Product Hunt
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-500/10 border border-gray-500/20 rounded-full text-gray-300 text-sm">
+                            <span>💻</span> GitHub
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-full text-yellow-300 text-sm">
+                            <span>❓</span> Stack Overflow
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300 text-sm">
+                            <span>📰</span> Google News
+                        </div>
+                        <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-red-300 text-sm">
+                            <span>📺</span> YouTube
+                        </div>
+                    </div>
 
                 </div>
             </div>

@@ -1,5 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import Parser from 'rss-parser';
+import { multiPlatformService, MultiPlatformResult } from '../src/services/multiPlatformService';
 
 interface RedditPost {
   title: string;
@@ -20,6 +21,15 @@ interface ValidationInsights {
   painPoints: string[];
   popularSolutions: string[];
   validationScore: number;
+  platformBreakdown?: {
+    reddit: number;
+    hackernews: number;
+    producthunt: number;
+    googlenews: number;
+    github: number;
+    stackoverflow: number;
+    youtube: number;
+  };
 }
 
 // RSS Parser instance
@@ -181,54 +191,60 @@ const searchRedditPosts = async (query: string, subreddits: string[]): Promise<R
     .slice(0, 50); // Limit to top 50 posts
 };
 
-// Analyze posts with AI
-const analyzePostsWithAI = async (posts: RedditPost[], query: string): Promise<ValidationInsights> => {
+// Analyze multi-platform data with AI
+const analyzeMultiPlatformData = async (multiPlatformData: MultiPlatformResult, query: string): Promise<ValidationInsights> => {
   if (!process.env.GOOGLE_API_KEY) {
     throw new Error('Google AI API key not configured');
   }
 
   const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
   
-  // Prepare posts data for AI analysis
-  const postsData = posts.map(post => ({
-    title: post.title,
-    content: post.content.substring(0, 300), // Increased content length for better analysis
-    score: post.score,
-    comments: post.comments,
-    subreddit: post.subreddit
+  // Prepare multi-platform data for AI analysis
+  const platformSummary = multiPlatformData.platforms.map(platform => ({
+    name: platform.platform,
+    itemCount: platform.items.length,
+    items: platform.items.slice(0, 5).map(item => ({
+      title: item.title || item.name || 'No title',
+      description: item.description || item.content || item.body || 'No description',
+      engagement: item.score || item.stars || item.views || item.points || 0,
+      url: item.url || item.link || item.html_url || '#'
+    }))
   }));
 
-  // Calculate engagement metrics for better scoring
-  const totalScore = postsData.reduce((sum, post) => sum + post.score, 0);
-  const totalComments = postsData.reduce((sum, post) => sum + post.comments, 0);
-  const avgEngagement = postsData.length > 0 ? (totalScore + totalComments) / postsData.length : 0;
+  const totalItems = multiPlatformData.totalItems;
+  const platformBreakdown = multiPlatformData.summary;
 
-  const analysisPrompt = `You are an expert market researcher analyzing Reddit community discussions for startup validation.
+  const analysisPrompt = `You are an expert market researcher analyzing multi-platform data for startup validation.
 
 QUERY: "${query}"
 
-ENGAGEMENT METRICS:
-- Total Posts Analyzed: ${postsData.length}
-- Average Engagement: ${avgEngagement.toFixed(1)} (score + comments)
-- Communities: ${[...new Set(postsData.map(p => p.subreddit))].join(', ')}
+MULTI-PLATFORM ANALYSIS:
+- Total Items Analyzed: ${totalItems}
+- Platforms Searched: ${Object.keys(platformBreakdown).filter(k => platformBreakdown[k as keyof typeof platformBreakdown] > 0).join(', ')}
+- Platform Breakdown: ${JSON.stringify(platformBreakdown)}
 
-REDDIT POSTS DATA (AI-filtered for relevance):
-${postsData.map((post, index) => `
-Post ${index + 1} [r/${post.subreddit}]:
-Title: ${post.title}
-Content: ${post.content}
-Engagement: ${post.score} upvotes, ${post.comments} comments
-`).join('\n---\n')}
+PLATFORM DATA:
+${platformSummary.map(platform => `
+=== ${platform.name.toUpperCase()} (${platform.itemCount} items) ===
+${platform.items.map((item, index) => `
+${index + 1}. ${item.title}
+   Description: ${item.description.substring(0, 200)}
+   Engagement: ${item.engagement}
+   URL: ${item.url}
+`).join('\n')}
+`).join('\n')}
 
 ANALYSIS TASK:
-Analyze these AI-filtered, highly relevant Reddit discussions to validate the startup idea: "${query}"
+Analyze this multi-platform data to validate the startup idea: "${query}"
 
-Focus on extracting deep insights from the community conversations. Look for:
-1. Explicit mentions of problems or frustrations
-2. Discussions about existing solutions and their limitations  
-3. User behavior patterns and preferences
-4. Market gaps and unmet needs
-5. Community sentiment toward similar ideas
+Cross-platform insights to extract:
+1. Market demand signals across different communities
+2. Technical discussions and implementation challenges (GitHub, StackOverflow)
+3. Product launches and competitive landscape (Product Hunt)
+4. News coverage and industry trends (Google News)
+5. Community discussions and user pain points (Reddit, Hacker News)
+6. Educational content and tutorials (YouTube)
+7. Developer interest and open-source activity (GitHub)
 
 Provide comprehensive insights in JSON format:
 
@@ -237,42 +253,61 @@ Provide comprehensive insights in JSON format:
   "sentiment": "positive/negative/neutral",
   "trendingTopics": ["topic1", "topic2", "topic3"],
   "keyInsights": [
-    "insight about market demand",
-    "insight about user behavior", 
-    "insight about competition"
+    "cross-platform market demand insight",
+    "technical feasibility insight from developer communities", 
+    "competitive landscape insight from product launches"
   ],
   "painPoints": [
-    "specific problem users mention",
-    "frustration or difficulty users face",
-    "gap in current solutions"
+    "specific problems identified across platforms",
+    "technical challenges mentioned by developers",
+    "user frustrations in community discussions"
   ],
   "opportunities": [
-    "market opportunity identified",
-    "underserved user segment",
-    "potential feature or solution"
+    "market gaps identified from multi-platform analysis",
+    "underserved segments across different communities",
+    "technical opportunities from open-source activity"
   ],
   "popularSolutions": [
-    "existing solution users mention",
-    "workaround users currently use",
-    "competitor or alternative mentioned"
-  ]
+    "existing products from Product Hunt",
+    "open-source solutions from GitHub",
+    "tools mentioned in developer discussions"
+  ],
+  "platformBreakdown": {
+    "reddit": ${platformBreakdown.reddit},
+    "hackernews": ${platformBreakdown.hackernews},
+    "producthunt": ${platformBreakdown.producthunt},
+    "googlenews": ${platformBreakdown.googlenews},
+    "github": ${platformBreakdown.github},
+    "stackoverflow": ${platformBreakdown.stackoverflow},
+    "youtube": ${platformBreakdown.youtube}
+  }
 }
 
-SCORING CRITERIA:
-- 90-100: Strong community interest, clear pain points, positive sentiment
-- 70-89: Moderate interest, some validation signals, mixed sentiment
-- 50-69: Limited discussion, unclear demand, neutral sentiment
-- 30-49: Minimal interest, negative feedback, existing solutions dominate
-- 0-29: No relevant discussion, negative sentiment, saturated market
+MULTI-PLATFORM SCORING CRITERIA:
+- 90-100: Strong signals across multiple platforms, active development, positive sentiment
+- 70-89: Moderate cross-platform interest, some technical activity, mixed sentiment  
+- 50-69: Limited platform coverage, unclear demand, neutral sentiment
+- 30-49: Minimal cross-platform interest, saturated market indicators
+- 0-29: No significant activity across platforms, negative sentiment
 
 Focus on:
-1. How much interest/discussion exists around this topic
-2. What problems users are actually facing
-3. How users currently solve these problems
-4. Sentiment toward existing solutions
-5. Opportunities for improvement or innovation
+1. Cross-platform validation signals and consistency
+2. Technical feasibility from developer communities
+3. Market competition from product launches
+4. News coverage and industry trends
+5. Community engagement and sentiment
+6. Open-source activity and developer interest
+7. Educational content availability
 
-Be realistic and data-driven in your analysis.`;
+Weight platforms appropriately:
+- Reddit/HackerNews: Community validation (25%)
+- GitHub: Technical feasibility (20%)
+- Product Hunt: Competition analysis (20%)
+- StackOverflow: Implementation challenges (15%)
+- Google News: Industry trends (10%)
+- YouTube: Educational ecosystem (10%)
+
+Be comprehensive and data-driven in your multi-platform analysis.`;
 
   try {
     const result = await gemini.models.generateContent({
@@ -292,10 +327,11 @@ Be realistic and data-driven in your analysis.`;
       validationScore: analysis.validationScore || 50,
       sentiment: analysis.sentiment || 'neutral',
       trendingTopics: analysis.trendingTopics || [],
-      keyInsights: analysis.keyInsights || ['Analysis completed with limited data'],
-      painPoints: analysis.painPoints || ['No specific pain points identified'],
-      opportunities: analysis.opportunities || ['Limited opportunities detected'],
-      popularSolutions: analysis.popularSolutions || ['No popular solutions mentioned']
+      keyInsights: analysis.keyInsights || ['Multi-platform analysis completed with limited data'],
+      painPoints: analysis.painPoints || ['No specific pain points identified across platforms'],
+      opportunities: analysis.opportunities || ['Limited opportunities detected in cross-platform analysis'],
+      popularSolutions: analysis.popularSolutions || ['No popular solutions mentioned across platforms'],
+      platformBreakdown: analysis.platformBreakdown || platformBreakdown
     };
     
   } catch (error) {
@@ -306,10 +342,11 @@ Be realistic and data-driven in your analysis.`;
       validationScore: 50,
       sentiment: 'neutral',
       trendingTopics: ['General discussion'],
-      keyInsights: ['Analysis completed with basic data processing'],
-      painPoints: ['Unable to identify specific pain points'],
-      opportunities: ['Manual analysis recommended'],
-      popularSolutions: ['Various solutions mentioned in discussions']
+      keyInsights: ['Multi-platform analysis completed with basic data processing'],
+      painPoints: ['Unable to identify specific pain points across platforms'],
+      opportunities: ['Manual analysis recommended for deeper insights'],
+      popularSolutions: ['Various solutions mentioned across platforms'],
+      platformBreakdown: platformBreakdown
     };
   }
 };
@@ -375,67 +412,71 @@ export default async function handler(req: any, res: any) {
   }
   
   try {
-    const { query, subreddits, analysisType } = req.body;
+    const { query, analysisType = 'comprehensive' } = req.body;
     
-    // Input validation
-    if (!validateInput(query, subreddits)) {
+    // Input validation for query
+    if (!query || typeof query !== 'string' || query.length < 3 || query.length > 200) {
       return res.status(400).json({
-        message: 'Invalid input. Query must be 3-200 characters and subreddits must be valid.',
+        message: 'Invalid input. Query must be 3-200 characters.',
         error: 'Validation failed'
       });
     }
     
-    console.log(`🔍 Public validation request: "${query}" in r/${subreddits.join(', r/')}`);
+    console.log(`🔍 Multi-platform validation request: "${query}"`);
     
-    // Fetch Reddit posts
-    const posts = await searchRedditPosts(query, subreddits);
-    console.log(`📊 Found ${posts.length} relevant posts`);
+    // Fetch data from all platforms
+    const multiPlatformData = await multiPlatformService.searchAllPlatforms(query, 15);
+    console.log(`📊 Multi-platform results:`, multiPlatformData.summary);
     
-    if (posts.length === 0) {
+    if (multiPlatformData.totalItems === 0) {
       return res.status(200).json({
         insights: {
           validationScore: 25,
           sentiment: 'neutral',
-          trendingTopics: ['Limited discussion found'],
-          keyInsights: ['No significant community discussion found for this topic'],
-          painPoints: ['Unable to identify pain points - limited data'],
-          opportunities: ['Consider broader keyword search or different communities'],
-          popularSolutions: ['No solutions mentioned in available discussions']
+          trendingTopics: ['Limited discussion found across platforms'],
+          keyInsights: ['No significant activity found across multiple platforms for this topic'],
+          painPoints: ['Unable to identify pain points - limited cross-platform data'],
+          opportunities: ['Consider broader keyword search or niche market validation'],
+          popularSolutions: ['No solutions mentioned in available discussions'],
+          platformBreakdown: multiPlatformData.summary
         },
-        posts: [],
+        platformData: multiPlatformData.platforms,
         metadata: {
           analysisDate: new Date().toISOString(),
-          postsAnalyzed: 0,
-          subredditsSearched: subreddits,
-          dataSource: 'Reddit RSS feeds'
+          totalItemsAnalyzed: 0,
+          platformsSearched: Object.keys(multiPlatformData.summary),
+          dataSource: 'Multi-platform aggregation'
         }
       });
     }
     
     // Analyze with AI
-    const insights = await analyzePostsWithAI(posts, query);
+    const insights = await analyzeMultiPlatformData(multiPlatformData, query);
     
     // Return results
     const response = {
       insights,
-      posts: posts.slice(0, 10), // Return top 10 posts for display
+      platformData: multiPlatformData.platforms.map(platform => ({
+        ...platform,
+        items: platform.items.slice(0, 5) // Limit items per platform for response size
+      })),
       metadata: {
         analysisDate: new Date().toISOString(),
-        postsAnalyzed: posts.length,
-        subredditsSearched: subreddits,
-        dataSource: 'Reddit RSS feeds',
+        totalItemsAnalyzed: multiPlatformData.totalItems,
+        platformsSearched: Object.keys(multiPlatformData.summary),
+        dataSource: 'Multi-platform aggregation (Reddit, HackerNews, ProductHunt, GoogleNews, GitHub, StackOverflow, YouTube)',
         aiModel: 'gemini-1.5-flash'
       }
     };
     
-    console.log(`✅ Public validation completed - Score: ${insights.validationScore}/100`);
+    console.log(`✅ Multi-platform validation completed - Score: ${insights.validationScore}/100`);
     return res.status(200).json(response);
     
   } catch (error) {
     console.error('❌ Public validation failed:', error);
     
     return res.status(500).json({
-      message: 'Public validation system temporarily unavailable. Please try again later.',
+      message: 'Multi-platform validation system temporarily unavailable. Please try again later.',
       error: 'Internal server error'
     });
   }
