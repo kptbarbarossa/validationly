@@ -33,7 +33,7 @@ const PlatformDetails: React.FC<PlatformDetailsProps> = ({ platformData }) => {
           description: item.content || item.description,
           engagement: `${item.score || 0} upvotes, ${item.comments || 0} comments`,
           url: item.url,
-          source: `r/${item.subreddit || 'unknown'}`
+          source: `r/${item.subreddit || 'unknown'} • by ${item.author || 'unknown'}`
         };
       case 'hackernews':
         return {

@@ -5,6 +5,7 @@ import { googleNewsService } from './platforms/googlenews';
 import { gitHubService } from './platforms/github';
 import { stackOverflowService } from './platforms/stackoverflow';
 import { youTubeService } from './platforms/youtube';
+import { redditService } from './platforms/reddit';
 
 export interface PlatformData {
   platform: string;
@@ -41,7 +42,7 @@ export class MultiPlatformService {
       stackOverflowResults,
       youtubeResults
     ] = await Promise.allSettled([
-      this.searchReddit(query, limit),
+      redditService.searchPostsRSS(query, ['startups', 'entrepreneur', 'SaaS', 'indiehackers'], limit),
       hackerNewsService.searchStories(query, limit),
       productHuntService.searchProducts(query),
       googleNewsService.searchNews(query, limit),
@@ -114,6 +115,7 @@ export class MultiPlatformService {
     console.log(`📈 Fetching trending content from all platforms`);
     
     const [
+      redditTrending,
       hackerNewsTop,
       productHuntDaily,
       googleNewsTech,
@@ -121,6 +123,7 @@ export class MultiPlatformService {
       stackOverflowTrending,
       youtubeTech
     ] = await Promise.allSettled([
+      redditService.getTrendingByTopic('startup', 15),
       hackerNewsService.getTopStories(15),
       productHuntService.getDailyProducts(15),
       googleNewsService.getTechNews(15),
@@ -132,8 +135,8 @@ export class MultiPlatformService {
     const platforms: PlatformData[] = [
       {
         platform: 'reddit',
-        items: [], // We'll add Reddit trending later
-        error: undefined
+        items: redditTrending.status === 'fulfilled' ? redditTrending.value : [],
+        error: redditTrending.status === 'rejected' ? redditTrending.reason.message : undefined
       },
       {
         platform: 'hackernews',
@@ -170,7 +173,7 @@ export class MultiPlatformService {
     const totalItems = platforms.reduce((sum, platform) => sum + platform.items.length, 0);
 
     const summary = {
-      reddit: 0,
+      reddit: platforms.find(p => p.platform === 'reddit')?.items.length || 0,
       hackernews: platforms.find(p => p.platform === 'hackernews')?.items.length || 0,
       producthunt: platforms.find(p => p.platform === 'producthunt')?.items.length || 0,
       googlenews: platforms.find(p => p.platform === 'googlenews')?.items.length || 0,
@@ -189,17 +192,7 @@ export class MultiPlatformService {
     };
   }
 
-  private async searchReddit(query: string, limit: number): Promise<any[]> {
-    // This will use the existing Reddit RSS functionality
-    // We'll integrate it with the existing public-validation.ts logic
-    try {
-      // For now, return empty array - we'll integrate with existing Reddit logic
-      return [];
-    } catch (error) {
-      console.error('Reddit search error:', error);
-      return [];
-    }
-  }
+  // Reddit search is now handled by redditService directly
 
   async getPlatformStats(): Promise<{ [key: string]: { available: boolean; lastCheck: string } }> {
     const stats: { [key: string]: { available: boolean; lastCheck: string } } = {};
@@ -207,6 +200,7 @@ export class MultiPlatformService {
 
     // Test each platform with a simple query
     const testPromises = [
+      { name: 'reddit', test: () => redditService.getSubredditPostsRSS('startups', 1) },
       { name: 'hackernews', test: () => hackerNewsService.getTopStories(1) },
       { name: 'producthunt', test: () => productHuntService.getDailyProducts(1) },
       { name: 'googlenews', test: () => googleNewsService.getTechNews(1) },
