@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
 import Parser from 'rss-parser';
-import { multiPlatformService, MultiPlatformResult } from '../src/services/multiPlatformService';
+import { multiPlatformService, MultiPlatformResult } from './services/multiPlatformService';
 
 interface RedditPost {
   title: string;
