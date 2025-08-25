@@ -1,223 +1,236 @@
 import React, { useState } from 'react';
 
-interface ActionStep {
+interface ActionItem {
   id: string;
-  icon: string;
   title: string;
   description: string;
-  timeframe: string;
+  timeframe: '24h' | '1week' | '1month';
   priority: 'high' | 'medium' | 'low';
-  completed?: boolean;
+  completed: boolean;
+  resources?: {
+    type: 'template' | 'tool' | 'guide';
+    name: string;
+    url: string;
+  }[];
 }
 
-interface ActionPlanSectionProps {
+interface ActionPlanProps {
   score: number;
+  category: string;
 }
 
-const ActionPlanSection: React.FC<ActionPlanSectionProps> = ({ score }) => {
-  const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
+export const ActionPlanSection: React.FC<ActionPlanProps> = ({ score, category }) => {
+  const [completedActions, setCompletedActions] = useState<Set<string>>(new Set());
+  const [activeTab, setActiveTab] = useState<'24h' | '1week' | '1month'>('24h');
 
-  const getActionSteps = (score: number): ActionStep[] => {
+  const generateActions = (score: number, category: string): ActionItem[] => {
+    const baseActions: ActionItem[] = [
+      {
+        id: '1',
+        title: 'Create Landing Page',
+        description: 'Build a simple landing page to test demand and collect emails',
+        timeframe: '24h',
+        priority: 'high',
+        completed: false,
+        resources: [
+          { type: 'template', name: 'Landing Page Template', url: '/templates/landing' },
+          { type: 'tool', name: 'Carrd.co', url: 'https://carrd.co' }
+        ]
+      },
+      {
+        id: '2',
+        title: 'Social Media Validation',
+        description: 'Post on relevant social platforms to gauge interest',
+        timeframe: '24h',
+        priority: 'high',
+        completed: false,
+        resources: [
+          { type: 'template', name: 'Social Post Templates', url: '/templates/social' }
+        ]
+      },
+      {
+        id: '3',
+        title: 'Customer Interviews',
+        description: 'Conduct 5-10 interviews with potential customers',
+        timeframe: '1week',
+        priority: 'high',
+        completed: false,
+        resources: [
+          { type: 'guide', name: 'Interview Guide', url: '/guides/interviews' }
+        ]
+      }
+    ];
+
+    // Customize based on score
     if (score >= 80) {
-      return [
-        {
-          id: 'mvp',
-          icon: '🚀',
-          title: 'Build MVP',
-          description: 'Start building your minimum viable product',
-          timeframe: 'Next 2 weeks',
-          priority: 'high'
-        },
-        {
-          id: 'funding',
-          icon: '💰',
-          title: 'Seek Funding',
-          description: 'Prepare pitch deck and approach investors',
-          timeframe: 'Next month',
-          priority: 'high'
-        },
-        {
-          id: 'team',
-          icon: '👥',
-          title: 'Build Team',
-          description: 'Recruit key team members',
-          timeframe: 'Next 6 weeks',
-          priority: 'medium'
-        }
-      ];
-    } else if (score >= 60) {
-      return [
-        {
-          id: 'landing',
-          icon: '🌐',
-          title: 'Create Landing Page',
-          description: 'Build a landing page to collect early interest',
-          timeframe: 'Next 48 hours',
-          priority: 'high'
-        },
-        {
-          id: 'social',
-          icon: '📱',
-          title: 'Social Validation',
-          description: 'Post on social media to gather feedback',
-          timeframe: 'This week',
-          priority: 'high'
-        },
-        {
-          id: 'research',
-          icon: '🔍',
-          title: 'Market Research',
-          description: 'Conduct deeper market analysis',
-          timeframe: 'Next 2 weeks',
-          priority: 'medium'
-        }
-      ];
-    } else {
-      return [
-        {
-          id: 'pivot',
-          icon: '🔄',
-          title: 'Refine Concept',
-          description: 'Iterate on your idea based on insights',
-          timeframe: 'This week',
-          priority: 'high'
-        },
-        {
-          id: 'feedback',
-          icon: '💬',
-          title: 'Gather Feedback',
-          description: 'Talk to potential customers',
-          timeframe: 'Next 2 weeks',
-          priority: 'high'
-        },
-        {
-          id: 'alternatives',
-          icon: '💡',
-          title: 'Explore Alternatives',
-          description: 'Consider different approaches or markets',
-          timeframe: 'Next month',
-          priority: 'medium'
-        }
-      ];
+      baseActions.push({
+        id: '4',
+        title: 'MVP Development',
+        description: 'Start building your minimum viable product',
+        timeframe: '1month',
+        priority: 'high',
+        completed: false
+      });
+    } else if (score < 50) {
+      baseActions.push({
+        id: '4',
+        title: 'Pivot Analysis',
+        description: 'Explore alternative approaches or target markets',
+        timeframe: '1week',
+        priority: 'medium',
+        completed: false
+      });
     }
+
+    return baseActions;
   };
 
-  const actionSteps = getActionSteps(score);
+  const actions = generateActions(score, category);
+  const filteredActions = actions.filter(action => action.timeframe === activeTab);
 
-  const toggleStep = (stepId: string) => {
-    const newCompleted = new Set(completedSteps);
-    if (newCompleted.has(stepId)) {
-      newCompleted.delete(stepId);
+  const toggleAction = (actionId: string) => {
+    const newCompleted = new Set(completedActions);
+    if (newCompleted.has(actionId)) {
+      newCompleted.delete(actionId);
     } else {
-      newCompleted.add(stepId);
+      newCompleted.add(actionId);
     }
-    setCompletedSteps(newCompleted);
+    setCompletedActions(newCompleted);
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'border-red-400 bg-red-400/10';
-      case 'medium': return 'border-yellow-400 bg-yellow-400/10';
-      case 'low': return 'border-green-400 bg-green-400/10';
-      default: return 'border-gray-400 bg-gray-400/10';
+      case 'high': return 'text-red-400 bg-red-500/20 border-red-500/30';
+      case 'medium': return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30';
+      case 'low': return 'text-green-400 bg-green-500/20 border-green-500/30';
+      default: return 'text-slate-400 bg-slate-500/20 border-slate-500/30';
     }
   };
 
-  const completionRate = (completedSteps.size / actionSteps.length) * 100;
+  const getTimeframeEmoji = (timeframe: string) => {
+    switch (timeframe) {
+      case '24h': return '⚡';
+      case '1week': return '📅';
+      case '1month': return '🗓️';
+      default: return '⏰';
+    }
+  };
 
   return (
-    <div className="glass glass-border p-6 sm:p-8 rounded-3xl mb-12">
+    <div className="glass glass-border p-8 rounded-3xl mb-8">
       <div className="text-center mb-8">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-          🎯 Your Action Plan
+        <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+          🚀 Your Action Plan
         </h2>
-        <p className="text-slate-400 mb-6">
-          {score >= 80 
-            ? "Time to execute! Your idea has strong validation."
-            : score >= 60 
-            ? "Build momentum with these strategic steps."
-            : "Let's refine and strengthen your concept."
-          }
-        </p>
-        
-        {/* Progress Bar */}
-        <div className="max-w-md mx-auto mb-6">
-          <div className="flex justify-between text-sm text-slate-400 mb-2">
-            <span>Progress</span>
-            <span>{Math.round(completionRate)}%</span>
-          </div>
-          <div className="w-full bg-white/10 rounded-full h-2">
-            <div 
-              className="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${completionRate}%` }}
-            ></div>
-          </div>
+        <p className="text-slate-400">Prioritized steps to validate and launch your idea</p>
+      </div>
+
+      {/* Timeframe Tabs */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex bg-slate-800/50 rounded-2xl p-1 border border-slate-700">
+          {(['24h', '1week', '1month'] as const).map((timeframe) => (
+            <button
+              key={timeframe}
+              onClick={() => setActiveTab(timeframe)}
+              className={`px-6 py-3 rounded-xl font-semibold transition-all flex items-center gap-2 ${
+                activeTab === timeframe
+                  ? 'bg-blue-500 text-white shadow-lg'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-700/50'
+              }`}
+            >
+              <span>{getTimeframeEmoji(timeframe)}</span>
+              <span>{timeframe === '24h' ? 'Next 24h' : timeframe === '1week' ? 'This Week' : 'This Month'}</span>
+            </button>
+          ))}
         </div>
       </div>
-      
-      {/* Action Steps */}
-      <div className="grid gap-4 sm:gap-6">
-        {actionSteps.map((step, index) => (
-          <div 
-            key={step.id}
-            className={`glass glass-border p-4 sm:p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] ${
-              completedSteps.has(step.id) ? 'opacity-75 bg-green-500/10' : ''
+
+      {/* Action Items */}
+      <div className="space-y-4">
+        {filteredActions.map((action) => (
+          <div
+            key={action.id}
+            className={`p-6 rounded-2xl border transition-all ${
+              completedActions.has(action.id)
+                ? 'bg-green-500/10 border-green-500/30'
+                : 'bg-slate-800/30 border-slate-700 hover:border-slate-600'
             }`}
           >
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-              {/* Step Icon & Number */}
-              <div className="flex items-center gap-4">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {index + 1}
+            <div className="flex items-start gap-4">
+              {/* Checkbox */}
+              <button
+                onClick={() => toggleAction(action.id)}
+                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
+                  completedActions.has(action.id)
+                    ? 'bg-green-500 border-green-500'
+                    : 'border-slate-500 hover:border-slate-400'
+                }`}
+              >
+                {completedActions.has(action.id) && (
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                )}
+              </button>
+
+              <div className="flex-1">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-2">
+                  <h3 className={`text-lg font-semibold ${
+                    completedActions.has(action.id) ? 'text-green-400 line-through' : 'text-white'
+                  }`}>
+                    {action.title}
+                  </h3>
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(action.priority)}`}>
+                    {action.priority}
+                  </span>
                 </div>
-                <div className="text-3xl">{step.icon}</div>
-              </div>
-              
-              {/* Step Content */}
-              <div className="flex-1 min-w-0">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
-                  <h3 className="text-lg sm:text-xl font-bold text-white">{step.title}</h3>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs border ${getPriorityColor(step.priority)}`}>
-                      {step.priority} priority
-                    </span>
-                    <span className="text-sm text-slate-400">{step.timeframe}</span>
+
+                {/* Description */}
+                <p className="text-slate-300 mb-4">{action.description}</p>
+
+                {/* Resources */}
+                {action.resources && action.resources.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {action.resources.map((resource, index) => (
+                      <a
+                        key={index}
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 px-3 py-1 bg-blue-500/20 border border-blue-500/30 rounded-full text-blue-400 text-sm hover:bg-blue-500/30 transition-all"
+                      >
+                        <span>
+                          {resource.type === 'template' && '📄'}
+                          {resource.type === 'tool' && '🛠️'}
+                          {resource.type === 'guide' && '📚'}
+                        </span>
+                        <span>{resource.name}</span>
+                      </a>
+                    ))}
                   </div>
-                </div>
-                <p className="text-slate-300 text-sm sm:text-base mb-4">{step.description}</p>
-                
-                {/* Action Button */}
-                <button
-                  onClick={() => toggleStep(step.id)}
-                  className={`w-full sm:w-auto px-4 py-2 rounded-lg font-semibold transition-all ${
-                    completedSteps.has(step.id)
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:scale-105'
-                  }`}
-                >
-                  {completedSteps.has(step.id) ? '✅ Completed' : '🚀 Start This Step'}
-                </button>
+                )}
               </div>
             </div>
           </div>
         ))}
       </div>
-      
-      {/* Motivational Footer */}
-      {completionRate > 0 && (
-        <div className="text-center mt-8 p-4 bg-gradient-to-r from-green-500/10 to-blue-500/10 rounded-2xl">
-          <p className="text-green-400 font-semibold">
-            🎉 Great progress! You've completed {completedSteps.size} out of {actionSteps.length} steps.
-          </p>
-          {completionRate === 100 && (
-            <p className="text-yellow-400 mt-2">
-              🚀 Amazing! You're ready for the next phase of your startup journey!
-            </p>
-          )}
+
+      {/* Progress Indicator */}
+      <div className="mt-8 p-4 bg-slate-800/30 rounded-2xl border border-slate-700">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-slate-400">Progress</span>
+          <span className="text-white font-semibold">
+            {completedActions.size} / {filteredActions.length} completed
+          </span>
         </div>
-      )}
+        <div className="w-full bg-slate-700 rounded-full h-2">
+          <div
+            className="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-500"
+            style={{ width: `${(completedActions.size / filteredActions.length) * 100}%` }}
+          />
+        </div>
+      </div>
     </div>
   );
 };
-
-export default ActionPlanSection;
