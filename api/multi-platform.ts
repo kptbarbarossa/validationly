@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { MultiPlatformService } from '../lib/services/multiPlatformService';
+import { MultiPlatformService } from '../lib/services/multiPlatformService.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS headers

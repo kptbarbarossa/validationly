@@ -1,5 +1,5 @@
 // Reddit API + RSS integration
-import { cache, CACHE_TTL } from '../cache';
+import { cache, CACHE_TTL } from '../cache.js';
 import Parser from 'rss-parser';
 
 interface RedditPost {

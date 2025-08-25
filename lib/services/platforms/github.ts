@@ -1,5 +1,5 @@
 // GitHub API integration
-import { cache, CACHE_TTL } from '../cache';
+import { cache, CACHE_TTL } from '../cache.js';
 
 interface GitHubRepo {
   id: number;

@@ -1,8 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
-import { YouTubeService } from '../lib/services/platforms/youtube';
-import { MultiPlatformService } from '../lib/services/multiPlatformService';
+import { YouTubeService } from '../lib/services/platforms/youtube.js';
+import { MultiPlatformService } from '../lib/services/multiPlatformService.js';
 
 // Import our enhanced prompt system
 interface IdeaClassification {

@@ -1,5 +1,5 @@
 // G2 Software Reviews Integration
-import { cache, CACHE_TTL } from '../cache';
+import { cache, CACHE_TTL } from '../cache.js';
 import Parser from 'rss-parser';
 
 interface G2Software {

@@ -12,7 +12,7 @@ interface ValidationResult {
   idea: string;
   demandScore: number;
   scoreJustification: string;
-  
+
   // YouTube analysis data
   youtubeData?: {
     searchResults: {
@@ -50,7 +50,7 @@ interface ValidationResult {
       validationInsights: string[];
     };
   };
-  
+
   // Multi-platform validation results
   multiPlatformData?: {
     platforms: Array<{
@@ -69,7 +69,7 @@ interface ValidationResult {
     };
     totalItems: number;
   };
-  
+
   // Enhanced insights from multi-platform analysis
   insights?: {
     validationScore: number;
@@ -89,7 +89,7 @@ interface ValidationResult {
       youtube: number;
     };
   };
-  
+
   // Enhanced classification
   classification?: {
     primaryCategory: string;
@@ -98,7 +98,7 @@ interface ValidationResult {
     complexity: string;
     confidence?: number;
   };
-  
+
   // Enhanced dimension scores
   dimensionScores?: {
     marketOpportunity?: {
@@ -133,7 +133,7 @@ interface ValidationResult {
       launchStrategy?: string;
     };
   };
-  
+
   // Industry-specific insights
   industrySpecificInsights?: {
     regulatoryConsiderations?: string[];
@@ -142,7 +142,7 @@ interface ValidationResult {
     successFactors?: string[];
     commonFailureReasons?: string[];
   };
-  
+
   // Actionable recommendations
   actionableRecommendations?: {
     immediateNextSteps?: string[];
@@ -151,14 +151,14 @@ interface ValidationResult {
     riskMitigation?: string[];
     keyMetricsToTrack?: string[];
   };
-  
+
   platformAnalyses: Array<{
     platform: string;
     signalStrength: string;
     analysis: string;
     score?: number;
   }>;
-  
+
   // Enhanced social media suggestions
   socialMediaSuggestions?: {
     tweetSuggestion?: string;
@@ -166,7 +166,7 @@ interface ValidationResult {
     redditTitleSuggestion?: string;
     redditBodySuggestion?: string;
   };
-  
+
   // Market data
   marketData?: {
     estimatedMarketSize?: string;
@@ -175,7 +175,7 @@ interface ValidationResult {
     marketMaturity?: string;
     keyTrends?: string[];
   };
-  
+
   // Legacy fields for backward compatibility
   socialArbitrageInsights?: {
     microToMacro: string;
@@ -198,7 +198,7 @@ interface ValidationResult {
   realWorldData?: any;
   dataConfidence?: string;
   lastDataUpdate?: string;
-  
+
   // Analysis metadata
   analysisMetadata?: {
     analysisDate?: string;
@@ -207,7 +207,7 @@ interface ValidationResult {
     analysisDepth?: string;
     confidence?: number;
   };
-  
+
   // Enhanced analysis for premium users
   enhancedAnalysis?: any;
   isPremiumAnalysis?: boolean;
@@ -218,7 +218,7 @@ const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const result: ValidationResult = location.state?.result;
 
   useEffect(() => {
@@ -322,7 +322,7 @@ const ResultsPage: React.FC = () => {
         description="Startup fikrinizin AI destekli doğrulama sonuçları ve eylem planı"
         keywords="startup doğrulama, fikir doğrulama, pazar araştırması, startup araçları"
       />
-      
+
       <div className="min-h-screen text-white">
         {/* Modern gradient background */}
         <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
@@ -330,7 +330,7 @@ const ResultsPage: React.FC = () => {
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
         </div>
-        
+
         <div className="relative z-10">
           {/* Header Section */}
           <div className="container mx-auto px-4 py-8">
@@ -346,7 +346,7 @@ const ResultsPage: React.FC = () => {
                   </svg>
                   <span>Yeni Analiz</span>
                 </button>
-                
+
                 <div className="flex gap-2">
                   <button className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-xl transition-all">
                     📤 Paylaş
@@ -368,7 +368,7 @@ const ResultsPage: React.FC = () => {
                       {result.classification?.primaryCategory} • {result.classification?.businessModel}
                     </p>
                   </div>
-                  
+
                   <div className="text-center">
                     <div className="text-4xl md:text-5xl font-bold mb-2">
                       <span className={getScoreColor(result.demandScore)}>

@@ -1,10 +1,10 @@
-import { RedditService } from './platforms/reddit';
-import { HackerNewsService } from './platforms/hackernews';
-import { ProductHuntService } from './platforms/producthunt';
-import { GitHubService } from './platforms/github';
-import { StackOverflowService } from './platforms/stackoverflow';
-import { GoogleNewsService } from './platforms/googlenews';
-import { YouTubeService } from './platforms/youtube';
+import { RedditService } from './platforms/reddit.js';
+import { HackerNewsService } from './platforms/hackernews.js';
+import { ProductHuntService } from './platforms/producthunt.js';
+import { GitHubService } from './platforms/github.js';
+import { StackOverflowService } from './platforms/stackoverflow.js';
+import { GoogleNewsService } from './platforms/googlenews.js';
+import { YouTubeService } from './platforms/youtube.js';
 
 export interface PlatformResult {
   platform: string;
