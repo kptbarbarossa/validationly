@@ -2,7 +2,10 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
 import PublicValidationPage from './pages/PublicValidationPage';
+import PainPointHomePage from './pages/PainPointHomePage';
+import PainPointDetailPage from './pages/PainPointDetailPage';
 
 import ResultsPage from './pages/ResultsPage';
 import AITweetGenerator from './pages/AITweetGenerator';
@@ -78,7 +81,10 @@ const App: React.FC = () => {
           
           <main className="container mx-auto px-0 pt-24 sm:pt-24">
             <Routes>
-              <Route path="/" element={<HomePage />} />
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/validate" element={<HomePage />} />
+              <Route path="/pain-points" element={<PainPointHomePage />} />
+              <Route path="/pain-point/:id" element={<PainPointDetailPage />} />
 
               <Route path="/results" element={<ResultsPage />} />
               <Route path="/public-validation" element={<PublicValidationPage />} />
