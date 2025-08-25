@@ -56,8 +56,6 @@ export class StackOverflowService {
   }
 
   private async searchQuestionsInternal(query: string, limit = 20): Promise<any[]> {
-
-  async searchQuestions(query: string, limit = 20): Promise<any[]> {
     const cacheKey = `so:search:${query}:${limit}`;
     
     const cached = await cache.get(cacheKey);

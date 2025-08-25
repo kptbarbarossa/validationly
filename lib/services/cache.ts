@@ -208,8 +208,7 @@ export const CACHE_TTL = {
 };
 
 export const cache = new SimpleCache();
-//
- Utility function for cache - aware API calls
+// Utility function for cache-aware API calls
 export async function withCache<T>(
     key: string,
     fetchFn: () => Promise<T>,
