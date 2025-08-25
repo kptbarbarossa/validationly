@@ -108,7 +108,7 @@ const HomePage: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ 
-                    query: ideaPayload,
+                    content: ideaPayload,
                     analysisType: 'comprehensive'
                 })
             });

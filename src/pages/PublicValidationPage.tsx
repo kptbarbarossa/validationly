@@ -72,7 +72,7 @@ const PublicValidationPage: React.FC = () => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    query: searchQuery,
+                    content: searchQuery,
                     subreddits: selectedSubreddits,
                     analysisType: 'comprehensive'
                 })
