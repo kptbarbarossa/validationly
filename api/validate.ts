@@ -19,58 +19,111 @@ const classifyIdea = (idea: string): IdeaClassification => {
   const lowerIdea = idea.toLowerCase();
   
   const categoryPatterns = {
-    'SaaS': ['saas', 'software', 'platform', 'dashboard', 'analytics', 'crm', 'automation', 'workflow', 'api'],
-    'FinTech': ['payment', 'banking', 'finance', 'money', 'investment', 'trading', 'crypto', 'wallet', 'loan'],
-    'E-commerce': ['ecommerce', 'e-commerce', 'shop', 'store', 'marketplace', 'retail', 'product', 'selling'],
-    'HealthTech': ['health', 'medical', 'healthcare', 'patient', 'doctor', 'clinic', 'diagnosis', 'therapy'],
-    'EdTech': ['education', 'learning', 'course', 'student', 'teacher', 'school', 'training', 'skill'],
-    'Marketplace': ['marketplace', 'connect', 'freelancer', 'gig', 'peer-to-peer', 'sharing', 'platform']
+    'SaaS': ['saas', 'software', 'platform', 'dashboard', 'analytics', 'crm', 'automation', 'workflow', 'api', 'tool', 'system', 'solution'],
+    'FinTech': ['payment', 'banking', 'finance', 'money', 'investment', 'trading', 'crypto', 'wallet', 'loan', 'fintech', 'financial'],
+    'E-commerce': ['ecommerce', 'e-commerce', 'shop', 'store', 'marketplace', 'retail', 'product', 'selling', 'buy', 'sell', 'commerce'],
+    'HealthTech': ['health', 'medical', 'healthcare', 'patient', 'doctor', 'clinic', 'diagnosis', 'therapy', 'wellness', 'fitness', 'mental'],
+    'EdTech': ['education', 'learning', 'course', 'student', 'teacher', 'school', 'training', 'skill', 'knowledge', 'study', 'tutorial'],
+    'Marketplace': ['marketplace', 'connect', 'freelancer', 'gig', 'peer-to-peer', 'sharing', 'platform', 'network', 'community'],
+    'FoodTech': ['food', 'restaurant', 'delivery', 'recipe', 'cooking', 'meal', 'nutrition', 'diet', 'kitchen', 'chef'],
+    'TravelTech': ['travel', 'trip', 'hotel', 'booking', 'vacation', 'tourism', 'flight', 'destination', 'journey'],
+    'PropTech': ['property', 'real estate', 'rent', 'housing', 'apartment', 'home', 'building', 'construction'],
+    'AgriTech': ['agriculture', 'farming', 'crop', 'farm', 'agricultural', 'harvest', 'livestock', 'rural'],
+    'CleanTech': ['clean', 'green', 'sustainable', 'renewable', 'energy', 'solar', 'environment', 'eco'],
+    'Gaming': ['game', 'gaming', 'player', 'entertainment', 'fun', 'play', 'mobile game', 'video game'],
+    'Social': ['social', 'community', 'friends', 'chat', 'messaging', 'network', 'share', 'connect'],
+    'Productivity': ['productivity', 'organize', 'task', 'time', 'efficiency', 'management', 'planning', 'schedule'],
+    'Content': ['content', 'media', 'video', 'blog', 'writing', 'creator', 'publish', 'streaming'],
+    'AI/ML': ['ai', 'artificial intelligence', 'machine learning', 'ml', 'neural', 'algorithm', 'prediction', 'automation'],
+    'IoT': ['iot', 'internet of things', 'smart', 'sensor', 'device', 'connected', 'hardware', 'monitoring'],
+    'Logistics': ['logistics', 'delivery', 'shipping', 'transport', 'supply chain', 'warehouse', 'fulfillment'],
+    'Security': ['security', 'privacy', 'protection', 'safe', 'secure', 'cybersecurity', 'encryption', 'authentication']
   };
 
   const businessModelPatterns = {
-    'B2B': ['business', 'enterprise', 'company', 'organization', 'corporate', 'team'],
-    'B2C': ['consumer', 'user', 'customer', 'individual', 'personal', 'people'],
-    'Marketplace': ['marketplace', 'connect', 'platform', 'peer-to-peer', 'two-sided'],
-    'Subscription': ['subscription', 'monthly', 'recurring', 'saas', 'membership']
+    'B2B': ['business', 'enterprise', 'company', 'organization', 'corporate', 'team', 'professional', 'workplace', 'office'],
+    'B2C': ['consumer', 'user', 'customer', 'individual', 'personal', 'people', 'everyone', 'anyone', 'public'],
+    'Marketplace': ['marketplace', 'connect', 'platform', 'peer-to-peer', 'two-sided', 'network', 'community', 'matching'],
+    'Subscription': ['subscription', 'monthly', 'recurring', 'saas', 'membership', 'premium', 'plan', 'tier'],
+    'Freemium': ['free', 'freemium', 'basic', 'upgrade', 'premium features'],
+    'E-commerce': ['sell', 'buy', 'purchase', 'order', 'product', 'store', 'shop', 'retail'],
+    'Advertising': ['ads', 'advertising', 'sponsored', 'revenue', 'monetize', 'traffic']
   };
 
   const targetMarketPatterns = {
-    'SMB': ['small business', 'smb', 'startup', 'entrepreneur', 'freelancer'],
-    'Enterprise': ['enterprise', 'large company', 'corporation', 'fortune'],
-    'Consumer': ['consumer', 'individual', 'personal', 'everyday', 'people'],
-    'Developer': ['developer', 'programmer', 'api', 'code', 'technical']
+    'SMB': ['small business', 'smb', 'startup', 'entrepreneur', 'freelancer', 'small company', 'local business'],
+    'Enterprise': ['enterprise', 'large company', 'corporation', 'fortune', 'big business', 'multinational'],
+    'Consumer': ['consumer', 'individual', 'personal', 'everyday', 'people', 'user', 'customer', 'public'],
+    'Developer': ['developer', 'programmer', 'api', 'code', 'technical', 'engineer', 'software developer'],
+    'Students': ['student', 'university', 'college', 'school', 'academic', 'education'],
+    'Professionals': ['professional', 'expert', 'specialist', 'consultant', 'manager', 'executive'],
+    'Creators': ['creator', 'artist', 'designer', 'writer', 'influencer', 'content creator'],
+    'Healthcare': ['doctor', 'nurse', 'patient', 'medical', 'healthcare professional', 'clinic'],
+    'Parents': ['parent', 'family', 'children', 'kids', 'mother', 'father', 'baby']
   };
 
-  // Detect primary category
-  let primaryCategory = 'Other';
+  // Detect primary category with weighted scoring
+  let primaryCategory = 'Tech Startup';
   let maxScore = 0;
   
   for (const [category, keywords] of Object.entries(categoryPatterns)) {
-    const score = keywords.filter(keyword => lowerIdea.includes(keyword)).length;
+    let score = 0;
+    keywords.forEach(keyword => {
+      if (lowerIdea.includes(keyword)) {
+        // Give higher weight to exact matches and longer keywords
+        score += keyword.length > 5 ? 2 : 1;
+      }
+    });
+    
     if (score > maxScore) {
       maxScore = score;
       primaryCategory = category;
     }
   }
 
-  // Detect business model
+  // If no strong category match, try to infer from context
+  if (maxScore === 0) {
+    if (lowerIdea.includes('app') || lowerIdea.includes('mobile') || lowerIdea.includes('web')) {
+      primaryCategory = 'SaaS';
+    } else if (lowerIdea.includes('service') || lowerIdea.includes('help')) {
+      primaryCategory = 'Service';
+    } else if (lowerIdea.includes('market') || lowerIdea.includes('demand')) {
+      primaryCategory = 'Market Research';
+    } else {
+      primaryCategory = 'Tech Startup'; // Better default than "Other"
+    }
+  }
+
+  // Detect business model with weighted scoring
   let businessModel = 'B2C';
   maxScore = 0;
   
   for (const [model, keywords] of Object.entries(businessModelPatterns)) {
-    const score = keywords.filter(keyword => lowerIdea.includes(keyword)).length;
+    let score = 0;
+    keywords.forEach(keyword => {
+      if (lowerIdea.includes(keyword)) {
+        score += keyword.length > 5 ? 2 : 1;
+      }
+    });
+    
     if (score > maxScore) {
       maxScore = score;
       businessModel = model;
     }
   }
 
-  // Detect target market
+  // Detect target market with weighted scoring
   let targetMarket = 'Consumer';
   maxScore = 0;
   
   for (const [market, keywords] of Object.entries(targetMarketPatterns)) {
-    const score = keywords.filter(keyword => lowerIdea.includes(keyword)).length;
+    let score = 0;
+    keywords.forEach(keyword => {
+      if (lowerIdea.includes(keyword)) {
+        score += keyword.length > 5 ? 2 : 1;
+      }
+    });
+    
     if (score > maxScore) {
       maxScore = score;
       targetMarket = market;
@@ -408,27 +461,67 @@ const generateEnhancedPrompt = (idea: string, classification: IdeaClassification
   };
 
   if (fast) {
-    return `You are a Senior ${classification.primaryCategory} Industry Expert and Startup Validator.
+    return `You are a Senior ${classification.primaryCategory} Industry Expert and Startup Validator with 15+ years of experience.
 
-EXPERTISE: ${classification.primaryCategory} market dynamics, ${classification.businessModel} business models, ${classification.targetMarket} customer acquisition.
+STARTUP IDEA TO ANALYZE: "${idea}"
 
-INDUSTRY CONTEXT:
+CLASSIFICATION:
+- Industry: ${classification.primaryCategory}
+- Business Model: ${classification.businessModel}
+- Target Market: ${classification.targetMarket}
+
+INDUSTRY EXPERTISE:
 - Key Regulations: ${context.regulations.join(', ')}
 - Success Metrics: ${context.keyMetrics.join(', ')}
-- Major Players: ${context.competitors.join(', ')}
+- Major Competitors: ${context.competitors.join(', ')}
 - Current Trends: ${context.trends.join(', ')}
 
-TASK: Analyze this ${classification.primaryCategory} startup idea targeting ${classification.targetMarket} market.
+ANALYSIS REQUIREMENTS:
+Provide a comprehensive validation analysis with specific, actionable insights. Be realistic but constructive.
 
-ANALYSIS FRAMEWORK:
-1. MARKET OPPORTUNITY (30%): Market size, competition, customer demand, timing
-2. EXECUTION FEASIBILITY (25%): Technical complexity, resources, timeline, risks
-3. BUSINESS MODEL (25%): Revenue streams, unit economics, scalability, profitability
-4. GO-TO-MARKET (20%): Customer acquisition, positioning, channels, growth potential
+SCORING FRAMEWORK (0-100):
+1. MARKET OPPORTUNITY (30%): 
+   - Market size and growth potential
+   - Customer pain point severity
+   - Competitive landscape analysis
+   - Market timing assessment
 
-SCORING: Be realistic. Most viable ${classification.primaryCategory} ideas score 55-75.
+2. EXECUTION FEASIBILITY (25%):
+   - Technical complexity and requirements
+   - Resource needs and team requirements
+   - Development timeline and milestones
+   - Key execution risks
 
-RETURN JSON with detailed scores, industry-specific insights, and actionable recommendations.`;
+3. BUSINESS MODEL VIABILITY (25%):
+   - Revenue model clarity and potential
+   - Unit economics and profitability path
+   - Scalability factors
+   - Monetization timeline
+
+4. GO-TO-MARKET STRATEGY (20%):
+   - Customer acquisition channels
+   - Product-market fit validation approach
+   - Competitive differentiation
+   - Growth and scaling strategy
+
+REALISTIC SCORING GUIDELINES:
+- 85-100: Exceptional opportunity with clear path to success
+- 70-84: Strong opportunity with good market potential
+- 55-69: Moderate opportunity requiring optimization
+- 40-54: Challenging opportunity needing significant pivots
+- 0-39: Poor opportunity with fundamental issues
+
+REQUIRED OUTPUT FORMAT:
+Return a detailed JSON response with:
+- Overall demand score (0-100)
+- Detailed score justification
+- Dimension scores with specific insights
+- Industry-specific recommendations
+- Actionable next steps
+- Platform-specific social media suggestions
+- Risk assessment and mitigation strategies
+
+Be specific, actionable, and provide concrete examples relevant to ${classification.primaryCategory} industry.`;
   }
 
   return `You are a Senior Startup Validation Expert with deep expertise in ${classification.primaryCategory} industry and ${classification.businessModel} business models.
@@ -487,7 +580,21 @@ Be realistic and consider both opportunities and risks. Provide actionable insig
 // Trends integration
 async function getGoogleTrendsData(keyword: string): Promise<any> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/google-trends?keyword=${encodeURIComponent(keyword)}`);
+    // Skip trends API call in production for now to avoid connection errors
+    if (process.env.NODE_ENV === 'production') {
+      return null;
+    }
+    
+    const baseUrl = process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : process.env.NEXT_PUBLIC_BASE_URL 
+      ? process.env.NEXT_PUBLIC_BASE_URL 
+      : 'http://localhost:3000';
+      
+    const response = await fetch(`${baseUrl}/api/google-trends?keyword=${encodeURIComponent(keyword)}`, {
+      timeout: 5000 // 5 second timeout
+    });
+    
     if (!response.ok) return null;
     const data = await response.json();
     return data.data;
