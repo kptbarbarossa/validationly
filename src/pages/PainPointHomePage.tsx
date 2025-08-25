@@ -124,107 +124,139 @@ const PainPointHomePage: React.FC = () => {
         keywords="SaaS ideas, startup opportunities, pain points, market validation, business ideas"
       />
       
-      <div className="min-h-screen text-white">
-        {/* Background */}
-        <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/10 via-purple-500/5 to-cyan-600/10"></div>
-          <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
-        </div>
-        
-        <div className="relative z-10">
-          {/* Header */}
-          <div className="container mx-auto px-4 py-8">
-            <div className="text-center mb-12">
-              <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+      <div className="text-center max-w-4xl mx-auto text-slate-100">
+        {/* Enhanced Hero Section */}
+        <div className="relative mb-8">
+          <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
+
+          <div className="relative z-10 py-8">
+            <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up delay-100">
+              <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
                 PainPointDB
-              </h1>
-              <p className="text-xl md:text-2xl text-slate-300 mb-4 max-w-4xl mx-auto">
-                Discover validated SaaS opportunities from real user pain points
-              </p>
-              <p className="text-lg text-slate-400 max-w-3xl mx-auto">
-                We scan Reddit, G2, Upwork, and forums to find problems people are willing to pay to solve
-              </p>
-              
-              {/* Stats */}
-              <div className="flex justify-center gap-8 mt-8">
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-blue-400">1,247</div>
-                  <div className="text-slate-400 text-sm">Pain Points</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-green-400">89%</div>
-                  <div className="text-slate-400 text-sm">Validated</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-3xl font-bold text-purple-400">7</div>
-                  <div className="text-slate-400 text-sm">Data Sources</div>
-                </div>
+              </span>
+              <br />
+              <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">
+                Validated SaaS Opportunities
+              </span>
+            </h1>
+
+            <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
+              Discover validated SaaS opportunities from real user pain points across Reddit, G2, forums, and more.
+            </p>
+
+            {/* Data Source Badges */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8 animate-slide-up delay-300">
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-300 text-sm">
+                <span>🤖</span> Reddit
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300 text-sm">
+                <span>⭐</span> G2 Reviews
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-300 text-sm">
+                <span>💼</span> Upwork
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300 text-sm">
+                <span>🚀</span> IndieHackers
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-full text-yellow-300 text-sm">
+                <span>❓</span> Stack Overflow
+              </div>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-pink-500/10 border border-pink-500/20 rounded-full text-pink-300 text-sm">
+                <span>💬</span> Forums
               </div>
             </div>
 
-            {/* Search and Filters */}
-            <div className="glass glass-border p-6 rounded-3xl mb-8 max-w-6xl mx-auto">
-              <div className="grid md:grid-cols-3 gap-4 mb-6">
-                {/* Search */}
-                <div className="md:col-span-1">
-                  <input
-                    type="text"
-                    placeholder="Search pain points..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 transition-all"
-                  />
-                </div>
-                
-                {/* Category Filter */}
-                <div>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-blue-500 transition-all"
-                  >
-                    {categories.map(category => (
-                      <option key={category} value={category}>{category}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                {/* Difficulty Filter */}
-                <div>
-                  <select
-                    value={selectedDifficulty}
-                    onChange={(e) => setSelectedDifficulty(e.target.value)}
-                    className="w-full px-4 py-3 bg-slate-800/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:border-blue-500 transition-all"
-                  >
-                    {difficulties.map(difficulty => (
-                      <option key={difficulty} value={difficulty}>
-                        {difficulty === 'All' ? 'All Difficulties' : `${difficulty} to Build`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+            {/* Stats */}
+            <div className="flex justify-center gap-8 mb-8">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-400">1,247</div>
+                <div className="text-slate-400 text-sm">Pain Points</div>
               </div>
-              
-              <div className="text-center text-slate-400">
-                Found {filteredPainPoints.length} validated opportunities
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-400">89%</div>
+                <div className="text-slate-400 text-sm">Validated</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-purple-400">6</div>
+                <div className="text-slate-400 text-sm">Data Sources</div>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Pain Points Grid */}
-            {isLoading ? (
-              <div className="text-center py-12">
-                <div className="animate-spin text-6xl mb-4">🔍</div>
-                <p className="text-slate-400">Discovering pain points...</p>
+        <div className="w-full max-w-6xl mx-auto">
+          {/* Search and Filters */}
+          <div className="mb-8">
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+              
+              <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all p-6">
+                <div className="grid md:grid-cols-3 gap-4 mb-4">
+                  {/* Search */}
+                  <div className="md:col-span-1">
+                    <input
+                      type="text"
+                      placeholder="Search pain points..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all"
+                    />
+                  </div>
+                  
+                  {/* Category Filter */}
+                  <div>
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-all"
+                    >
+                      {categories.map(category => (
+                        <option key={category} value={category} className="bg-slate-800">
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  {/* Difficulty Filter */}
+                  <div>
+                    <select
+                      value={selectedDifficulty}
+                      onChange={(e) => setSelectedDifficulty(e.target.value)}
+                      className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-indigo-500 transition-all"
+                    >
+                      {difficulties.map(difficulty => (
+                        <option key={difficulty} value={difficulty} className="bg-slate-800">
+                          {difficulty === 'All' ? 'All Difficulties' : `${difficulty} to Build`}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="text-center text-slate-400">
+                  Found {filteredPainPoints.length} validated opportunities
+                </div>
               </div>
-            ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
-                {filteredPainPoints.map((point) => (
-                  <div
-                    key={point.id}
-                    className="glass glass-border p-6 rounded-2xl hover:scale-105 transition-all cursor-pointer"
-                    onClick={() => navigate(`/pain-point/${point.id}`)}
-                  >
+            </div>
+          </div>
+
+
+
+          {/* Pain Points Grid */}
+          {isLoading ? (
+            <div className="text-center py-12">
+              <div className="animate-spin text-6xl mb-4">🔍</div>
+              <p className="text-slate-400">Discovering pain points...</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredPainPoints.map((point) => (
+                <div
+                  key={point.id}
+                  className="glass glass-border p-6 rounded-2xl hover:scale-105 transition-all cursor-pointer hover:border-white/20"
+                  onClick={() => navigate(`/pain-point/${point.id}`)}
+                >
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
@@ -286,23 +318,22 @@ const PainPointHomePage: React.FC = () => {
               </div>
             )}
 
-            {/* CTA Section */}
-            <div className="text-center mt-16">
-              <div className="glass glass-border p-8 rounded-3xl max-w-4xl mx-auto">
-                <h2 className="text-3xl font-bold mb-4 text-white">
-                  Ready to Build Your Next SaaS?
-                </h2>
-                <p className="text-slate-300 mb-6">
-                  Get unlimited access to our database of validated opportunities
-                </p>
-                <div className="flex justify-center gap-4">
-                  <button className="px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-2xl font-semibold transition-all transform hover:scale-105">
-                    Start Free Trial
-                  </button>
-                  <button className="px-8 py-4 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 rounded-2xl font-semibold transition-all">
-                    View Pricing
-                  </button>
-                </div>
+          {/* CTA Section */}
+          <div className="text-center mt-16">
+            <div className="glass glass-border p-8 rounded-3xl hover:border-white/20 transition-all">
+              <h2 className="text-3xl font-bold mb-4 text-white">
+                Ready to Build Your Next SaaS?
+              </h2>
+              <p className="text-slate-300 mb-6">
+                Get unlimited access to our database of validated opportunities
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <button className="px-8 py-4 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 rounded-2xl font-semibold transition-all transform hover:scale-105">
+                  Start Free Trial
+                </button>
+                <button className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-2xl font-semibold transition-all">
+                  View Pricing
+                </button>
               </div>
             </div>
           </div>
