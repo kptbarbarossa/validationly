@@ -102,7 +102,7 @@ const HomePage: React.FC = () => {
         try {
             // Use new multi-platform validation API
             const ideaPayload = userInput.idea;
-            const response = await fetch('/api/public-validation', {
+            const response = await fetch('/api/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

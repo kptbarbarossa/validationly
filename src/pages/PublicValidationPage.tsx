@@ -66,7 +66,7 @@ const PublicValidationPage: React.FC = () => {
         try {
             setLoadingStep('Analyzing with AI...');
 
-            const response = await fetch('/api/public-validation', {
+            const response = await fetch('/api/validate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
