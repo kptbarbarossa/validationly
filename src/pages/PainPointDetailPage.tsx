@@ -128,7 +128,7 @@ const PainPointDetailPage: React.FC = () => {
         description={painPoint.description}
         keywords={`${painPoint.tags.join(', ')}, SaaS opportunity, startup idea`}
       />
-      
+
       <div className="text-center max-w-6xl mx-auto text-slate-100">
         <div className="container mx-auto px-4 py-8">
           {/* Back Button */}
@@ -144,165 +144,165 @@ const PainPointDetailPage: React.FC = () => {
           <div className="relative mb-8">
             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
             <div className="relative glass glass-border p-8 rounded-3xl hover:border-white/20 transition-all">
-            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-              <div className="flex-1 text-left">
-                <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                  <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
-                    {painPoint.title}
-                  </span>
-                </h1>
-                
-                <div className="flex flex-wrap items-center gap-3 mb-6">
-                  <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300">
-                    {painPoint.category}
-                  </span>
-                  <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300">
-                    {painPoint.industry}
-                  </span>
-                  <span className={`px-3 py-1 border rounded-full ${getDifficultyColor(painPoint.difficultyLevel)}`}>
-                    {painPoint.difficultyLevel} to Build
-                  </span>
-                </div>
-              </div>
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+                <div className="flex-1 text-left">
+                  <h1 className="text-3xl md:text-4xl font-bold mb-4">
+                    <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
+                      {painPoint.title}
+                    </span>
+                  </h1>
 
-              <div className="text-center lg:text-right">
-                <div className="text-5xl font-bold bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent mb-2">
-                  {painPoint.demandScore}
+                  <div className="flex flex-wrap items-center gap-3 mb-6">
+                    <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300">
+                      {painPoint.category}
+                    </span>
+                    <span className="px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-purple-300">
+                      {painPoint.industry}
+                    </span>
+                    <span className={`px-3 py-1 border rounded-full ${getDifficultyColor(painPoint.difficultyLevel)}`}>
+                      {painPoint.difficultyLevel} to Build
+                    </span>
+                  </div>
                 </div>
-                <div className="text-slate-400">Demand Score</div>
-                <div className="text-sm text-slate-500 mt-1">
-                  Based on {painPoint.evidence.length} sources
+
+                <div className="text-center lg:text-right">
+                  <div className="text-5xl font-bold bg-gradient-to-r from-green-400 to-cyan-400 bg-clip-text text-transparent mb-2">
+                    {painPoint.demandScore}
+                  </div>
+                  <div className="text-slate-400">Demand Score</div>
+                  <div className="text-sm text-slate-500 mt-1">
+                    Based on {painPoint.evidence.length} sources
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Problem Description */}
-            <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
-              <h2 className="text-2xl font-bold mb-4 text-white text-left">Problem Description</h2>
-              <p className="text-slate-300 leading-relaxed text-left">
-                {painPoint.description}
-              </p>
-            </div>
-
-            {/* Evidence */}
-            <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
-              <h2 className="text-2xl font-bold mb-4 text-white text-left">Evidence Sources</h2>
-              <div className="space-y-4">
-                {painPoint.evidence.slice(0, showFullEvidence ? undefined : 2).map((evidence, index) => (
-                  <div key={index} className="bg-white/5 p-4 rounded-xl border border-white/10 hover:border-white/20 transition-all">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span className="text-indigo-400 font-medium">{evidence.source}</span>
-                        <a
-                          href={evidence.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-slate-400 hover:text-indigo-400 transition-all"
-                        >
-                          🔗
-                        </a>
-                      </div>
-                      {evidence.upvotes && (
-                        <div className="flex items-center gap-4 text-sm text-slate-400">
-                          <span>👍 {evidence.upvotes}</span>
-                          <span>💬 {evidence.comments}</span>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-slate-300 italic text-left">"{evidence.snippet}"</p>
-                  </div>
-                ))}
-                
-                {painPoint.evidence.length > 2 && (
-                  <button
-                    onClick={() => setShowFullEvidence(!showFullEvidence)}
-                    className="text-indigo-400 hover:text-indigo-300 transition-all"
-                  >
-                    {showFullEvidence ? 'Show Less' : `Show ${painPoint.evidence.length - 2} More Sources`}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            {/* Suggested Solution */}
-            <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
-              <h2 className="text-2xl font-bold mb-4 text-white text-left">Suggested Solution</h2>
-              <div className="bg-gradient-to-r from-green-500/10 to-cyan-500/10 border border-green-500/20 p-4 rounded-xl">
-                <p className="text-green-300 font-medium text-lg text-left">
-                  {painPoint.suggestedSolution}
+          <div className="grid lg:grid-cols-3 gap-8">
+            {/* Main Content */}
+            <div className="lg:col-span-2 space-y-8">
+              {/* Problem Description */}
+              <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
+                <h2 className="text-2xl font-bold mb-4 text-white text-left">Problem Description</h2>
+                <p className="text-slate-300 leading-relaxed text-left">
+                  {painPoint.description}
                 </p>
               </div>
-            </div>
-          </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Quick Stats */}
-            <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
-              <h3 className="text-xl font-bold mb-4 text-white text-left">Quick Stats</h3>
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Competition Level</span>
-                  <span className={`font-medium ${getCompetitionColor(painPoint.competitionLevel)}`}>
-                    {painPoint.competitionLevel}
-                  </span>
+              {/* Evidence */}
+              <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
+                <h2 className="text-2xl font-bold mb-4 text-white text-left">Evidence Sources</h2>
+                <div className="space-y-4">
+                  {painPoint.evidence.slice(0, showFullEvidence ? undefined : 2).map((evidence, index) => (
+                    <div key={index} className="bg-white/5 p-4 rounded-xl border border-white/10 hover:border-white/20 transition-all">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-indigo-400 font-medium">{evidence.source}</span>
+                          <a
+                            href={evidence.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-slate-400 hover:text-indigo-400 transition-all"
+                          >
+                            🔗
+                          </a>
+                        </div>
+                        {evidence.upvotes && (
+                          <div className="flex items-center gap-4 text-sm text-slate-400">
+                            <span>👍 {evidence.upvotes}</span>
+                            <span>💬 {evidence.comments}</span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-slate-300 italic text-left">"{evidence.snippet}"</p>
+                    </div>
+                  ))}
+
+                  {painPoint.evidence.length > 2 && (
+                    <button
+                      onClick={() => setShowFullEvidence(!showFullEvidence)}
+                      className="text-indigo-400 hover:text-indigo-300 transition-all"
+                    >
+                      {showFullEvidence ? 'Show Less' : `Show ${painPoint.evidence.length - 2} More Sources`}
+                    </button>
+                  )}
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Technical Complexity</span>
-                  <span className={`font-medium ${getCompetitionColor(painPoint.technicalComplexity)}`}>
-                    {painPoint.technicalComplexity}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Market Size</span>
-                  <span className="font-medium text-green-400">{painPoint.estimatedMarketSize}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-400">Last Updated</span>
-                  <span className="text-slate-300">{painPoint.lastUpdated}</span>
+              </div>
+
+              {/* Suggested Solution */}
+              <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
+                <h2 className="text-2xl font-bold mb-4 text-white text-left">Suggested Solution</h2>
+                <div className="bg-gradient-to-r from-green-500/10 to-cyan-500/10 border border-green-500/20 p-4 rounded-xl">
+                  <p className="text-green-300 font-medium text-lg text-left">
+                    {painPoint.suggestedSolution}
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Tags */}
-            <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
-              <h3 className="text-xl font-bold mb-4 text-white text-left">Tags</h3>
-              <div className="flex flex-wrap gap-2">
-                {painPoint.tags.map((tag, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-slate-300 hover:bg-white/10 hover:border-white/20 cursor-pointer transition-all"
-                  >
-                    #{tag}
-                  </span>
-                ))}
+            {/* Sidebar */}
+            <div className="space-y-6">
+              {/* Quick Stats */}
+              <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
+                <h3 className="text-xl font-bold mb-4 text-white text-left">Quick Stats</h3>
+                <div className="space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Competition Level</span>
+                    <span className={`font-medium ${getCompetitionColor(painPoint.competitionLevel)}`}>
+                      {painPoint.competitionLevel}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Technical Complexity</span>
+                    <span className={`font-medium ${getCompetitionColor(painPoint.technicalComplexity)}`}>
+                      {painPoint.technicalComplexity}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Market Size</span>
+                    <span className="font-medium text-green-400">{painPoint.estimatedMarketSize}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Last Updated</span>
+                    <span className="text-slate-300">{painPoint.lastUpdated}</span>
+                  </div>
+                </div>
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
-              <h3 className="text-xl font-bold mb-4 text-white text-left">Take Action</h3>
-              <div className="space-y-3">
-                <button className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 rounded-xl font-semibold transition-all transform hover:scale-105">
-                  Save to Favorites
-                </button>
-                <button className="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl font-semibold transition-all">
-                  Export Details
-                </button>
-                <button className="w-full px-4 py-3 bg-gradient-to-r from-green-500/20 to-cyan-500/20 hover:from-green-500/30 hover:to-cyan-500/30 border border-green-500/30 text-green-400 rounded-xl font-semibold transition-all">
-                  Start Building
-                </button>
+              {/* Tags */}
+              <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
+                <h3 className="text-xl font-bold mb-4 text-white text-left">Tags</h3>
+                <div className="flex flex-wrap gap-2">
+                  {painPoint.tags.map((tag, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-sm text-slate-300 hover:bg-white/10 hover:border-white/20 cursor-pointer transition-all"
+                    >
+                      #{tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="glass glass-border p-6 rounded-2xl hover:border-white/20 transition-all">
+                <h3 className="text-xl font-bold mb-4 text-white text-left">Take Action</h3>
+                <div className="space-y-3">
+                  <button className="w-full px-4 py-3 bg-gradient-to-r from-indigo-500 to-cyan-500 hover:from-indigo-600 hover:to-cyan-600 rounded-xl font-semibold transition-all transform hover:scale-105">
+                    Save to Favorites
+                  </button>
+                  <button className="w-full px-4 py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-xl font-semibold transition-all">
+                    Export Details
+                  </button>
+                  <button className="w-full px-4 py-3 bg-gradient-to-r from-green-500/20 to-cyan-500/20 hover:from-green-500/30 hover:to-cyan-500/30 border border-green-500/30 text-green-400 rounded-xl font-semibold transition-all">
+                    Start Building
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </>
   );
 };

@@ -20,6 +20,9 @@ interface PainPoint {
   tags: string[];
   createdAt: string;
   lastUpdated: string;
+  // Backward compatibility for simple display
+  source?: string;
+  evidenceUrl?: string;
 }
 
 interface PainPointsResponse {

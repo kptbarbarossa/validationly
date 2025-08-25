@@ -23,39 +23,84 @@ const PainPointHomePage: React.FC = () => {
       title: 'Freelancers struggle with client brief collection',
       description: 'Freelancers spend hours going back and forth with clients to get proper project briefs. Many projects fail due to unclear requirements.',
       category: 'Freelancing',
+      industry: 'Professional Services',
       demandScore: 85,
       difficultyLevel: 'Medium',
-      source: 'Reddit r/freelance',
-      evidenceUrl: 'https://reddit.com/r/freelance/example',
+      evidence: [
+        {
+          source: 'Reddit r/freelance',
+          url: 'https://reddit.com/r/freelance/example',
+          snippet: 'Getting briefs from clients is a nightmare. I spend more time trying to understand what they want than actually doing the work.',
+          upvotes: 234,
+          comments: 45
+        }
+      ],
       suggestedSolution: 'Brief collection tool with templates + CRM integration',
+      competitionLevel: 'Low',
+      technicalComplexity: 'Medium',
+      estimatedMarketSize: '$50M',
       tags: ['freelancing', 'client-management', 'forms'],
-      createdAt: '2025-01-25'
+      createdAt: '2025-01-25',
+      lastUpdated: '2025-01-25',
+      // Backward compatibility
+      source: 'Reddit r/freelance',
+      evidenceUrl: 'https://reddit.com/r/freelance/example'
     },
     {
       id: '2',
       title: 'Small businesses need simple inventory tracking',
       description: 'Local shops and small businesses struggle with Excel-based inventory. They need something simpler than enterprise solutions.',
       category: 'SaaS',
+      industry: 'Retail',
       demandScore: 78,
       difficultyLevel: 'Easy',
-      source: 'G2 Reviews',
-      evidenceUrl: 'https://g2.com/example',
+      evidence: [
+        {
+          source: 'G2 Reviews',
+          url: 'https://g2.com/example',
+          snippet: 'Current inventory software is too complex for our small shop. We just need basic tracking.',
+          upvotes: 156,
+          comments: 32
+        }
+      ],
       suggestedSolution: 'Simple inventory tracker with barcode scanning',
+      competitionLevel: 'Medium',
+      technicalComplexity: 'Low',
+      estimatedMarketSize: '$120M',
       tags: ['inventory', 'small-business', 'retail'],
-      createdAt: '2025-01-24'
+      createdAt: '2025-01-24',
+      lastUpdated: '2025-01-24',
+      // Backward compatibility
+      source: 'G2 Reviews',
+      evidenceUrl: 'https://g2.com/example'
     },
     {
       id: '3',
       title: 'Content creators need better analytics dashboard',
       description: 'YouTubers and content creators juggle multiple platforms but lack unified analytics. Current tools are too complex or expensive.',
       category: 'Marketing',
+      industry: 'Content Creation',
       demandScore: 92,
       difficultyLevel: 'Hard',
-      source: 'IndieHackers',
-      evidenceUrl: 'https://indiehackers.com/example',
+      evidence: [
+        {
+          source: 'IndieHackers',
+          url: 'https://indiehackers.com/example',
+          snippet: 'Managing analytics across YouTube, TikTok, Instagram is a nightmare. Need one dashboard.',
+          upvotes: 445,
+          comments: 78
+        }
+      ],
       suggestedSolution: 'Multi-platform content analytics dashboard',
+      competitionLevel: 'High',
+      technicalComplexity: 'High',
+      estimatedMarketSize: '$200M',
       tags: ['analytics', 'content-creation', 'social-media'],
-      createdAt: '2025-01-23'
+      createdAt: '2025-01-23',
+      lastUpdated: '2025-01-23',
+      // Backward compatibility
+      source: 'IndieHackers',
+      evidenceUrl: 'https://indiehackers.com/example'
     }
   ];
 
