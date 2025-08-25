@@ -4,9 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 
 const navItems: Array<{ to: string; label: string; external?: boolean }> = [
-  { to: '/', label: 'Home' },
-  { to: '/validate', label: 'Validate Idea' },
-  { to: '/pain-points', label: 'Pain Points' },
+  { to: '/', label: 'New Analysis' },
   { to: '/tools', label: 'Tools' },
   { to: '/faq', label: 'FAQ' },
   { to: '/blog', label: 'Blog' },

@@ -7,6 +7,14 @@ const ToolsPage: React.FC = () => {
 
     const tools = [
         {
+            id: 'pain-points',
+            title: 'PainPointDB',
+            description: 'Discover validated SaaS opportunities from real user pain points across Reddit, G2, forums, and more.',
+            icon: '💡',
+            route: '/pain-points',
+            features: ['1,247+ validated opportunities', 'Evidence from real users', 'Market size estimates', 'Suggested solutions']
+        },
+        {
             id: 'trend-hunter',
             title: 'Trend Hunter',
             description: 'Discover viral trends and generate profitable startup ideas from social media momentum.',
