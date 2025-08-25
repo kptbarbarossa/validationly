@@ -198,6 +198,8 @@ export const CACHE_TTL = {
     GITHUB: 12 * 60 * 60 * 1000,       // 12 hours (repos don't change often)
     STACKOVERFLOW: 6 * 60 * 60 * 1000, // 6 hours (questions/answers)
     YOUTUBE: 12 * 60 * 60 * 1000,      // 12 hours (videos don't change)
+    G2: 24 * 60 * 60 * 1000,           // 24 hours (software reviews change slowly)
+    UPWORK: 2 * 60 * 60 * 1000,        // 2 hours (job postings change frequently)
 
     // Short-term cache for API responses
     SHORT: 15 * 60 * 1000,             // 15 minutes

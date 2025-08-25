@@ -6,6 +6,8 @@ import { gitHubService } from './platforms/github';
 import { stackOverflowService } from './platforms/stackoverflow';
 import { youTubeService } from './platforms/youtube';
 import { redditService } from './platforms/reddit';
+import { g2Service } from './platforms/g2';
+import { upworkService } from './platforms/upwork';
 
 export interface PlatformData {
   platform: string;
@@ -25,6 +27,8 @@ export interface MultiPlatformResult {
     github: number;
     stackoverflow: number;
     youtube: number;
+    g2: number;
+    upwork: number;
   };
 }
 
@@ -40,7 +44,9 @@ export class MultiPlatformService {
       googleNewsResults,
       githubResults,
       stackOverflowResults,
-      youtubeResults
+      youtubeResults,
+      g2Results,
+      upworkResults
     ] = await Promise.allSettled([
       redditService.searchPostsRSS(query, ['startups', 'entrepreneur', 'SaaS', 'indiehackers'], limit),
       hackerNewsService.searchStories(query, limit),
@@ -48,7 +54,9 @@ export class MultiPlatformService {
       googleNewsService.searchNews(query, limit),
       gitHubService.searchRepositories(query, limit),
       stackOverflowService.searchQuestions(query, limit),
-      youTubeService.searchVideos(query, limit)
+      youTubeService.searchVideos(query, limit),
+      g2Service.searchSoftware(query, limit),
+      upworkService.searchJobs(query, limit)
     ]);
 
     const platforms: PlatformData[] = [
@@ -86,6 +94,16 @@ export class MultiPlatformService {
         platform: 'youtube',
         items: youtubeResults.status === 'fulfilled' ? youtubeResults.value : [],
         error: youtubeResults.status === 'rejected' ? youtubeResults.reason.message : undefined
+      },
+      {
+        platform: 'g2',
+        items: g2Results.status === 'fulfilled' ? g2Results.value : [],
+        error: g2Results.status === 'rejected' ? g2Results.reason.message : undefined
+      },
+      {
+        platform: 'upwork',
+        items: upworkResults.status === 'fulfilled' ? upworkResults.value : [],
+        error: upworkResults.status === 'rejected' ? upworkResults.reason.message : undefined
       }
     ];
 
@@ -99,6 +117,8 @@ export class MultiPlatformService {
       github: platforms.find(p => p.platform === 'github')?.items.length || 0,
       stackoverflow: platforms.find(p => p.platform === 'stackoverflow')?.items.length || 0,
       youtube: platforms.find(p => p.platform === 'youtube')?.items.length || 0,
+      g2: platforms.find(p => p.platform === 'g2')?.items.length || 0,
+      upwork: platforms.find(p => p.platform === 'upwork')?.items.length || 0,
     };
 
     console.log(`✅ Multi-platform search completed:`, summary);
