@@ -41,6 +41,31 @@ export class RedditService {
     }
   });
 
+  // Main search method for multi-platform integration
+  async searchPosts(query: string, limit = 25): Promise<{
+    posts: RedditPost[];
+    totalResults: number;
+    subreddits: string[];
+  }> {
+    try {
+      const posts = await this.searchPostsRSS(query, ['startups', 'entrepreneur', 'SaaS', 'indiehackers', 'smallbusiness'], limit);
+      const subreddits = [...new Set(posts.map(p => p.subreddit))];
+      
+      return {
+        posts,
+        totalResults: posts.length,
+        subreddits
+      };
+    } catch (error) {
+      console.error('Reddit search failed:', error);
+      return {
+        posts: [],
+        totalResults: 0,
+        subreddits: []
+      };
+    }
+  }
+
   // Reddit API Methods (for when we have credentials)
   async searchPostsAPI(query: string, subreddits: string[] = [], limit = 25): Promise<RedditPost[]> {
     const cacheKey = `reddit:api:search:${query}:${subreddits.join(',')}:${limit}`;

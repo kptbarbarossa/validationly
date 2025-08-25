@@ -16,6 +16,54 @@ export class ProductHuntService {
     upcoming: 'https://www.producthunt.com/feed/upcoming'
   };
 
+  // Main search method for multi-platform integration
+  async searchProducts(query: string, limit = 20): Promise<{
+    products: ProductHuntItem[];
+    totalResults: number;
+  }> {
+    try {
+      const products = await this.searchProductsInternal(query, limit);
+      return {
+        products,
+        totalResults: products.length
+      };
+    } catch (error) {
+      console.error('ProductHunt search failed:', error);
+      return {
+        products: [],
+        totalResults: 0
+      };
+    }
+  }
+
+  private async searchProductsInternal(query: string, limit = 20): Promise<ProductHuntItem[]> {
+    const cacheKey = `ph:search:${query}:${limit}`;
+    
+    const cached = await cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    try {
+      const dailyProducts = await this.parseRSSFeed(this.rssFeeds.daily);
+      const upcomingProducts = await this.parseRSSFeed(this.rssFeeds.upcoming);
+      
+      const allProducts = [...dailyProducts, ...upcomingProducts];
+      
+      // Filter by query
+      const filteredProducts = allProducts.filter(product =>
+        product.title.toLowerCase().includes(query.toLowerCase()) ||
+        product.description.toLowerCase().includes(query.toLowerCase())
+      ).slice(0, limit);
+
+      await cache.set(cacheKey, filteredProducts, CACHE_TTL.PRODUCTHUNT);
+      return filteredProducts;
+    } catch (error) {
+      console.error('ProductHunt search error:', error);
+      return [];
+    }
+  }
+
   async parseRSSFeed(url: string): Promise<ProductHuntItem[]> {
     try {
       const response = await fetch(url);

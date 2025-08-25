@@ -227,6 +227,63 @@ body {
 .delay-550 { animation-delay: 550ms !important; }
 .delay-600 { animation-delay: 600ms !important; }
 
+/* Slide down animation for accordion */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    max-height: 1000px;
+    transform: translateY(0);
+  }
+}
+
+.animate-slideDown {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Line clamp utilities */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+/* Score circle animation */
+@keyframes scoreCircle {
+  from {
+    stroke-dasharray: 0 283;
+  }
+  to {
+    stroke-dasharray: var(--score-dash) 283;
+  }
+}
+
+.animate-score-circle {
+  animation: scoreCircle 2s ease-out 0.5s both;
+}
+
 /* Fade in animation for Results Page */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }

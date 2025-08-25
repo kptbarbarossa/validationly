@@ -29,6 +29,34 @@ export class StackOverflowService {
   private baseUrl = 'https://api.stackexchange.com/2.3';
   private site = 'stackoverflow';
 
+  // Main search method for multi-platform integration
+  async searchQuestions(query: string, limit = 20): Promise<{
+    questions: any[];
+    totalResults: number;
+    topTags: string[];
+  }> {
+    try {
+      const questions = await this.searchQuestionsInternal(query, limit);
+      const allTags = questions.flatMap(q => q.tags || []);
+      const topTags = [...new Set(allTags)].slice(0, 5);
+      
+      return {
+        questions,
+        totalResults: questions.length,
+        topTags
+      };
+    } catch (error) {
+      console.error('StackOverflow search failed:', error);
+      return {
+        questions: [],
+        totalResults: 0,
+        topTags: []
+      };
+    }
+  }
+
+  private async searchQuestionsInternal(query: string, limit = 20): Promise<any[]> {
+
   async searchQuestions(query: string, limit = 20): Promise<any[]> {
     const cacheKey = `so:search:${query}:${limit}`;
     

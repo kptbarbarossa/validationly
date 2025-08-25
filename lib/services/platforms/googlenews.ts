@@ -13,6 +13,48 @@ interface NewsItem {
 export class GoogleNewsService {
   private baseUrl = 'https://news.google.com/rss';
 
+  // Main search method for multi-platform integration
+  async searchNews(query: string, limit = 20): Promise<{
+    articles: NewsItem[];
+    totalResults: number;
+  }> {
+    try {
+      const articles = await this.searchNewsInternal(query, limit);
+      return {
+        articles,
+        totalResults: articles.length
+      };
+    } catch (error) {
+      console.error('GoogleNews search failed:', error);
+      return {
+        articles: [],
+        totalResults: 0
+      };
+    }
+  }
+
+  private async searchNewsInternal(query: string, limit = 20): Promise<NewsItem[]> {
+    const cacheKey = `gn:search:${query}:${limit}`;
+    
+    const cached = await cache.get(cacheKey);
+    if (cached) {
+      return cached;
+    }
+
+    try {
+      const searchUrl = `${this.baseUrl}/search?q=${encodeURIComponent(query)}&hl=en&gl=US&ceid=US:en`;
+      const articles = await this.parseRSSFeed(searchUrl);
+      
+      const limitedArticles = articles.slice(0, limit);
+      await cache.set(cacheKey, limitedArticles, CACHE_TTL.GOOGLENEWS);
+      
+      return limitedArticles;
+    } catch (error) {
+      console.error('GoogleNews search error:', error);
+      return [];
+    }
+  }
+
   async parseRSSFeed(url: string): Promise<NewsItem[]> {
     try {
       const response = await fetch(url);

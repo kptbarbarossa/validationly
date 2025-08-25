@@ -28,7 +28,19 @@ export class HackerNewsService {
   private baseUrl = 'https://hacker-news.firebaseio.com/v0';
   private searchUrl = 'http://hn.algolia.com/api/v1/search';
 
-  async searchStories(query: string, limit = 20): Promise<any[]> {
+  // Main search method for multi-platform integration
+  async searchStories(query: string, limit = 20): Promise<{
+    stories: any[];
+    totalResults: number;
+  }> {
+    const stories = await this.searchStoriesInternal(query, limit);
+    return {
+      stories,
+      totalResults: stories.length
+    };
+  }
+
+  private async searchStoriesInternal(query: string, limit = 20): Promise<any[]> {
     const cacheKey = `hn:search:${query}:${limit}`;
     
     // Check cache first

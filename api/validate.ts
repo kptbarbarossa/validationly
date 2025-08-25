@@ -1,6 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
+import { YouTubeService } from '../lib/services/platforms/youtube';
+import { MultiPlatformService } from '../lib/services/multiPlatformService';
 
 // Import our enhanced prompt system
 interface IdeaClassification {
@@ -492,6 +494,137 @@ async function getGoogleTrendsData(keyword: string): Promise<any> {
   } catch (error) {
     console.error('Trends fetch error:', error);
     return null;
+  }
+}
+
+// YouTube data integration
+async function getYouTubeData(keyword: string): Promise<any> {
+  try {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) {
+      console.log('⚠️ YouTube API key not available');
+      return null;
+    }
+
+    console.log('📺 Fetching YouTube data for:', keyword, 'with API key:', apiKey.substring(0, 10) + '...');
+    const youtubeService = new YouTubeService(apiKey);
+    
+    // Get both search results and trend analysis
+    const [searchResults, trendAnalysis] = await Promise.all([
+      youtubeService.searchVideos(keyword, 20),
+      youtubeService.analyzeTrends(keyword)
+    ]);
+
+    return {
+      searchResults,
+      trendAnalysis,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('YouTube fetch error:', error);
+    return null;
+  }
+}
+
+// Multi-platform data integration
+async function getMultiPlatformData(keyword: string): Promise<any> {
+  try {
+    console.log('🌐 Fetching multi-platform data for:', keyword);
+    const multiPlatformService = new MultiPlatformService();
+    
+    const analysis = await multiPlatformService.analyzeIdea(keyword, 10);
+    
+    return {
+      ...analysis,
+      timestamp: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error('Multi-platform fetch error:', error);
+    return null;
+  }
+}
+
+// Enhance YouTube data with AI analysis
+async function enhanceYouTubeWithGemini(youtubeData: any, idea: string): Promise<any> {
+  try {
+    if (!process.env.GOOGLE_API_KEY || !youtubeData) {
+      console.log('⚠️ Gemini API key not available or no YouTube data, returning raw data');
+      return youtubeData;
+    }
+
+    console.log('🤖 Enhancing YouTube data with Gemini AI...');
+    
+    const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
+    
+    const analysisPrompt = `You are an expert YouTube market analyst and content strategist.
+
+ANALYZE THIS YOUTUBE DATA for the business idea: "${idea}"
+
+YOUTUBE METRICS:
+- Total Videos Found: ${youtubeData.trendAnalysis.totalVideos}
+- Average Views: ${youtubeData.trendAnalysis.averageViews.toLocaleString()}
+- Total Views: ${youtubeData.trendAnalysis.totalViews.toLocaleString()}
+- Recent Activity: ${youtubeData.trendAnalysis.recentActivity ? 'Yes' : 'No'}
+- Top Channels: ${youtubeData.trendAnalysis.topChannels.join(', ')}
+
+TOP VIDEOS: ${youtubeData.searchResults.videos.slice(0, 5).map((v: any) => 
+  `"${v.title}" by ${v.channelTitle} (${parseInt(v.viewCount).toLocaleString()} views)`
+).join(', ')}
+
+Provide comprehensive YouTube market analysis in JSON format:
+
+{
+  "youtubeAnalysis": {
+    "marketDemand": "High/Medium/Low - based on video volume and engagement",
+    "contentSaturation": "Oversaturated/Competitive/Emerging/Untapped",
+    "audienceEngagement": "Analysis of view counts and channel diversity",
+    "contentGaps": ["Gap 1", "Gap 2", "Gap 3"],
+    "competitorChannels": ["Channel analysis based on top performers"],
+    "marketOpportunity": "Detailed opportunity assessment"
+  },
+  "contentStrategy": {
+    "recommendedApproach": "Content strategy for this market",
+    "keyTopics": ["Topic 1", "Topic 2", "Topic 3"],
+    "targetAudience": "Primary audience based on channel analysis",
+    "contentFormats": ["Format 1", "Format 2", "Format 3"]
+  },
+  "validationInsights": [
+    "Insight 1 about market validation from YouTube data",
+    "Insight 2 about audience interest",
+    "Insight 3 about competitive landscape"
+  ]
+}`;
+
+    const result = await gemini.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: analysisPrompt,
+      config: {
+        temperature: 0.3,
+        maxOutputTokens: 1024,
+        responseMimeType: 'application/json'
+      }
+    });
+
+    const aiAnalysis = result.text?.trim();
+    
+    if (aiAnalysis) {
+      try {
+        const parsedAnalysis = JSON.parse(aiAnalysis);
+        return {
+          ...youtubeData,
+          aiAnalysis: parsedAnalysis,
+          geminiEnhanced: true
+        };
+      } catch (parseError) {
+        console.log('⚠️ Failed to parse YouTube Gemini response');
+        return youtubeData;
+      }
+    }
+
+    return youtubeData;
+  } catch (error) {
+    console.error('❌ YouTube Gemini enhancement failed:', error);
+    return youtubeData;
   }
 }
 
@@ -1073,6 +1206,11 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
             }
           }
           
+          // Add external data to response
+          if (trendsData) parsed.trendsData = trendsData;
+          if (youtubeData) parsed.youtubeData = youtubeData;
+          if (multiPlatformData) parsed.multiPlatformData = multiPlatformData;
+          
           console.log(`✅ Enhanced ${fast ? 'fast' : 'standard'} analysis completed - Score: ${parsed.demandScore}/100, Category: ${classification.primaryCategory}`);
           return res.status(200).json(parsed);
         } else {
@@ -1293,15 +1431,42 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
     }
     
     if (parsed && typeof parsed === 'object') {
-      // Get trends data if available
+      // Get trends, YouTube, and multi-platform data if available
       let trendsData = null;
+      let youtubeData = null;
+      let multiPlatformData = null;
+      
       try {
-        trendsData = await getGoogleTrendsData(inputContent);
-        if (trendsData) {
-          trendsData = await enhanceTrendsWithGemini(trendsData, inputContent);
+        // Fetch all external data in parallel
+        const [trends, youtube, multiPlatform] = await Promise.all([
+          getGoogleTrendsData(inputContent),
+          getYouTubeData(inputContent),
+          getMultiPlatformData(inputContent)
+        ]);
+        
+        if (trends) {
+          trendsData = await enhanceTrendsWithGemini(trends, inputContent);
+        }
+        
+        if (youtube) {
+          youtubeData = await enhanceYouTubeWithGemini(youtube, inputContent);
+          console.log('📺 YouTube data processed:', { 
+            hasData: !!youtubeData, 
+            videosCount: youtubeData?.searchResults?.videos?.length || 0 
+          });
+        } else {
+          console.log('⚠️ No YouTube data received');
+        }
+        
+        if (multiPlatform) {
+          multiPlatformData = multiPlatform;
+          console.log('✅ Multi-platform data collected:', {
+            totalItems: multiPlatform.totalItems,
+            platforms: Object.keys(multiPlatform.summary).filter(k => multiPlatform.summary[k] > 0)
+          });
         }
       } catch (error) {
-        console.log('Trends data fetch failed:', error);
+        console.log('External data fetch failed:', error);
       }
       
       // Ensure required fields exist
@@ -1402,7 +1567,11 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
           processingTime,
           confidence: 75,
           language: 'English'
-        }
+        },
+        // Add external data sources
+        ...(trendsData && { trendsData }),
+        ...(youtubeData && { youtubeData }),
+        ...(multiPlatformData && { multiPlatformData })
       };
       
       console.log(`Analysis completed - Score: ${enhancedResult.demandScore}/100, Time: ${processingTime}ms`);

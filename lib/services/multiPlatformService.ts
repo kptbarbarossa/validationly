@@ -1,24 +1,21 @@
-// Multi-platform data aggregation service
-import { hackerNewsService } from './platforms/hackernews';
-import { productHuntService } from './platforms/producthunt';
-import { googleNewsService } from './platforms/googlenews';
-import { gitHubService } from './platforms/github';
-import { stackOverflowService } from './platforms/stackoverflow';
-import { youTubeService } from './platforms/youtube';
-import { redditService } from './platforms/reddit';
-import { g2Service } from './platforms/g2';
-import { upworkService } from './platforms/upwork';
+import { RedditService } from './platforms/reddit';
+import { HackerNewsService } from './platforms/hackernews';
+import { ProductHuntService } from './platforms/producthunt';
+import { GitHubService } from './platforms/github';
+import { StackOverflowService } from './platforms/stackoverflow';
+import { GoogleNewsService } from './platforms/googlenews';
+import { YouTubeService } from './platforms/youtube';
 
-export interface PlatformData {
+export interface PlatformResult {
   platform: string;
   items: any[];
+  totalResults: number;
   error?: string;
+  metadata?: any;
 }
 
-export interface MultiPlatformResult {
-  query: string;
-  totalItems: number;
-  platforms: PlatformData[];
+export interface MultiPlatformAnalysis {
+  platforms: PlatformResult[];
   summary: {
     reddit: number;
     hackernews: number;
@@ -27,219 +24,300 @@ export interface MultiPlatformResult {
     github: number;
     stackoverflow: number;
     youtube: number;
-    g2: number;
-    upwork: number;
+  };
+  totalItems: number;
+  insights: {
+    validationScore: number;
+    sentiment: 'positive' | 'negative' | 'neutral';
+    trendingTopics: string[];
+    keyInsights: string[];
+    painPoints: string[];
+    opportunities: string[];
+    popularSolutions: string[];
   };
 }
 
 export class MultiPlatformService {
-  async searchAllPlatforms(query: string, limit = 15): Promise<MultiPlatformResult> {
-    console.log(`🔍 Searching across all platforms for: "${query}"`);
-    
-    // Execute all searches in parallel for better performance
-    const [
-      redditResults,
-      hackerNewsResults,
-      productHuntResults,
-      googleNewsResults,
-      githubResults,
-      stackOverflowResults,
-      youtubeResults,
-      g2Results,
-      upworkResults
-    ] = await Promise.allSettled([
-      redditService.searchPostsRSS(query, ['startups', 'entrepreneur', 'SaaS', 'indiehackers'], limit),
-      hackerNewsService.searchStories(query, limit),
-      productHuntService.searchProducts(query),
-      googleNewsService.searchNews(query, limit),
-      gitHubService.searchRepositories(query, limit),
-      stackOverflowService.searchQuestions(query, limit),
-      youTubeService.searchVideos(query, limit),
-      g2Service.searchSoftware(query, limit),
-      upworkService.searchJobs(query, limit)
-    ]);
+  private redditService: RedditService;
+  private hackerNewsService: HackerNewsService;
+  private productHuntService: ProductHuntService;
+  private githubService: GitHubService;
+  private stackOverflowService: StackOverflowService;
+  private googleNewsService: GoogleNewsService;
+  private youtubeService: YouTubeService | null = null;
 
-    const platforms: PlatformData[] = [
-      {
-        platform: 'reddit',
-        items: redditResults.status === 'fulfilled' ? redditResults.value : [],
-        error: redditResults.status === 'rejected' ? redditResults.reason.message : undefined
-      },
-      {
-        platform: 'hackernews',
-        items: hackerNewsResults.status === 'fulfilled' ? hackerNewsResults.value : [],
-        error: hackerNewsResults.status === 'rejected' ? hackerNewsResults.reason.message : undefined
-      },
-      {
-        platform: 'producthunt',
-        items: productHuntResults.status === 'fulfilled' ? productHuntResults.value : [],
-        error: productHuntResults.status === 'rejected' ? productHuntResults.reason.message : undefined
-      },
-      {
-        platform: 'googlenews',
-        items: googleNewsResults.status === 'fulfilled' ? googleNewsResults.value : [],
-        error: googleNewsResults.status === 'rejected' ? googleNewsResults.reason.message : undefined
-      },
-      {
-        platform: 'github',
-        items: githubResults.status === 'fulfilled' ? githubResults.value : [],
-        error: githubResults.status === 'rejected' ? githubResults.reason.message : undefined
-      },
-      {
-        platform: 'stackoverflow',
-        items: stackOverflowResults.status === 'fulfilled' ? stackOverflowResults.value : [],
-        error: stackOverflowResults.status === 'rejected' ? stackOverflowResults.reason.message : undefined
-      },
-      {
-        platform: 'youtube',
-        items: youtubeResults.status === 'fulfilled' ? youtubeResults.value : [],
-        error: youtubeResults.status === 'rejected' ? youtubeResults.reason.message : undefined
-      },
-      {
-        platform: 'g2',
-        items: g2Results.status === 'fulfilled' ? g2Results.value : [],
-        error: g2Results.status === 'rejected' ? g2Results.reason.message : undefined
-      },
-      {
-        platform: 'upwork',
-        items: upworkResults.status === 'fulfilled' ? upworkResults.value : [],
-        error: upworkResults.status === 'rejected' ? upworkResults.reason.message : undefined
-      }
+  constructor() {
+    this.redditService = new RedditService();
+    this.hackerNewsService = new HackerNewsService();
+    this.productHuntService = new ProductHuntService();
+    this.githubService = new GitHubService();
+    this.stackOverflowService = new StackOverflowService();
+    this.googleNewsService = new GoogleNewsService();
+    
+    // YouTube service requires API key
+    if (process.env.YOUTUBE_API_KEY) {
+      this.youtubeService = new YouTubeService(process.env.YOUTUBE_API_KEY);
+    }
+  }
+
+  async analyzeIdea(idea: string, maxResultsPerPlatform: number = 10): Promise<MultiPlatformAnalysis> {
+    console.log('🚀 Starting multi-platform analysis for:', idea);
+
+    // Run all platform searches in parallel
+    const platformPromises = [
+      this.searchReddit(idea, maxResultsPerPlatform),
+      this.searchHackerNews(idea, maxResultsPerPlatform),
+      this.searchProductHunt(idea, maxResultsPerPlatform),
+      this.searchGitHub(idea, maxResultsPerPlatform),
+      this.searchStackOverflow(idea, maxResultsPerPlatform),
+      this.searchGoogleNews(idea, maxResultsPerPlatform),
+      this.searchYouTube(idea, maxResultsPerPlatform)
     ];
 
-    const totalItems = platforms.reduce((sum, platform) => sum + platform.items.length, 0);
-
+    const results = await Promise.allSettled(platformPromises);
+    
+    const platforms: PlatformResult[] = [];
     const summary = {
-      reddit: platforms.find(p => p.platform === 'reddit')?.items.length || 0,
-      hackernews: platforms.find(p => p.platform === 'hackernews')?.items.length || 0,
-      producthunt: platforms.find(p => p.platform === 'producthunt')?.items.length || 0,
-      googlenews: platforms.find(p => p.platform === 'googlenews')?.items.length || 0,
-      github: platforms.find(p => p.platform === 'github')?.items.length || 0,
-      stackoverflow: platforms.find(p => p.platform === 'stackoverflow')?.items.length || 0,
-      youtube: platforms.find(p => p.platform === 'youtube')?.items.length || 0,
-      g2: platforms.find(p => p.platform === 'g2')?.items.length || 0,
-      upwork: platforms.find(p => p.platform === 'upwork')?.items.length || 0,
+      reddit: 0,
+      hackernews: 0,
+      producthunt: 0,
+      googlenews: 0,
+      github: 0,
+      stackoverflow: 0,
+      youtube: 0
     };
 
-    console.log(`✅ Multi-platform search completed:`, summary);
+    // Process results
+    results.forEach((result, index) => {
+      const platformNames = ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'];
+      const platformName = platformNames[index];
+
+      if (result.status === 'fulfilled' && result.value) {
+        platforms.push(result.value);
+        summary[platformName as keyof typeof summary] = result.value.items.length;
+      } else {
+        console.log(`❌ ${platformName} search failed:`, result.status === 'rejected' ? result.reason : 'No data');
+        platforms.push({
+          platform: platformName,
+          items: [],
+          totalResults: 0,
+          error: result.status === 'rejected' ? result.reason?.message || 'Search failed' : 'No data available'
+        });
+      }
+    });
+
+    const totalItems = Object.values(summary).reduce((sum, count) => sum + count, 0);
+
+    // Generate insights from collected data
+    const insights = this.generateInsights(platforms, idea);
+
+    console.log('✅ Multi-platform analysis completed:', {
+      totalItems,
+      platformsWithData: platforms.filter(p => p.items.length > 0).length
+    });
 
     return {
-      query,
-      totalItems,
       platforms,
-      summary
+      summary,
+      totalItems,
+      insights
     };
   }
 
-  async getTrendingContent(): Promise<MultiPlatformResult> {
-    console.log(`📈 Fetching trending content from all platforms`);
-    
-    const [
-      redditTrending,
-      hackerNewsTop,
-      productHuntDaily,
-      googleNewsTech,
-      githubTrending,
-      stackOverflowTrending,
-      youtubeTech
-    ] = await Promise.allSettled([
-      redditService.getTrendingByTopic('startup', 15),
-      hackerNewsService.getTopStories(15),
-      productHuntService.getDailyProducts(15),
-      googleNewsService.getTechNews(15),
-      gitHubService.getTrendingRepositories('', 15),
-      stackOverflowService.getTrendingQuestions(15),
-      youTubeService.getTechChannelsVideos(15)
-    ]);
-
-    const platforms: PlatformData[] = [
-      {
+  private async searchReddit(idea: string, maxResults: number): Promise<PlatformResult> {
+    try {
+      const results = await this.redditService.searchPosts(idea, maxResults);
+      return {
         platform: 'reddit',
-        items: redditTrending.status === 'fulfilled' ? redditTrending.value : [],
-        error: redditTrending.status === 'rejected' ? redditTrending.reason.message : undefined
-      },
-      {
-        platform: 'hackernews',
-        items: hackerNewsTop.status === 'fulfilled' ? hackerNewsTop.value : [],
-        error: hackerNewsTop.status === 'rejected' ? hackerNewsTop.reason.message : undefined
-      },
-      {
-        platform: 'producthunt',
-        items: productHuntDaily.status === 'fulfilled' ? productHuntDaily.value : [],
-        error: productHuntDaily.status === 'rejected' ? productHuntDaily.reason.message : undefined
-      },
-      {
-        platform: 'googlenews',
-        items: googleNewsTech.status === 'fulfilled' ? googleNewsTech.value : [],
-        error: googleNewsTech.status === 'rejected' ? googleNewsTech.reason.message : undefined
-      },
-      {
-        platform: 'github',
-        items: githubTrending.status === 'fulfilled' ? githubTrending.value : [],
-        error: githubTrending.status === 'rejected' ? githubTrending.reason.message : undefined
-      },
-      {
-        platform: 'stackoverflow',
-        items: stackOverflowTrending.status === 'fulfilled' ? stackOverflowTrending.value : [],
-        error: stackOverflowTrending.status === 'rejected' ? stackOverflowTrending.reason.message : undefined
-      },
-      {
-        platform: 'youtube',
-        items: youtubeTech.status === 'fulfilled' ? youtubeTech.value : [],
-        error: youtubeTech.status === 'rejected' ? youtubeTech.reason.message : undefined
-      }
-    ];
-
-    const totalItems = platforms.reduce((sum, platform) => sum + platform.items.length, 0);
-
-    const summary = {
-      reddit: platforms.find(p => p.platform === 'reddit')?.items.length || 0,
-      hackernews: platforms.find(p => p.platform === 'hackernews')?.items.length || 0,
-      producthunt: platforms.find(p => p.platform === 'producthunt')?.items.length || 0,
-      googlenews: platforms.find(p => p.platform === 'googlenews')?.items.length || 0,
-      github: platforms.find(p => p.platform === 'github')?.items.length || 0,
-      stackoverflow: platforms.find(p => p.platform === 'stackoverflow')?.items.length || 0,
-      youtube: platforms.find(p => p.platform === 'youtube')?.items.length || 0,
-    };
-
-    console.log(`✅ Trending content fetched:`, summary);
-
-    return {
-      query: 'trending',
-      totalItems,
-      platforms,
-      summary
-    };
+        items: results.posts,
+        totalResults: results.totalResults,
+        metadata: { subreddits: results.subreddits }
+      };
+    } catch (error) {
+      throw new Error(`Reddit search failed: ${error}`);
+    }
   }
 
-  // Reddit search is now handled by redditService directly
+  private async searchHackerNews(idea: string, maxResults: number): Promise<PlatformResult> {
+    try {
+      const results = await this.hackerNewsService.searchStories(idea, maxResults);
+      return {
+        platform: 'hackernews',
+        items: results.stories,
+        totalResults: results.totalResults
+      };
+    } catch (error) {
+      throw new Error(`Hacker News search failed: ${error}`);
+    }
+  }
 
-  async getPlatformStats(): Promise<{ [key: string]: { available: boolean; lastCheck: string } }> {
-    const stats: { [key: string]: { available: boolean; lastCheck: string } } = {};
-    const now = new Date().toISOString();
+  private async searchProductHunt(idea: string, maxResults: number): Promise<PlatformResult> {
+    try {
+      const results = await this.productHuntService.searchProducts(idea, maxResults);
+      return {
+        platform: 'producthunt',
+        items: results.products,
+        totalResults: results.totalResults
+      };
+    } catch (error) {
+      throw new Error(`Product Hunt search failed: ${error}`);
+    }
+  }
 
-    // Test each platform with a simple query
-    const testPromises = [
-      { name: 'reddit', test: () => redditService.getSubredditPostsRSS('startups', 1) },
-      { name: 'hackernews', test: () => hackerNewsService.getTopStories(1) },
-      { name: 'producthunt', test: () => productHuntService.getDailyProducts(1) },
-      { name: 'googlenews', test: () => googleNewsService.getTechNews(1) },
-      { name: 'github', test: () => gitHubService.searchRepositories('test', 1) },
-      { name: 'stackoverflow', test: () => stackOverflowService.searchQuestions('test', 1) },
-      { name: 'youtube', test: () => youTubeService.searchVideos('test', 1) }
-    ];
+  private async searchGitHub(idea: string, maxResults: number): Promise<PlatformResult> {
+    try {
+      const results = await this.githubService.searchRepositories(idea, maxResults);
+      return {
+        platform: 'github',
+        items: results.repositories,
+        totalResults: results.totalResults,
+        metadata: { languages: results.topLanguages }
+      };
+    } catch (error) {
+      throw new Error(`GitHub search failed: ${error}`);
+    }
+  }
 
-    for (const { name, test } of testPromises) {
-      try {
-        await test();
-        stats[name] = { available: true, lastCheck: now };
-      } catch (error) {
-        stats[name] = { available: false, lastCheck: now };
+  private async searchStackOverflow(idea: string, maxResults: number): Promise<PlatformResult> {
+    try {
+      const results = await this.stackOverflowService.searchQuestions(idea, maxResults);
+      return {
+        platform: 'stackoverflow',
+        items: results.questions,
+        totalResults: results.totalResults,
+        metadata: { tags: results.topTags }
+      };
+    } catch (error) {
+      throw new Error(`Stack Overflow search failed: ${error}`);
+    }
+  }
+
+  private async searchGoogleNews(idea: string, maxResults: number): Promise<PlatformResult> {
+    try {
+      const results = await this.googleNewsService.searchNews(idea, maxResults);
+      return {
+        platform: 'googlenews',
+        items: results.articles,
+        totalResults: results.totalResults
+      };
+    } catch (error) {
+      throw new Error(`Google News search failed: ${error}`);
+    }
+  }
+
+  private async searchYouTube(idea: string, maxResults: number): Promise<PlatformResult> {
+    try {
+      if (!this.youtubeService) {
+        throw new Error('YouTube API key not configured');
       }
+      
+      const results = await this.youtubeService.searchVideos(idea, maxResults);
+      return {
+        platform: 'youtube',
+        items: results.videos,
+        totalResults: results.totalResults
+      };
+    } catch (error) {
+      throw new Error(`YouTube search failed: ${error}`);
+    }
+  }
+
+  private generateInsights(platforms: PlatformResult[], idea: string): MultiPlatformAnalysis['insights'] {
+    const allItems = platforms.flatMap(p => p.items);
+    const totalItems = allItems.length;
+
+    // Calculate validation score based on data availability and engagement
+    let validationScore = 0;
+    let sentimentScore = 0;
+    const trendingTopics: string[] = [];
+    const keyInsights: string[] = [];
+    const painPoints: string[] = [];
+    const opportunities: string[] = [];
+    const popularSolutions: string[] = [];
+
+    platforms.forEach(platform => {
+      if (platform.items.length > 0) {
+        validationScore += Math.min(platform.items.length * 5, 20); // Max 20 points per platform
+        
+        // Platform-specific insights
+        switch (platform.platform) {
+          case 'reddit':
+            keyInsights.push(`Found ${platform.items.length} Reddit discussions`);
+            if (platform.metadata?.subreddits) {
+              trendingTopics.push(...platform.metadata.subreddits.slice(0, 3));
+            }
+            break;
+            
+          case 'hackernews':
+            keyInsights.push(`${platform.items.length} Hacker News stories found`);
+            sentimentScore += platform.items.length * 2; // HN is tech-positive
+            break;
+            
+          case 'producthunt':
+            keyInsights.push(`${platform.items.length} similar products on Product Hunt`);
+            popularSolutions.push(...platform.items.slice(0, 3).map((item: any) => item.name || item.title));
+            break;
+            
+          case 'github':
+            keyInsights.push(`${platform.items.length} related GitHub repositories`);
+            if (platform.metadata?.languages) {
+              trendingTopics.push(...platform.metadata.languages.slice(0, 2));
+            }
+            break;
+            
+          case 'stackoverflow':
+            painPoints.push(`${platform.items.length} related developer questions found`);
+            if (platform.metadata?.tags) {
+              trendingTopics.push(...platform.metadata.tags.slice(0, 3));
+            }
+            break;
+            
+          case 'googlenews':
+            keyInsights.push(`${platform.items.length} recent news articles`);
+            sentimentScore += platform.items.length;
+            break;
+            
+          case 'youtube':
+            keyInsights.push(`${platform.items.length} YouTube videos found`);
+            opportunities.push('Content marketing potential on YouTube');
+            break;
+        }
+      } else if (platform.error) {
+        painPoints.push(`${platform.platform} data unavailable: ${platform.error}`);
+      }
+    });
+
+    // Normalize validation score (0-100)
+    validationScore = Math.min(validationScore, 100);
+
+    // Determine overall sentiment
+    const sentiment: 'positive' | 'negative' | 'neutral' = 
+      sentimentScore > totalItems ? 'positive' : 
+      sentimentScore < totalItems / 2 ? 'negative' : 'neutral';
+
+    // Add general insights based on data availability
+    if (totalItems > 50) {
+      keyInsights.push('High market interest detected across platforms');
+      opportunities.push('Strong validation signals for market entry');
+    } else if (totalItems > 20) {
+      keyInsights.push('Moderate market interest with growth potential');
+      opportunities.push('Niche market opportunity identified');
+    } else if (totalItems > 5) {
+      keyInsights.push('Limited but focused market interest');
+      opportunities.push('Early market opportunity with less competition');
+    } else {
+      painPoints.push('Limited online discussion about this topic');
+      opportunities.push('Blue ocean opportunity - be the first to market');
     }
 
-    return stats;
+    return {
+      validationScore,
+      sentiment,
+      trendingTopics: [...new Set(trendingTopics)].slice(0, 5),
+      keyInsights: keyInsights.slice(0, 5),
+      painPoints: painPoints.slice(0, 3),
+      opportunities: opportunities.slice(0, 3),
+      popularSolutions: [...new Set(popularSolutions)].slice(0, 5)
+    };
   }
 }
-
-export const multiPlatformService = new MultiPlatformService();

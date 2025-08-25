@@ -26,12 +26,47 @@ interface GitHubSearchResult {
 
 export class GitHubService {
   private baseUrl = 'https://api.github.com';
-  private headers = {
-    'Accept': 'application/vnd.github.v3+json',
-    'User-Agent': 'Validationly-App'
-  };
+  
+  private getHeaders() {
+    const headers: Record<string, string> = {
+      'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'Validationly-App'
+    };
+    
+    // Add auth token if available for higher rate limits
+    if (process.env.GITHUB_TOKEN) {
+      headers['Authorization'] = `token ${process.env.GITHUB_TOKEN}`;
+    }
+    
+    return headers;
+  }
 
-  async searchRepositories(query: string, limit = 20): Promise<any[]> {
+  // Main search method for multi-platform integration
+  async searchRepositories(query: string, limit = 20): Promise<{
+    repositories: any[];
+    totalResults: number;
+    topLanguages: string[];
+  }> {
+    try {
+      const repositories = await this.searchRepositoriesInternal(query, limit);
+      const languages = [...new Set(repositories.map(r => r.language).filter(Boolean))];
+      
+      return {
+        repositories,
+        totalResults: repositories.length,
+        topLanguages: languages.slice(0, 5)
+      };
+    } catch (error) {
+      console.error('GitHub search failed:', error);
+      return {
+        repositories: [],
+        totalResults: 0,
+        topLanguages: []
+      };
+    }
+  }
+
+  private async searchRepositoriesInternal(query: string, limit = 20): Promise<any[]> {
     const cacheKey = `gh:search:${query}:${limit}`;
     
     const cached = await cache.get(cacheKey);
@@ -42,9 +77,12 @@ export class GitHubService {
     try {
       const searchUrl = `${this.baseUrl}/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${limit}`;
       
-      const response = await fetch(searchUrl, { headers: this.headers });
+      const response = await fetch(searchUrl, { headers: this.getHeaders() });
       
       if (!response.ok) {
+        if (response.status === 403) {
+          console.warn('GitHub API rate limit exceeded. Consider adding GITHUB_TOKEN to .env.local');
+        }
         throw new Error(`GitHub API error: ${response.status}`);
       }
 
@@ -54,16 +92,15 @@ export class GitHubService {
         id: repo.id,
         name: repo.name,
         full_name: repo.full_name,
-        description: repo.description,
+        description: repo.description || '',
         url: repo.html_url,
         stars: repo.stargazers_count,
         forks: repo.forks_count,
         language: repo.language,
-        topics: repo.topics,
-        owner: repo.owner.login,
-        avatar: repo.owner.avatar_url,
         created_at: repo.created_at,
         updated_at: repo.updated_at,
+        topics: repo.topics || [],
+        owner: repo.owner.login,
         platform: 'github'
       }));
 
@@ -76,8 +113,8 @@ export class GitHubService {
     }
   }
 
-  async getTrendingRepositories(language = '', limit = 20): Promise<any[]> {
-    const cacheKey = `gh:trending:${language}:${limit}`;
+  async getTrendingRepositories(language?: string, limit = 30): Promise<any[]> {
+    const cacheKey = `gh:trending:${language || 'all'}:${limit}`;
     
     const cached = await cache.get(cacheKey);
     if (cached) {
@@ -88,19 +125,19 @@ export class GitHubService {
       // Search for repositories created in the last week, sorted by stars
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      const dateStr = oneWeekAgo.toISOString().split('T')[0];
+      const dateString = oneWeekAgo.toISOString().split('T')[0];
       
-      let query = `created:>${dateStr}`;
+      let searchQuery = `created:>${dateString}`;
       if (language) {
-        query += ` language:${language}`;
+        searchQuery += ` language:${language}`;
       }
       
-      const searchUrl = `${this.baseUrl}/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${limit}`;
+      const searchUrl = `${this.baseUrl}/search/repositories?q=${encodeURIComponent(searchQuery)}&sort=stars&order=desc&per_page=${limit}`;
       
-      const response = await fetch(searchUrl, { headers: this.headers });
+      const response = await fetch(searchUrl, { headers: this.getHeaders() });
       
       if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status}`);
+        throw new Error(`GitHub trending API error: ${response.status}`);
       }
 
       const data: GitHubSearchResult = await response.json();
@@ -109,18 +146,14 @@ export class GitHubService {
         id: repo.id,
         name: repo.name,
         full_name: repo.full_name,
-        description: repo.description,
+        description: repo.description || '',
         url: repo.html_url,
         stars: repo.stargazers_count,
         forks: repo.forks_count,
         language: repo.language,
-        topics: repo.topics,
-        owner: repo.owner.login,
-        avatar: repo.owner.avatar_url,
         created_at: repo.created_at,
-        updated_at: repo.updated_at,
-        platform: 'github',
-        trending: true
+        owner: repo.owner.login,
+        platform: 'github'
       }));
 
       await cache.set(cacheKey, repos, CACHE_TTL.GITHUB);
@@ -131,52 +164,6 @@ export class GitHubService {
       return [];
     }
   }
-
-  async searchByTopic(topic: string, limit = 20): Promise<any[]> {
-    const cacheKey = `gh:topic:${topic}:${limit}`;
-    
-    const cached = await cache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    try {
-      const query = `topic:${topic}`;
-      const searchUrl = `${this.baseUrl}/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${limit}`;
-      
-      const response = await fetch(searchUrl, { headers: this.headers });
-      
-      if (!response.ok) {
-        throw new Error(`GitHub API error: ${response.status}`);
-      }
-
-      const data: GitHubSearchResult = await response.json();
-      
-      const repos = data.items.map(repo => ({
-        id: repo.id,
-        name: repo.name,
-        full_name: repo.full_name,
-        description: repo.description,
-        url: repo.html_url,
-        stars: repo.stargazers_count,
-        forks: repo.forks_count,
-        language: repo.language,
-        topics: repo.topics,
-        owner: repo.owner.login,
-        avatar: repo.owner.avatar_url,
-        created_at: repo.created_at,
-        updated_at: repo.updated_at,
-        platform: 'github'
-      }));
-
-      await cache.set(cacheKey, repos, CACHE_TTL.GITHUB);
-      
-      return repos;
-    } catch (error) {
-      console.error('GitHub topic search error:', error);
-      return [];
-    }
-  }
 }
 
-export const gitHubService = new GitHubService();
+export const githubService = new GitHubService();

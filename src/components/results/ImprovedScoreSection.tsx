@@ -85,8 +85,27 @@ export const ImprovedScoreSection: React.FC<ScoreSectionProps> = ({
             />
             <defs>
               <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" className={`stop-color-gradient-${getScoreColor(score).split('-')[1]}`} />
-                <stop offset="100%" className={`stop-color-gradient-${getScoreColor(score).split('-')[3]}`} />
+                {score >= 80 ? (
+                  <>
+                    <stop offset="0%" stopColor="#34d399" />
+                    <stop offset="100%" stopColor="#10b981" />
+                  </>
+                ) : score >= 60 ? (
+                  <>
+                    <stop offset="0%" stopColor="#fbbf24" />
+                    <stop offset="100%" stopColor="#f59e0b" />
+                  </>
+                ) : score >= 40 ? (
+                  <>
+                    <stop offset="0%" stopColor="#fb923c" />
+                    <stop offset="100%" stopColor="#ef4444" />
+                  </>
+                ) : (
+                  <>
+                    <stop offset="0%" stopColor="#f87171" />
+                    <stop offset="100%" stopColor="#dc2626" />
+                  </>
+                )}
               </linearGradient>
             </defs>
           </svg>
