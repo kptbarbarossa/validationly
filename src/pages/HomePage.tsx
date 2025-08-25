@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
     });
     const [isLoading, setIsLoading] = useState(false); // analysis submit loading
 
-    const [isEnhancing, setIsEnhancing] = useState(false); // enhance-only loading
+    const [isOptimizing, setIsOptimizing] = useState(false); // optimize-only loading
     const [selectedTier, setSelectedTier] = useState<'free' | 'pro' | 'business' | 'enterprise'>('free');
     // const [enhancedPrompt] = useState(false);
     const navigate = useNavigate();
@@ -60,16 +60,16 @@ const HomePage: React.FC = () => {
         setUserInput(validation);
     };
 
-    const enhancePromptRemotely = async (raw: string): Promise<string | null> => {
+    const optimizePromptRemotely = async (raw: string): Promise<string | null> => {
         try {
             const resp = await fetch('/api/validate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ idea: (raw || '').trim(), enhance: true })
+                body: JSON.stringify({ idea: (raw || '').trim(), optimize: true })
             });
             if (!resp.ok) return null;
             const data = await resp.json();
-            return (data?.enhancedPrompt as string) || null;
+            return (data?.optimizedPrompt as string) || null;
         } catch {
             return null;
         }
@@ -272,27 +272,27 @@ const HomePage: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={async () => {
-                                        if (isLoading || isEnhancing) return;
-                                        setIsEnhancing(true);
-                                        const enhanced = await enhancePromptRemotely(userInput.idea);
-                                        if (enhanced) {
-                                            const validation = validateInput(enhanced);
+                                        if (isLoading || isOptimizing) return;
+                                        setIsOptimizing(true);
+                                        const optimized = await optimizePromptRemotely(userInput.idea);
+                                        if (optimized) {
+                                            const validation = validateInput(optimized);
                                             setUserInput(validation);
                                         }
-                                        setIsEnhancing(false);
+                                        setIsOptimizing(false);
                                     }}
-                                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isEnhancing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
-                                    aria-label="Enhance prompt"
-                                    title="Enhance prompt"
-                                    disabled={isEnhancing || isLoading}
+                                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isOptimizing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                                    aria-label="Optimize prompt"
+                                    title="Optimize prompt"
+                                    disabled={isOptimizing || isLoading}
                                 >
-                                    {isEnhancing ? (
+                                    {isOptimizing ? (
                                         <span className="inline-flex items-center gap-1">
                                             <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
                                             </svg>
-                                            Enhancing…
+                                            Optimizing…
                                         </span>
                                     ) : (
                                         '✨'

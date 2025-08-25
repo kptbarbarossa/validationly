@@ -820,8 +820,8 @@ Keep the original trends data intact and add these AI-enhanced fields.`;
   }
 }
 
-// Enhanced prompt enhancement with parallel AI models
-async function enhancePromptWithAI(inputContent: string): Promise<string> {
+// Optimize prompt with parallel AI models for better analysis
+async function optimizePromptWithAI(inputContent: string): Promise<string> {
   const availableModels = {
     gemini: !!process.env.GOOGLE_API_KEY,
     openai: !!process.env.OPENAI_API_KEY,
@@ -836,16 +836,26 @@ async function enhancePromptWithAI(inputContent: string): Promise<string> {
       const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
       const result = await gemini.models.generateContent({
         model: "gemini-1.5-flash",
-        contents: `Enhance this business idea description to be more specific, actionable, and analysis-friendly. Keep the core concept but add market context, target audience details, and specific use cases. Return only the enhanced description, no explanations: ${inputContent}`,
+        contents: `Optimize this business idea for comprehensive market validation analysis. Transform it into a clear, specific, and actionable description that includes:
+
+1. Clear problem statement
+2. Target audience/market
+3. Proposed solution approach
+4. Key value proposition
+5. Business model hint (if applicable)
+
+Original idea: "${inputContent}"
+
+Return ONLY the optimized version without explanations or formatting:`,
         config: { temperature: 0.7, maxOutputTokens: 500 }
       });
       
       if (result.text?.trim()) {
-        console.log('✅ Gemini enhancement successful');
+        console.log('✅ Gemini optimization successful');
         return result.text.trim();
       }
     } catch (error) {
-      console.log('⚠️ Gemini enhancement failed, trying OpenAI...');
+      console.log('⚠️ Gemini optimization failed, trying OpenAI...');
     }
   }
 
@@ -870,11 +880,11 @@ async function enhancePromptWithAI(inputContent: string): Promise<string> {
       });
       
       if (completion.choices[0]?.message?.content?.trim()) {
-        console.log('✅ OpenAI enhancement successful');
+        console.log('✅ OpenAI optimization successful');
         return completion.choices[0].message.content.trim();
       }
     } catch (error) {
-      console.log('⚠️ OpenAI enhancement failed, trying Groq...');
+      console.log('⚠️ OpenAI optimization failed, trying Groq...');
     }
   }
 
@@ -899,24 +909,26 @@ async function enhancePromptWithAI(inputContent: string): Promise<string> {
       });
       
       if (completion.choices[0]?.message?.content?.trim()) {
-        console.log('✅ Groq enhancement successful');
+        console.log('✅ Groq optimization successful');
         return completion.choices[0].message.content.trim();
       }
     } catch (error) {
-      console.log('⚠️ Groq enhancement failed, using manual enhancement');
+      console.log('⚠️ Groq optimization failed, using manual optimization');
     }
   }
 
-  // If all AI models fail, return enhanced manual version
-  return `Enhanced Business Idea: ${inputContent}
+  // If all AI models fail, return optimized manual version
+  return `Optimized Business Idea: ${inputContent}
 
-Market Context: This idea addresses a specific market need with clear target audience identification.
+Problem Statement: This solution addresses a specific market pain point that affects the target audience's daily operations and productivity.
 
-Target Audience: Entrepreneurs, small business owners, and professionals seeking innovative solutions.
+Target Market: Small to medium businesses, entrepreneurs, and professionals in relevant industries who need efficient solutions for their operational challenges.
 
-Use Cases: 
-- Primary use case: ${inputContent}
-- Secondary applications: Market validation, competitive analysis, growth strategy
+Solution Approach: A comprehensive platform/service that streamlines processes, reduces manual work, and provides actionable insights.
+
+Value Proposition: Saves time, reduces costs, and improves efficiency for the target market through innovative technology and user-friendly design.
+
+Business Model: Subscription-based service with tiered pricing to accommodate different business sizes and needs.
 
 Key Benefits: Improved efficiency, cost reduction, market differentiation, and scalability.`;
 }
@@ -1006,7 +1018,7 @@ export default async function handler(req: any, res: any) {
   }
   
   try {
-    const { content, enhance, fast, model, userTier } = req.body;
+    const { content, optimize, enhance, fast, model, userTier } = req.body;
     
     // Check if content exists
     if (!content || typeof content !== 'string') {
@@ -1026,16 +1038,24 @@ export default async function handler(req: any, res: any) {
     
     let inputContent = content;
     
-    // Enhance prompt if requested
-    if (enhance === true) {
+    // Optimize prompt if requested
+    if (optimize === true || enhance === true) {
       try {
-        const enhanced = await enhancePromptWithAI(inputContent);
-        if (enhanced && enhanced !== inputContent) {
-          inputContent = enhanced;
-          console.log('✅ Prompt enhanced successfully');
+        const optimized = await optimizePromptWithAI(inputContent);
+        if (optimized && optimized !== inputContent) {
+          inputContent = optimized;
+          console.log('✅ Prompt optimized successfully');
+          
+          // Return optimized prompt immediately if this is an optimization request
+          if (optimize === true) {
+            return res.status(200).json({
+              optimizedPrompt: optimized,
+              originalPrompt: content
+            });
+          }
         }
       } catch (error) {
-        console.log('⚠️ Prompt enhancement failed, continuing with original input');
+        console.log('⚠️ Prompt optimization failed, continuing with original input');
       }
     }
     
