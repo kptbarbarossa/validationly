@@ -29,6 +29,46 @@ interface ValidationResult {
     redditTitleSuggestion?: string;
     redditBodySuggestion?: string;
   };
+  youtubeData?: {
+    searchResults: {
+      videos: Array<{
+        id: string;
+        title: string;
+        description: string;
+        viewCount: string;
+        likeCount: string;
+        commentCount: string;
+        publishedAt: string;
+        channelTitle: string;
+        tags?: string[];
+      }>;
+      totalResults: number;
+    };
+    trendAnalysis: {
+      totalViews: number;
+      averageViews: number;
+      totalVideos: number;
+      recentActivity: boolean;
+      topChannels: string[];
+    };
+    aiAnalysis?: {
+      youtubeAnalysis: {
+        marketDemand: string;
+        contentSaturation: string;
+        audienceEngagement: string;
+        contentGaps: string[];
+        competitorChannels: string[];
+        marketOpportunity: string;
+      };
+      contentStrategy: {
+        recommendedApproach: string;
+        keyTopics: string[];
+        targetAudience: string;
+        contentFormats: string[];
+      };
+      validationInsights: string[];
+    };
+  };
 }
 
 const ResultsPage: React.FC = () => {
@@ -277,6 +317,152 @@ const ResultsPage: React.FC = () => {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* YouTube Raw Data */}
+          {result.youtubeData && (
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 mb-8">
+              <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-3">
+                <span>📺</span> YouTube Pazar Verisi
+              </h2>
+
+              {/* YouTube Stats Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-red-400 mb-1">
+                    {result.youtubeData.searchResults.totalResults.toLocaleString()}
+                  </div>
+                  <p className="text-slate-300 text-sm">Toplam Video</p>
+                </div>
+
+                <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-green-400 mb-1">
+                    {(result.youtubeData.trendAnalysis.totalViews / 1000000).toFixed(1)}M
+                  </div>
+                  <p className="text-slate-300 text-sm">Toplam İzlenme</p>
+                </div>
+
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-blue-400 mb-1">
+                    {(result.youtubeData.trendAnalysis.averageViews / 1000).toFixed(0)}K
+                  </div>
+                  <p className="text-slate-300 text-sm">Ortalama İzlenme</p>
+                </div>
+
+                <div className="bg-purple-500/10 border border-purple-500/20 rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold text-purple-400 mb-1">
+                    {result.youtubeData.trendAnalysis.recentActivity ? '✅' : '❌'}
+                  </div>
+                  <p className="text-slate-300 text-sm">Son 30 Gün Aktivite</p>
+                </div>
+              </div>
+
+              {/* Top Videos */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-4 text-white">🔥 En Popüler Videolar</h3>
+                <div className="space-y-3 max-h-96 overflow-y-auto">
+                  {result.youtubeData.searchResults.videos.slice(0, 10).map((video, index) => (
+                    <div key={video.id} className="bg-slate-800/30 rounded-lg p-4 border border-slate-700">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-shrink-0 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                          {index + 1}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-white text-sm mb-2 line-clamp-2">
+                            {video.title}
+                          </h4>
+
+                          <div className="flex items-center gap-4 text-xs text-slate-400 mb-2">
+                            <span className="flex items-center gap-1">
+                              👁️ {parseInt(video.viewCount).toLocaleString()}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              👍 {parseInt(video.likeCount).toLocaleString()}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              💬 {parseInt(video.commentCount).toLocaleString()}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              📅 {new Date(video.publishedAt).toLocaleDateString('tr-TR')}
+                            </span>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <span className="text-slate-500 text-xs">
+                              📺 {video.channelTitle}
+                            </span>
+                            <a
+                              href={`https://youtube.com/watch?v=${video.id}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-red-400 hover:text-red-300 text-xs transition-colors"
+                            >
+                              İzle →
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Top Channels */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-4 text-white">🏆 En Aktif Kanallar</h3>
+                <div className="flex flex-wrap gap-2">
+                  {result.youtubeData.trendAnalysis.topChannels.map((channel, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full text-red-300 text-sm"
+                    >
+                      #{index + 1} {channel}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* AI Analysis */}
+              {result.youtubeData.aiAnalysis && (
+                <div className="bg-slate-800/50 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold mb-4 text-white flex items-center gap-2">
+                    🤖 AI Analizi
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <h4 className="font-medium text-cyan-400 mb-2">Pazar Talebi</h4>
+                      <p className="text-slate-300 text-sm mb-4">
+                        {result.youtubeData.aiAnalysis.youtubeAnalysis.marketDemand}
+                      </p>
+
+                      <h4 className="font-medium text-yellow-400 mb-2">İçerik Doygunluğu</h4>
+                      <p className="text-slate-300 text-sm">
+                        {result.youtubeData.aiAnalysis.youtubeAnalysis.contentSaturation}
+                      </p>
+                    </div>
+
+                    <div>
+                      <h4 className="font-medium text-green-400 mb-2">Pazar Fırsatı</h4>
+                      <p className="text-slate-300 text-sm mb-4">
+                        {result.youtubeData.aiAnalysis.youtubeAnalysis.marketOpportunity}
+                      </p>
+
+                      <h4 className="font-medium text-purple-400 mb-2">İçerik Boşlukları</h4>
+                      <ul className="text-slate-300 text-sm space-y-1">
+                        {result.youtubeData.aiAnalysis.youtubeAnalysis.contentGaps.map((gap, index) => (
+                          <li key={index} className="flex items-start gap-2">
+                            <span className="text-purple-400 mt-1">•</span>
+                            {gap}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
