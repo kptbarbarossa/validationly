@@ -6,6 +6,7 @@ import { InsightsSection } from '../components/results/InsightsSection';
 import { PlatformAnalysisSection } from '../components/results/PlatformAnalysisSection';
 import { SocialMediaSection } from '../components/results/SocialMediaSection';
 import { YouTubeAnalysisSection } from '../components/results/YouTubeAnalysisSection';
+import { PlatformCard } from '../components/results/PlatformCard';
 
 interface ValidationResult {
   idea: string;
@@ -274,300 +275,142 @@ const ResultsPage: React.FC = () => {
         keywords="startup doğrulama, fikir doğrulama, pazar araştırması, startup araçları"
       />
 
-      {/* Vision UI Dashboard Layout */}
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-        {/* Sidebar Navigation */}
-        <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-50 lg:w-64 lg:flex lg:flex-col bg-white dark:bg-slate-800 shadow-xl border-r border-gray-200 dark:border-slate-700">
-          <div className="flex flex-col h-full">
-            {/* Logo */}
-            <div className="flex items-center px-6 py-4 border-b border-gray-200 dark:border-slate-700">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">V</span>
-                </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">Validationly</span>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <nav className="flex-1 px-4 py-6 space-y-2">
+      {/* Global Background Style */}
+      <div className="relative min-h-screen font-sans antialiased text-slate-100 bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
+        <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-3xl animate-aurora"></div>
+        <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
+        
+        {/* Main Content */}
+        <div className="relative z-10">
+          {/* Header */}
+          <div className="container mx-auto px-4 py-8">
+            <div className="flex items-center justify-between mb-8">
               <button
                 onClick={() => navigate('/')}
-                className="w-full flex items-center px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all text-slate-200 hover:text-white"
               >
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-                Yeni Analiz
+                <span>Yeni Analiz</span>
               </button>
-              
-              <div className="w-full flex items-center px-4 py-3 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
-                Dashboard
-              </div>
-            </nav>
 
-            {/* User Profile */}
-            <div className="px-4 py-4 border-t border-gray-200 dark:border-slate-700">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">U</span>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">User</p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 truncate">Free Plan</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content */}
-        <div className="lg:ml-64">
-          {/* Mobile Header */}
-          <div className="lg:hidden bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40">
-            <div className="px-4 py-3">
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={() => navigate('/')}
-                  className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                  </svg>
-                  <span className="font-medium">Geri</span>
+              <div className="flex items-center gap-3">
+                <button className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 rounded-xl transition-all text-blue-300 hover:text-blue-200">
+                  📤 Paylaş
                 </button>
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white">Dashboard</h1>
-                <button className="p-2 text-gray-600 dark:text-gray-400">
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                  </svg>
+                <button className="px-4 py-2 bg-green-500/20 hover:bg-green-500/30 border border-green-500/30 rounded-xl transition-all text-green-300 hover:text-green-200">
+                  📄 PDF İndir
                 </button>
               </div>
             </div>
-          </div>
 
-          {/* Desktop Header */}
-          <div className="hidden lg:block bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40">
-            <div className="px-6 py-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Doğrulama Raporu</h1>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    {result.classification?.primaryCategory} • {result.classification?.businessModel}
-                  </p>
-                </div>
-                
-                <div className="flex items-center space-x-3">
-                  <button className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors shadow-sm">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
-                    </svg>
-                    Paylaş
-                  </button>
-                  <button className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl">
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    PDF İndir
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Dashboard Content */}
-          <div className="p-6">
             {/* Welcome Card */}
+            <div className="glass glass-border p-8 rounded-3xl mb-8 max-w-4xl mx-auto">
+              <div className="flex flex-col md:flex-row items-center gap-6">
+                <div className="text-center md:text-left flex-1">
+                  <h1 className="text-3xl md:text-4xl font-bold mb-4 text-white">
+                    "{result.idea}"
+                  </h1>
+                  <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-4">
+                    <span className="px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full text-indigo-300 text-sm">
+                      {result.classification?.primaryCategory}
+                    </span>
+                    <span className="px-4 py-2 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300 text-sm">
+                      {result.classification?.businessModel}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="text-center">
+                  <div className="text-6xl md:text-7xl font-bold mb-2">
+                    <span className={getScoreColor(result.demandScore)}>
+                      {result.demandScore}%
+                    </span>
+                  </div>
+                  <p className="text-slate-400 text-lg">Doğrulama Skoru</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Summary Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="glass glass-border p-6 rounded-2xl text-center">
+                <div className="text-4xl font-bold text-indigo-400 mb-2">
+                  {result.multiPlatformData?.platforms?.filter(p => p.items?.length > 0).length || 0}
+                </div>
+                <p className="text-slate-300 font-medium">Aktif Platform</p>
+                <p className="text-slate-400 text-sm mt-1">7 platformdan</p>
+              </div>
+
+              <div className="glass glass-border p-6 rounded-2xl text-center">
+                <div className="text-4xl font-bold text-cyan-400 mb-2">
+                  {result.multiPlatformData?.totalItems || 0}
+                </div>
+                <p className="text-slate-300 font-medium">Toplam Sonuç</p>
+                <p className="text-slate-400 text-sm mt-1">Analiz edilen içerik</p>
+              </div>
+
+              <div className="glass glass-border p-6 rounded-2xl text-center">
+                <div className="text-4xl font-bold text-purple-400 mb-2">
+                  {result.insights?.keyInsights?.length || 0}
+                </div>
+                <p className="text-slate-300 font-medium">AI Öngörüler</p>
+                <p className="text-slate-400 text-sm mt-1">
+                  {result.insights?.sentiment === 'positive' ? 'Olumlu' : result.insights?.sentiment === 'negative' ? 'Olumsuz' : 'Nötr'} sentiment
+                </p>
+              </div>
+            </div>
+
+            {/* Score Section */}
+            <div className="glass glass-border p-8 rounded-3xl mb-8">
+              <h2 className="text-2xl font-bold mb-6 text-center text-white flex items-center justify-center gap-3">
+                <span>🎯</span> Doğrulama Skoru
+              </h2>
+              <ImprovedScoreSection
+                score={result.demandScore}
+                classification={result.classification}
+                justification={result.scoreJustification}
+              />
+            </div>
+
+            {/* Platform Cards Grid */}
             <div className="mb-8">
-              <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden">
-                <div className="absolute inset-0 bg-black/10"></div>
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold mb-2">
-                        "{result.idea}"
-                      </h2>
-                      <div className="flex items-center space-x-4 text-sm opacity-90">
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm">
-                          {result.classification?.primaryCategory}
-                        </span>
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 backdrop-blur-sm">
-                          {result.classification?.businessModel}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-5xl font-bold mb-1">
-                        {result.demandScore}
-                      </div>
-                      <div className="text-sm opacity-90">Doğrulama Skoru</div>
-                    </div>
-                  </div>
-                </div>
-                {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-white/10 rounded-full"></div>
-                <div className="absolute -bottom-8 -left-8 w-32 h-32 bg-white/5 rounded-full"></div>
+              <h2 className="text-2xl font-bold mb-6 text-center text-white flex items-center justify-center gap-3">
+                <span>🌐</span> Platform Analizi
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {result.multiPlatformData?.platforms?.map((platform, index) => (
+                  <PlatformCard key={index} platform={platform} />
+                ))}
               </div>
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Aktif Platform</p>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {result.multiPlatformData?.platforms?.filter(p => p.items?.length > 0).length || 0}
-                    </p>
-                    <p className="text-xs text-green-600 dark:text-green-400 font-medium mt-1">
-                      +{Math.round(((result.multiPlatformData?.platforms?.filter(p => p.items?.length > 0).length || 0) / 7) * 100)}% coverage
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Toplam Sonuç</p>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {result.multiPlatformData?.totalItems || 0}
-                    </p>
-                    <p className="text-xs text-green-600 dark:text-green-400 font-medium mt-1">
-                      {result.multiPlatformData?.totalItems > 50 ? 'Yüksek' : result.multiPlatformData?.totalItems > 20 ? 'Orta' : 'Düşük'} aktivite
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">AI Öngörüler</p>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {result.insights?.keyInsights?.length || 0}
-                    </p>
-                    <p className="text-xs text-purple-600 dark:text-purple-400 font-medium mt-1">
-                      {result.insights?.sentiment === 'positive' ? 'Olumlu' : result.insights?.sentiment === 'negative' ? 'Olumsuz' : 'Nötr'} sentiment
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-slate-700 hover:shadow-xl transition-shadow">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">YouTube Videoları</p>
-                    <p className="text-3xl font-bold text-gray-900 dark:text-white">
-                      {result.youtubeData?.trendAnalysis?.totalVideos || 0}
-                    </p>
-                    <p className="text-xs text-red-600 dark:text-red-400 font-medium mt-1">
-                      {result.youtubeData?.trendAnalysis?.recentActivity ? 'Aktif' : 'Pasif'} trend
-                    </p>
-                  </div>
-                  <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center">
-                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
+            {/* AI Insights */}
+            <div className="glass glass-border p-8 rounded-3xl mb-8">
+              <h2 className="text-2xl font-bold mb-6 text-center text-white flex items-center justify-center gap-3">
+                <span>🧠</span> AI Öngörüleri
+              </h2>
+              <InsightsSection insights={result.insights} />
             </div>
 
-            {/* Main Dashboard Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8">
-              {/* Left Column - Score & Insights */}
-              <div className="lg:col-span-4 space-y-4 lg:space-y-8">
-                {/* Score Section */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 p-6 hover:shadow-2xl transition-shadow">
-                  <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center mr-3">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Doğrulama Skoru</h3>
-                  </div>
-                  <ImprovedScoreSection
-                    score={result.demandScore}
-                    classification={result.classification}
-                    justification={result.scoreJustification}
-                  />
-                </div>
-
-                {/* AI Insights */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 p-6 hover:shadow-2xl transition-shadow">
-                  <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center mr-3">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">AI Öngörüleri</h3>
-                  </div>
-                  <InsightsSection insights={result.insights} />
-                </div>
+            {/* YouTube Analysis */}
+            {result.youtubeData && (
+              <div className="glass glass-border p-8 rounded-3xl mb-8">
+                <h2 className="text-2xl font-bold mb-6 text-center text-white flex items-center justify-center gap-3">
+                  <span>📺</span> YouTube Analizi
+                </h2>
+                <YouTubeAnalysisSection youtubeData={result.youtubeData} />
               </div>
+            )}
 
-              {/* Right Column - Platform Analysis & YouTube */}
-              <div className="lg:col-span-8 space-y-4 lg:space-y-8">
-                {/* Platform Analysis */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 p-6 hover:shadow-2xl transition-shadow">
-                  <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center mr-3">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Platform Analizi</h3>
-                  </div>
-                  <PlatformAnalysisSection result={result} />
-                </div>
-
-                {/* YouTube Analysis */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 p-6 hover:shadow-2xl transition-shadow">
-                  <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-pink-600 rounded-xl flex items-center justify-center mr-3">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">YouTube Analizi</h3>
-                  </div>
-                  <YouTubeAnalysisSection youtubeData={result.youtubeData} />
-                </div>
-
-                {/* Social Media Content */}
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-gray-100 dark:border-slate-700 p-6 hover:shadow-2xl transition-shadow">
-                  <div className="flex items-center mb-6">
-                    <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-xl flex items-center justify-center mr-3">
-                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                      </svg>
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Sosyal Medya İçerikleri</h3>
-                  </div>
-                  <SocialMediaSection result={result} />
-                </div>
-              </div>
+            {/* Social Media Content */}
+            <div className="glass glass-border p-8 rounded-3xl mb-8">
+              <h2 className="text-2xl font-bold mb-6 text-center text-white flex items-center justify-center gap-3">
+                <span>📱</span> Sosyal Medya İçerikleri
+              </h2>
+              <SocialMediaSection result={result} />
             </div>
           </div>
         </div>
