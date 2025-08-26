@@ -571,7 +571,6 @@ const ResultsPage: React.FC = () => {
             </div>
           </div>
         </div>
-        </div>
       </div>
     </>
   );
