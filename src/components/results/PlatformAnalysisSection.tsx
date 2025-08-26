@@ -33,8 +33,8 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
 
   return (
     <div className="space-y-6">
-      {/* Platform Overview Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      {/* Platform Overview Grid - Dashboard Style */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {platforms.map((platform) => {
           const score = getPlatformScore(platform.id);
           const data = getPlatformData(platform.id);
@@ -44,18 +44,24 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
             <button
               key={platform.id}
               onClick={() => setSelectedPlatform(selectedPlatform === platform.id ? null : platform.id)}
-              className={`glass glass-border p-4 rounded-2xl text-center transition-all hover:scale-105 ${
-                selectedPlatform === platform.id ? 'ring-2 ring-blue-500' : ''
+              className={`p-3 rounded-lg border transition-all hover:shadow-sm ${
+                selectedPlatform === platform.id 
+                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
+                  : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
               } ${hasData ? '' : 'opacity-50'}`}
             >
-              <div className="text-3xl mb-2">{platform.icon}</div>
-              <h3 className="font-semibold text-white text-sm mb-1">{platform.name}</h3>
-              <div className="text-2xl font-bold mb-1">
-                <span className={`bg-gradient-to-r ${platform.color} bg-clip-text text-transparent`}>
+              <div className="text-xl mb-1">{platform.icon}</div>
+              <h3 className="font-medium text-slate-900 dark:text-white text-xs mb-1">{platform.name}</h3>
+              <div className="text-lg font-bold mb-1">
+                <span className={`${
+                  score >= 70 ? 'text-green-600 dark:text-green-400' :
+                  score >= 40 ? 'text-yellow-600 dark:text-yellow-400' :
+                  score > 0 ? 'text-orange-600 dark:text-orange-400' : 'text-slate-400'
+                }`}>
                   {score}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 {hasData ? `${data.items.length} sonuç` : 'Veri yok'}
               </p>
             </button>
@@ -63,9 +69,9 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
         })}
       </div>
 
-      {/* Selected Platform Details */}
+      {/* Selected Platform Details - Dashboard Style */}
       {selectedPlatform && (
-        <div className="glass glass-border p-6 rounded-2xl animate-slideDown">
+        <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600 p-4">
           {(() => {
             const platform = platforms.find(p => p.id === selectedPlatform);
             const data = getPlatformData(selectedPlatform);
@@ -74,35 +80,33 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
 
             return (
               <div>
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="text-3xl">{platform.icon}</span>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-2xl">{platform.icon}</span>
                   <div>
-                    <h3 className="text-xl font-bold text-white">{platform.name} Analizi</h3>
-                    <p className="text-slate-400">
-                      Skor: <span className={`font-semibold bg-gradient-to-r ${platform.color} bg-clip-text text-transparent`}>
-                        {getPlatformScore(selectedPlatform)}/100
-                      </span>
+                    <h3 className="font-semibold text-slate-900 dark:text-white">{platform.name} Detayları</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                      Skor: <span className="font-medium">{getPlatformScore(selectedPlatform)}/100</span>
                     </p>
                   </div>
                 </div>
 
                 {data && data.items && data.items.length > 0 ? (
-                  <div className="space-y-4">
-                    <h4 className="font-semibold text-blue-400 mb-3">
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-slate-900 dark:text-white text-sm">
                       Bulunan İçerikler ({data.items.length})
                     </h4>
-                    <div className="grid gap-3 max-h-96 overflow-y-auto">
-                      {data.items.slice(0, 5).map((item: any, index: number) => (
-                        <div key={index} className="bg-slate-800/30 p-4 rounded-xl border border-slate-700">
-                          <h5 className="font-medium text-white mb-2 line-clamp-2">
+                    <div className="space-y-2 max-h-64 overflow-y-auto">
+                      {data.items.slice(0, 3).map((item: any, index: number) => (
+                        <div key={index} className="bg-white dark:bg-slate-800 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                          <h5 className="font-medium text-slate-900 dark:text-white text-sm mb-1 line-clamp-1">
                             {item.title || item.name || 'Başlık bulunamadı'}
                           </h5>
                           {item.description && (
-                            <p className="text-slate-400 text-sm line-clamp-2 mb-2">
+                            <p className="text-slate-600 dark:text-slate-400 text-xs line-clamp-2 mb-2">
                               {item.description}
                             </p>
                           )}
-                          <div className="flex items-center gap-4 text-xs text-slate-500">
+                          <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
                             {item.score && <span>Skor: {item.score}</span>}
                             {item.engagement && <span>Etkileşim: {item.engagement}</span>}
                             {item.date && <span>Tarih: {item.date}</span>}
@@ -110,17 +114,17 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
                         </div>
                       ))}
                     </div>
-                    {data.items.length > 5 && (
-                      <p className="text-center text-slate-400 text-sm">
-                        +{data.items.length - 5} daha fazla sonuç
+                    {data.items.length > 3 && (
+                      <p className="text-center text-slate-500 dark:text-slate-400 text-xs">
+                        +{data.items.length - 3} daha fazla sonuç
                       </p>
                     )}
                   </div>
                 ) : (
-                  <div className="text-center py-8">
-                    <div className="text-4xl mb-3">📭</div>
-                    <h4 className="font-semibold text-slate-300 mb-2">Veri Bulunamadı</h4>
-                    <p className="text-slate-400 text-sm">
+                  <div className="text-center py-6">
+                    <div className="text-3xl mb-2">📭</div>
+                    <h4 className="font-medium text-slate-900 dark:text-white mb-1">Veri Bulunamadı</h4>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm">
                       Bu platform için henüz analiz verisi mevcut değil.
                     </p>
                   </div>
@@ -131,30 +135,25 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
         </div>
       )}
 
-      {/* Platform Summary */}
-      <div className="glass glass-border p-6 rounded-2xl">
-        <h3 className="text-xl font-bold mb-4 text-center text-blue-400">
-          📊 Platform Özeti
-        </h3>
-        <div className="grid md:grid-cols-3 gap-6 text-center">
-          <div>
-            <div className="text-3xl font-bold text-green-400 mb-2">
-              {result.multiPlatformData?.totalItems || 0}
-            </div>
-            <p className="text-slate-400">Toplam Sonuç</p>
+      {/* Platform Summary - Compact Dashboard Style */}
+      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-slate-200 dark:border-slate-600">
+        <div className="text-center">
+          <div className="text-xl font-bold text-green-600 dark:text-green-400 mb-1">
+            {result.multiPlatformData?.totalItems || 0}
           </div>
-          <div>
-            <div className="text-3xl font-bold text-blue-400 mb-2">
-              {platforms.filter(p => getPlatformScore(p.id) > 0).length}
-            </div>
-            <p className="text-slate-400">Aktif Platform</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Toplam Sonuç</p>
+        </div>
+        <div className="text-center">
+          <div className="text-xl font-bold text-blue-600 dark:text-blue-400 mb-1">
+            {platforms.filter(p => getPlatformScore(p.id) > 0).length}
           </div>
-          <div>
-            <div className="text-3xl font-bold text-purple-400 mb-2">
-              {Math.round(platforms.reduce((acc, p) => acc + getPlatformScore(p.id), 0) / platforms.length)}
-            </div>
-            <p className="text-slate-400">Ortalama Skor</p>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Aktif Platform</p>
+        </div>
+        <div className="text-center">
+          <div className="text-xl font-bold text-purple-600 dark:text-purple-400 mb-1">
+            {Math.round(platforms.reduce((acc, p) => acc + getPlatformScore(p.id), 0) / platforms.length)}
           </div>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Ortalama Skor</p>
         </div>
       </div>
     </div>

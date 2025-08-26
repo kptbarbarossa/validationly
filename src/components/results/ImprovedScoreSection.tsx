@@ -27,10 +27,10 @@ export const ImprovedScoreSection: React.FC<ScoreSectionProps> = ({
   }, [score]);
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'from-green-400 to-emerald-500';
-    if (score >= 60) return 'from-yellow-400 to-orange-500';
-    if (score >= 40) return 'from-orange-400 to-red-500';
-    return 'from-red-400 to-red-600';
+    if (score >= 80) return 'text-green-600 dark:text-green-400';
+    if (score >= 60) return 'text-yellow-600 dark:text-yellow-400';
+    if (score >= 40) return 'text-orange-600 dark:text-orange-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
   const getScoreEmoji = (score: number) => {
@@ -41,118 +41,85 @@ export const ImprovedScoreSection: React.FC<ScoreSectionProps> = ({
   };
 
   const getScoreMessage = (score: number) => {
-    if (score >= 80) return 'Excellent potential! Ready to launch.';
-    if (score >= 60) return 'Good potential with some optimization needed.';
-    if (score >= 40) return 'Moderate potential, consider pivoting.';
-    return 'Low potential, significant changes recommended.';
+    if (score >= 80) return 'Mükemmel potansiyel! Lansmanı başlatabilirsiniz.';
+    if (score >= 60) return 'İyi potansiyel, bazı optimizasyonlar gerekli.';
+    if (score >= 40) return 'Orta potansiyel, pivot düşünülebilir.';
+    return 'Düşük potansiyel, önemli değişiklikler öneriliyor.';
   };
 
   return (
-    <div className="glass glass-border p-8 rounded-3xl mb-8">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-          Your Validation Score
-        </h2>
-        <p className="text-slate-400">AI-powered analysis across 7 platforms</p>
-      </div>
-
-      {/* Score Circle */}
-      <div className="flex justify-center mb-8">
+    <div className="space-y-4">
+      {/* Score Circle - Compact Dashboard Style */}
+      <div className="flex justify-center">
         <div className="relative">
-          <svg className="w-48 h-48 transform -rotate-90" viewBox="0 0 100 100">
+          <svg className="w-20 h-20 transform -rotate-90" viewBox="0 0 100 100">
             {/* Background circle */}
             <circle
               cx="50"
               cy="50"
               r="45"
               stroke="currentColor"
-              strokeWidth="8"
+              strokeWidth="6"
               fill="none"
-              className="text-slate-700"
+              className="text-gray-200 dark:text-gray-700"
             />
             {/* Progress circle */}
             <circle
               cx="50"
               cy="50"
               r="45"
-              stroke="url(#scoreGradient)"
-              strokeWidth="8"
+              stroke="currentColor"
+              strokeWidth="6"
               fill="none"
               strokeLinecap="round"
               strokeDasharray={`${(animatedScore / maxScore) * 283} 283`}
-              className="transition-all duration-2000 ease-out"
+              className={`transition-all duration-2000 ease-out ${score >= 80 ? 'text-green-500' :
+                score >= 60 ? 'text-yellow-500' :
+                  score >= 40 ? 'text-orange-500' : 'text-red-500'
+                }`}
             />
-            <defs>
-              <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                {score >= 80 ? (
-                  <>
-                    <stop offset="0%" stopColor="#34d399" />
-                    <stop offset="100%" stopColor="#10b981" />
-                  </>
-                ) : score >= 60 ? (
-                  <>
-                    <stop offset="0%" stopColor="#fbbf24" />
-                    <stop offset="100%" stopColor="#f59e0b" />
-                  </>
-                ) : score >= 40 ? (
-                  <>
-                    <stop offset="0%" stopColor="#fb923c" />
-                    <stop offset="100%" stopColor="#ef4444" />
-                  </>
-                ) : (
-                  <>
-                    <stop offset="0%" stopColor="#f87171" />
-                    <stop offset="100%" stopColor="#dc2626" />
-                  </>
-                )}
-              </linearGradient>
-            </defs>
           </svg>
-          
+
           {/* Score text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <div className="text-6xl font-bold text-white mb-2">
+            <div className={`text-xl font-bold ${getScoreColor(score)}`}>
               {animatedScore}
             </div>
-            <div className="text-xl text-slate-400">/ {maxScore}</div>
-            <div className="text-3xl mt-2">{getScoreEmoji(score)}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">/{maxScore}</div>
           </div>
         </div>
       </div>
 
       {/* Score Message */}
-      <div className="text-center mb-6">
-        <p className={`text-xl font-semibold bg-gradient-to-r ${getScoreColor(score)} bg-clip-text text-transparent`}>
+      <div className="text-center">
+        <div className="text-lg mb-1">{getScoreEmoji(score)}</div>
+        <p className={`text-xs font-medium ${getScoreColor(score)}`}>
           {getScoreMessage(score)}
         </p>
       </div>
 
-      {/* Classification Badge */}
-      {classification && (
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/20 border border-blue-500/30 rounded-full">
-            <span className="text-blue-400 font-semibold">{classification.primaryCategory}</span>
-            {classification.confidence && (
-              <span className="text-slate-400 text-sm">
-                ({classification.confidence}% confidence)
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+      {/* Progress Bar */}
+      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+        <div
+          className={`h-1.5 rounded-full transition-all duration-1000 ${score >= 80 ? 'bg-green-500' :
+            score >= 60 ? 'bg-yellow-500' :
+              score >= 40 ? 'bg-orange-500' : 'bg-red-500'
+            }`}
+          style={{ width: `${animatedScore}%` }}
+        />
+      </div>
 
       {/* Toggle Details */}
       <div className="text-center">
         <button
           onClick={() => setShowDetails(!showDetails)}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-slate-800/50 hover:bg-slate-700/50 border border-slate-600 rounded-xl transition-all"
+          className="inline-flex items-center gap-1 px-3 py-1 text-xs text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 transition-all"
         >
-          <span>View Details</span>
-          <svg 
-            className={`w-4 h-4 transition-transform ${showDetails ? 'rotate-180' : ''}`}
-            fill="none" 
-            stroke="currentColor" 
+          <span>Detaylar</span>
+          <svg
+            className={`w-3 h-3 transition-transform ${showDetails ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -162,9 +129,9 @@ export const ImprovedScoreSection: React.FC<ScoreSectionProps> = ({
 
       {/* Detailed Justification */}
       {showDetails && (
-        <div className="mt-6 p-6 bg-slate-800/30 rounded-2xl border border-slate-700">
-          <h3 className="text-lg font-semibold mb-4 text-blue-400">Score Breakdown</h3>
-          <p className="text-slate-300 leading-relaxed">{justification}</p>
+        <div className="p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-gray-200 dark:border-gray-600">
+          <h4 className="font-medium text-gray-900 dark:text-white mb-2 text-sm">Skor Açıklaması</h4>
+          <p className="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">{justification}</p>
         </div>
       )}
     </div>

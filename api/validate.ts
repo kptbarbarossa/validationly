@@ -17,7 +17,7 @@ interface IdeaClassification {
 // Quick classification function (simplified version for API)
 const classifyIdea = (idea: string): IdeaClassification => {
   const lowerIdea = idea.toLowerCase();
-  
+
   const categoryPatterns = {
     'SaaS': ['saas', 'software', 'platform', 'dashboard', 'analytics', 'crm', 'automation', 'workflow', 'api', 'tool', 'system', 'solution'],
     'FinTech': ['payment', 'banking', 'finance', 'money', 'investment', 'trading', 'crypto', 'wallet', 'loan', 'fintech', 'financial'],
@@ -65,7 +65,7 @@ const classifyIdea = (idea: string): IdeaClassification => {
   // Detect primary category with weighted scoring
   let primaryCategory = 'Tech Startup';
   let maxScore = 0;
-  
+
   for (const [category, keywords] of Object.entries(categoryPatterns)) {
     let score = 0;
     keywords.forEach(keyword => {
@@ -74,7 +74,7 @@ const classifyIdea = (idea: string): IdeaClassification => {
         score += keyword.length > 5 ? 2 : 1;
       }
     });
-    
+
     if (score > maxScore) {
       maxScore = score;
       primaryCategory = category;
@@ -97,7 +97,7 @@ const classifyIdea = (idea: string): IdeaClassification => {
   // Detect business model with weighted scoring
   let businessModel = 'B2C';
   maxScore = 0;
-  
+
   for (const [model, keywords] of Object.entries(businessModelPatterns)) {
     let score = 0;
     keywords.forEach(keyword => {
@@ -105,7 +105,7 @@ const classifyIdea = (idea: string): IdeaClassification => {
         score += keyword.length > 5 ? 2 : 1;
       }
     });
-    
+
     if (score > maxScore) {
       maxScore = score;
       businessModel = model;
@@ -115,7 +115,7 @@ const classifyIdea = (idea: string): IdeaClassification => {
   // Detect target market with weighted scoring
   let targetMarket = 'Consumer';
   maxScore = 0;
-  
+
   for (const [market, keywords] of Object.entries(targetMarketPatterns)) {
     let score = 0;
     keywords.forEach(keyword => {
@@ -123,7 +123,7 @@ const classifyIdea = (idea: string): IdeaClassification => {
         score += keyword.length > 5 ? 2 : 1;
       }
     });
-    
+
     if (score > maxScore) {
       maxScore = score;
       targetMarket = market;
@@ -145,7 +145,7 @@ const classifyIdea = (idea: string): IdeaClassification => {
 // Enhanced Analysis Functions
 const identifyWeakAreas = (basicResult: any): string[] => {
   const weakAreas = [];
-  
+
   if (basicResult.dimensionScores?.marketOpportunity?.score < 70) {
     weakAreas.push('market-opportunity');
   }
@@ -158,7 +158,7 @@ const identifyWeakAreas = (basicResult: any): string[] => {
   if (basicResult.dimensionScores?.goToMarketStrategy?.score < 70) {
     weakAreas.push('go-to-market');
   }
-  
+
   return weakAreas;
 };
 
@@ -287,7 +287,7 @@ RETURN JSON:
 
   try {
     const result = await gemini.models.generateContent({
-      model: "gemini-1.5-flash", 
+      model: "gemini-1.5-flash",
       contents: competitorPrompt,
       config: {
         responseMimeType: 'application/json',
@@ -375,10 +375,10 @@ const performEnhancedAnalysis = async (
   gemini: GoogleGenAI
 ): Promise<any> => {
   console.log('🚀 Starting enhanced analysis for', userTier, 'user');
-  
+
   const weakAreas = identifyWeakAreas(basicResult);
   console.log('📊 Weak areas identified:', weakAreas);
-  
+
   const enhancedResult: any = {
     basicAnalysis: basicResult,
     overallEnhancement: {
@@ -584,17 +584,17 @@ async function getGoogleTrendsData(keyword: string): Promise<any> {
     if (process.env.NODE_ENV === 'production') {
       return null;
     }
-    
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}` 
-      : process.env.NEXT_PUBLIC_BASE_URL 
-      ? process.env.NEXT_PUBLIC_BASE_URL 
-      : 'http://localhost:3000';
-      
+
+    const baseUrl = process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : process.env.NEXT_PUBLIC_BASE_URL
+        ? process.env.NEXT_PUBLIC_BASE_URL
+        : 'http://localhost:3000';
+
     const response = await fetch(`${baseUrl}/api/google-trends?keyword=${encodeURIComponent(keyword)}`, {
       timeout: 5000 // 5 second timeout
     });
-    
+
     if (!response.ok) return null;
     const data = await response.json();
     return data.data;
@@ -615,7 +615,7 @@ async function getYouTubeData(keyword: string): Promise<any> {
 
     console.log('📺 Fetching YouTube data for:', keyword, 'with API key:', apiKey.substring(0, 10) + '...');
     const youtubeService = new YouTubeService(apiKey);
-    
+
     // Get both search results and trend analysis
     const [searchResults, trendAnalysis] = await Promise.all([
       youtubeService.searchVideos(keyword, 20),
@@ -638,9 +638,9 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
   try {
     console.log('🌐 Fetching multi-platform data for:', keyword);
     const multiPlatformService = new MultiPlatformService();
-    
+
     const analysis = await multiPlatformService.analyzeIdea(keyword, 10);
-    
+
     return {
       ...analysis,
       timestamp: new Date().toISOString()
@@ -649,6 +649,129 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
     console.error('Multi-platform fetch error:', error);
     return null;
   }
+}
+
+// Generate AI Insights from platform data
+async function generateInsights(idea: string, platformData: any, gemini: GoogleGenAI): Promise<any> {
+  try {
+    console.log('🧠 Generating AI insights for idea:', idea);
+
+    const prompt = `You are an expert startup analyst and market researcher.
+
+ANALYZE THIS STARTUP IDEA: "${idea}"
+
+PLATFORM DATA SUMMARY:
+${JSON.stringify(platformData, null, 2)}
+
+Based on the platform data analysis, provide comprehensive insights in JSON format:
+
+{
+  "validationScore": 0-100,
+  "sentiment": "positive|negative|neutral",
+  "keyInsights": [
+    "Key insight 1 based on platform data",
+    "Key insight 2 about market potential",
+    "Key insight 3 about execution challenges"
+  ],
+  "opportunities": [
+    "Opportunity 1 identified from data",
+    "Opportunity 2 for market entry",
+    "Opportunity 3 for differentiation"
+  ],
+  "painPoints": [
+    "Challenge 1 from market analysis",
+    "Challenge 2 from competitive landscape",
+    "Challenge 3 from execution perspective"
+  ],
+  "trendingTopics": [
+    "Relevant trend 1",
+    "Relevant trend 2",
+    "Relevant trend 3"
+  ],
+  "popularSolutions": [
+    "Existing solution 1",
+    "Existing solution 2",
+    "Existing solution 3"
+  ]
+}
+
+ANALYSIS REQUIREMENTS:
+- Base insights on actual platform data provided
+- Be realistic and data-driven
+- Identify both opportunities and challenges
+- Consider market timing and competition
+- Provide actionable insights`;
+
+    const result = await gemini.models.generateContent({
+      model: "gemini-1.5-flash",
+      contents: prompt,
+      config: {
+        temperature: 0.3,
+        maxOutputTokens: 1024,
+        responseMimeType: 'application/json'
+      }
+    });
+
+    const aiInsights = result.text?.trim();
+
+    if (aiInsights) {
+      try {
+        const parsedInsights = JSON.parse(aiInsights);
+        console.log('✅ AI insights generated successfully');
+        return parsedInsights;
+      } catch (parseError) {
+        console.log('⚠️ Failed to parse AI insights, using fallback');
+        return generateFallbackInsights(idea, platformData);
+      }
+    }
+
+    return generateFallbackInsights(idea, platformData);
+  } catch (error) {
+    console.error('❌ AI insights generation failed:', error);
+    return generateFallbackInsights(idea, platformData);
+  }
+}
+
+// Fallback insights when AI fails
+function generateFallbackInsights(idea: string, platformData: any): any {
+  const totalItems = platformData?.totalItems || 0;
+  const activePlatforms = platformData?.platforms?.filter((p: any) => p.items?.length > 0).length || 0;
+  
+  // Calculate validation score based on data
+  const baseScore = Math.min(totalItems * 2, 60); // Max 60 from items
+  const platformBonus = activePlatforms * 8; // Max 56 from 7 platforms
+  const validationScore = Math.min(baseScore + platformBonus, 100);
+
+  return {
+    validationScore,
+    sentiment: validationScore > 70 ? 'positive' : validationScore > 40 ? 'neutral' : 'negative',
+    keyInsights: [
+      `${totalItems} toplam sonuç ${activePlatforms} platformda bulundu`,
+      `${activePlatforms > 4 ? 'Güçlü' : activePlatforms > 2 ? 'Orta' : 'Zayıf'} platform çeşitliliği mevcut`,
+      totalItems > 50 ? 'Yüksek topluluk ilgisi tespit edildi' : 'Pazar doğrulaması için daha fazla araştırma önerilir'
+    ],
+    opportunities: [
+      activePlatforms > 3 ? 'Çoklu platform stratejisi uygulanabilir' : 'Platform çeşitliliği artırılabilir',
+      totalItems > 30 ? 'Mevcut talep üzerine inşa edilebilir' : 'Niş pazar fırsatı değerlendirilebilir',
+      'Topluluk geri bildiriminden yararlanılarak ürün geliştirilebilir'
+    ],
+    painPoints: [
+      activePlatforms < 3 ? 'Sınırlı platform görünürlüğü' : 'Rekabet yoğunluğu analiz edilmeli',
+      totalItems < 20 ? 'Düşük pazar ilgisi riski' : 'Müşteri kazanma stratejisi belirsiz',
+      'Teknik uygulama ve kaynak gereksinimleri değerlendirilmeli'
+    ],
+    trendingTopics: [
+      'Startup validation',
+      'Market research', 
+      'Product development',
+      'Community feedback'
+    ],
+    popularSolutions: [
+      'Mevcut pazar liderleri',
+      'Alternatif çözümler',
+      'DIY yaklaşımları'
+    ]
+  };
 }
 
 // Enhance YouTube data with AI analysis
@@ -660,9 +783,9 @@ async function enhanceYouTubeWithGemini(youtubeData: any, idea: string): Promise
     }
 
     console.log('🤖 Enhancing YouTube data with Gemini AI...');
-    
+
     const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
-    
+
     const analysisPrompt = `You are an expert YouTube market analyst and content strategist.
 
 ANALYZE THIS YOUTUBE DATA for the business idea: "${idea}"
@@ -674,9 +797,9 @@ YOUTUBE METRICS:
 - Recent Activity: ${youtubeData.trendAnalysis.recentActivity ? 'Yes' : 'No'}
 - Top Channels: ${youtubeData.trendAnalysis.topChannels.join(', ')}
 
-TOP VIDEOS: ${youtubeData.searchResults.videos.slice(0, 5).map((v: any) => 
-  `"${v.title}" by ${v.channelTitle} (${parseInt(v.viewCount).toLocaleString()} views)`
-).join(', ')}
+TOP VIDEOS: ${youtubeData.searchResults.videos.slice(0, 5).map((v: any) =>
+      `"${v.title}" by ${v.channelTitle} (${parseInt(v.viewCount).toLocaleString()} views)`
+    ).join(', ')}
 
 Provide comprehensive YouTube market analysis in JSON format:
 
@@ -713,7 +836,7 @@ Provide comprehensive YouTube market analysis in JSON format:
     });
 
     const aiAnalysis = result.text?.trim();
-    
+
     if (aiAnalysis) {
       try {
         const parsedAnalysis = JSON.parse(aiAnalysis);
@@ -744,9 +867,9 @@ async function enhanceTrendsWithGemini(trendsData: any, idea: string): Promise<a
     }
 
     console.log('🤖 Enhancing trends data with Gemini AI...');
-    
+
     const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
-    
+
     const analysisPrompt = `You are an expert market analyst and trend interpreter.
 
 ANALYZE THIS TREND DATA for the business idea: "${idea}"
@@ -792,12 +915,12 @@ Keep the original trends data intact and add these AI-enhanced fields.`;
     });
 
     const aiAnalysis = result.text?.trim();
-    
+
     if (aiAnalysis) {
       try {
         // Try to parse the AI response
         const parsedAnalysis = JSON.parse(aiAnalysis);
-        
+
         // Merge AI analysis with original trends data
         return {
           ...trendsData,
@@ -849,7 +972,7 @@ Original idea: "${inputContent}"
 Return ONLY the optimized version without explanations or formatting:`,
         config: { temperature: 0.7, maxOutputTokens: 500 }
       });
-      
+
       if (result.text?.trim()) {
         console.log('✅ Gemini optimization successful');
         return result.text.trim();
@@ -878,7 +1001,7 @@ Return ONLY the optimized version without explanations or formatting:`,
         temperature: 0.7,
         max_tokens: 500
       });
-      
+
       if (completion.choices[0]?.message?.content?.trim()) {
         console.log('✅ OpenAI optimization successful');
         return completion.choices[0].message.content.trim();
@@ -907,7 +1030,7 @@ Return ONLY the optimized version without explanations or formatting:`,
         temperature: 0.7,
         max_tokens: 500
       });
-      
+
       if (completion.choices[0]?.message?.content?.trim()) {
         console.log('✅ Groq optimization successful');
         return completion.choices[0].message.content.trim();
@@ -957,7 +1080,7 @@ function getAI() {
 function validateInput(input: string): boolean {
   if (!input || typeof input !== 'string') return false;
   if (input.length < 10 || input.length > 1000) return false;
-  
+
   // Block potentially dangerous content
   const dangerousPatterns = [
     /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
@@ -966,7 +1089,7 @@ function validateInput(input: string): boolean {
     /vbscript:/gi,
     /data:/gi
   ];
-  
+
   return !dangerousPatterns.some(pattern => pattern.test(input));
 }
 
@@ -978,36 +1101,36 @@ const WINDOW_MS = 60 * 1000; // 1 minute
 function isRateLimited(ip: string): boolean {
   const now = Date.now();
   const userData = requestCounts.get(ip);
-  
+
   if (!userData || now > userData.resetTime) {
     requestCounts.set(ip, { count: 1, resetTime: now + WINDOW_MS });
     return false;
   }
-  
+
   if (userData.count >= MAX_REQUESTS_PER_WINDOW) {
     return true;
   }
-  
+
   userData.count++;
   return false;
 }
 
 export default async function handler(req: any, res: any) {
   const startTime = Date.now();
-  
+
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', 'https://validationly.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
-  
+
   if (req.method !== 'POST') {
     return res.status(405).json({ message: 'Method not allowed' });
   }
-  
+
   // Rate limiting
   const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
   if (isRateLimited(clientIP)) {
@@ -1016,10 +1139,10 @@ export default async function handler(req: any, res: any) {
       retryAfter: Math.ceil(WINDOW_MS / 1000)
     });
   }
-  
+
   try {
     const { content, optimize, enhance, fast, model, userTier } = req.body;
-    
+
     // Check if content exists
     if (!content || typeof content !== 'string') {
       return res.status(400).json({
@@ -1027,7 +1150,7 @@ export default async function handler(req: any, res: any) {
         error: 'Missing content'
       });
     }
-    
+
     // Input validation
     if (!validateInput(content)) {
       return res.status(400).json({
@@ -1035,9 +1158,9 @@ export default async function handler(req: any, res: any) {
         error: 'Validation failed'
       });
     }
-    
+
     let inputContent = content;
-    
+
     // Optimize prompt if requested
     if (optimize === true || enhance === true) {
       try {
@@ -1045,7 +1168,7 @@ export default async function handler(req: any, res: any) {
         if (optimized && optimized !== inputContent) {
           inputContent = optimized;
           console.log('✅ Prompt optimized successfully');
-          
+
           // Return optimized prompt immediately if this is an optimization request
           if (optimize === true) {
             return res.status(200).json({
@@ -1058,19 +1181,19 @@ export default async function handler(req: any, res: any) {
         console.log('⚠️ Prompt optimization failed, continuing with original input');
       }
     }
-    
+
     // Fast mode: Enhanced analysis with classification
     if (fast === true) {
       try {
         console.log('🚀 Starting enhanced fast analysis...');
-        
+
         // Step 1: Classify the idea
         const classification = classifyIdea(inputContent);
         console.log('📊 Idea classified as:', classification);
-        
+
         // Step 2: Generate enhanced prompt
         const enhancedPrompt = generateEnhancedPrompt(inputContent, classification, true);
-        
+
         const aiInstance = getAI();
         const result = await aiInstance.models.generateContent({
           model: process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash',
@@ -1145,15 +1268,15 @@ REQUIRED JSON OUTPUT:
 }
 
 Provide realistic, industry-specific analysis for ${classification.primaryCategory} targeting ${classification.targetMarket}.`,
-          config: { 
-            responseMimeType: 'application/json', 
-            temperature: 0.3, 
-            maxOutputTokens: 2500 
+          config: {
+            responseMimeType: 'application/json',
+            temperature: 0.3,
+            maxOutputTokens: 2500
           }
         });
-        
+
         console.log('Raw AI response:', result.text);
-        
+
         let parsed: any = null;
         try {
           const cleanedText = (result.text || '').trim();
@@ -1166,20 +1289,20 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
         } catch (e) {
           console.log('JSON parse error:', e);
         }
-        
+
         if (parsed && typeof parsed === 'object') {
           console.log('✅ Enhanced analysis completed successfully');
-          
+
           // Validate and ensure required fields with enhanced defaults
           if (typeof parsed.demandScore !== 'number' || parsed.demandScore < 0 || parsed.demandScore > 100) {
             parsed.demandScore = 50;
           }
-          
+
           // Ensure classification exists
           if (!parsed.classification) {
             parsed.classification = classification;
           }
-          
+
           // Ensure dimension scores exist
           if (!parsed.dimensionScores) {
             parsed.dimensionScores = {
@@ -1189,7 +1312,7 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
               goToMarketStrategy: { score: 50, justification: "GTM analysis completed" }
             };
           }
-          
+
           // Ensure industry insights exist
           if (!parsed.industryInsights && !parsed.industrySpecificInsights) {
             parsed.industrySpecificInsights = {
@@ -1199,7 +1322,7 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
               successFactors: [`${classification.businessModel} success factors`]
             };
           }
-          
+
           // Ensure actionable recommendations exist
           if (!parsed.actionableRecommendations) {
             parsed.actionableRecommendations = {
@@ -1214,7 +1337,7 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
               ]
             };
           }
-          
+
           if (!parsed.platformAnalyses) {
             parsed.platformAnalyses = [
               {
@@ -1224,59 +1347,59 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
                 score: 3
               },
               {
-                platform: "Reddit", 
+                platform: "Reddit",
                 signalStrength: "moderate",
                 analysis: `${classification.primaryCategory} community engagement and validation`,
                 score: 3
               },
               {
                 platform: "LinkedIn",
-                signalStrength: "moderate", 
+                signalStrength: "moderate",
                 analysis: `${classification.businessModel} professional networking strategy`,
                 score: 3
               }
             ];
           }
-          
+
           // Enhanced social media suggestions
           if (!parsed.socialMediaSuggestions && !parsed.tweetSuggestion) {
             const targetAudience = classification.targetMarket.toLowerCase();
             const category = classification.primaryCategory.toLowerCase();
-            
+
             parsed.tweetSuggestion = `🚀 Building something exciting in ${category}! Working on: "${inputContent.substring(0, 100)}..." What do ${targetAudience}s think? Would you use this? #${classification.primaryCategory} #Startup #Innovation`;
             parsed.redditTitleSuggestion = `[${classification.primaryCategory}] Looking for feedback on my ${category} startup idea`;
             parsed.redditBodySuggestion = `Hey r/${category}! 👋\n\nI'm working on a ${classification.primaryCategory} solution: "${inputContent}"\n\n**Target audience:** ${classification.targetMarket}\n**Business model:** ${classification.businessModel}\n\nWhat are your thoughts? Would this solve a real problem for you?\n\nAny feedback appreciated! 🙏`;
             parsed.linkedinSuggestion = `Excited to share my latest ${classification.primaryCategory} venture! 🚀\n\nI'm developing: "${inputContent}"\n\nThis addresses a key challenge in the ${classification.targetMarket} market. As someone passionate about ${category} innovation, I'd love to hear your professional insights.\n\nWhat are your thoughts on this approach? #${classification.primaryCategory} #Innovation #Startup`;
           }
-          
+
           if (!parsed.realWorldData) {
             parsed.realWorldData = {
               socialMediaSignals: {
-                twitter: { 
-                  trending: false, 
-                  sentiment: 'neutral', 
+                twitter: {
+                  trending: false,
+                  sentiment: 'neutral',
                   volume: 'medium',
                   keyHashtags: [`#${classification.primaryCategory}`, `#${classification.businessModel}`]
                 },
-                facebook: { 
-                  groupActivity: 'medium', 
+                facebook: {
+                  groupActivity: 'medium',
                   engagement: 'medium',
                   relevantGroups: [`${classification.primaryCategory} Entrepreneurs`, `${classification.targetMarket} Network`]
                 },
-                tiktok: { 
-                  viralPotential: 'medium', 
+                tiktok: {
+                  viralPotential: 'medium',
                   userReaction: 'neutral',
                   contentTypes: [`${classification.primaryCategory} tips`, 'startup journey']
                 }
               },
               forumInsights: {
-                reddit: { 
-                  discussionVolume: 'medium', 
+                reddit: {
+                  discussionVolume: 'medium',
                   painPoints: [`${classification.primaryCategory} challenges`, `${classification.targetMarket} needs`],
                   relevantSubreddits: [`r/${classification.primaryCategory.toLowerCase()}`, `r/startups`]
                 },
-                quora: { 
-                  questionFrequency: 'medium', 
+                quora: {
+                  questionFrequency: 'medium',
                   topics: [`${classification.primaryCategory} solutions`, `${classification.businessModel} strategies`]
                 }
               },
@@ -1292,11 +1415,11 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
               }
             };
           }
-          
+
           // Ensure metadata
           if (!parsed.dataConfidence) parsed.dataConfidence = 'medium';
           if (!parsed.lastDataUpdate) parsed.lastDataUpdate = new Date().toISOString();
-          
+
           // Add enhanced metadata
           if (!parsed.analysisMetadata) {
             parsed.analysisMetadata = {
@@ -1307,7 +1430,7 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
               confidence: 75
             };
           }
-          
+
           // Enhanced analysis for premium users
           if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
             try {
@@ -1320,24 +1443,41 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
                 userTier as 'pro' | 'business' | 'enterprise',
                 gemini
               );
-              
+
               // Merge enhanced results with basic analysis
               parsed.enhancedAnalysis = enhancedResult;
               parsed.isPremiumAnalysis = true;
               parsed.premiumTier = userTier;
-              
+
               console.log(`✅ Enhanced ${userTier} analysis completed with ${enhancedResult.overallEnhancement.confidenceBoost}% confidence boost`);
             } catch (enhancedError) {
               console.log('⚠️ Enhanced analysis failed, continuing with basic analysis:', enhancedError);
               // Continue with basic analysis if enhanced fails
             }
           }
-          
+
+          // Generate AI Insights from platform data
+          if (process.env.GOOGLE_API_KEY && multiPlatformData) {
+            try {
+              console.log('🧠 Generating AI insights from platform data...');
+              const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+              const insights = await generateInsights(inputContent, multiPlatformData, gemini);
+              parsed.insights = insights;
+              console.log('✅ AI insights generated successfully');
+            } catch (insightsError) {
+              console.log('⚠️ AI insights generation failed, using fallback:', insightsError);
+              parsed.insights = generateFallbackInsights(inputContent, multiPlatformData);
+            }
+          } else {
+            // Use fallback insights if no API key or platform data
+            parsed.insights = generateFallbackInsights(inputContent, multiPlatformData);
+          }
+
           // Add external data to response
           if (trendsData) parsed.trendsData = trendsData;
           if (youtubeData) parsed.youtubeData = youtubeData;
           if (multiPlatformData) parsed.multiPlatformData = multiPlatformData;
-          
+
           console.log(`✅ Enhanced ${fast ? 'fast' : 'standard'} analysis completed - Score: ${parsed.demandScore}/100, Category: ${classification.primaryCategory}`);
           return res.status(200).json(parsed);
         } else {
@@ -1355,14 +1495,14 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
                 score: 3
               },
               {
-                platform: "Reddit", 
+                platform: "Reddit",
                 signalStrength: "moderate",
                 analysis: "Community validation potential exists",
                 score: 3
               },
               {
                 platform: "LinkedIn",
-                signalStrength: "moderate", 
+                signalStrength: "moderate",
                 analysis: "Professional network opportunity",
                 score: 3
               }
@@ -1392,7 +1532,8 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
             redditBodySuggestion: "I'm working on a new startup idea and would love your thoughts.",
             linkedinSuggestion: "Excited to share my latest startup idea and looking for feedback.",
             dataConfidence: 'low',
-            lastDataUpdate: new Date().toISOString()
+            lastDataUpdate: new Date().toISOString(),
+            insights: generateFallbackInsights(inputContent, null)
           };
           return res.status(200).json(fallbackData);
         }
@@ -1401,17 +1542,17 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
         // Continue to normal analysis path
       }
     }
-    
+
     // Normal analysis path - Enhanced with classification
     console.log('🔍 Starting enhanced standard analysis...');
-    
+
     // Step 1: Classify the idea
     const classification = classifyIdea(inputContent);
     console.log('📊 Idea classified as:', classification);
-    
+
     // Step 2: Generate comprehensive enhanced prompt
     const enhancedPrompt = generateEnhancedPrompt(inputContent, classification, false);
-    
+
     const aiInstance = getAI();
     const result = await aiInstance.models.generateContent({
       model: process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash',
@@ -1535,15 +1676,15 @@ COMPREHENSIVE JSON OUTPUT REQUIRED:
 }
 
 Provide realistic, comprehensive, industry-specific analysis for ${classification.primaryCategory} startup targeting ${classification.targetMarket} market using ${classification.businessModel} business model.`,
-      config: { 
-        responseMimeType: 'application/json', 
-        temperature: 0.4, 
-        maxOutputTokens: 4000 
+      config: {
+        responseMimeType: 'application/json',
+        temperature: 0.4,
+        maxOutputTokens: 4000
       }
     });
-    
+
     console.log('Raw AI response:', result.text);
-    
+
     let parsed: any = null;
     try {
       const cleanedText = (result.text || '').trim();
@@ -1556,13 +1697,13 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
     } catch (e) {
       console.log('JSON parse error:', e);
     }
-    
+
     if (parsed && typeof parsed === 'object') {
       // Get trends, YouTube, and multi-platform data if available
       let trendsData = null;
       let youtubeData = null;
       let multiPlatformData = null;
-      
+
       try {
         // Fetch all external data in parallel
         const [trends, youtube, multiPlatform] = await Promise.all([
@@ -1570,21 +1711,21 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
           getYouTubeData(inputContent),
           getMultiPlatformData(inputContent)
         ]);
-        
+
         if (trends) {
           trendsData = await enhanceTrendsWithGemini(trends, inputContent);
         }
-        
+
         if (youtube) {
           youtubeData = await enhanceYouTubeWithGemini(youtube, inputContent);
-          console.log('📺 YouTube data processed:', { 
-            hasData: !!youtubeData, 
-            videosCount: youtubeData?.searchResults?.videos?.length || 0 
+          console.log('📺 YouTube data processed:', {
+            hasData: !!youtubeData,
+            videosCount: youtubeData?.searchResults?.videos?.length || 0
           });
         } else {
           console.log('⚠️ No YouTube data received');
         }
-        
+
         if (multiPlatform) {
           multiPlatformData = multiPlatform;
           console.log('✅ Multi-platform data collected:', {
@@ -1595,12 +1736,12 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
       } catch (error) {
         console.log('External data fetch failed:', error);
       }
-      
+
       // Ensure required fields exist
       if (typeof parsed.demandScore !== 'number' || parsed.demandScore < 0 || parsed.demandScore > 100) {
         parsed.demandScore = 50;
       }
-      
+
       if (!parsed.platformAnalyses) {
         parsed.platformAnalyses = [
           {
@@ -1610,20 +1751,20 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
             score: 3
           },
           {
-            platform: "Reddit", 
+            platform: "Reddit",
             signalStrength: "moderate",
             analysis: "Community validation potential exists",
             score: 3
           },
           {
             platform: "LinkedIn",
-            signalStrength: "moderate", 
+            signalStrength: "moderate",
             analysis: "Professional network opportunity",
             score: 3
           }
         ];
       }
-      
+
       if (!parsed.realWorldData) {
         parsed.realWorldData = {
           socialMediaSignals: {
@@ -1646,12 +1787,12 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
           }
         };
       }
-      
+
       // Add trends data if available
       if (trendsData) {
         parsed.googleTrends = trendsData;
       }
-      
+
       // Enhanced analysis for premium users (normal mode)
       if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
         try {
@@ -1664,19 +1805,19 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
             userTier as 'pro' | 'business' | 'enterprise',
             gemini
           );
-          
+
           // Merge enhanced results with basic analysis
           parsed.enhancedAnalysis = enhancedResult;
           parsed.isPremiumAnalysis = true;
           parsed.premiumTier = userTier;
-          
+
           console.log(`✅ Enhanced ${userTier} analysis completed with ${enhancedResult.overallEnhancement.confidenceBoost}% confidence boost`);
         } catch (enhancedError) {
           console.log('⚠️ Enhanced analysis failed, continuing with basic analysis:', enhancedError);
           // Continue with basic analysis if enhanced fails
         }
       }
-      
+
       // Ensure other required fields
       if (!parsed.tweetSuggestion) parsed.tweetSuggestion = "Share your idea on X to get feedback!";
       if (!parsed.redditTitleSuggestion) parsed.redditTitleSuggestion = "Looking for feedback on my startup idea";
@@ -1684,7 +1825,7 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
       if (!parsed.linkedinSuggestion) parsed.linkedinSuggestion = "Excited to share my latest startup idea and looking for feedback.";
       if (!parsed.dataConfidence) parsed.dataConfidence = 'medium';
       if (!parsed.lastDataUpdate) parsed.lastDataUpdate = new Date().toISOString();
-      
+
       const processingTime = Date.now() - startTime;
       const enhancedResult = {
         ...parsed,
@@ -1700,7 +1841,7 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
         ...(youtubeData && { youtubeData }),
         ...(multiPlatformData && { multiPlatformData })
       };
-      
+
       console.log(`Analysis completed - Score: ${enhancedResult.demandScore}/100, Time: ${processingTime}ms`);
       return res.status(200).json(enhancedResult);
     } else {
@@ -1717,14 +1858,14 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
             score: 3
           },
           {
-            platform: "Reddit", 
+            platform: "Reddit",
             signalStrength: "moderate",
             analysis: "Community validation potential exists",
             score: 3
           },
           {
             platform: "LinkedIn",
-            signalStrength: "moderate", 
+            signalStrength: "moderate",
             analysis: "Professional network opportunity",
             score: 3
           }
@@ -1761,16 +1902,17 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
           processingTime: Date.now() - startTime,
           confidence: 50,
           language: 'English'
-        }
+        },
+        insights: generateFallbackInsights(inputContent, null)
       };
-      
+
       console.log('Using fallback data due to parsing failure');
       return res.status(200).json(fallbackResult);
     }
-    
+
   } catch (error) {
     console.error('❌ Analysis failed:', error);
-    
+
     // Return error response
     return res.status(500).json({
       message: 'Analysis system temporarily unavailable. Please try again later.',

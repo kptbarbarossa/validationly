@@ -1,240 +1,313 @@
-import React from 'react';
-
-interface YouTubeData {
-  searchResults: {
-    videos: Array<{
-      id: string;
-      title: string;
-      viewCount: string;
-      channelTitle: string;
-      publishedAt: string;
-    }>;
-    totalResults: number;
-  };
-  trendAnalysis: {
-    totalViews: number;
-    averageViews: number;
-    totalVideos: number;
-    recentActivity: boolean;
-    topChannels: string[];
-  };
-  aiAnalysis?: {
-    youtubeAnalysis: {
-      marketDemand: string;
-      contentSaturation: string;
-      audienceEngagement: string;
-      contentGaps: string[];
-      competitorChannels: string[];
-      marketOpportunity: string;
-    };
-    contentStrategy: {
-      recommendedApproach: string;
-      keyTopics: string[];
-      targetAudience: string;
-      contentFormats: string[];
-    };
-    validationInsights: string[];
-  };
-}
+import React, { useState } from 'react';
 
 interface YouTubeAnalysisSectionProps {
-  youtubeData: YouTubeData;
+  youtubeData?: {
+    searchResults: {
+      videos: Array<{
+        id: string;
+        title: string;
+        viewCount: string;
+        channelTitle: string;
+        publishedAt: string;
+      }>;
+      totalResults: number;
+    };
+    trendAnalysis: {
+      totalViews: number;
+      averageViews: number;
+      totalVideos: number;
+      recentActivity: boolean;
+      topChannels: string[];
+    };
+    aiAnalysis?: {
+      youtubeAnalysis: {
+        marketDemand: string;
+        contentSaturation: string;
+        audienceEngagement: string;
+        contentGaps: string[];
+        competitorChannels: string[];
+        marketOpportunity: string;
+      };
+      contentStrategy: {
+        recommendedApproach: string;
+        keyTopics: string[];
+        targetAudience: string;
+        contentFormats: string[];
+      };
+      validationInsights: string[];
+    };
+  };
 }
 
-const YouTubeAnalysisSection: React.FC<YouTubeAnalysisSectionProps> = ({ youtubeData }) => {
-  const { searchResults, trendAnalysis, aiAnalysis } = youtubeData;
-  
-  // Debug: Log YouTube data
-  console.log('📺 YouTube data received:', youtubeData);
+export const YouTubeAnalysisSection: React.FC<YouTubeAnalysisSectionProps> = ({ youtubeData }) => {
+  const [activeTab, setActiveTab] = useState<'overview' | 'videos' | 'strategy'>('overview');
 
-  const getDemandColor = (demand: string) => {
-    switch (demand?.toLowerCase()) {
-      case 'high': return 'text-green-600 bg-green-50';
-      case 'medium': return 'text-yellow-600 bg-yellow-50';
-      case 'low': return 'text-red-600 bg-red-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
+  if (!youtubeData) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-4xl mb-3">📺</div>
+        <h3 className="font-semibold text-slate-900 dark:text-white mb-2">YouTube Verisi Yok</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400">
+          Bu analiz için YouTube verisi mevcut değil.
+        </p>
+      </div>
+    );
+  }
+
+  const formatNumber = (num: number) => {
+    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+    if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
+    return num.toString();
   };
 
-  const getSaturationColor = (saturation: string) => {
-    switch (saturation?.toLowerCase()) {
-      case 'untapped': return 'text-green-600 bg-green-50';
-      case 'emerging': return 'text-blue-600 bg-blue-50';
-      case 'competitive': return 'text-yellow-600 bg-yellow-50';
-      case 'oversaturated': return 'text-red-600 bg-red-50';
-      default: return 'text-gray-600 bg-gray-50';
-    }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('tr-TR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-      <div className="flex items-center mb-6">
-        <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center mr-3">
-          <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-          </svg>
+    <div className="space-y-6">
+      {/* YouTube Metrics Overview */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-red-500">📺</span>
+            <span className="text-sm font-medium text-red-700 dark:text-red-300">Toplam Video</span>
+          </div>
+          <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+            {youtubeData.trendAnalysis.totalVideos}
+          </div>
         </div>
-        <div>
-          <h3 className="text-xl font-semibold text-gray-900">YouTube Market Analysis</h3>
-          <p className="text-gray-600 text-sm">Content landscape and audience insights</p>
+
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-blue-500">👁️</span>
+            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Toplam İzlenme</span>
+          </div>
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+            {formatNumber(youtubeData.trendAnalysis.totalViews)}
+          </div>
+        </div>
+
+        <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-green-500">📊</span>
+            <span className="text-sm font-medium text-green-700 dark:text-green-300">Ort. İzlenme</span>
+          </div>
+          <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+            {formatNumber(youtubeData.trendAnalysis.averageViews)}
+          </div>
+        </div>
+
+        <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-purple-500">🔥</span>
+            <span className="text-sm font-medium text-purple-700 dark:text-purple-300">Aktivite</span>
+          </div>
+          <div className="text-lg font-bold text-purple-600 dark:text-purple-400">
+            {youtubeData.trendAnalysis.recentActivity ? 'Yüksek' : 'Düşük'}
+          </div>
         </div>
       </div>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <div className="text-2xl font-bold text-gray-900">
-            {trendAnalysis.totalVideos.toLocaleString()}
-          </div>
-          <div className="text-sm text-gray-600">Videos Found</div>
-        </div>
-        
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <div className="text-2xl font-bold text-gray-900">
-            {trendAnalysis.averageViews.toLocaleString()}
-          </div>
-          <div className="text-sm text-gray-600">Avg Views</div>
-        </div>
-        
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <div className="text-2xl font-bold text-gray-900">
-            {(trendAnalysis.totalViews / 1000000).toFixed(1)}M
-          </div>
-          <div className="text-sm text-gray-600">Total Views</div>
-        </div>
-        
-        <div className="text-center p-4 bg-gray-50 rounded-lg">
-          <div className={`text-2xl font-bold ${trendAnalysis.recentActivity ? 'text-green-600' : 'text-red-600'}`}>
-            {trendAnalysis.recentActivity ? '✓' : '✗'}
-          </div>
-          <div className="text-sm text-gray-600">Recent Activity</div>
-        </div>
+      {/* Tab Navigation */}
+      <div className="flex space-x-1 bg-slate-100 dark:bg-slate-800 rounded-lg p-1">
+        {[
+          { id: 'overview', label: '📊 Genel Bakış', icon: '📊' },
+          { id: 'videos', label: '📺 Videolar', icon: '📺' },
+          { id: 'strategy', label: '🎯 Strateji', icon: '🎯' }
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all ${
+              activeTab === tab.id
+                ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+            }`}
+          >
+            <span>{tab.icon}</span>
+            <span className="hidden sm:inline">{tab.label.split(' ')[1]}</span>
+          </button>
+        ))}
       </div>
 
-      {/* AI Analysis */}
-      {aiAnalysis && (
-        <div className="space-y-6">
-          {/* Market Assessment */}
-          <div className="grid md:grid-cols-2 gap-6">
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Market Assessment</h4>
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Market Demand:</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getDemandColor(aiAnalysis.youtubeAnalysis.marketDemand)}`}>
-                    {aiAnalysis.youtubeAnalysis.marketDemand}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Content Saturation:</span>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getSaturationColor(aiAnalysis.youtubeAnalysis.contentSaturation)}`}>
-                    {aiAnalysis.youtubeAnalysis.contentSaturation}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Content Strategy</h4>
-              <div className="space-y-2">
-                <div>
-                  <span className="text-gray-600 text-sm">Target Audience:</span>
-                  <p className="text-gray-900">{aiAnalysis.contentStrategy.targetAudience}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Content Gaps */}
-          {aiAnalysis.youtubeAnalysis.contentGaps.length > 0 && (
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Content Opportunities</h4>
-              <div className="grid md:grid-cols-2 gap-4">
-                <div>
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">Content Gaps</h5>
-                  <div className="space-y-1">
-                    {aiAnalysis.youtubeAnalysis.contentGaps.map((gap, index) => (
-                      <div key={index} className="text-sm text-gray-600 bg-blue-50 px-3 py-1 rounded">
-                        {gap}
-                      </div>
-                    ))}
+      {/* Tab Content */}
+      <div className="min-h-[300px]">
+        {activeTab === 'overview' && (
+          <div className="space-y-6">
+            {/* AI Analysis */}
+            {youtubeData.aiAnalysis && (
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>🎯</span> Pazar Analizi
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+                      <h5 className="font-medium text-slate-900 dark:text-white mb-2">Pazar Talebi</h5>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                        {youtubeData.aiAnalysis.youtubeAnalysis.marketDemand}
+                      </p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+                      <h5 className="font-medium text-slate-900 dark:text-white mb-2">İçerik Doygunluğu</h5>
+                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                        {youtubeData.aiAnalysis.youtubeAnalysis.contentSaturation}
+                      </p>
+                    </div>
                   </div>
                 </div>
-                
-                <div>
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">Recommended Topics</h5>
-                  <div className="flex flex-wrap gap-2">
-                    {aiAnalysis.contentStrategy.keyTopics.map((topic, index) => (
-                      <span key={index} className="px-3 py-1 bg-green-50 text-green-700 rounded-full text-sm">
-                        {topic}
-                      </span>
-                    ))}
+
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>🚀</span> Fırsatlar
+                  </h4>
+                  <div className="space-y-3">
+                    <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+                      <h5 className="font-medium text-slate-900 dark:text-white mb-2">İçerik Boşlukları</h5>
+                      <ul className="space-y-1">
+                        {youtubeData.aiAnalysis.youtubeAnalysis.contentGaps.slice(0, 3).map((gap, index) => (
+                          <li key={index} className="text-sm text-slate-600 dark:text-slate-300 flex items-start gap-2">
+                            <span className="text-green-500 mt-1">•</span>
+                            <span>{gap}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Top Channels */}
-          {trendAnalysis.topChannels.length > 0 && (
+            {/* Top Channels */}
             <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Leading Channels</h4>
+              <h4 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <span>🏆</span> Popüler Kanallar
+              </h4>
               <div className="flex flex-wrap gap-2">
-                {trendAnalysis.topChannels.map((channel, index) => (
-                  <span key={index} className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">
+                {youtubeData.trendAnalysis.topChannels.slice(0, 5).map((channel, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-full text-red-700 dark:text-red-300 text-sm"
+                  >
                     {channel}
                   </span>
                 ))}
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Validation Insights */}
-          {aiAnalysis.validationInsights.length > 0 && (
-            <div>
-              <h4 className="font-semibold text-gray-900 mb-3">Key Insights</h4>
-              <div className="space-y-2">
-                {aiAnalysis.validationInsights.map((insight, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                    <p className="text-gray-700 text-sm">{insight}</p>
+        {activeTab === 'videos' && (
+          <div className="space-y-4">
+            <h4 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <span>📺</span> Popüler Videolar ({youtubeData.searchResults.videos.length})
+            </h4>
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {youtubeData.searchResults.videos.slice(0, 8).map((video, index) => (
+                <div key={video.id} className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+                  <div className="flex items-start gap-3">
+                    <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center text-white font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h5 className="font-medium text-slate-900 dark:text-white mb-1 line-clamp-2">
+                        {video.title}
+                      </h5>
+                      <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+                        <span className="flex items-center gap-1">
+                          <span>📺</span>
+                          {video.channelTitle}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span>👁️</span>
+                          {formatNumber(parseInt(video.viewCount))}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <span>📅</span>
+                          {formatDate(video.publishedAt)}
+                        </span>
+                      </div>
+                    </div>
                   </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'strategy' && youtubeData.aiAnalysis && (
+          <div className="space-y-6">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div>
+                <h4 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                  <span>🎯</span> İçerik Stratejisi
+                </h4>
+                <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border border-slate-200 dark:border-slate-600">
+                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">
+                    {youtubeData.aiAnalysis.contentStrategy.recommendedApproach}
+                  </p>
+                  <div className="space-y-2">
+                    <h5 className="font-medium text-slate-900 dark:text-white text-sm">Hedef Kitle:</h5>
+                    <p className="text-sm text-slate-600 dark:text-slate-300">
+                      {youtubeData.aiAnalysis.contentStrategy.targetAudience}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                  <span>📝</span> İçerik Formatları
+                </h4>
+                <div className="space-y-2">
+                  {youtubeData.aiAnalysis.contentStrategy.contentFormats.map((format, index) => (
+                    <div key={index} className="bg-slate-50 dark:bg-slate-700/50 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                      <span className="text-sm text-slate-600 dark:text-slate-300">{format}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Key Topics */}
+            <div>
+              <h4 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <span>🔑</span> Anahtar Konular
+              </h4>
+              <div className="flex flex-wrap gap-2">
+                {youtubeData.aiAnalysis.contentStrategy.keyTopics.map((topic, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-full text-blue-700 dark:text-blue-300 text-sm"
+                  >
+                    {topic}
+                  </span>
                 ))}
               </div>
             </div>
-          )}
 
-          {/* Market Opportunity */}
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-900 mb-2">Market Opportunity</h4>
-            <p className="text-blue-800 text-sm">{aiAnalysis.youtubeAnalysis.marketOpportunity}</p>
+            {/* Validation Insights */}
+            <div>
+              <h4 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <span>✅</span> Doğrulama Öngörüleri
+              </h4>
+              <ul className="space-y-2">
+                {youtubeData.aiAnalysis.validationInsights.map((insight, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <span className="text-green-500 mt-1 text-sm">•</span>
+                    <span className="text-sm text-slate-600 dark:text-slate-300">{insight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
-        </div>
-      )}
-
-      {/* Recent Videos Preview */}
-      {searchResults.videos.length > 0 && (
-        <div className="mt-6">
-          <h4 className="font-semibold text-gray-900 mb-3">Recent Content</h4>
-          <div className="space-y-3 max-h-60 overflow-y-auto">
-            {searchResults.videos.slice(0, 5).map((video) => (
-              <div key={video.id} className="p-3 bg-gray-50 rounded-lg">
-                <div className="font-medium text-sm text-gray-900 truncate mb-1">
-                  {video.title}
-                </div>
-                <div className="text-xs text-gray-600">
-                  {video.channelTitle} • {parseInt(video.viewCount).toLocaleString()} views
-                  {video.publishedAt && (
-                    <span> • {new Date(video.publishedAt).toLocaleDateString()}</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };
-
-export default YouTubeAnalysisSection;
