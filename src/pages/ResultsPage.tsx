@@ -69,6 +69,23 @@ interface ValidationResult {
       validationInsights: string[];
     };
   };
+  multiPlatformData?: {
+    platforms: Array<{
+      platform: string;
+      items: any[];
+      error?: string;
+    }>;
+    summary: {
+      reddit: number;
+      hackernews: number;
+      producthunt: number;
+      googlenews: number;
+      github: number;
+      stackoverflow: number;
+      youtube: number;
+    };
+    totalItems: number;
+  };
 }
 
 const ResultsPage: React.FC = () => {
@@ -463,6 +480,145 @@ const ResultsPage: React.FC = () => {
                   </div>
                 </div>
               )}
+            </div>
+          )}
+
+          {/* Multi-Platform Raw Data */}
+          {result.multiPlatformData && result.multiPlatformData.platforms && (
+            <div className="space-y-8 mb-8">
+              {result.multiPlatformData.platforms.map((platform, index) => {
+                if (!platform.items || platform.items.length === 0) return null;
+
+                const platformConfig = {
+                  reddit: { name: 'Reddit', icon: '🔴', color: 'red', description: 'Topluluk tartışmaları ve gönderiler' },
+                  hackernews: { name: 'Hacker News', icon: '🟠', color: 'orange', description: 'Teknoloji haberleri ve tartışmaları' },
+                  producthunt: { name: 'Product Hunt', icon: '🚀', color: 'pink', description: 'Yeni ürün lansmanları ve keşifler' },
+                  github: { name: 'GitHub', icon: '⚫', color: 'gray', description: 'Açık kaynak projeler ve kod deposu' },
+                  stackoverflow: { name: 'Stack Overflow', icon: '📚', color: 'yellow', description: 'Geliştirici soruları ve çözümleri' },
+                  googlenews: { name: 'Google News', icon: '📰', color: 'blue', description: 'Haber makaleleri ve medya kapsamı' }
+                };
+
+                const config = platformConfig[platform.platform as keyof typeof platformConfig];
+                if (!config) return null;
+
+                return (
+                  <div key={index} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+                    <h2 className="text-2xl font-bold mb-6 text-white flex items-center gap-3">
+                      <span>{config.icon}</span> {config.name} Ham Verisi
+                    </h2>
+
+                    <p className="text-slate-400 mb-6">{config.description}</p>
+
+                    {/* Platform Stats */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                      <div className={`bg-${config.color}-500/10 border border-${config.color}-500/20 rounded-xl p-4 text-center`}>
+                        <div className={`text-2xl font-bold text-${config.color}-400 mb-1`}>
+                          {platform.items.length}
+                        </div>
+                        <p className="text-slate-300 text-sm">Toplam Sonuç</p>
+                      </div>
+
+                      <div className={`bg-${config.color}-500/10 border border-${config.color}-500/20 rounded-xl p-4 text-center`}>
+                        <div className={`text-2xl font-bold text-${config.color}-400 mb-1`}>
+                          {platform.items.filter(item => item.score && item.score > 50).length}
+                        </div>
+                        <p className="text-slate-300 text-sm">Yüksek Skor</p>
+                      </div>
+
+                      <div className={`bg-${config.color}-500/10 border border-${config.color}-500/20 rounded-xl p-4 text-center`}>
+                        <div className={`text-2xl font-bold text-${config.color}-400 mb-1`}>
+                          {platform.items.filter(item => {
+                            const date = new Date(item.date || item.publishedAt || item.created_at);
+                            const thirtyDaysAgo = new Date();
+                            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                            return date > thirtyDaysAgo;
+                          }).length}
+                        </div>
+                        <p className="text-slate-300 text-sm">Son 30 Gün</p>
+                      </div>
+                    </div>
+
+                    {/* Platform Items */}
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {platform.items.slice(0, 15).map((item: any, itemIndex: number) => (
+                        <div key={itemIndex} className="bg-slate-800/30 rounded-lg p-4 border border-slate-700">
+                          <div className="flex items-start gap-4">
+                            <div className={`flex-shrink-0 w-8 h-8 bg-${config.color}-500 rounded-full flex items-center justify-center text-white font-bold text-sm`}>
+                              {itemIndex + 1}
+                            </div>
+
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-white text-sm mb-2 line-clamp-2">
+                                {item.title || item.name || item.description || 'Başlık bulunamadı'}
+                              </h4>
+
+                              {item.description && item.title && (
+                                <p className="text-slate-400 text-xs mb-2 line-clamp-2">
+                                  {item.description}
+                                </p>
+                              )}
+
+                              <div className="flex items-center gap-4 text-xs text-slate-400 mb-2">
+                                {item.score && (
+                                  <span className="flex items-center gap-1">
+                                    📊 Skor: {item.score}
+                                  </span>
+                                )}
+                                {item.upvotes && (
+                                  <span className="flex items-center gap-1">
+                                    ⬆️ {item.upvotes}
+                                  </span>
+                                )}
+                                {item.comments && (
+                                  <span className="flex items-center gap-1">
+                                    💬 {item.comments}
+                                  </span>
+                                )}
+                                {item.stars && (
+                                  <span className="flex items-center gap-1">
+                                    ⭐ {item.stars}
+                                  </span>
+                                )}
+                                {(item.date || item.publishedAt || item.created_at) && (
+                                  <span className="flex items-center gap-1">
+                                    📅 {new Date(item.date || item.publishedAt || item.created_at).toLocaleDateString('tr-TR')}
+                                  </span>
+                                )}
+                              </div>
+
+                              <div className="flex items-center justify-between">
+                                {item.author && (
+                                  <span className="text-slate-500 text-xs">
+                                    👤 {item.author}
+                                  </span>
+                                )}
+                                {item.url && (
+                                  <a
+                                    href={item.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`text-${config.color}-400 hover:text-${config.color}-300 text-xs transition-colors`}
+                                  >
+                                    Görüntüle →
+                                  </a>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {platform.items.length > 15 && (
+                      <div className="mt-4 text-center">
+                        <span className="text-slate-400 text-sm">
+                          +{platform.items.length - 15} daha fazla sonuç mevcut
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           )}
 
