@@ -17,8 +17,12 @@ function verifyAuth(authorization: string | null) {
     const JWT_SECRET = process.env.JWT_SECRET || 'dev-super-secret-change-in-production';
 
     try {
-        const user = jwt.verify(token, JWT_SECRET) as UserPayload;
-        return { ok: true as const, user };
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (typeof decoded === 'object' && decoded && 'id' in decoded && 'email' in decoded && 'plan' in decoded) {
+            const user = decoded as UserPayload;
+            return { ok: true as const, user };
+        }
+        return { ok: false as const };
     } catch {
         return { ok: false as const };
     }
@@ -32,19 +36,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (method === 'POST' && action === 'create-checkout') {
       // Create Stripe checkout session
       const auth = verifyAuth(req.headers.authorization as string);
-      if (!auth.ok) {
+      if (!auth.ok || !auth.user) {
           return res.status(401).json({ error: 'Unauthorized' });
       }
 
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-          apiVersion: '2024-06-20'
+          apiVersion: '2025-07-30.basil'
       });
+
+      const priceId = process.env.STRIPE_PRICE_ID;
+      if (!priceId) {
+          return res.status(500).json({ error: 'Stripe price ID not configured' });
+      }
 
       const session = await stripe.checkout.sessions.create({
           payment_method_types: ['card'],
           line_items: [
               {
-                  price: process.env.STRIPE_PRICE_ID,
+                  price: priceId,
                   quantity: 1,
               },
           ],
@@ -63,7 +72,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (method === 'POST' && action === 'webhook') {
       // Stripe webhook handler
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-          apiVersion: '2024-06-20'
+          apiVersion: '2025-07-30.basil'
       });
 
       const sig = req.headers['stripe-signature'] as string;

@@ -118,7 +118,8 @@ class SimpleCache {
             await fs.writeFile(filePath, JSON.stringify(item));
         } catch (error) {
             // File write failed - this is expected in some serverless environments
-            console.warn('Cache file write failed (using memory only):', error.message);
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            console.warn('Cache file write failed (using memory only):', errorMessage);
         }
     }
 
@@ -214,20 +215,20 @@ export async function withCache<T>(
     fetchFn: () => Promise<T>,
     ttl: number = CACHE_TTL.MEDIUM
 ): Promise<T> {
-        // Try cache first
-        const cached = await cache.get(key);
-        if (cached) {
-            return cached;
-        }
-
-        // Fetch fresh data
-        const data = await fetchFn();
-
-        // Cache the result
-        await cache.set(key, data, ttl);
-
-        return data;
+    // Try cache first
+    const cached = await cache.get(key);
+    if (cached) {
+        return cached;
     }
+
+    // Fetch fresh data
+    const data = await fetchFn();
+
+    // Cache the result
+    await cache.set(key, data, ttl);
+
+    return data;
+}
 
 // Memory-only cache for session data
 class SessionCache {
@@ -247,7 +248,9 @@ class SessionCache {
         // Clean up if we're at capacity
         if (this.cache.size >= this.maxItems) {
             const oldestKey = this.cache.keys().next().value;
-            this.cache.delete(oldestKey);
+            if (oldestKey) {
+                this.cache.delete(oldestKey);
+            }
         }
 
         this.cache.set(key, {

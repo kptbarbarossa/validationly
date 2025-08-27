@@ -19,19 +19,23 @@ interface Usage {
 const usage: Usage[] = [];
 
 function verifyAuth(authorization: string | null) {
-  if (!authorization?.startsWith('Bearer ')) {
-    return { ok: false as const };
-  }
-  
-  const token = authorization.split(' ')[1];
-  const JWT_SECRET = process.env.JWT_SECRET || 'dev-super-secret-change-in-production';
-  
-  try {
-    const user = jwt.verify(token, JWT_SECRET) as UserPayload;
-    return { ok: true as const, user };
-  } catch {
-    return { ok: false as const };
-  }
+    if (!authorization?.startsWith('Bearer ')) {
+        return { ok: false as const };
+    }
+
+    const token = authorization.split(' ')[1];
+    const JWT_SECRET = process.env.JWT_SECRET || 'dev-super-secret-change-in-production';
+
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (typeof decoded === 'object' && decoded && 'id' in decoded && 'email' in decoded && 'plan' in decoded) {
+            const user = decoded as UserPayload;
+            return { ok: true as const, user };
+        }
+        return { ok: false as const };
+    } catch {
+        return { ok: false as const };
+    }
 }
 
 function checkQuota(userId: string, plan: 'free' | 'pro') {
@@ -182,9 +186,9 @@ Please rewrite this CV to better match the job requirements while keeping all fa
     const outTokens = Math.ceil(revised.length / 4);
     recordUsage(auth.user.id, inTokens, outTokens);
 
-    res.status(200).json({ revised });
+    return res.status(200).json({ revised });
   } catch (error) {
     console.error('CV rewrite error:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }

@@ -12,8 +12,7 @@
     "declaration": false,
     "outDir": "./dist",
     "rootDir": ".",
-    "types": ["node"],
-    "composite": true
+    "types": ["node"]
   },
   "include": [
     "api/**/*",

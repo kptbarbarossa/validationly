@@ -155,22 +155,6 @@ export class ProductHuntService {
       return [];
     }
   }
-
-  async searchProducts(query: string): Promise<ProductHuntItem[]> {
-    // Get all recent products and filter by query
-    const [daily, upcoming] = await Promise.all([
-      this.getDailyProducts(50),
-      this.getUpcomingProducts(50)
-    ]);
-    
-    const allProducts = [...daily, ...upcoming];
-    const queryLower = query.toLowerCase();
-    
-    return allProducts.filter(product => 
-      product.title.toLowerCase().includes(queryLower) ||
-      product.description.toLowerCase().includes(queryLower)
-    );
-  }
 }
 
 export const productHuntService = new ProductHuntService();

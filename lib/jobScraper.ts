@@ -1,6 +1,5 @@
 import puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
-import axios from 'axios';
 
 export interface JobPosting {
   title: string;
@@ -234,7 +233,7 @@ export class JobScraper {
   }
 
   // Search jobs on LinkedIn (requires authentication - for future implementation)
-  async searchLinkedInJobs(query: string, location: string = '', limit: number = 10): Promise<JobPosting[]> {
+  async searchLinkedInJobs(_query: string, _location: string = '', _limit: number = 10): Promise<JobPosting[]> {
     // This would require LinkedIn API access or authenticated scraping
     // For now, return empty array
     console.log('LinkedIn job search not implemented yet');
@@ -257,7 +256,7 @@ export class JobScraper {
       
       const jobs: JobPosting[] = [];
       
-      $('.job_seen_beacon, .slider_container .slider_item').each((index, element) => {
+      $('.job_seen_beacon, .slider_container .slider_item').each((_index, element) => {
         if (jobs.length >= limit) return false;
         
         const $job = $(element);

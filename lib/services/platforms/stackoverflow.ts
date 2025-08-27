@@ -77,9 +77,9 @@ export class StackOverflowService {
         throw new Error(`StackOverflow API error: ${response.status}`);
       }
 
-      const data: StackOverflowSearchResult = await response.json();
+      const data: any = await response.json();
       
-      const questions = data.items.map(question => ({
+      const questions = data.items.map((question: any) => ({
         id: question.question_id,
         title: question.title,
         body: question.body ? this.stripHtml(question.body) : '',
@@ -127,9 +127,9 @@ export class StackOverflowService {
         throw new Error(`StackOverflow API error: ${response.status}`);
       }
 
-      const data: StackOverflowSearchResult = await response.json();
+      const data: any = await response.json();
       
-      const questions = data.items.map(question => ({
+      const questions = data.items.map((question: any) => ({
         id: question.question_id,
         title: question.title,
         body: question.body ? this.stripHtml(question.body) : '',
@@ -180,9 +180,9 @@ export class StackOverflowService {
         throw new Error(`StackOverflow API error: ${response.status}`);
       }
 
-      const data: StackOverflowSearchResult = await response.json();
+      const data: any = await response.json();
       
-      const questions = data.items.map(question => ({
+      const questions = data.items.map((question: any) => ({
         id: question.question_id,
         title: question.title,
         body: question.body ? this.stripHtml(question.body) : '',

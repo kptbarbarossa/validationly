@@ -90,11 +90,26 @@ export class ValidationlyDB {
   }
 
   static async updateUserCredits(userId: string, creditsUsed: number): Promise<boolean> {
+    // First get current credits
+    const { data: userData } = await supabase
+      .from('users')
+      .select('credits_remaining, total_validations')
+      .eq('id', userId)
+      .single();
+    
+    if (!userData) {
+      console.error('User not found');
+      return false;
+    }
+    
+    const newCredits = Math.max(0, userData.credits_remaining - creditsUsed);
+    const newTotalValidations = userData.total_validations + 1;
+    
     const { error } = await supabase
       .from('users')
       .update({ 
-        credits_remaining: supabase.raw(`credits_remaining - ${creditsUsed}`),
-        total_validations: supabase.raw(`total_validations + 1`)
+        credits_remaining: newCredits,
+        total_validations: newTotalValidations
       })
       .eq('id', userId);
     
@@ -256,9 +271,10 @@ export class ValidationlyDB {
       }
     });
 
-    const favoriteCategory = Object.keys(categoryCount).reduce((a, b) => 
-      categoryCount[a] > categoryCount[b] ? a : b, 'Technology'
-    );
+    const favoriteCategory = Object.keys(categoryCount).length > 0 ? 
+      Object.keys(categoryCount).reduce((a, b) => 
+        categoryCount[a] > categoryCount[b] ? a : b, 'Technology'
+      ) : 'Technology';
 
     return {
       totalValidations,

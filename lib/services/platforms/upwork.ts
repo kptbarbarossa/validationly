@@ -62,7 +62,7 @@ class UpworkService {
     // Extract skills from description
     const skillsMatch = description.match(/Skills:\s*([^.]+)/i);
     const skills = skillsMatch ? 
-      skillsMatch[1].split(',').map(s => s.trim()).filter(s => s.length > 0) : 
+      skillsMatch[1].split(',').map((s: string) => s.trim()).filter((s: string) => s.length > 0) : 
       [];
 
     // Determine category from title/description

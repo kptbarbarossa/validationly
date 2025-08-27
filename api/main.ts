@@ -31,18 +31,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleValidation(req: VercelRequest, res: VercelResponse) {
+async function handleValidation(_req: VercelRequest, res: VercelResponse) {
   // validate.ts kodunu buraya kopyala
+  return res.status(501).json({ error: 'Not implemented yet' });
 }
 
-async function handleAdvancedValidation(req: VercelRequest, res: VercelResponse) {
+async function handleAdvancedValidation(_req: VercelRequest, res: VercelResponse) {
   // advanced-validate.ts kodunu buraya kopyala
+  return res.status(501).json({ error: 'Not implemented yet' });
 }
 
-async function handlePublicValidation(req: VercelRequest, res: VercelResponse) {
+async function handlePublicValidation(_req: VercelRequest, res: VercelResponse) {
   // public-validation.ts kodunu buraya kopyala
+  return res.status(501).json({ error: 'Not implemented yet' });
 }
 
-async function handleTrends(req: VercelRequest, res: VercelResponse) {
+async function handleTrends(_req: VercelRequest, res: VercelResponse) {
   // google-trends.ts kodunu buraya kopyala
+  return res.status(501).json({ error: 'Not implemented yet' });
 }

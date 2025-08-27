@@ -17,8 +17,12 @@ function verifyAuth(authorization: string | null) {
     const JWT_SECRET = process.env.JWT_SECRET || 'dev-super-secret-change-in-production';
 
     try {
-        const user = jwt.verify(token, JWT_SECRET) as UserPayload;
-        return { ok: true as const, user };
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (typeof decoded === 'object' && decoded && 'id' in decoded && 'email' in decoded && 'plan' in decoded) {
+            const user = decoded as UserPayload;
+            return { ok: true as const, user };
+        }
+        return { ok: false as const };
     } catch {
         return { ok: false as const };
     }
@@ -32,7 +36,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     if (method === 'GET' && action === 'usage') {
       // Get user usage analytics
       const auth = verifyAuth(req.headers.authorization as string);
-      if (!auth.ok) {
+      if (!auth.ok || !auth.user) {
           return res.status(401).json({ error: 'Unauthorized' });
       }
 

@@ -45,7 +45,7 @@ export class YouTubeService {
         throw new Error(`YouTube Search API error: ${searchResponse.status}`);
       }
 
-      const searchData = await searchResponse.json();
+      const searchData: any = await searchResponse.json();
       console.log('📊 YouTube search response:', { 
         itemsCount: searchData.items?.length || 0, 
         totalResults: searchData.pageInfo?.totalResults || 0 
@@ -71,7 +71,7 @@ export class YouTubeService {
         throw new Error(`YouTube Videos API error: ${videosResponse.status}`);
       }
 
-      const videosData = await videosResponse.json();
+      const videosData: any = await videosResponse.json();
 
       const videos: YouTubeVideo[] = videosData.items.map((item: any) => ({
         id: item.id,
@@ -113,7 +113,7 @@ export class YouTubeService {
         throw new Error(`YouTube Channel API error: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       
       const videos: YouTubeVideo[] = data.items.map((item: any) => ({
         id: item.id.videoId,

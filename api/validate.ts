@@ -458,7 +458,6 @@ const detectLanguage = (text: string): string => {
 
 const generateEnhancedPrompt = (idea: string, classification: IdeaClassification, fast: boolean = false): string => {
   const language = detectLanguage(idea);
-  const isTurkish = language === 'Turkish';
   
   const industryContexts = {
     'SaaS': {
@@ -1410,10 +1409,10 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
                 processing_time: Date.now() - startTime,
                 is_favorite: false,
                 is_public: false
-              }).catch(err => console.log('Supabase save error:', err));
+              }).catch((err: any) => console.log('Supabase save error:', err));
               
               // Update user credits
-              ValidationlyDB.updateUserCredits(userId, 1).catch(err => console.log('Credits update error:', err));
+              ValidationlyDB.updateUserCredits(userId, 1).catch((err: any) => console.log('Credits update error:', err));
             }
           } catch (error) {
             console.log('Supabase integration error:', error);
@@ -1803,10 +1802,10 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
             processing_time: processingTime,
             is_favorite: false,
             is_public: false
-          }).catch(err => console.log('Supabase save error:', err));
+          }).catch((err: any) => console.log('Supabase save error:', err));
           
           // Update user credits
-          ValidationlyDB.updateUserCredits(userId, 1).catch(err => console.log('Credits update error:', err));
+          ValidationlyDB.updateUserCredits(userId, 1).catch((err: any) => console.log('Credits update error:', err));
         }
       } catch (error) {
         console.log('Supabase integration error:', error);

@@ -145,9 +145,9 @@ export class RedditService {
       throw new Error(`Reddit API error: ${response.status}`);
     }
 
-    const data: RedditAPIResponse = await response.json();
+    const data: any = await response.json();
     
-    return data.data.children.map(child => ({
+    return data.data.children.map((child: any) => ({
       id: child.data.id,
       title: child.data.title,
       content: child.data.selftext || '',
@@ -270,6 +270,11 @@ export class RedditService {
     };
 
     const subreddits = topicSubreddits[topic.toLowerCase()] || topicSubreddits['startup'];
+    
+    if (!subreddits) {
+      console.warn(`No subreddits found for topic: ${topic}`);
+      return [];
+    }
     
     const allPosts: RedditPost[] = [];
     

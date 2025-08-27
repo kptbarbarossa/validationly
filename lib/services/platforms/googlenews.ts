@@ -106,28 +106,6 @@ export class GoogleNewsService {
       .trim();
   }
 
-  async searchNews(query: string, limit = 20): Promise<NewsItem[]> {
-    const cacheKey = `gn:search:${query}:${limit}`;
-    
-    const cached = await cache.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
-    try {
-      const searchUrl = `${this.baseUrl}/search?q=${encodeURIComponent(query)}&hl=en&gl=US`;
-      const articles = await this.parseRSSFeed(searchUrl);
-      const limitedArticles = articles.slice(0, limit);
-      
-      await cache.set(cacheKey, limitedArticles, CACHE_TTL.GOOGLENEWS);
-      
-      return limitedArticles;
-    } catch (error) {
-      console.error('Google News search error:', error);
-      return [];
-    }
-  }
-
   async getTechNews(limit = 20): Promise<NewsItem[]> {
     const cacheKey = `gn:tech:${limit}`;
     

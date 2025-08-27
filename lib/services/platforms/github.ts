@@ -86,27 +86,25 @@ export class GitHubService {
         throw new Error(`GitHub API error: ${response.status}`);
       }
 
-      const data: GitHubSearchResult = await response.json();
+      const data: any = await response.json();
       
-      const repos = data.items.map(repo => ({
+      const repositories = data.items.map((repo: any) => ({
         id: repo.id,
         name: repo.name,
-        full_name: repo.full_name,
+        fullName: repo.full_name,
         description: repo.description || '',
-        url: repo.html_url,
+        language: repo.language,
         stars: repo.stargazers_count,
         forks: repo.forks_count,
-        language: repo.language,
-        created_at: repo.created_at,
-        updated_at: repo.updated_at,
-        topics: repo.topics || [],
-        owner: repo.owner.login,
+        issues: repo.open_issues_count,
+        lastUpdated: repo.updated_at,
+        url: repo.html_url,
         platform: 'github'
       }));
 
-      await cache.set(cacheKey, repos, CACHE_TTL.GITHUB);
+      await cache.set(cacheKey, repositories, CACHE_TTL.GITHUB);
       
-      return repos;
+      return repositories;
     } catch (error) {
       console.error('GitHub search error:', error);
       return [];
@@ -140,25 +138,25 @@ export class GitHubService {
         throw new Error(`GitHub trending API error: ${response.status}`);
       }
 
-      const data: GitHubSearchResult = await response.json();
+      const data: any = await response.json();
       
-      const repos = data.items.map(repo => ({
+      const repositories = data.items.map((repo: any) => ({
         id: repo.id,
         name: repo.name,
-        full_name: repo.full_name,
+        fullName: repo.full_name,
         description: repo.description || '',
-        url: repo.html_url,
+        language: repo.language,
         stars: repo.stargazers_count,
         forks: repo.forks_count,
-        language: repo.language,
-        created_at: repo.created_at,
-        owner: repo.owner.login,
+        issues: repo.open_issues_count,
+        lastUpdated: repo.updated_at,
+        url: repo.html_url,
         platform: 'github'
       }));
 
-      await cache.set(cacheKey, repos, CACHE_TTL.GITHUB);
+      await cache.set(cacheKey, repositories, CACHE_TTL.GITHUB);
       
-      return repos;
+      return repositories;
     } catch (error) {
       console.error('GitHub trending error:', error);
       return [];

@@ -1,16 +1,6 @@
 // Hacker News API integration
-import { cache, CACHE_TTL } from '../cache';
-
-interface HNItem {
-  id: number;
-  title: string;
-  url?: string;
-  text?: string;
-  score: number;
-  by: string;
-  time: number;
-  descendants?: number;
-}
+import { cache } from '../cache';
+import { CACHE_TTL } from '../cache';
 
 interface HNSearchResult {
   hits: Array<{
@@ -59,9 +49,9 @@ export class HackerNewsService {
         throw new Error(`HN search failed: ${searchResponse.status}`);
       }
 
-      const searchData: HNSearchResult = await searchResponse.json();
+      const searchData: any = await searchResponse.json();
       
-      const stories = searchData.hits.map(hit => ({
+      const stories = searchData.hits.map((hit: any) => ({
         id: hit.objectID,
         title: hit.title,
         url: hit.url,
@@ -94,10 +84,10 @@ export class HackerNewsService {
     try {
       // Get top story IDs
       const topStoriesResponse = await fetch(`${this.baseUrl}/topstories.json`);
-      const topStoryIds: number[] = await topStoriesResponse.json();
+      const topStoryIds: any = await topStoriesResponse.json();
       
       // Get first 'limit' stories
-      const storyPromises = topStoryIds.slice(0, limit).map(async (id) => {
+      const storyPromises = topStoryIds.slice(0, limit).map(async (id: number) => {
         const storyResponse = await fetch(`${this.baseUrl}/item/${id}.json`);
         return storyResponse.json();
       });
@@ -105,8 +95,8 @@ export class HackerNewsService {
       const stories = await Promise.all(storyPromises);
       
       const formattedStories = stories
-        .filter(story => story && story.title)
-        .map(story => ({
+        .filter((story: any) => story && story.title)
+        .map((story: any) => ({
           id: story.id,
           title: story.title,
           url: story.url,

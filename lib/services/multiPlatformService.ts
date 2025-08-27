@@ -109,7 +109,7 @@ export class MultiPlatformService {
     const totalItems = Object.values(summary).reduce((sum, count) => sum + count, 0);
 
     // Generate insights from collected data
-    const insights = this.generateInsights(platforms, idea);
+    const insights = this.generateInsights(platforms);
 
     console.log('✅ Multi-platform analysis completed:', {
       totalItems,
@@ -222,7 +222,7 @@ export class MultiPlatformService {
     }
   }
 
-  private generateInsights(platforms: PlatformResult[], idea: string): MultiPlatformAnalysis['insights'] {
+  private generateInsights(platforms: PlatformResult[]): MultiPlatformAnalysis['insights'] {
     const allItems = platforms.flatMap(p => p.items);
     const totalItems = allItems.length;
 
