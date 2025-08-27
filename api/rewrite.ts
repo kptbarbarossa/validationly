@@ -56,6 +56,25 @@ function recordUsage(userId: string, tokensIn: number, tokensOut: number) {
   });
 }
 
+function getToneGuidelines(tone: string): string {
+  switch (tone) {
+    case 'formal':
+      return ' (professional, conservative language)';
+    case 'casual':
+      return ' (approachable, friendly language)';
+    case 'impact':
+      return ' (results-focused, achievement-heavy language)';
+    case 'executive':
+      return ' (leadership-focused, strategic language with C-suite appeal)';
+    case 'creative':
+      return ' (innovative, dynamic language showcasing creativity and originality)';
+    case 'technical':
+      return ' (precise, technical language emphasizing skills and methodologies)';
+    default:
+      return '';
+  }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
@@ -77,8 +96,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       });
     }
 
-    if (!['formal', 'casual', 'impact'].includes(tone)) {
-      return res.status(400).json({ error: 'Invalid tone. Must be formal, casual, or impact' });
+    const validTones = ['formal', 'casual', 'impact', 'executive', 'creative', 'technical'];
+    if (!validTones.includes(tone)) {
+      return res.status(400).json({ error: 'Invalid tone' });
+    }
+
+    // Check if user is trying to use premium tones
+    const premiumTones = ['executive', 'creative', 'technical'];
+    if (premiumTones.includes(tone) && auth.user.plan !== 'pro') {
+      return res.status(403).json({ error: 'Premium tone requires Pro plan' });
     }
 
     // Check quota
@@ -98,7 +124,7 @@ Guidelines:
 - Keep all factual information accurate (dates, company names, achievements)
 - Tailor the language and emphasis to match the job requirements
 - Highlight relevant skills and experiences
-- Use appropriate ${tone} tone
+- Use appropriate ${tone} tone${getToneGuidelines(tone)}
 - Maintain the original structure but improve content
 - Focus on quantifiable achievements where possible
 - Use action verbs and industry-relevant keywords
