@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Job Tailor - AI CV Optimizer",
+  "version": "1.0.0",
+  "description": "Automatically optimize your CV for any job posting with AI-powered analysis",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "clipboardWrite"
+  ],
+  "host_permissions": [
+    "https://validationly.com/*",
+    "https://*.linkedin.com/*",
+    "https://*.indeed.com/*",
+    "https://*.glassdoor.com/*",
+    "https://*.monster.com/*",
+    "https://*.ziprecruiter.com/*"
+  ],
+  "action": {
+    "default_title": "Job Tailor",
+    "default_popup": "popup/index.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.linkedin.com/jobs/*",
+        "*://*.indeed.com/viewjob*",
+        "*://*.glassdoor.com/job-listing/*",
+        "*://*.monster.com/job-openings/*",
+        "*://*.ziprecruiter.com/jobs/*"
+      ],
+      "js": ["content/detector.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options/index.html",
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
+}

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PricingModal from '../components/PricingModal';
+import JobSearch from '../components/JobSearch';
+import CVExport from '../components/CVExport';
+import ATSChecker from '../components/ATSChecker';
 
 interface JobTailorResult {
     revised: string;
@@ -23,6 +26,7 @@ const JobTailorPage: React.FC = () => {
     const [token, setToken] = useState('');
     const [userPlan, setUserPlan] = useState<UserPlan>({ plan: 'free', dailyUsage: 0, limit: 3 });
     const [showPricingModal, setShowPricingModal] = useState(false);
+    const [showJobSearch, setShowJobSearch] = useState(false);
 
     const handleGetToken = async () => {
         if (!email.trim()) {
@@ -138,6 +142,11 @@ const JobTailorPage: React.FC = () => {
         }
     };
 
+    const handleJobSelect = (job: any) => {
+        setJobDesc(`${job.title} at ${job.company}\n\nLocation: ${job.location}\n\n${job.description}`);
+        setShowJobSearch(false);
+    };
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 py-12 px-4">
             <div className="max-w-4xl mx-auto">
@@ -214,11 +223,26 @@ const JobTailorPage: React.FC = () => {
                     {/* Input Section */}
                     <div className="space-y-6">
                         <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                            <h3 className="text-lg font-semibold text-white mb-4">Job Description</h3>
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold text-white">Job Description</h3>
+                                <button
+                                    onClick={() => setShowJobSearch(!showJobSearch)}
+                                    className="text-sm bg-gradient-to-r from-indigo-600 to-cyan-600 text-white px-4 py-1 rounded-lg hover:from-indigo-700 hover:to-cyan-700 transition-all"
+                                >
+                                    {showJobSearch ? 'Hide Job Search' : '🔍 Find Jobs'}
+                                </button>
+                            </div>
+                            
+                            {showJobSearch && token && (
+                                <div className="mb-4">
+                                    <JobSearch onJobSelect={handleJobSelect} token={token} />
+                                </div>
+                            )}
+                            
                             <textarea
                                 value={jobDesc}
                                 onChange={(e) => setJobDesc(e.target.value)}
-                                placeholder="Paste the job description here..."
+                                placeholder="Paste the job description here or use the job search above..."
                                 rows={8}
                                 className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                             />
@@ -293,18 +317,19 @@ const JobTailorPage: React.FC = () => {
                     </div>
 
                     {/* Results Section */}
-                    <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
-                        <div className="flex justify-between items-center mb-4">
-                            <h3 className="text-lg font-semibold text-white">Optimized CV</h3>
-                            {result?.revised && (
-                                <button
-                                    onClick={copyToClipboard}
-                                    className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors text-sm"
-                                >
-                                    Copy
-                                </button>
-                            )}
-                        </div>
+                    <div className="space-y-6">
+                        <div className="bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10">
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="text-lg font-semibold text-white">Optimized CV</h3>
+                                {result?.revised && (
+                                    <button
+                                        onClick={copyToClipboard}
+                                        className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-600 transition-colors text-sm"
+                                    >
+                                        Copy
+                                    </button>
+                                )}
+                            </div>
 
                         {isLoading && (
                             <div className="flex items-center justify-center py-12">
@@ -334,7 +359,26 @@ const JobTailorPage: React.FC = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* CV Export */}
+                    {result?.revised && (
+                        <CVExport
+                            cvText={result.revised}
+                            jobTitle={jobDesc.split('\n')[0]?.replace(/^(.*?)\s+at\s+/, '')}
+                            userPlan={userPlan.plan}
+                            onUpgrade={() => setShowPricingModal(true)}
+                        />
+                    )}
+
+                    {/* ATS Checker */}
+                    <ATSChecker
+                        cvText={result?.revised || ''}
+                        jobDescription={jobDesc}
+                        userPlan={userPlan.plan}
+                        onUpgrade={() => setShowPricingModal(true)}
+                    />
                 </div>
+            </div>
 
                 {/* Features */}
                 <div className="mt-12 grid md:grid-cols-3 gap-6">

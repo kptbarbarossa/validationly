@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Job Tailor - Settings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #e2e8f0;
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 30px;
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding-bottom: 30px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+    
+    .section h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #f1f5f9;
+    }
+    
+    .setting-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+    
+    .setting-info {
+      flex: 1;
+    }
+    
+    .setting-title {
+      font-weight: 500;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+    }
+    
+    .setting-description {
+      font-size: 12px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+    
+    .setting-control {
+      margin-left: 20px;
+    }
+    
+    .toggle {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+    }
+    
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: 0.3s;
+      border-radius: 24px;
+    }
+    
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: 0.3s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .slider {
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+    }
+    
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+    
+    .form-control {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #f1f5f9;
+      font-size: 14px;
+      min-width: 150px;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2);
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    }
+    
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      margin-left: 10px;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    .status {
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    
+    .status.success {
+      background: rgba(34, 197, 94, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      color: #4ade80;
+    }
+    
+    .status.error {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #f87171;
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .footer a {
+      color: #4f46e5;
+      text-decoration: none;
+      margin: 0 15px;
+    }
+    
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Job Tailor Settings</h1>
+      <p>Customize your CV optimization experience</p>
+    </div>
+    
+    <!-- Detection Settings -->
+    <div class="section">
+      <h2>Job Detection</h2>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Auto-detect job postings</div>
+          <div class="setting-description">
+            Automatically detect and extract job information when you visit job posting pages
+          </div>
+        </div>
+        <div class="setting-control">
+          <label class="toggle">
+            <input type="checkbox" id="auto-detect">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Show notifications</div>
+          <div class="setting-description">
+            Display browser notifications when jobs are detected or CV optimization is complete
+          </div>
+        </div>
+        <div class="setting-control">
+          <label class="toggle">
+            <input type="checkbox" id="notifications">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Optimization Settings -->
+    <div class="section">
+      <h2>CV Optimization</h2>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Default tone</div>
+          <div class="setting-description">
+            The default tone to use for CV optimization
+          </div>
+        </div>
+        <div class="setting-control">
+          <select id="default-tone" class="form-control">
+            <option value="formal">Formal</option>
+            <option value="casual">Casual</option>
+            <option value="impact">Impact</option>
+            <option value="executive">Executive</option>
+            <option value="creative">Creative</option>
+            <option value="technical">Technical</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Auto-optimize (Pro)</div>
+          <div class="setting-description">
+            Automatically optimize your CV when a job is detected (requires saved CV template)
+          </div>
+        </div>
+        <div class="setting-control">
+          <label class="toggle">
+            <input type="checkbox" id="auto-optimize">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- API Settings -->
+    <div class="section">
+      <h2>API Configuration</h2>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">API Endpoint</div>
+          <div class="setting-description">
+            Job Tailor API server URL (advanced users only)
+          </div>
+        </div>
+        <div class="setting-control">
+          <input type="url" id="api-endpoint" class="form-control" placeholder="https://validationly.com">
+        </div>
+      </div>
+    </div>
+    
+    <!-- Account Settings -->
+    <div class="section">
+      <h2>Account</h2>
+      
+      <div class="setting-item">
+        <div class="setting-info">
+          <div class="setting-title">Authentication Token</div>
+          <div class="setting-description">
+            Your Job Tailor authentication token
+          </div>
+        </div>
+        <div class="setting-control">
+          <button id="clear-token" class="btn btn-secondary">Clear Token</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Action Buttons -->
+    <div style="text-align: center; margin-top: 30px;">
+      <button id="save-settings" class="btn">Save Settings</button>
+      <button id="reset-settings" class="btn btn-secondary">Reset to Defaults</button>
+    </div>
+    
+    <!-- Status Message -->
+    <div id="status" class="status hidden"></div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <a href="https://validationly.com/job-tailor" target="_blank">Job Tailor Web</a>
+      <a href="https://validationly.com/privacy" target="_blank">Privacy Policy</a>
+      <a href="mailto:support@validationly.com">Support</a>
+    </div>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html>
