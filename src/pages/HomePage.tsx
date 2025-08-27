@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { PLATFORM_COUNT } from '../constants/platforms';
+// import { PLATFORM_COUNT } from '../constants/platforms';
 import { useNavigate } from 'react-router-dom';
 // Direct API call - no service layer needed
 import type { UserInput } from '../types';
@@ -10,6 +10,7 @@ import PromptGallery from '../components/PromptGallery';
 // import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import { SEOHead } from '../components/SEOHead';
+import RedditPosts from '../components/RedditPosts';
 // import RelatedStartups from '../components/RelatedStartups';
 
 // Sample categories removed
@@ -353,6 +354,11 @@ const HomePage: React.FC = () => {
                     textareaRef.current?.focus();
                 }}
             />
+
+            {/* Reddit Posts Section */}
+            <div className="mt-8">
+                <RedditPosts />
+            </div>
 
             {/* Premium Tier Selector (Test Mode) */}
             <div className="mt-8 max-w-2xl mx-auto">

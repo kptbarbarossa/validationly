@@ -39,6 +39,14 @@ const ToolsPage: React.FC = () => {
             features: ['AI-powered content', '5-tweet series', 'Optimized for engagement', 'Ready to post']
         },
         {
+            id: 'job-tailor',
+            title: 'Job Tailor',
+            description: 'AI-powered CV optimization for specific job applications. Tailor your resume to match job requirements perfectly.',
+            icon: '📄',
+            route: '/job-tailor',
+            features: ['CV optimization', 'Job matching', 'Multiple tones', 'Instant results']
+        },
+        {
             id: 'market-academy',
             title: 'Market Signal Academy',
             description: 'Master trend analysis and market intelligence through comprehensive courses and real case studies.',
