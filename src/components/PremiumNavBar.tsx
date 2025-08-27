@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/aria-proptypes */
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 
 const navItems: Array<{ to: string; label: string; external?: boolean }> = [
@@ -16,6 +17,7 @@ const PremiumNavBar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const { user, signOut } = useAuth();
 
   const isActive = (to: string) => (to === '/' ? location.pathname === '/' : location.pathname.startsWith(to));
 
@@ -68,15 +70,33 @@ const PremiumNavBar: React.FC = () => {
 
           {/* Right: CTAs */}
           <div className="flex items-center gap-2 pr-2 justify-self-end">
-            <a
-              href="https://apps.shopify.com/shhhh-pricing"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-emerald-200 hover:text-emerald-100 hover:bg-white/10 transition-colors"
-              aria-label="B2B App – Shopify"
-            >
-              <span className="hidden lg:inline text-xs sm:text-sm">B2B App</span>
-            </a>
+            {user ? (
+              <>
+                <Link
+                  to="/dashboard"
+                  className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  <span className="hidden lg:inline text-xs sm:text-sm">Dashboard</span>
+                </Link>
+                <button
+                  onClick={signOut}
+                  className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  <span className="hidden lg:inline text-xs sm:text-sm">Sign Out</span>
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-indigo-200 hover:text-indigo-100 hover:bg-white/10 transition-colors border border-indigo-400/30"
+              >
+                <span className="text-xs sm:text-sm font-medium">Sign In</span>
+              </Link>
+            )}
+            
             <a
               href="https://x.com/kptbarbarossa"
               target="_blank"

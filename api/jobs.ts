@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
-import { JobScraper } from '../lib/jobScraper';
+import { JobScraper, JobPosting } from '../lib/jobScraper';
 
 interface UserPayload {
     id: string;
@@ -46,7 +46,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const scraper = new JobScraper();
 
       try {
-          let jobs: any[] = [];
+          let jobs: JobPosting[] = [];
 
           if (platform === 'indeed') {
               jobs = await scraper.searchIndeedJobs(query, location as string, searchLimit);
@@ -56,15 +56,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               return res.status(400).json({ error: 'Unsupported platform. Use "indeed" or "linkedin"' });
           }
 
-          jobs = jobs.map(job => ({
+          const enrichedJobs = jobs.map(job => ({
               ...job,
-              requirements: JobScraper.extractRequirements(job.description),
-              benefits: JobScraper.extractBenefits(job.description)
+              requirements: JobScraper.extractRequirements(job.description || ''),
+              benefits: JobScraper.extractBenefits(job.description || '')
           }));
 
           return res.status(200).json({
-              jobs,
-              total: jobs.length,
+              jobs: enrichedJobs,
+              total: enrichedJobs.length,
               platform,
               query,
               location: location || 'Any location'

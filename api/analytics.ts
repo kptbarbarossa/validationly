@@ -1,5 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
+import { ValidationlyDB } from '../lib/supabase';
 
 interface UserPayload {
     id: string;
@@ -35,20 +36,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           return res.status(401).json({ error: 'Unauthorized' });
       }
 
-      // Mock analytics data - replace with actual database queries
+      // Get real analytics data from Supabase
+      const userStats = await ValidationlyDB.getUserStats(auth.user.id);
+      const userValidations = await ValidationlyDB.getUserValidations(auth.user.id, 50);
+      
+      // Calculate monthly usage
+      const monthlyUsage = userValidations.reduce((acc: any[], validation) => {
+        const month = new Date(validation.created_at).toLocaleDateString('en-US', { month: 'short' });
+        const existing = acc.find(item => item.month === month);
+        if (existing) {
+          existing.validations++;
+        } else {
+          acc.push({ month, validations: 1 });
+        }
+        return acc;
+      }, []);
+
+      // Get top ideas
+      const topIdeas = userValidations
+        .filter(v => v.demand_score && v.demand_score > 0)
+        .sort((a, b) => (b.demand_score || 0) - (a.demand_score || 0))
+        .slice(0, 5)
+        .map(v => ({
+          idea: v.idea_text.substring(0, 50) + (v.idea_text.length > 50 ? '...' : ''),
+          score: v.demand_score,
+          date: new Date(v.created_at).toISOString().split('T')[0]
+        }));
+
       const analytics = {
-          totalValidations: 42,
-          validationsThisMonth: 12,
-          averageScore: 78,
-          topIdeas: [
-              { idea: 'AI-powered job matching', score: 85, date: '2024-01-15' },
-              { idea: 'Remote work platform', score: 72, date: '2024-01-10' }
-          ],
-          monthlyUsage: [
-              { month: 'Jan', validations: 12 },
-              { month: 'Feb', validations: 8 },
-              { month: 'Mar', validations: 15 }
-          ]
+          totalValidations: userStats.totalValidations,
+          validationsThisMonth: userValidations.filter(v => 
+            new Date(v.created_at) > new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+          ).length,
+          averageScore: userStats.avgScore,
+          topIdeas,
+          monthlyUsage: monthlyUsage.slice(0, 12),
+          favoriteCategory: userStats.favoriteCategory,
+          creditsRemaining: userStats.creditsRemaining
       };
 
       return res.status(200).json(analytics);

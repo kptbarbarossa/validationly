@@ -3,6 +3,7 @@ const OpenAI = require('openai');
 const Groq = require('groq-sdk');
 const { YouTubeService } = require('../lib/services/platforms/youtube');
 const { MultiPlatformService } = require('../lib/services/multiPlatformService');
+const { ValidationlyDB } = require('../lib/supabase');
 
 // Import our enhanced prompt system
 interface IdeaClassification {
@@ -167,7 +168,7 @@ const performDeepDiveAnalysis = async (
   classification: IdeaClassification,
   basicResult: any,
   weakAreas: string[],
-  gemini: GoogleGenAI
+  gemini: any
 ): Promise<any> => {
   if (weakAreas.length === 0) {
     return { message: "No weak areas identified - strong overall analysis" };
@@ -234,7 +235,7 @@ RETURN JSON:
 const performCompetitorAnalysis = async (
   idea: string,
   classification: IdeaClassification,
-  gemini: GoogleGenAI
+  gemini: any
 ): Promise<any> => {
   const competitorPrompt = `You are a Competitive Intelligence Expert specializing in ${classification.primaryCategory} market research.
 
@@ -306,7 +307,7 @@ RETURN JSON:
 const performMarketTimingAnalysis = async (
   idea: string,
   classification: IdeaClassification,
-  gemini: GoogleGenAI
+  gemini: any
 ): Promise<any> => {
   const timingPrompt = `You are a Market Timing Expert and Trend Analyst specializing in ${classification.primaryCategory} industry.
 
@@ -372,7 +373,7 @@ const performEnhancedAnalysis = async (
   classification: IdeaClassification,
   basicResult: any,
   userTier: 'pro' | 'business' | 'enterprise',
-  gemini: GoogleGenAI
+  gemini: any
 ): Promise<any> => {
   console.log('🚀 Starting enhanced analysis for', userTier, 'user');
 
@@ -455,9 +456,10 @@ const detectLanguage = (text: string): string => {
   return 'English';
 };
 
-const generateEnhancedPrompt = (idea: string, classification: IdeaClassification, fast: boolean = false) => {
+const generateEnhancedPrompt = (idea: string, classification: IdeaClassification, fast: boolean = false): string => {
   const language = detectLanguage(idea);
   const isTurkish = language === 'Turkish';
+  
   const industryContexts = {
     'SaaS': {
       regulations: ['GDPR', 'SOC2', 'Data Privacy'],
@@ -487,176 +489,25 @@ const generateEnhancedPrompt = (idea: string, classification: IdeaClassification
   };
 
   if (fast) {
-    if (isTurkish) {
-      return `Sen ${classification.primaryCategory} sektöründe 15+ yıl deneyimli Kıdemli Sektör Uzmanı ve Startup Doğrulayıcısısın.
+    return `You are a Senior ${classification.primaryCategory} Industry Expert. Analyze: "${idea}" and provide a JSON response with demand score (0-100) and brief insights.`;
+  }
 
-ANALİZ EDİLECEK STARTUP FİKRİ: "${idea}"
+  return `You are a Senior Startup Validation Expert with deep expertise in ${classification.primaryCategory} industry.
 
-SINIFLANDIRMA:
-- Sektör: ${classification.primaryCategory}
-- İş Modeli: ${classification.businessModel}
-- Hedef Pazar: ${classification.targetMarket}
-
-SEKTÖR UZMANLIĞİ:
-- Temel Düzenlemeler: ${context.regulations.join(', ')}
-- Başarı Metrikleri: ${context.keyMetrics.join(', ')}
-- Büyük Rakipler: ${context.competitors.join(', ')}
-- Güncel Trendler: ${context.trends.join(', ')}
-
-ANALİZ GEREKSİNİMLERİ:
-Spesifik, uygulanabilir öngörülerle kapsamlı bir doğrulama analizi sağla. Gerçekçi ama yapıcı ol.
-
-PUANLAMA ÇERÇEVESİ (0-100):
-1. PAZAR FIRSATI (30%): 
-   - Pazar büyüklüğü ve büyüme potansiyeli
-   - Müşteri acı noktası şiddeti
-   - Rekabet ortamı analizi
-   - Pazar zamanlaması değerlendirmesi
-
-2. UYGULAMA KOLAYLIĞİ (25%):
-   - Teknik karmaşıklık ve gereksinimler
-   - Kaynak ihtiyaçları ve ekip gereksinimleri
-   - Geliştirme zaman çizelgesi ve kilometre taşları
-   - Temel uygulama riskleri
-
-3. İŞ MODELİ GEÇERLİLİĞİ (25%):
-   - Gelir modeli netliği ve potansiyeli
-   - Birim ekonomi ve karlılık yolu
-   - Ölçeklenebilirlik faktörleri
-   - Para kazanma zaman çizelgesi
-
-4. PAZARA GİRİŞ STRATEJİSİ (20%):
-   - ${classification.targetMarket} için müşteri kazanma kanalları
-   - Ürün-pazar uyumu doğrulama yaklaşımı
-   - Rekabet farklılaşması ve konumlandırma
-   - Pazar giriş engelleri ve lansman stratejisi
-
-GERÇEKÇİ PUANLAMA REHBERİ:
-- 85-100: Güçlü doğrulama sinyalleri ile olağanüstü fırsat
-- 70-84: İyi pazar potansiyeli ile güçlü fırsat
-- 55-69: Orta potansiyeli olan uygulanabilir fırsat
-- 40-54: İterasyon gerektiren zorlu fırsat
-- 25-39: Büyük endişeleri olan zayıf fırsat
-- 0-24: Temel kusurları olan kötü fırsat
-
-Gerçekçi ol ve hem fırsatları hem de riskleri değerlendir. ${classification.primaryCategory} sektörü ve ${classification.businessModel} iş modeline özel uygulanabilir öngörüler sağla.
-
-TÜRKÇE CEVAP VER ve JSON formatında döndür.`;
-    } else {
-      return `You are a Senior ${classification.primaryCategory} Industry Expert and Startup Validator with 15+ years of experience.
-
-STARTUP IDEA TO ANALYZE: "${idea}"
+STARTUP IDEA: "${idea}"
 
 CLASSIFICATION:
 - Industry: ${classification.primaryCategory}
 - Business Model: ${classification.businessModel}
 - Target Market: ${classification.targetMarket}
 
-INDUSTRY EXPERTISE:
+INDUSTRY CONTEXT:
 - Key Regulations: ${context.regulations.join(', ')}
 - Success Metrics: ${context.keyMetrics.join(', ')}
 - Major Competitors: ${context.competitors.join(', ')}
 - Current Trends: ${context.trends.join(', ')}
 
-ANALYSIS REQUIREMENTS:
-Provide a comprehensive validation analysis with specific, actionable insights. Be realistic but constructive.
-
-SCORING FRAMEWORK (0-100):
-1. MARKET OPPORTUNITY (30%): 
-   - Market size and growth potential
-   - Customer pain point severity
-   - Competitive landscape analysis
-   - Market timing assessment
-
-2. EXECUTION FEASIBILITY (25%):
-   - Technical complexity and requirements
-   - Resource needs and team requirements
-   - Development timeline and milestones
-   - Key execution risks
-
-3. BUSINESS MODEL VIABILITY (25%):
-   - Revenue model clarity and potential
-   - Unit economics and profitability path
-   - Scalability factors
-   - Monetization timeline
-
-4. GO-TO-MARKET STRATEGY (20%):
-   - Customer acquisition channels
-   - Product-market fit validation approach
-   - Competitive differentiation
-   - Growth and scaling strategy
-
-REALISTIC SCORING GUIDELINES:
-- 85-100: Exceptional opportunity with clear path to success
-- 70-84: Strong opportunity with good market potential
-- 55-69: Moderate opportunity requiring optimization
-- 40-54: Challenging opportunity needing significant pivots
-- 0-39: Poor opportunity with fundamental issues
-
-REQUIRED OUTPUT FORMAT:
-Return a detailed JSON response with:
-- Overall demand score (0-100)
-- Detailed score justification
-- Dimension scores with specific insights
-- Industry-specific recommendations
-- Actionable next steps
-- Platform-specific social media suggestions
-- Risk assessment and mitigation strategies
-
-Be specific, actionable, and provide concrete examples relevant to ${classification.primaryCategory} industry.`;
-  }
-
-  return `You are a Senior Startup Validation Expert with deep expertise in ${classification.primaryCategory} industry and ${classification.businessModel} business models.
-
-INDUSTRY EXPERTISE:
-- ${classification.primaryCategory} market dynamics and regulatory landscape
-- ${classification.businessModel} revenue models and unit economics
-- ${classification.targetMarket} customer behavior and acquisition strategies
-- Key regulations: ${context.regulations.join(', ')}
-- Success metrics: ${context.keyMetrics.join(', ')}
-- Competitive landscape: ${context.competitors.join(', ')}
-- Industry trends: ${context.trends.join(', ')}
-
-ANALYSIS FRAMEWORK:
-Evaluate this ${classification.primaryCategory} startup idea across four critical dimensions:
-
-1. MARKET OPPORTUNITY (Weight: 30%)
-   - Market size and growth potential in ${classification.primaryCategory}
-   - Customer pain point severity and market demand
-   - Competitive landscape and market saturation
-   - Market timing and trend alignment
-   - Regulatory environment impact
-
-2. EXECUTION FEASIBILITY (Weight: 25%)
-   - Technical complexity and development requirements
-   - Resource needs and team expertise requirements
-   - Capital requirements and funding timeline
-   - Operational complexity and scaling challenges
-   - Key risk factors and mitigation strategies
-
-3. BUSINESS MODEL VIABILITY (Weight: 25%)
-   - Revenue model strength and predictability
-   - Unit economics and profitability potential
-   - Customer acquisition economics (CAC/LTV)
-   - Pricing power and market positioning
-   - Scalability and network effects potential
-
-4. GO-TO-MARKET STRATEGY (Weight: 20%)
-   - Customer acquisition channels for ${classification.targetMarket}
-   - Product-market fit validation approach
-   - Competitive differentiation and positioning
-   - Market entry barriers and launch strategy
-   - Growth potential and viral mechanics
-
-SCORING METHODOLOGY:
-- 90-100: Exceptional opportunity with strong validation signals
-- 75-89: Strong opportunity with good market potential  
-- 60-74: Viable opportunity with moderate potential
-- 45-59: Challenging opportunity requiring iteration
-- 30-44: Weak opportunity with major concerns
-- 0-29: Poor opportunity with fundamental flaws
-
-Be realistic and consider both opportunities and risks. Provide actionable insights specific to ${classification.primaryCategory} industry and ${classification.businessModel} business model.`;
+Provide comprehensive validation analysis with actionable insights. Return detailed JSON response with overall demand score (0-100) and dimension-specific analysis.`;
 };
 
 // Trends integration
@@ -674,12 +525,12 @@ async function getGoogleTrendsData(keyword: string): Promise<any> {
         : 'http://localhost:3000';
 
     const response = await fetch(`${baseUrl}/api/google-trends?keyword=${encodeURIComponent(keyword)}`, {
-      timeout: 5000 // 5 second timeout
+      // timeout: 5000 // 5 second timeout - not supported in fetch
     });
 
     if (!response.ok) return null;
     const data = await response.json();
-    return data.data;
+    return (data as any).data;
   } catch (error) {
     console.error('Trends fetch error:', error);
     return null;
@@ -734,7 +585,7 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
 }
 
 // Generate AI Insights from platform data
-async function generateInsights(idea: string, platformData: any, gemini: GoogleGenAI): Promise<any> {
+async function generateInsights(idea: string, platformData: any, gemini: any): Promise<any> {
   try {
     console.log('🧠 Generating AI insights for idea:', idea);
 
@@ -1538,29 +1389,36 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
             }
           }
 
-          // Generate AI Insights from platform data
-          if (process.env.GOOGLE_API_KEY && multiPlatformData) {
-            try {
-              console.log('🧠 Generating AI insights from platform data...');
-              const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
-              const insights = await generateInsights(inputContent, multiPlatformData, gemini);
-              parsed.insights = insights;
-              console.log('✅ AI insights generated successfully');
-            } catch (insightsError) {
-              console.log('⚠️ AI insights generation failed, using fallback:', insightsError);
-              parsed.insights = generateFallbackInsights(inputContent, multiPlatformData);
-            }
-          } else {
-            // Use fallback insights if no API key or platform data
-            parsed.insights = generateFallbackInsights(inputContent, multiPlatformData);
-          }
-
-          // Add external data to response
-          if (trendsData) parsed.trendsData = trendsData;
-          if (youtubeData) parsed.youtubeData = youtubeData;
-          if (multiPlatformData) parsed.multiPlatformData = multiPlatformData;
+          // Generate fallback insights for fast mode
+          parsed.insights = generateFallbackInsights(inputContent, null);
 
           console.log(`✅ Enhanced ${fast ? 'fast' : 'standard'} analysis completed - Score: ${parsed.demandScore}/100, Category: ${classification.primaryCategory}`);
+          
+          // Save to Supabase (async, don't wait for completion)
+          try {
+            const userId = req.headers['x-user-id'] || 'anonymous';
+            if (userId !== 'anonymous') {
+              ValidationlyDB.saveValidation({
+                user_id: userId,
+                idea_text: inputContent,
+                demand_score: parsed.demandScore,
+                category: classification.primaryCategory,
+                business_model: classification.businessModel,
+                target_market: classification.targetMarket,
+                analysis_result: parsed,
+                validation_type: fast ? 'fast' : 'standard',
+                processing_time: Date.now() - startTime,
+                is_favorite: false,
+                is_public: false
+              }).catch(err => console.log('Supabase save error:', err));
+              
+              // Update user credits
+              ValidationlyDB.updateUserCredits(userId, 1).catch(err => console.log('Credits update error:', err));
+            }
+          } catch (error) {
+            console.log('Supabase integration error:', error);
+          }
+          
           return res.status(200).json(parsed);
         } else {
           console.log('Failed to parse AI response, using fallback data');
@@ -1925,6 +1783,35 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
       };
 
       console.log(`Analysis completed - Score: ${enhancedResult.demandScore}/100, Time: ${processingTime}ms`);
+      
+      // Save to Supabase (async, don't wait for completion)
+      try {
+        const userId = req.headers['x-user-id'] || 'anonymous';
+        if (userId !== 'anonymous') {
+          const classification = classifyIdea(inputContent);
+          ValidationlyDB.saveValidation({
+            user_id: userId,
+            idea_text: inputContent,
+            demand_score: enhancedResult.demandScore,
+            category: classification.primaryCategory,
+            business_model: classification.businessModel,
+            target_market: classification.targetMarket,
+            analysis_result: enhancedResult,
+            platform_analyses: multiPlatformData,
+            real_world_data: { trendsData, youtubeData },
+            validation_type: 'premium',
+            processing_time: processingTime,
+            is_favorite: false,
+            is_public: false
+          }).catch(err => console.log('Supabase save error:', err));
+          
+          // Update user credits
+          ValidationlyDB.updateUserCredits(userId, 1).catch(err => console.log('Credits update error:', err));
+        }
+      } catch (error) {
+        console.log('Supabase integration error:', error);
+      }
+      
       return res.status(200).json(enhancedResult);
     } else {
       // Return fallback data if parsing fails

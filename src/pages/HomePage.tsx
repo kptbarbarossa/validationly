@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 // import { PLATFORM_COUNT } from '../constants/platforms';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 // Direct API call - no service layer needed
 import type { UserInput } from '../types';
 // import LoadingSpinner from '../components/LoadingSpinner';
@@ -30,6 +31,7 @@ const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { trackEvent, trackValidation } = useAnalytics();
+    const { user } = useAuth();
 
     useEffect(() => {
         textareaRef.current?.focus();
@@ -65,7 +67,10 @@ const HomePage: React.FC = () => {
         try {
             const resp = await fetch('/api/validate', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    ...(user && { 'x-user-id': user.id })
+                },
                 body: JSON.stringify({ idea: (raw || '').trim(), optimize: true })
             });
             if (!resp.ok) return null;
@@ -107,6 +112,7 @@ const HomePage: React.FC = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    ...(user && { 'x-user-id': user.id })
                 },
                 body: JSON.stringify({ 
                     content: ideaPayload,

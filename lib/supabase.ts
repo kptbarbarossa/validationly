@@ -1,67 +1,85 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || 'https://your-project.supabase.co';
-const supabaseKey = process.env.SUPABASE_ANON_KEY || 'your-anon-key';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
 
-// Database types
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true
+  }
+});
+
+// Validationly Database Types
 export interface User {
   id: string;
   email: string;
-  plan: 'free' | 'pro';
+  full_name?: string;
+  avatar_url?: string;
+  plan: 'free' | 'pro' | 'business';
+  credits_remaining: number;
+  total_validations: number;
   stripe_customer_id?: string;
   subscription_status?: string;
+  subscription_end_date?: string;
   created_at: string;
   updated_at: string;
 }
 
-export interface CVRewrite {
+export interface Validation {
   id: string;
   user_id: string;
-  job_title?: string;
-  company_name?: string;
-  industry?: string;
-  tone: string;
-  tokens_used: number;
-  success_rating?: number;
+  idea_text: string;
+  demand_score?: number;
+  category?: string;
+  business_model?: string;
+  target_market?: string;
+  analysis_result?: any;
+  platform_analyses?: any;
+  real_world_data?: any;
+  insights?: any;
+  is_favorite: boolean;
+  is_public: boolean;
+  validation_type: 'fast' | 'standard' | 'premium';
+  processing_time?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Analytics {
+  id: string;
+  user_id: string;
+  event_type: string;
+  event_data?: any;
+  ip_address?: string;
+  user_agent?: string;
+  session_id?: string;
   created_at: string;
 }
 
-export interface JobApplication {
+export interface IdeaCollection {
   id: string;
   user_id: string;
-  job_url?: string;
-  company_name: string;
-  position: string;
-  application_date: string;
-  status: 'applied' | 'interview' | 'rejected' | 'offer' | 'accepted';
-  cv_version_used?: string;
-  notes?: string;
+  name: string;
+  description?: string;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
-// Database functions
-export class Database {
+// Validationly Database Functions
+export class ValidationlyDB {
   // User management
-  static async createUser(email: string): Promise<User | null> {
-    const { data, error } = await supabase
-      .from('users')
-      .insert([{ email, plan: 'free' }])
-      .select()
-      .single();
-    
-    if (error) {
-      console.error('Error creating user:', error);
-      return null;
-    }
-    return data;
-  }
-
-  static async getUserByEmail(email: string): Promise<User | null> {
+  static async getUser(userId: string): Promise<User | null> {
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .eq('email', email)
+      .eq('id', userId)
       .single();
     
     if (error) {
@@ -71,14 +89,42 @@ export class Database {
     return data;
   }
 
-  static async updateUserPlan(userId: string, plan: 'free' | 'pro', stripeCustomerId?: string): Promise<boolean> {
+  static async updateUserCredits(userId: string, creditsUsed: number): Promise<boolean> {
     const { error } = await supabase
       .from('users')
       .update({ 
-        plan, 
-        stripe_customer_id: stripeCustomerId,
-        updated_at: new Date().toISOString()
+        credits_remaining: supabase.raw(`credits_remaining - ${creditsUsed}`),
+        total_validations: supabase.raw(`total_validations + 1`)
       })
+      .eq('id', userId);
+    
+    if (error) {
+      console.error('Error updating user credits:', error);
+      return false;
+    }
+    return true;
+  }
+
+  static async updateUserPlan(
+    userId: string, 
+    plan: 'free' | 'pro' | 'business', 
+    stripeCustomerId?: string,
+    subscriptionStatus?: string,
+    subscriptionEndDate?: string
+  ): Promise<boolean> {
+    const updateData: any = { plan };
+    
+    if (stripeCustomerId) updateData.stripe_customer_id = stripeCustomerId;
+    if (subscriptionStatus) updateData.subscription_status = subscriptionStatus;
+    if (subscriptionEndDate) updateData.subscription_end_date = subscriptionEndDate;
+    
+    // Reset credits based on plan
+    if (plan === 'pro') updateData.credits_remaining = 100;
+    if (plan === 'business') updateData.credits_remaining = 500;
+
+    const { error } = await supabase
+      .from('users')
+      .update(updateData)
       .eq('id', userId);
     
     if (error) {
@@ -88,125 +134,191 @@ export class Database {
     return true;
   }
 
-  // Usage tracking
-  static async recordCVRewrite(rewrite: Omit<CVRewrite, 'id' | 'created_at'>): Promise<boolean> {
-    const { error } = await supabase
-      .from('cv_rewrites')
-      .insert([rewrite]);
-    
-    if (error) {
-      console.error('Error recording CV rewrite:', error);
-      return false;
-    }
-    return true;
-  }
-
-  static async getDailyUsage(userId: string): Promise<number> {
-    const today = new Date().toISOString().split('T')[0];
-    
+  // Validation management
+  static async saveValidation(validation: Omit<Validation, 'id' | 'created_at' | 'updated_at'>): Promise<string | null> {
     const { data, error } = await supabase
-      .from('cv_rewrites')
+      .from('validations')
+      .insert([validation])
       .select('id')
-      .eq('user_id', userId)
-      .gte('created_at', `${today}T00:00:00.000Z`)
-      .lt('created_at', `${today}T23:59:59.999Z`);
+      .single();
     
     if (error) {
-      console.error('Error fetching daily usage:', error);
-      return 0;
+      console.error('Error saving validation:', error);
+      return null;
     }
-    return data?.length || 0;
+    return data.id;
   }
 
-  static async getUserStats(userId: string): Promise<{
-    totalRewrites: number;
-    dailyUsage: number;
-    favoriteIndustry: string;
-    successRate: number;
-  }> {
-    // Total rewrites
-    const { data: totalData } = await supabase
-      .from('cv_rewrites')
-      .select('id')
-      .eq('user_id', userId);
-
-    // Daily usage
-    const dailyUsage = await this.getDailyUsage(userId);
-
-    // Favorite industry
-    const { data: industryData } = await supabase
-      .from('cv_rewrites')
-      .select('industry')
-      .eq('user_id', userId)
-      .not('industry', 'is', null);
-
-    const industryCount: Record<string, number> = {};
-    industryData?.forEach(item => {
-      if (item.industry) {
-        industryCount[item.industry] = (industryCount[item.industry] || 0) + 1;
-      }
-    });
-
-    const favoriteIndustry = Object.keys(industryCount).reduce((a, b) => 
-      industryCount[a] > industryCount[b] ? a : b, 'Technology'
-    );
-
-    // Success rate (based on ratings)
-    const { data: ratingData } = await supabase
-      .from('cv_rewrites')
-      .select('success_rating')
-      .eq('user_id', userId)
-      .not('success_rating', 'is', null);
-
-    const avgRating = ratingData?.length ? 
-      ratingData.reduce((sum, item) => sum + (item.success_rating || 0), 0) / ratingData.length : 0;
-
-    return {
-      totalRewrites: totalData?.length || 0,
-      dailyUsage,
-      favoriteIndustry,
-      successRate: Math.round(avgRating * 20) // Convert 1-5 rating to percentage
-    };
-  }
-
-  // Job applications tracking
-  static async addJobApplication(application: Omit<JobApplication, 'id'>): Promise<boolean> {
-    const { error } = await supabase
-      .from('job_applications')
-      .insert([application]);
-    
-    if (error) {
-      console.error('Error adding job application:', error);
-      return false;
-    }
-    return true;
-  }
-
-  static async getUserApplications(userId: string): Promise<JobApplication[]> {
+  static async getUserValidations(userId: string, limit = 20): Promise<Validation[]> {
     const { data, error } = await supabase
-      .from('job_applications')
+      .from('validations')
       .select('*')
       .eq('user_id', userId)
-      .order('application_date', { ascending: false });
+      .order('created_at', { ascending: false })
+      .limit(limit);
     
     if (error) {
-      console.error('Error fetching applications:', error);
+      console.error('Error fetching validations:', error);
       return [];
     }
     return data || [];
   }
 
-  static async updateApplicationStatus(
-    applicationId: string, 
-    status: JobApplication['status']
-  ): Promise<boolean> {
-    const { error } = await supabase
-      .from('job_applications')
-      .update({ status })
-      .eq('id', applicationId);
+  static async getValidation(validationId: string): Promise<Validation | null> {
+    const { data, error } = await supabase
+      .from('validations')
+      .select('*')
+      .eq('id', validationId)
+      .single();
     
     if (error) {
-      console.error('Error updating application status:', error);
+      console.error('Error fetching validation:', error);
+      return null;
+    }
+    return data;
+  }
+
+  static async updateValidationFavorite(validationId: string, isFavorite: boolean): Promise<boolean> {
+    const { error } = await supabase
+      .from('validations')
+      .update({ is_favorite: isFavorite })
+      .eq('id', validationId);
+    
+    if (error) {
+      console.error('Error updating validation favorite:', error);
+      return false;
+    }
+    return true;
+  }
+
+  static async getPublicValidations(limit = 50): Promise<Validation[]> {
+    const { data, error } = await supabase
+      .from('validations')
+      .select('*')
+      .eq('is_public', true)
+      .order('demand_score', { ascending: false })
+      .limit(limit);
+    
+    if (error) {
+      console.error('Error fetching public validations:', error);
+      return [];
+    }
+    return data || [];
+  }
+
+  // Analytics
+  static async trackEvent(
+    userId: string, 
+    eventType: string, 
+    eventData?: any,
+    sessionId?: string
+  ): Promise<boolean> {
+    const { error } = await supabase
+      .from('analytics')
+      .insert([{
+        user_id: userId,
+        event_type: eventType,
+        event_data: eventData,
+        session_id: sessionId
+      }]);
+    
+    if (error) {
+      console.error('Error tracking event:', error);
+      return false;
+    }
+    return true;
+  }
+
+  static async getUserStats(userId: string): Promise<{
+    totalValidations: number;
+    avgScore: number;
+    favoriteCategory: string;
+    creditsRemaining: number;
+  }> {
+    // Get user info
+    const user = await this.getUser(userId);
+    
+    // Get validation stats
+    const { data: validations } = await supabase
+      .from('validations')
+      .select('demand_score, category')
+      .eq('user_id', userId);
+
+    const totalValidations = validations?.length || 0;
+    const avgScore = validations?.length ? 
+      validations.reduce((sum, v) => sum + (v.demand_score || 0), 0) / validations.length : 0;
+
+    // Find favorite category
+    const categoryCount: Record<string, number> = {};
+    validations?.forEach(v => {
+      if (v.category) {
+        categoryCount[v.category] = (categoryCount[v.category] || 0) + 1;
+      }
+    });
+
+    const favoriteCategory = Object.keys(categoryCount).reduce((a, b) => 
+      categoryCount[a] > categoryCount[b] ? a : b, 'Technology'
+    );
+
+    return {
+      totalValidations,
+      avgScore: Math.round(avgScore),
+      favoriteCategory,
+      creditsRemaining: user?.credits_remaining || 0
+    };
+  }
+
+  // Collections
+  static async createCollection(
+    userId: string, 
+    name: string, 
+    description?: string
+  ): Promise<string | null> {
+    const { data, error } = await supabase
+      .from('idea_collections')
+      .insert([{
+        user_id: userId,
+        name,
+        description,
+        is_public: false
+      }])
+      .select('id')
+      .single();
+    
+    if (error) {
+      console.error('Error creating collection:', error);
+      return null;
+    }
+    return data.id;
+  }
+
+  static async getUserCollections(userId: string): Promise<IdeaCollection[]> {
+    const { data, error } = await supabase
+      .from('idea_collections')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+    
+    if (error) {
+      console.error('Error fetching collections:', error);
+      return [];
+    }
+    return data || [];
+  }
+
+  static async addValidationToCollection(
+    collectionId: string, 
+    validationId: string
+  ): Promise<boolean> {
+    const { error } = await supabase
+      .from('collection_validations')
+      .insert([{
+        collection_id: collectionId,
+        validation_id: validationId
+      }]);
+    
+    if (error) {
+      console.error('Error adding validation to collection:', error);
       return false;
     }
     return true;

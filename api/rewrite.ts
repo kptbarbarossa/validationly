@@ -171,7 +171,7 @@ Please rewrite this CV to better match the job requirements while keeping all fa
     }
 
     const data = await response.json();
-    const revised = data.choices?.[0]?.message?.content || '';
+    const revised = (data as any).choices?.[0]?.message?.content || '';
 
     if (!revised) {
       return res.status(500).json({ error: 'Failed to generate revised CV' });

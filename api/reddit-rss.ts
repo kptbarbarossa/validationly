@@ -67,7 +67,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 }
 
                 const data = await response.json();
-                const posts = data.data?.children || [];
+                const posts = (data as any).data?.children || [];
 
                 console.log(`Found ${posts.length} posts in r/${subreddit}`);
 

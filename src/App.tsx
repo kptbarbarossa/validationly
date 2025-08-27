@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './contexts/AuthContext';
 import HomePage from './pages/HomePage';
 import PublicValidationPage from './pages/PublicValidationPage';
 import PainPointHomePage from './pages/PainPointHomePage';
@@ -15,6 +16,8 @@ import MarketSignalAcademyPage from './pages/MarketSignalAcademyPage';
 import SocialValidationPage from './pages/SocialValidationPage';
 import AnalysisPage from './pages/AnalysisPage';
 import JobTailorPage from './pages/JobTailorPage';
+import DashboardPage from './pages/DashboardPage';
+import AuthPage from './pages/AuthPage';
 
 import FAQPage from './pages/FAQPage';
 import BlogIndexPage from './pages/BlogIndexPage';
@@ -71,52 +74,56 @@ class ErrorBoundary extends React.Component<
 const App: React.FC = () => {
   return (
     <ErrorBoundary>
-      <div className="relative min-h-screen font-sans antialiased text-slate-100 bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 overflow-hidden">
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
-        <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-3xl animate-aurora"></div>
-        <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
-        <BrowserRouter>
-          <Analytics />
-          <PremiumNavBar />
-          
-          <main className="container mx-auto px-0 pt-24 sm:pt-24">
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/pain-points" element={<PainPointHomePage />} />
-              <Route path="/pain-point/:id" element={<PainPointDetailPage />} />
+      <AuthProvider>
+        <div className="relative min-h-screen font-sans antialiased text-slate-100 bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950 overflow-hidden">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-indigo-500/10 to-cyan-500/10 blur-3xl"></div>
+          <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-3xl animate-aurora"></div>
+          <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
+          <BrowserRouter>
+            <Analytics />
+            <PremiumNavBar />
+            
+            <main className="container mx-auto px-0 pt-24 sm:pt-24">
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/pain-points" element={<PainPointHomePage />} />
+                <Route path="/pain-point/:id" element={<PainPointDetailPage />} />
 
-              <Route path="/results" element={<ResultsPage />} />
-              <Route path="/public-validation" element={<PublicValidationPage />} />
-              <Route path="/tweet-generator" element={<AITweetGenerator />} />
-              <Route path="/trend-hunter" element={<TrendHunterPage />} />
-              <Route path="/trend-to-startup" element={<TrendToStartupPage />} />
-              <Route path="/market-signal-academy" element={<MarketSignalAcademyPage />} />
-                                        <Route path="/social-validation" element={<SocialValidationPage />} />
-              <Route path="/tools" element={<ToolsPage />} />
-              <Route path="/analysis" element={<AnalysisPage />} />
-              <Route path="/job-tailor" element={<JobTailorPage />} />
+                <Route path="/results" element={<ResultsPage />} />
+                <Route path="/public-validation" element={<PublicValidationPage />} />
+                <Route path="/tweet-generator" element={<AITweetGenerator />} />
+                <Route path="/trend-hunter" element={<TrendHunterPage />} />
+                <Route path="/trend-to-startup" element={<TrendToStartupPage />} />
+                <Route path="/market-signal-academy" element={<MarketSignalAcademyPage />} />
+                                          <Route path="/social-validation" element={<SocialValidationPage />} />
+                <Route path="/tools" element={<ToolsPage />} />
+                <Route path="/analysis" element={<AnalysisPage />} />
+                <Route path="/job-tailor" element={<JobTailorPage />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/auth" element={<AuthPage />} />
 
-              <Route path="/faq" element={<FAQPage />} />
-              <Route path="/blog" element={<BlogIndexPage />} />
-              <Route path="/blog/x-content-generator-guide" element={<XContentGeneratorGuide />} />
-              <Route path="/blog/login-to-see-price-guide" element={<LoginToSeePriceGuide />} />
-              <Route path="/blog/:slug" element={<BlogPostPage />} />
-              <Route path="/use-cases" element={<UseCasesIndexPage />} />
-              <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
-              <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
-              <Route path="/privacy" element={<PrivacyPolicyPage />} />
-              <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center text-slate-300">Page not found</div>} />
-            </Routes>
-          </main>
-          
-          <footer className="text-center py-8 text-slate-400 text-sm border-t border-white/10">
-            <p className="mb-2">&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
-            <p>
-              <a href="/privacy" className="underline hover:text-slate-300">Privacy Policy</a>
-            </p>
-          </footer>
-        </BrowserRouter>
-      </div>
+                <Route path="/faq" element={<FAQPage />} />
+                <Route path="/blog" element={<BlogIndexPage />} />
+                <Route path="/blog/x-content-generator-guide" element={<XContentGeneratorGuide />} />
+                <Route path="/blog/login-to-see-price-guide" element={<LoginToSeePriceGuide />} />
+                <Route path="/blog/:slug" element={<BlogPostPage />} />
+                <Route path="/use-cases" element={<UseCasesIndexPage />} />
+                <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
+                <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
+                <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center text-slate-300">Page not found</div>} />
+              </Routes>
+            </main>
+            
+            <footer className="text-center py-8 text-slate-400 text-sm border-t border-white/10">
+              <p className="mb-2">&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
+              <p>
+                <a href="/privacy" className="underline hover:text-slate-300">Privacy Policy</a>
+              </p>
+            </footer>
+          </BrowserRouter>
+        </div>
+      </AuthProvider>
     </ErrorBoundary>
   );
 };

@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "test:platforms": "node test-platforms.js",
     "test:youtube": "node test-youtube.js",
-    "type-check": "tsc --noEmit",
+    "test:supabase": "node test-supabase.js",
+    "type-check": "tsc --noEmit && tsc --project tsconfig.api.json --noEmit",
+    "type-check:api": "tsc --project tsconfig.api.json --noEmit",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {

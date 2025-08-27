@@ -141,6 +141,11 @@ export class JobScraper {
     }
   }
 
+  // Alias for scrapeJobPosting for API compatibility
+  async scrapeJobDetails(url: string): Promise<JobPosting | null> {
+    return this.scrapeJobPosting(url);
+  }
+
   // Generic job scraping for unknown sites
   private async scrapeGenericJob(jobUrl: string): Promise<JobPosting | null> {
     try {
