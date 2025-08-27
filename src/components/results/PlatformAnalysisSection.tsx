@@ -14,7 +14,7 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
     { id: 'github', name: 'GitHub', icon: '⚫', color: 'from-gray-600 to-gray-800' },
     { id: 'stackoverflow', name: 'Stack Overflow', icon: '📚', color: 'from-orange-400 to-yellow-600' },
     { id: 'youtube', name: 'YouTube', icon: '🔴', color: 'from-red-500 to-red-600' },
-    { id: 'googlenews', name: 'Google News', icon: '📰', color: 'from-blue-500 to-green-500' }
+    { id: 'googlenews', name: 'Google News', icon: '/google.png', color: 'from-blue-500 to-green-500' }
   ];
 
   const getPlatformScore = (platformId: string) => {

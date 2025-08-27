@@ -238,7 +238,8 @@ const HomePage: React.FC = () => {
                             <span>❓</span> Stack Overflow
                         </div>
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300 text-sm">
-                            <span>📰</span> Google News
+                            <img src="/google.png" alt="Google" className="w-4 h-4" />
+                            Google News
                         </div>
                         <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-red-300 text-sm">
                             <span>📺</span> YouTube

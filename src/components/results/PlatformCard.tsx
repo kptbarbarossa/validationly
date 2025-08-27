@@ -59,7 +59,7 @@ const platformConfig = {
   },
   googlenews: {
     name: 'Google News',
-    icon: '📰',
+    icon: '/google.png',
     color: 'from-blue-500 to-green-500',
     bgColor: 'bg-blue-500/10',
     borderColor: 'border-blue-500/20',
@@ -82,7 +82,11 @@ export const PlatformCard: React.FC<PlatformCardProps> = ({ platform }) => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className={`w-12 h-12 ${config.bgColor} ${config.borderColor} border rounded-xl flex items-center justify-center`}>
-            <span className="text-2xl">{config.icon}</span>
+            {config.icon.startsWith('/') ? (
+              <img src={config.icon} alt={config.name} className="w-6 h-6" />
+            ) : (
+              <span className="text-2xl">{config.icon}</span>
+            )}
           </div>
           <div>
             <h3 className="text-xl font-bold text-white">{config.name}</h3>

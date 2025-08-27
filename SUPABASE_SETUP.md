@@ -6,7 +6,7 @@ Supabase dashboard'unda (https://supabase.com/dashboard/project/ozuwdijovszuakcg
 
 1. **Settings** > **API** sayfasına git
 2. Şu bilgileri kopyala:
-   - **Project URL**: `https://ozuwdijovszuakcgay.supabase.co`
+   - **Project URL**: `https://ozuwdljoxvszuiakcgay.supabase.co`
    - **anon public key**: `eyJ...` (uzun bir JWT token)
    - **service_role key**: `eyJ...` (başka bir JWT token)
 
@@ -16,12 +16,12 @@ Supabase dashboard'dan API keys'leri kopyala ve `.env.local` dosyasında güncel
 
 ```bash
 # Supabase Configuration  
-NEXT_PUBLIC_SUPABASE_URL=https://ozuwdijovszuakcgay.supabase.co
+NEXT_PUBLIC_SUPABASE_URL=https://ozuwdljoxvszuiakcgay.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... # anon public key
 SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... # service_role key
 
 # Supabase (for server-side)
-SUPABASE_URL=https://ozuwdijovszuakcgay.supabase.co  
+SUPABASE_URL=https://ozuwdljoxvszuiakcgay.supabase.co  
 SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... # anon public key (aynı)
 ```
 

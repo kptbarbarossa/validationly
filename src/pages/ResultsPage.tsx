@@ -448,7 +448,7 @@ const ResultsPage: React.FC = () => {
                         producthunt: { name: 'Product Hunt', color: 'bg-pink-500', icon: '🚀' },
                         github: { name: 'GitHub', color: 'bg-gray-600', icon: '⚫' },
                         stackoverflow: { name: 'Stack Overflow', color: 'bg-yellow-600', icon: '📚' },
-                        googlenews: { name: 'Google News', color: 'bg-blue-600', icon: '📰' }
+                        googlenews: { name: 'Google News', color: 'bg-blue-600', icon: '/google.png' }
                       };
 
                       const config = platformConfig[platform.platform as keyof typeof platformConfig];

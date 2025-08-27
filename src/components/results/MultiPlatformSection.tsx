@@ -48,7 +48,7 @@ const MultiPlatformSection: React.FC<MultiPlatformSectionProps> = ({ multiPlatfo
       reddit: '🔴',
       hackernews: '🟠', 
       producthunt: '🚀',
-      googlenews: '📰',
+      googlenews: '/google.png',
       github: '⚫',
       stackoverflow: '📚',
       youtube: '🔴'

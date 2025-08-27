@@ -15,7 +15,7 @@ const PlatformDetails: React.FC<PlatformDetailsProps> = ({ platformData }) => {
     reddit: { icon: '🤖', color: 'text-orange-400', name: 'Reddit' },
     hackernews: { icon: '📰', color: 'text-orange-500', name: 'Hacker News' },
     producthunt: { icon: '🚀', color: 'text-pink-400', name: 'Product Hunt' },
-    googlenews: { icon: '📰', color: 'text-blue-400', name: 'Google News' },
+    googlenews: { icon: '/google.png', color: 'text-blue-400', name: 'Google News' },
     github: { icon: '💻', color: 'text-gray-400', name: 'GitHub' },
     stackoverflow: { icon: '❓', color: 'text-yellow-400', name: 'Stack Overflow' },
     youtube: { icon: '📺', color: 'text-red-400', name: 'YouTube' }
