@@ -1,5 +1,5 @@
 // Stack Overflow API integration
-import { cache, CACHE_TTL } from '../cache.js';
+import { cache, CACHE_TTL } from '../cache';
 
 interface StackOverflowQuestion {
   question_id: number;

@@ -1,5 +1,5 @@
 // Product Hunt RSS integration
-import { cache, CACHE_TTL } from '../cache.js';
+import { cache, CACHE_TTL } from '../cache';
 
 interface ProductHuntItem {
   title: string;

@@ -1,5 +1,5 @@
 // Google News RSS integration
-import { cache, CACHE_TTL } from '../cache.js';
+import { cache, CACHE_TTL } from '../cache';
 
 interface NewsItem {
   title: string;

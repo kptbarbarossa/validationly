@@ -1,5 +1,5 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
-import { YouTubeService } from '../lib/services/platforms/youtube.js';
+import { YouTubeService } from '../lib/services/platforms/youtube';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS headers

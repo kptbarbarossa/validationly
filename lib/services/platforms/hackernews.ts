@@ -1,5 +1,5 @@
 // Hacker News API integration
-import { cache, CACHE_TTL } from '../cache.js';
+import { cache, CACHE_TTL } from '../cache';
 
 interface HNItem {
   id: number;
