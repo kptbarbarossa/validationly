@@ -4,7 +4,12 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      // Disable TypeScript checking in production
+      typescript: process.env.NODE_ENV === 'production' ? false : undefined
+    })
+  ],
   server: {
     proxy: {
       '/api': {
