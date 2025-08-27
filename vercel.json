@@ -6,7 +6,7 @@
   "devCommand": "npm run dev",
   "functions": {
     "api/**/*.ts": {
-      "runtime": "@vercel/node"
+      "runtime": "@vercel/node@18"
     }
   },
   "rewrites": [
