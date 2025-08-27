@@ -39,7 +39,8 @@
   },
   "build": {
     "env": {
-      "SKIP_TYPE_CHECK": "true"
+      "SKIP_TYPE_CHECK": "true",
+      "CACHE_BUST": "1"
     }
   }
 }
