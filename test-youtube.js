@@ -3,7 +3,7 @@ const testYouTube = async () => {
   console.log('🧪 Testing YouTube API...');
   
   try {
-    const response = await fetch('http://localhost:3000/api/youtube', {
+    const response = await fetch('http://localhost:5173/api/youtube', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

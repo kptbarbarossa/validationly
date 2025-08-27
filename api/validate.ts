@@ -1,8 +1,8 @@
-import { GoogleGenAI } from "@google/genai";
-import OpenAI from 'openai';
-import Groq from 'groq-sdk';
-import { YouTubeService } from '../lib/services/platforms/youtube';
-import { MultiPlatformService } from '../lib/services/multiPlatformService';
+const { GoogleGenAI } = require("@google/genai");
+const OpenAI = require('openai');
+const Groq = require('groq-sdk');
+const { YouTubeService } = require('../lib/services/platforms/youtube');
+const { MultiPlatformService } = require('../lib/services/multiPlatformService');
 
 // Import our enhanced prompt system
 interface IdeaClassification {

@@ -261,9 +261,9 @@ const ResultsPage: React.FC = () => {
                 <p className="text-slate-400 text-sm">Active Platforms</p>
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div 
-                      className="bg-indigo-600 h-2 rounded-full transition-all duration-1000" 
-                      style={{width: `${(activePlatforms / 7) * 100}%`}}
+                    <div
+                      className="bg-indigo-600 h-2 rounded-full transition-all duration-1000"
+                      style={{ width: `${(activePlatforms / 7) * 100}%` }}
                     ></div>
                   </div>
                   <span className="text-xs text-slate-500">{Math.round((activePlatforms / 7) * 100)}%</span>
@@ -283,9 +283,9 @@ const ResultsPage: React.FC = () => {
                 <p className="text-slate-400 text-sm">Total Results</p>
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div 
-                      className="bg-cyan-600 h-2 rounded-full transition-all duration-1000" 
-                      style={{width: `${Math.min((totalResults / 100) * 100, 100)}%`}}
+                    <div
+                      className="bg-cyan-600 h-2 rounded-full transition-all duration-1000"
+                      style={{ width: `${Math.min((totalResults / 100) * 100, 100)}%` }}
                     ></div>
                   </div>
                   <span className="text-xs text-slate-500">{Math.min(Math.round((totalResults / 100) * 100), 100)}%</span>
@@ -305,17 +305,16 @@ const ResultsPage: React.FC = () => {
                 <p className="text-slate-400 text-sm">AI Insights</p>
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div 
-                      className={`h-2 rounded-full transition-all duration-1000 ${
-                        result.insights?.sentiment === 'positive' ? 'bg-green-600' : 
+                    <div
+                      className={`h-2 rounded-full transition-all duration-1000 ${result.insights?.sentiment === 'positive' ? 'bg-green-600' :
                         result.insights?.sentiment === 'negative' ? 'bg-red-600' : 'bg-purple-600'
-                      }`}
-                      style={{width: '75%'}}
+                        }`}
+                      style={{ width: '75%' }}
                     ></div>
                   </div>
                   <span className="text-xs text-slate-500">
-                    {result.insights?.sentiment === 'positive' ? 'Positive' : 
-                     result.insights?.sentiment === 'negative' ? 'Negative' : 'Neutral'}
+                    {result.insights?.sentiment === 'positive' ? 'Positive' :
+                      result.insights?.sentiment === 'negative' ? 'Negative' : 'Neutral'}
                   </span>
                 </div>
               </div>
@@ -333,9 +332,9 @@ const ResultsPage: React.FC = () => {
                 <p className="text-slate-400 text-sm">Market Score</p>
                 <div className="mt-3 flex items-center gap-2">
                   <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div 
-                      className="bg-emerald-600 h-2 rounded-full transition-all duration-1000" 
-                      style={{width: `${(result.insights?.validationScore || result.demandScore)}%`}}
+                    <div
+                      className="bg-emerald-600 h-2 rounded-full transition-all duration-1000"
+                      style={{ width: `${(result.insights?.validationScore || result.demandScore)}%` }}
                     ></div>
                   </div>
                   <span className="text-xs text-slate-500">{result.insights?.validationScore || result.demandScore}%</span>
@@ -442,7 +441,7 @@ const ResultsPage: React.FC = () => {
                   <div className="space-y-4">
                     {result.multiPlatformData.platforms.map((platform, index) => {
                       if (!platform.items || platform.items.length === 0) return null;
-                      
+
                       const platformConfig = {
                         reddit: { name: 'Reddit', color: 'bg-orange-500', icon: '🔴' },
                         hackernews: { name: 'Hacker News', color: 'bg-orange-600', icon: '🟠' },
@@ -489,7 +488,7 @@ const ResultsPage: React.FC = () => {
                   </div>
                   <h3 className="text-xl font-bold text-white">Content Suggestions</h3>
                 </div>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {result.socialMediaSuggestions.tweetSuggestion && (
                     <div className="bg-slate-800 rounded-lg p-4">

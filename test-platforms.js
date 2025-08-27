@@ -3,7 +3,7 @@ const testPlatforms = async () => {
   console.log('🧪 Testing platforms...');
   
   try {
-    const response = await fetch('http://localhost:3000/api/multi-platform', {
+    const response = await fetch('http://localhost:5173/api/multi-platform', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
