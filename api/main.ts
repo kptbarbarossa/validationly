@@ -1,5 +1,8 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 
+// Runtime configuration for Vercel
+export const config = { runtime: 'nodejs20.x' };
+
 // Ana API endpoint - tüm işlemleri burada topla
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   const { action } = req.query;
