@@ -431,7 +431,33 @@ const performEnhancedAnalysis = async (
 };
 
 // Enhanced prompt generator
+// Detect language of the input idea
+const detectLanguage = (text: string): string => {
+  // Simple language detection based on common words
+  const turkishWords = ['ve', 'bir', 'bu', 'için', 'ile', 'olan', 'var', 'yok', 'gibi', 'kadar', 'çok', 'daha', 'en', 'de', 'da', 'ama', 'fakat', 'veya', 'ya', 'ki', 'şu', 'o', 'ben', 'sen', 'biz', 'siz', 'onlar'];
+  const englishWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'among'];
+  
+  const words = text.toLowerCase().split(/\s+/);
+  let turkishCount = 0;
+  let englishCount = 0;
+  
+  words.forEach(word => {
+    if (turkishWords.includes(word)) turkishCount++;
+    if (englishWords.includes(word)) englishCount++;
+  });
+  
+  // Also check for Turkish characters
+  const hasTurkishChars = /[çğıöşüÇĞIİÖŞÜ]/.test(text);
+  
+  if (hasTurkishChars || turkishCount > englishCount) {
+    return 'Turkish';
+  }
+  return 'English';
+};
+
 const generateEnhancedPrompt = (idea: string, classification: IdeaClassification, fast: boolean = false) => {
+  const language = detectLanguage(idea);
+  const isTurkish = language === 'Turkish';
   const industryContexts = {
     'SaaS': {
       regulations: ['GDPR', 'SOC2', 'Data Privacy'],
@@ -461,7 +487,63 @@ const generateEnhancedPrompt = (idea: string, classification: IdeaClassification
   };
 
   if (fast) {
-    return `You are a Senior ${classification.primaryCategory} Industry Expert and Startup Validator with 15+ years of experience.
+    if (isTurkish) {
+      return `Sen ${classification.primaryCategory} sektöründe 15+ yıl deneyimli Kıdemli Sektör Uzmanı ve Startup Doğrulayıcısısın.
+
+ANALİZ EDİLECEK STARTUP FİKRİ: "${idea}"
+
+SINIFLANDIRMA:
+- Sektör: ${classification.primaryCategory}
+- İş Modeli: ${classification.businessModel}
+- Hedef Pazar: ${classification.targetMarket}
+
+SEKTÖR UZMANLIĞİ:
+- Temel Düzenlemeler: ${context.regulations.join(', ')}
+- Başarı Metrikleri: ${context.keyMetrics.join(', ')}
+- Büyük Rakipler: ${context.competitors.join(', ')}
+- Güncel Trendler: ${context.trends.join(', ')}
+
+ANALİZ GEREKSİNİMLERİ:
+Spesifik, uygulanabilir öngörülerle kapsamlı bir doğrulama analizi sağla. Gerçekçi ama yapıcı ol.
+
+PUANLAMA ÇERÇEVESİ (0-100):
+1. PAZAR FIRSATI (30%): 
+   - Pazar büyüklüğü ve büyüme potansiyeli
+   - Müşteri acı noktası şiddeti
+   - Rekabet ortamı analizi
+   - Pazar zamanlaması değerlendirmesi
+
+2. UYGULAMA KOLAYLIĞİ (25%):
+   - Teknik karmaşıklık ve gereksinimler
+   - Kaynak ihtiyaçları ve ekip gereksinimleri
+   - Geliştirme zaman çizelgesi ve kilometre taşları
+   - Temel uygulama riskleri
+
+3. İŞ MODELİ GEÇERLİLİĞİ (25%):
+   - Gelir modeli netliği ve potansiyeli
+   - Birim ekonomi ve karlılık yolu
+   - Ölçeklenebilirlik faktörleri
+   - Para kazanma zaman çizelgesi
+
+4. PAZARA GİRİŞ STRATEJİSİ (20%):
+   - ${classification.targetMarket} için müşteri kazanma kanalları
+   - Ürün-pazar uyumu doğrulama yaklaşımı
+   - Rekabet farklılaşması ve konumlandırma
+   - Pazar giriş engelleri ve lansman stratejisi
+
+GERÇEKÇİ PUANLAMA REHBERİ:
+- 85-100: Güçlü doğrulama sinyalleri ile olağanüstü fırsat
+- 70-84: İyi pazar potansiyeli ile güçlü fırsat
+- 55-69: Orta potansiyeli olan uygulanabilir fırsat
+- 40-54: İterasyon gerektiren zorlu fırsat
+- 25-39: Büyük endişeleri olan zayıf fırsat
+- 0-24: Temel kusurları olan kötü fırsat
+
+Gerçekçi ol ve hem fırsatları hem de riskleri değerlendir. ${classification.primaryCategory} sektörü ve ${classification.businessModel} iş modeline özel uygulanabilir öngörüler sağla.
+
+TÜRKÇE CEVAP VER ve JSON formatında döndür.`;
+    } else {
+      return `You are a Senior ${classification.primaryCategory} Industry Expert and Startup Validator with 15+ years of experience.
 
 STARTUP IDEA TO ANALYZE: "${idea}"
 
