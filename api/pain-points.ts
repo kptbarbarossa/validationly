@@ -24,6 +24,31 @@ interface PainPoint {
   lastUpdated: string;
 }
 
+interface ShopifyPainPoint {
+  category: string;
+  topic: string;
+  frequency: number;
+  sentiment: 'negative' | 'neutral' | 'positive';
+  commonIssues: string[];
+  solutions: string[];
+  impact: 'high' | 'medium' | 'low';
+}
+
+interface ShopifyCommunityData {
+  categories: {
+    name: string;
+    topicCount: number;
+    url: string;
+  }[];
+  painPoints: ShopifyPainPoint[];
+  insights: {
+    totalIssues: number;
+    topCategories: string[];
+    commonThemes: string[];
+    recommendations: string[];
+  };
+}
+
 // Sample pain points database
 const painPointsDB: PainPoint[] = [
   {
@@ -100,147 +125,229 @@ const painPointsDB: PainPoint[] = [
         comments: 78
       }
     ],
-    suggestedSolution: 'Multi-platform content analytics dashboard',
-    competitionLevel: 'High',
+    suggestedSolution: 'Unified analytics dashboard for content creators',
+    competitionLevel: 'Medium',
     technicalComplexity: 'High',
-    estimatedMarketSize: '$200M',
-    tags: ['analytics', 'content-creation', 'social-media', 'dashboard'],
+    estimatedMarketSize: '$80M',
+    tags: ['analytics', 'content-creation', 'youtube', 'social-media'],
     createdAt: '2025-01-23',
     lastUpdated: '2025-01-23'
-  },
-  {
-    id: '4',
-    title: 'Remote teams struggle with async standup meetings',
-    description: 'Distributed teams across timezones find it difficult to coordinate daily standups. Traditional meeting times don\'t work for global teams.',
-    category: 'Productivity',
-    industry: 'Remote Work',
-    demandScore: 73,
-    difficultyLevel: 'Easy',
-    evidence: [
-      {
-        source: 'Reddit r/remotework',
-        url: 'https://reddit.com/r/remotework/example',
-        snippet: 'Our team spans 12 timezones. Daily standups are impossible to schedule.',
-        upvotes: 189,
-        comments: 56
-      }
-    ],
-    suggestedSolution: 'Async standup tool with video updates',
-    competitionLevel: 'Medium',
-    technicalComplexity: 'Medium',
-    estimatedMarketSize: '$80M',
-    tags: ['remote-work', 'async', 'standup', 'team-communication'],
-    createdAt: '2025-01-22',
-    lastUpdated: '2025-01-22'
-  },
-  {
-    id: '5',
-    title: 'Restaurants need better staff scheduling',
-    description: 'Restaurant managers spend hours creating schedules manually. Staff availability changes frequently and current tools are too expensive or complex.',
-    category: 'SaaS',
-    industry: 'Food Service',
-    demandScore: 81,
-    difficultyLevel: 'Medium',
-    evidence: [
-      {
-        source: 'Restaurant Manager Forum',
-        url: 'https://example.com/forum',
-        snippet: 'Scheduling is my biggest headache. Staff call in sick, want shift swaps, and I\'m constantly redoing the schedule.',
-        upvotes: 267,
-        comments: 89
-      }
-    ],
-    suggestedSolution: 'Smart restaurant scheduling with shift swapping',
-    competitionLevel: 'Medium',
-    technicalComplexity: 'Medium',
-    estimatedMarketSize: '$150M',
-    tags: ['restaurant', 'scheduling', 'staff-management', 'hospitality'],
-    createdAt: '2025-01-21',
-    lastUpdated: '2025-01-21'
   }
 ];
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
-  // Enable CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+async function analyzeShopifyCommunity(): Promise<ShopifyCommunityData> {
+  // Simulated data based on Shopify Community structure
+  // In production, this would use web scraping or Shopify's API
+  
+  const categories = [
+    { name: 'Start a Business', topicCount: 5504, url: 'https://community.shopify.com/c/start-a-business/282' },
+    { name: 'Store Design', topicCount: 94274, url: 'https://community.shopify.com/c/store-design/133' },
+    { name: 'Technical Q&A', topicCount: 43314, url: 'https://community.shopify.com/c/technical-qa/211' },
+    { name: 'Shopify Apps', topicCount: 19137, url: 'https://community.shopify.com/c/shopify-apps/186' },
+    { name: 'Payments + Shipping', topicCount: 14518, url: 'https://community.shopify.com/c/payments-shipping-fulfilment/217' },
+    { name: 'SEO', topicCount: 36, url: 'https://community.shopify.com/c/seo/288' },
+    { name: 'Social Media', topicCount: 16, url: 'https://community.shopify.com/c/social-media/289' },
+    { name: 'Email Marketing', topicCount: 15, url: 'https://community.shopify.com/c/email-marketing/292' }
+  ];
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  const painPoints: ShopifyPainPoint[] = [
+    {
+      category: 'Store Design',
+      topic: 'Theme Customization Issues',
+      frequency: 85,
+      sentiment: 'negative',
+      commonIssues: [
+        'Difficulty customizing themes without coding knowledge',
+        'Mobile responsiveness problems',
+        'Slow loading times on custom themes',
+        'Theme compatibility issues with apps'
+      ],
+      solutions: [
+        'Use Shopify theme editor with visual customization',
+        'Implement lazy loading for images',
+        'Choose mobile-first responsive themes',
+        'Test theme-app compatibility before purchase'
+      ],
+      impact: 'high'
+    },
+    {
+      category: 'Technical Q&A',
+      topic: 'App Integration Problems',
+      frequency: 72,
+      sentiment: 'negative',
+      commonIssues: [
+        'Apps conflicting with each other',
+        'Performance degradation after app installation',
+        'Difficult app removal and cleanup',
+        'App support and documentation issues'
+      ],
+      solutions: [
+        'Install apps one at a time and test thoroughly',
+        'Monitor site performance before and after app installation',
+        'Use app removal tools to clean up code',
+        'Choose apps with good support and documentation'
+      ],
+      impact: 'high'
+    },
+    {
+      category: 'Payments + Shipping',
+      topic: 'Checkout Abandonment',
+      frequency: 68,
+      sentiment: 'negative',
+      commonIssues: [
+        'High shipping costs at checkout',
+        'Payment method limitations',
+        'Complex checkout process',
+        'Trust and security concerns'
+      ],
+      solutions: [
+        'Offer free shipping thresholds',
+        'Add multiple payment options including PayPal, Apple Pay',
+        'Simplify checkout to single page',
+        'Display trust badges and security certificates'
+      ],
+      impact: 'high'
+    },
+    {
+      category: 'SEO',
+      topic: 'Search Engine Visibility',
+      frequency: 45,
+      sentiment: 'negative',
+      commonIssues: [
+        'Poor search engine rankings',
+        'Duplicate content issues',
+        'Slow page loading speeds',
+        'Missing meta descriptions and titles'
+      ],
+      solutions: [
+        'Optimize product titles and descriptions',
+        'Use canonical URLs to prevent duplicate content',
+        'Implement image optimization and compression',
+        'Add structured data markup for products'
+      ],
+      impact: 'medium'
+    },
+    {
+      category: 'Start a Business',
+      topic: 'Product Sourcing Challenges',
+      frequency: 38,
+      sentiment: 'negative',
+      commonIssues: [
+        'Finding reliable suppliers',
+        'Quality control issues',
+        'Shipping delays and costs',
+        'Minimum order quantities'
+      ],
+      solutions: [
+        'Use supplier verification platforms like Alibaba Gold',
+        'Request samples before bulk orders',
+        'Negotiate shipping terms and costs',
+        'Start with smaller suppliers for lower MOQs'
+      ],
+      impact: 'medium'
+    },
+    {
+      category: 'Social Media',
+      topic: 'Content Creation and Engagement',
+      frequency: 32,
+      sentiment: 'negative',
+      commonIssues: [
+        'Consistent content creation',
+        'Low engagement rates',
+        'Platform algorithm changes',
+        'Measuring ROI from social media'
+      ],
+      solutions: [
+        'Create content calendar and batch content creation',
+        'Engage with followers and respond to comments',
+        'Stay updated with platform changes',
+        'Use UTM parameters to track social media traffic'
+      ],
+      impact: 'medium'
+    }
+  ];
+
+  const insights = {
+    totalIssues: painPoints.reduce((sum, point) => sum + point.frequency, 0),
+    topCategories: ['Store Design', 'Technical Q&A', 'Payments + Shipping'],
+    commonThemes: [
+      'User experience optimization',
+      'Technical troubleshooting',
+      'Performance improvement',
+      'Customer trust building',
+      'Operational efficiency'
+    ],
+    recommendations: [
+      'Focus on mobile-first design and fast loading times',
+      'Implement comprehensive testing before app installations',
+      'Offer transparent pricing and multiple payment options',
+      'Create detailed product descriptions and high-quality images',
+      'Build trust through security badges and customer reviews',
+      'Develop a content strategy for consistent social media presence'
+    ]
+  };
+
+  return {
+    categories,
+    painPoints,
+    insights
+  };
+}
+
+export default async function handler(
+  req: VercelRequest,
+  res: VercelResponse
+) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
   }
 
   try {
-    const { method, query } = req;
+    const { type, analysisType = 'comprehensive' } = req.body;
 
-    if (method === 'GET') {
-      const { 
-        id, 
-        category, 
-        difficulty, 
-        search, 
-        limit = '10', 
-        offset = '0' 
-      } = query;
+    if (type === 'shopify') {
+      // Shopify Community pain points analysis
+      const shopifyData = await analyzeShopifyCommunity();
+      res.status(200).json(shopifyData);
+    } else {
+      // General pain points search
+      const { query, category, industry } = req.body;
+      
+      let filteredPoints = painPointsDB;
 
-      // Get single pain point by ID
-      if (id) {
-        const painPoint = painPointsDB.find(p => p.id === id);
-        if (!painPoint) {
-          return res.status(404).json({ error: 'Pain point not found' });
-        }
-        return res.status(200).json(painPoint);
-      }
-
-      // Filter pain points
-      let filteredPainPoints = [...painPointsDB];
-
-      // Filter by category
-      if (category && category !== 'All') {
-        filteredPainPoints = filteredPainPoints.filter(p => 
-          p.category.toLowerCase() === (category as string).toLowerCase()
+      if (query) {
+        const searchQuery = query.toLowerCase();
+        filteredPoints = filteredPoints.filter(point =>
+          point.title.toLowerCase().includes(searchQuery) ||
+          point.description.toLowerCase().includes(searchQuery) ||
+          point.tags.some(tag => tag.toLowerCase().includes(searchQuery))
         );
       }
 
-      // Filter by difficulty
-      if (difficulty && difficulty !== 'All') {
-        filteredPainPoints = filteredPainPoints.filter(p => 
-          p.difficultyLevel.toLowerCase() === (difficulty as string).toLowerCase()
-        );
+      if (category) {
+        filteredPoints = filteredPoints.filter(point => point.category === category);
       }
 
-      // Search filter
-      if (search) {
-        const searchTerm = (search as string).toLowerCase();
-        filteredPainPoints = filteredPainPoints.filter(p => 
-          p.title.toLowerCase().includes(searchTerm) ||
-          p.description.toLowerCase().includes(searchTerm) ||
-          p.tags.some(tag => tag.toLowerCase().includes(searchTerm))
-        );
+      if (industry) {
+        filteredPoints = filteredPoints.filter(point => point.industry === industry);
       }
 
-      // Sort by demand score (highest first)
-      filteredPainPoints.sort((a, b) => b.demandScore - a.demandScore);
+      // Sort by demand score
+      filteredPoints.sort((a, b) => b.demandScore - a.demandScore);
 
-      // Pagination
-      const limitNum = parseInt(limit as string);
-      const offsetNum = parseInt(offset as string);
-      const paginatedResults = filteredPainPoints.slice(offsetNum, offsetNum + limitNum);
-
-      return res.status(200).json({
-        painPoints: paginatedResults,
-        total: filteredPainPoints.length,
-        hasMore: offsetNum + limitNum < filteredPainPoints.length
+      res.status(200).json({
+        painPoints: filteredPoints,
+        total: filteredPoints.length,
+        query: query || null,
+        category: category || null,
+        industry: industry || null
       });
     }
-
-    return res.status(405).json({ error: 'Method not allowed' });
-
   } catch (error) {
-    console.error('Pain points API error:', error);
-    return res.status(500).json({ 
-      error: 'Internal server error',
-      message: error instanceof Error ? error.message : 'Unknown error'
+    console.error('Pain points analysis error:', error);
+    res.status(500).json({ 
+      error: 'Failed to analyze pain points',
+      details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
 }

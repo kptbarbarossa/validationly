@@ -44,7 +44,7 @@ const JobTailorPage: React.FC = () => {
         }
 
         try {
-            const response = await fetch('/api/auth/start-trial', {
+            const response = await fetch('/api/auth?action=start-trial', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
