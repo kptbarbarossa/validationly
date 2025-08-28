@@ -5,9 +5,8 @@ import { useAuth } from '../contexts/AuthContext';
 import Logo from './Logo';
 
 const navItems: Array<{ to: string; label: string; external?: boolean }> = [
-  { to: '/', label: 'New Analysis' },
   { to: '/tools', label: 'Tools' },
-  { to: '/job-tailor', label: 'Job Tailor' },
+  { to: '/apps', label: 'Apps' },
   { to: '/faq', label: 'FAQ' },
   { to: '/blog', label: 'Blog' },
   // { to: '/use-cases', label: 'Use Cases' }, // hidden from nav for SEO-only exposure
@@ -180,15 +179,7 @@ const PremiumNavBar: React.FC = () => {
               >
                 B2B App
               </a>
-              <a
-                href="https://x.com/kptbarbarossa"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 px-3 py-3 rounded-full text-slate-100/90 hover:text-white hover:bg-white/10"
-                onClick={() => setIsOpen(false)}
-              >
-                Feedback
-              </a>
+
               <a
                 href="https://buymeacoffee.com/kptbarbarossa"
                 target="_blank"
