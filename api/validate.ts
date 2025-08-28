@@ -1920,13 +1920,7 @@ COMPREHENSIVE JSON OUTPUT REQUIRED:
   }
 }
 
-Provide realistic, comprehensive, industry-specific analysis for ${classification.primaryCategory} startup targeting ${classification.targetMarket} market using ${classification.businessModel} business model.`,
-      config: {
-        responseMimeType: 'application/json',
-        temperature: 0.4,
-        maxOutputTokens: 4000
-      }
-    });
+Provide realistic, comprehensive, industry-specific analysis for ${classification.primaryCategory} startup targeting ${classification.targetMarket} market using ${classification.businessModel} business model.`);
 
             console.log('Raw AI response:', result);
 
