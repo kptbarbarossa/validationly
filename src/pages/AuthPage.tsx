@@ -149,14 +149,15 @@ const AuthPage: React.FC = () => {
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="mt-4 w-full flex items-center justify-center px-4 py-3 border border-slate-600 rounded-lg bg-slate-900/50 text-white hover:bg-slate-700/50 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-800"
+              className="mt-4 w-full gsi-material-button"
             >
-              <img 
-                src="/google.png" 
-                alt="Google" 
-                className="w-5 h-5 mr-2" 
-              />
-              Continue with Google
+              <div className="gsi-material-button-state"></div>
+              <div className="gsi-material-button-content-wrapper">
+                <div className="gsi-material-button-icon">
+                  <img src="/google.png" alt="Google" className="w-5 h-5" />
+                </div>
+                <span className="gsi-material-button-contents">Continue with Google</span>
+              </div>
             </button>
           </div>
 

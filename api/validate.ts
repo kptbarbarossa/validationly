@@ -1,12 +1,13 @@
-const { GoogleGenAI } = require("@google/genai");
-const OpenAI = require('openai');
-const Groq = require('groq-sdk');
-const { YouTubeService } = require('../lib/services/platforms/youtube');
-const { MultiPlatformService } = require('../lib/services/multiPlatformService');
-const { ValidationlyDB } = require('../lib/supabase');
+import { GoogleGenAI } from "@google/genai";
+import OpenAI from 'openai';
+import Groq from 'groq-sdk';
+import { YouTubeService } from '../lib/services/platforms/youtube.js';
+import { MultiPlatformService } from '../lib/services/multiPlatformService.js';
+import { ValidationlyDB } from '../lib/supabase.js';
 
 // Import our enhanced prompt system
-interface IdeaClassification {
+
+export interface IdeaClassification {
   primaryCategory: string;
   businessModel: string;
   targetMarket: string;
@@ -1047,7 +1048,7 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
-export default async function handler(req: any, res: any) {
+async function validateHandler(req: any, res: any) {
   const startTime = Date.now();
 
   // CORS headers
@@ -1888,3 +1889,5 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
     });
   }
 }
+
+export default validateHandler;

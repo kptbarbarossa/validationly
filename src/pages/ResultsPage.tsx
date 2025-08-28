@@ -458,7 +458,11 @@ const ResultsPage: React.FC = () => {
                         <div key={index} className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
                           <div className="flex items-center gap-3">
                             <div className={`w-8 h-8 ${config.color} rounded-lg flex items-center justify-center text-white text-sm`}>
-                              {config.icon}
+                              {config.icon.startsWith('/') ? (
+                                <img src={config.icon} alt={config.name} className="w-5 h-5" />
+                              ) : (
+                                config.icon
+                              )}
                             </div>
                             <div>
                               <p className="font-medium text-white">{config.name}</p>

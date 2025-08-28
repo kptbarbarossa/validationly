@@ -50,7 +50,13 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
                   : 'border-slate-200 dark:border-slate-600 hover:border-slate-300 dark:hover:border-slate-500'
               } ${hasData ? '' : 'opacity-50'}`}
             >
-              <div className="text-xl mb-1">{platform.icon}</div>
+              <div className="text-xl mb-1">
+                {platform.icon.startsWith('/') ? (
+                  <img src={platform.icon} alt={platform.name} className="w-6 h-6 mx-auto" />
+                ) : (
+                  platform.icon
+                )}
+              </div>
               <h3 className="font-medium text-slate-900 dark:text-white text-xs mb-1">{platform.name}</h3>
               <div className="text-lg font-bold mb-1">
                 <span className={`${
@@ -81,7 +87,13 @@ export const PlatformAnalysisSection: React.FC<PlatformAnalysisSectionProps> = (
             return (
               <div>
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="text-2xl">{platform.icon}</span>
+                  <span className="text-2xl">
+                    {platform.icon.startsWith('/') ? (
+                      <img src={platform.icon} alt={platform.name} className="w-8 h-8" />
+                    ) : (
+                      platform.icon
+                    )}
+                  </span>
                   <div>
                     <h3 className="font-semibold text-slate-900 dark:text-white">{platform.name} Detayları</h3>
                     <p className="text-sm text-slate-600 dark:text-slate-400">

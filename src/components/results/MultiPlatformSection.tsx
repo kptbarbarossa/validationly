@@ -140,7 +140,13 @@ const MultiPlatformSection: React.FC<MultiPlatformSectionProps> = ({ multiPlatfo
               }`}
               disabled={count === 0}
             >
-              <div className="text-lg mb-1">{getPlatformIcon(platform)}</div>
+              <div className="text-lg mb-1">
+                {getPlatformIcon(platform).startsWith('/') ? (
+                  <img src={getPlatformIcon(platform)} alt={getPlatformName(platform)} className="w-5 h-5 mx-auto" />
+                ) : (
+                  getPlatformIcon(platform)
+                )}
+              </div>
               <div className="text-sm font-medium text-gray-900">{count}</div>
               <div className="text-xs text-gray-600">{getPlatformName(platform)}</div>
             </button>

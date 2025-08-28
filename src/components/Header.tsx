@@ -22,37 +22,19 @@ const Header: React.FC = () => {
 
                     {/* Navigation */}
                     <nav className="hidden md:flex items-center gap-6">
-                        {!isHomePage && (
-                            <button
-                                onClick={() => navigate('/')}
-                                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
-                            >
-                                New Analysis
-                            </button>
-                        )}
-
-                        {/* B2B App link with icon from public */}
-                        <a
-                            href={(import.meta as any).env?.VITE_B2B_APP_URL || '/b2b'}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                        <button
+                            onClick={() => navigate('/tools')}
+                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
                         >
-                            <img src="/logo-b2b.png" alt="B2B" className="w-4 h-4 rounded" />
-                            B2B App
-                        </a>
+                            Tools
+                        </button>
 
-                        <a
-                            href="https://x.com/kptbarbarossa"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                        <button
+                            onClick={() => navigate('/apps')}
+                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
                         >
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
-                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zM17.083 19.77h1.833L7.084 4.126H5.117z"/>
-                            </svg>
-                            𝕏 Feedback on X
-                        </a>
+                            Apps
+                        </button>
 
                         <a
                             href="https://buymeacoffee.com/kptbarbarossa"
