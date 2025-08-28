@@ -227,7 +227,7 @@ RETURN JSON:
       }
     });
 
-    return JSON.parse(result.text || '{}');
+    return JSON.parse(result?.text || result?.content || result?.choices?.[0]?.message?.content || '{}');
   } catch (error) {
     console.log('Deep dive analysis failed:', error);
     return { error: 'Deep dive analysis failed' };
@@ -299,7 +299,7 @@ RETURN JSON:
       }
     });
 
-    return JSON.parse(result.text || '{}');
+    return JSON.parse(result?.text || result?.content || result?.choices?.[0]?.message?.content || '{}');
   } catch (error) {
     console.log('Competitor analysis failed:', error);
     return { error: 'Competitor analysis failed' };
@@ -363,7 +363,7 @@ RETURN JSON:
       }
     });
 
-    return JSON.parse(result.text || '{}');
+    return JSON.parse(result?.text || result?.content || result?.choices?.[0]?.message?.content || '{}');
   } catch (error) {
     console.log('Market timing analysis failed:', error);
     return { error: 'Market timing analysis failed' };
@@ -932,7 +932,7 @@ ANALYSIS REQUIREMENTS:
       }
     });
 
-    const aiInsights = result.text?.trim();
+            const aiInsights = (result?.text || result?.content || result?.choices?.[0]?.message?.content || '').trim();
 
     if (aiInsights) {
       try {
@@ -1055,7 +1055,7 @@ Provide comprehensive YouTube market analysis in JSON format:
       }
     });
 
-    const aiAnalysis = result.text?.trim();
+    const aiAnalysis = (result?.text || result?.content || result?.choices?.[0]?.message?.content || '').trim();
 
     if (aiAnalysis) {
       try {
@@ -1134,7 +1134,7 @@ Keep the original trends data intact and add these AI-enhanced fields.`;
       }
     });
 
-    const aiAnalysis = result.text?.trim();
+    const aiAnalysis = (result?.text || result?.content || result?.choices?.[0]?.message?.content || '').trim();
 
     if (aiAnalysis) {
       try {
@@ -1193,9 +1193,9 @@ Return ONLY the optimized version without explanations or formatting:`,
         config: { temperature: 0.7, maxOutputTokens: 500 }
       });
 
-      if (result.text?.trim()) {
+      if ((result?.text || result?.content || result?.choices?.[0]?.message?.content || '').trim()) {
         console.log('✅ Gemini optimization successful');
-        return result.text.trim();
+        return (result?.text || result?.content || result?.choices?.[0]?.message?.content || '').trim();
       }
     } catch (error) {
       console.log('⚠️ Gemini optimization failed, trying OpenAI...');
@@ -1286,11 +1286,39 @@ function getAI() {
 
   // Auto-select AI model with fallback
   if (availableModels.gemini) {
-    return new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+    const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
+    return {
+      type: 'gemini',
+      instance: genAI,
+      generateContent: async (prompt: any) => {
+        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        return await model.generateContent(prompt);
+      }
+    };
   } else if (availableModels.openai) {
-    return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    return {
+      type: 'openai',
+      instance: new OpenAI({ apiKey: process.env.OPENAI_API_KEY }),
+      generateContent: async (prompt: any) => {
+        const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+        return await openai.chat.completions.create({
+          model: "gpt-4",
+          messages: [{ role: "user", content: prompt }]
+        });
+      }
+    };
   } else if (availableModels.groq) {
-    return new Groq({ apiKey: process.env.GROQ_API_KEY });
+    return {
+      type: 'groq',
+      instance: new Groq({ apiKey: process.env.GROQ_API_KEY }),
+      generateContent: async (prompt: any) => {
+        const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+        return await groq.chat.completions.create({
+          model: "llama3-8b-8192",
+          messages: [{ role: "user", content: prompt }]
+        });
+      }
+    };
   } else {
     throw new Error('No AI models available');
   }
@@ -1414,10 +1442,8 @@ async function validateHandler(req: any, res: any) {
         // Step 2: Generate enhanced prompt
         const enhancedPrompt = generateEnhancedPrompt(inputContent, classification, true);
 
-        const aiInstance = getAI();
-        const result = await aiInstance.models.generateContent({
-          model: process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash',
-          contents: `${enhancedPrompt}
+            const aiInstance = getAI();
+        const result = await aiInstance.generateContent(`${enhancedPrompt}
 
 STARTUP IDEA: "${inputContent}"
 
@@ -1487,19 +1513,13 @@ REQUIRED JSON OUTPUT:
   "lastDataUpdate": "${new Date().toISOString()}"
 }
 
-Provide realistic, industry-specific analysis for ${classification.primaryCategory} targeting ${classification.targetMarket}.`,
-          config: {
-            responseMimeType: 'application/json',
-            temperature: 0.3,
-            maxOutputTokens: 2500
-          }
-        });
+Provide realistic, industry-specific analysis for ${classification.primaryCategory} targeting ${classification.targetMarket}.`);
 
-        console.log('Raw AI response:', result.text);
+        console.log('Raw AI response:', result);
 
         let parsed: any = null;
         try {
-          const cleanedText = (result.text || '').trim();
+          const cleanedText = (result?.text || result?.content || result?.choices?.[0]?.message?.content || '').trim();
           const jsonStart = cleanedText.indexOf('{');
           const jsonEnd = cleanedText.lastIndexOf('}') + 1;
           if (jsonStart >= 0 && jsonEnd > jsonStart) {
@@ -1781,9 +1801,7 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
     const enhancedPrompt = generateEnhancedPrompt(inputContent, classification, false);
 
     const aiInstance = getAI();
-    const result = await aiInstance.models.generateContent({
-      model: process.env.GEMINI_MODEL_PRIMARY || 'gemini-1.5-flash',
-      contents: `${enhancedPrompt}
+    const result = await aiInstance.generateContent(`${enhancedPrompt}
 
 STARTUP IDEA ANALYSIS REQUEST:
 
@@ -1910,11 +1928,11 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
       }
     });
 
-    console.log('Raw AI response:', result.text);
+            console.log('Raw AI response:', result);
 
     let parsed: any = null;
     try {
-      const cleanedText = (result.text || '').trim();
+              const cleanedText = (result?.text || result?.content || result?.choices?.[0]?.message?.content || '').trim();
       const jsonStart = cleanedText.indexOf('{');
       const jsonEnd = cleanedText.lastIndexOf('}') + 1;
       if (jsonStart >= 0 && jsonEnd > jsonStart) {
