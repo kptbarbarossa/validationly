@@ -93,8 +93,8 @@ const painPointsDB: PainPoint[] = [
     difficultyLevel: 'Easy',
     evidence: [
       {
-        source: 'G2 Reviews',
-        url: 'https://g2.com/example',
+              source: 'Product Hunt',
+      url: 'https://producthunt.com/example',
         snippet: 'Current inventory software is too complex for our small shop. We just need basic tracking.',
         upvotes: 156,
         comments: 32

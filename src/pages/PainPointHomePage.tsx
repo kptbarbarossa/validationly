@@ -56,8 +56,8 @@ const PainPointHomePage: React.FC = () => {
       difficultyLevel: 'Easy',
       evidence: [
         {
-          source: 'G2 Reviews',
-          url: 'https://g2.com/example',
+                  source: 'Product Hunt',
+        url: 'https://producthunt.com/example',
           snippet: 'Current inventory software is too complex for our small shop. We just need basic tracking.',
           upvotes: 156,
           comments: 32
@@ -71,8 +71,8 @@ const PainPointHomePage: React.FC = () => {
       createdAt: '2025-01-24',
       lastUpdated: '2025-01-24',
       // Backward compatibility
-      source: 'G2 Reviews',
-      evidenceUrl: 'https://g2.com/example'
+              source: 'Product Hunt',
+        evidenceUrl: 'https://producthunt.com/example'
     },
     {
       id: '3',
@@ -165,7 +165,7 @@ const PainPointHomePage: React.FC = () => {
     <>
       <SEOHead
         title="PainPointDB - Discover Validated SaaS Opportunities"
-        description="The largest database of validated SaaS opportunities sourced from real user pain points across Reddit, G2, Upwork, and more."
+        description="The largest database of validated SaaS opportunities sourced from real user pain points across Reddit, Product Hunt, Upwork, and more."
         keywords="SaaS ideas, startup opportunities, pain points, market validation, business ideas"
       />
       
@@ -186,7 +186,7 @@ const PainPointHomePage: React.FC = () => {
             </h1>
 
             <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
-              Discover validated SaaS opportunities from real user pain points across Reddit, G2, forums, and more.
+              Discover validated SaaS opportunities from real user pain points across Reddit, Product Hunt, forums, and more.
             </p>
 
             {/* Data Source Badges */}
@@ -195,7 +195,7 @@ const PainPointHomePage: React.FC = () => {
                 <span>🤖</span> Reddit
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300 text-sm">
-                <span>⭐</span> G2 Reviews
+                <span>⭐</span> Product Hunt
               </div>
               <div className="flex items-center gap-2 px-3 py-1.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-300 text-sm">
                 <span>💼</span> Upwork
