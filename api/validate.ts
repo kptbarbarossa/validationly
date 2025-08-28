@@ -6,6 +6,67 @@ import Groq from 'groq-sdk';
 import { YouTubeService } from '../lib/services/platforms/youtube.js';
 import { ValidationlyDB } from '../lib/supabase.js';
 
+// Rate limiting for API protection
+const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
+const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
+const RATE_LIMIT_MAX = 50; // Maximum 50 requests per window
+
+// Simple rate limiting function
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now();
+  const userLimit = rateLimitMap.get(ip);
+  
+  if (!userLimit || now > userLimit.resetTime) {
+    // Reset or create new limit
+    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
+    return true;
+  }
+  
+  if (userLimit.count >= RATE_LIMIT_MAX) {
+    return false; // Rate limit exceeded
+  }
+  
+  userLimit.count++;
+  return true;
+}
+
+// Input validation and sanitization
+function validateInput(input: string): boolean {
+  if (!input || typeof input !== 'string') {
+    return false;
+  }
+  
+  // Length validation
+  if (input.length < 10 || input.length > 1000) {
+    return false;
+  }
+  
+  // Dangerous content detection
+  const dangerousPatterns = [
+    /<script/i,
+    /javascript:/i,
+    /data:text\/html/i,
+    /vbscript:/i,
+    /on\w+\s*=/i,
+    /<iframe/i,
+    /<object/i,
+    /<embed/i,
+    /<form/i,
+    /<input/i,
+    /<textarea/i,
+    /<select/i,
+    /<button/i
+  ];
+  
+  for (const pattern of dangerousPatterns) {
+    if (pattern.test(input)) {
+      return false;
+    }
+  }
+  
+  return true;
+}
+
 // Import our enhanced prompt system
 
 export interface IdeaClassification {
@@ -1324,44 +1385,7 @@ function getAI() {
   }
 }
 
-// Input validation
-function validateInput(input: string): boolean {
-  if (!input || typeof input !== 'string') return false;
-  if (input.length < 10 || input.length > 1000) return false;
 
-  // Block potentially dangerous content
-  const dangerousPatterns = [
-    /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
-    /javascript:/gi,
-    /on\w+\s*=/gi,
-    /vbscript:/gi,
-    /data:/gi
-  ];
-
-  return !dangerousPatterns.some(pattern => pattern.test(input));
-}
-
-// Rate limiting
-const requestCounts = new Map<string, { count: number; resetTime: number }>();
-const MAX_REQUESTS_PER_WINDOW = 30;
-const WINDOW_MS = 60 * 1000; // 1 minute
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now();
-  const userData = requestCounts.get(ip);
-
-  if (!userData || now > userData.resetTime) {
-    requestCounts.set(ip, { count: 1, resetTime: now + WINDOW_MS });
-    return false;
-  }
-
-  if (userData.count >= MAX_REQUESTS_PER_WINDOW) {
-    return true;
-  }
-
-  userData.count++;
-  return false;
-}
 
 async function validateHandler(req: any, res: any) {
   const startTime = Date.now();
@@ -1379,12 +1403,12 @@ async function validateHandler(req: any, res: any) {
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  // Rate limiting
+  // Rate limiting check
   const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
-  if (isRateLimited(clientIP)) {
+  if (!checkRateLimit(clientIP)) {
     return res.status(429).json({
       message: 'Too many requests. Please try again later.',
-      retryAfter: Math.ceil(WINDOW_MS / 1000)
+      retryAfter: Math.ceil(RATE_LIMIT_WINDOW / 1000)
     });
   }
 

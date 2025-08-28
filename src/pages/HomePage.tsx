@@ -13,6 +13,7 @@ import { useAnalytics } from '../components/Analytics';
 import { SEOHead } from '../components/SEOHead';
 // import RelatedStartups from '../components/RelatedStartups';
 import GoogleOneTap from '../components/GoogleOneTap';
+import DOMPurify from 'dompurify';
 
 // Sample categories removed
 
@@ -40,7 +41,10 @@ const HomePage: React.FC = () => {
     const validateInput = (idea: string): UserInput => {
         // Ensure idea is a string and handle null/undefined cases
         const safeIdea = idea || '';
-        const trimmedIdea = safeIdea.trim();
+        
+        // Sanitize input to prevent XSS
+        const sanitizedIdea = DOMPurify.sanitize(safeIdea, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
+        const trimmedIdea = sanitizedIdea.trim();
 
         if (!trimmedIdea) {
             return { idea: safeIdea, isValid: false, errorMessage: 'Please enter an idea to validate.' };
@@ -52,6 +56,21 @@ const HomePage: React.FC = () => {
 
         if (trimmedIdea.length > 1000) {
             return { idea: safeIdea, isValid: false, errorMessage: 'Idea must be less than 1000 characters.' };
+        }
+
+        // Check for dangerous content
+        const dangerousPatterns = [
+            /<script/i,
+            /javascript:/i,
+            /data:text\/html/i,
+            /vbscript:/i,
+            /on\w+\s*=/i
+        ];
+
+        for (const pattern of dangerousPatterns) {
+            if (pattern.test(trimmedIdea)) {
+                return { idea: safeIdea, isValid: false, errorMessage: 'Input contains potentially dangerous content.' };
+            }
         }
 
         return { idea: safeIdea, isValid: true };
