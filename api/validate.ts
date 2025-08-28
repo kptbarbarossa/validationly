@@ -769,6 +769,47 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
       analysis.summary.github = ghData.totalResults;
     }
 
+    // Integrate Google News data if available
+    if (gnData && gnData.items && gnData.items.length > 0) {
+      // Find and update Google News platform data
+      const gnPlatformIndex = analysis.platforms.findIndex(p => p.platform === 'googlenews');
+      if (gnPlatformIndex !== -1) {
+        analysis.platforms[gnPlatformIndex] = {
+          platform: 'googlenews',
+          items: gnData.items.map((item: any) => ({
+            id: `gn_${item.link}`,
+            title: item.title,
+            description: item.description || '',
+            score: 0, // News articles don't have scores
+            comments: 0, // News articles don't have comments
+            created_at: item.pubDate,
+            platform: 'googlenews',
+            source_url: item.link,
+            source: item.source,
+            // Add analysis data
+            analysis: {
+              source: item.source,
+              pubDate: item.pubDate,
+              type: 'news_article'
+            }
+          })),
+          totalResults: gnData.totalResults,
+          metadata: {
+            analysis: gnData.analysis,
+            totalArticles: gnData.analysis.totalArticles,
+            recentArticles: gnData.analysis.recentArticles,
+            topSources: gnData.analysis.topSources,
+            sentiment: gnData.analysis.sentiment,
+            mediaCoverage: gnData.analysis.mediaCoverage,
+            marketValidation: gnData.analysis.marketValidation
+          }
+        };
+      }
+
+      // Update summary
+      analysis.summary.googlenews = gnData.totalResults;
+    }
+
     // Recalculate total items
     analysis.totalItems = analysis.platforms.reduce((sum, p) => sum + p.items.length, 0);
 
