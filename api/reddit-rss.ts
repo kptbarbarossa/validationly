@@ -7,8 +7,8 @@ interface RedditPost {
     author: string;
     subreddit: string;
     created: number;
-    score: number;
-    num_comments: number;
+    score?: number;
+    num_comments?: number;
     selftext?: string;
     thumbnail?: string;
 }
@@ -30,29 +30,29 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     console.log('Reddit RSS API called');
 
     try {
-        console.log('Starting Reddit data fetch...');
+        console.log('Starting Reddit RSS feed fetch...');
 
-        // Fetch from multiple startup/entrepreneur related subreddits
-        const subreddits = [
-            'startups',
-            'entrepreneur',
-            'SideProject',
-            'indiehackers',
-            'business'
+        // Reddit RSS feed URLs for startup/entrepreneur related subreddits
+        const rssFeeds = [
+            'https://www.reddit.com/r/startups/.rss',
+            'https://www.reddit.com/r/entrepreneur/.rss',
+            'https://www.reddit.com/r/SideProject/.rss',
+            'https://www.reddit.com/r/indiehackers/.rss',
+            'https://www.reddit.com/r/business/.rss'
         ];
 
         const allPosts: RedditPost[] = [];
         let successfulFetches = 0;
 
-        // Fetch from each subreddit with timeout
-        for (const subreddit of subreddits) {
+        // Fetch from each RSS feed with timeout
+        for (const rssUrl of rssFeeds) {
             try {
-                console.log(`Fetching from r/${subreddit}...`);
+                console.log(`Fetching from RSS feed: ${rssUrl}`);
 
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+                const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
 
-                const response = await fetch(`https://www.reddit.com/r/${subreddit}/hot.json?limit=3`, {
+                const response = await fetch(rssUrl, {
                     headers: {
                         'User-Agent': 'Validationly/1.0 (https://validationly.com)'
                     },
@@ -62,42 +62,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                 clearTimeout(timeoutId);
 
                 if (!response.ok) {
-                    console.log(`Failed to fetch r/${subreddit}: ${response.status}`);
+                    console.log(`Failed to fetch RSS feed: ${response.status}`);
                     continue;
                 }
 
-                const data = await response.json();
-                const posts = (data as any).data?.children || [];
+                const xmlText = await response.text();
+                console.log(`Successfully fetched RSS feed, parsing XML...`);
 
-                console.log(`Found ${posts.length} posts in r/${subreddit}`);
+                // Parse RSS XML
+                const posts = parseRSSFeed(xmlText, rssUrl);
+                console.log(`Parsed ${posts.length} posts from RSS feed`);
 
-                posts.forEach((post: any) => {
-                    const postData = post.data;
-                    if (postData && !postData.stickied && !postData.pinned && postData.title) {
-                        allPosts.push({
-                            id: postData.id,
-                            title: postData.title,
-                            url: `https://reddit.com${postData.permalink}`,
-                            author: postData.author || 'unknown',
-                            subreddit: postData.subreddit,
-                            created: postData.created_utc,
-                            score: postData.score || 0,
-                            num_comments: postData.num_comments || 0,
-                            selftext: postData.selftext?.substring(0, 200) || '',
-                            thumbnail: postData.thumbnail && postData.thumbnail !== 'self' && postData.thumbnail !== 'default' && postData.thumbnail !== 'nsfw' ? postData.thumbnail : undefined
-                        });
-                    }
-                });
-
+                allPosts.push(...posts);
                 successfulFetches++;
 
             } catch (error) {
-                console.error(`Error fetching from r/${subreddit}:`, error);
+                console.error(`Error fetching RSS feed:`, error);
                 continue;
             }
         }
 
-        console.log(`Successfully fetched from ${successfulFetches}/${subreddits.length} subreddits, total posts: ${allPosts.length}`);
+        console.log(`Successfully fetched from ${successfulFetches}/${rssFeeds.length} RSS feeds, total posts: ${allPosts.length}`);
 
         // Sort by score and created time, then take top 10
         const topPosts = allPosts
@@ -172,4 +157,78 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             fallback: true
         });
     }
+}
+
+// RSS XML parsing function
+function parseRSSFeed(xmlText: string, rssUrl: string): RedditPost[] {
+    const posts: RedditPost[] = [];
+    
+    try {
+        // Extract subreddit name from RSS URL
+        const subredditMatch = rssUrl.match(/\/r\/([^\/]+)\//);
+        const subreddit = subredditMatch ? subredditMatch[1] : 'unknown';
+        
+        // Parse RSS XML using regex (simple but effective)
+        const itemMatches = xmlText.match(/<item[^>]*>[\s\S]*?<\/item>/g) || [];
+        
+        for (const itemXml of itemMatches) {
+            try {
+                const title = extractXMLContent(itemXml, 'title');
+                const link = extractXMLContent(itemXml, 'link');
+                const author = extractXMLContent(itemXml, 'author') || extractXMLContent(itemXml, 'dc:creator') || 'unknown';
+                const pubDate = extractXMLContent(itemXml, 'pubDate');
+                const description = extractXMLContent(itemXml, 'description');
+                
+                if (title && link) {
+                    // Parse publication date
+                    const created = pubDate ? new Date(pubDate).getTime() / 1000 : Date.now() / 1000;
+                    
+                    // Extract Reddit post ID from URL
+                    const postIdMatch = link.match(/\/comments\/([a-zA-Z0-9]+)/);
+                    const id = postIdMatch ? postIdMatch[1] : `rss-${Date.now()}-${Math.random()}`;
+                    
+                    posts.push({
+                        id,
+                        title: cleanText(title),
+                        url: link,
+                        author: cleanText(author),
+                        subreddit,
+                        created,
+                        selftext: description ? cleanText(description).substring(0, 200) : '',
+                        thumbnail: undefined
+                    });
+                }
+            } catch (itemError) {
+                console.error('Error parsing RSS item:', itemError);
+                continue;
+            }
+        }
+        
+        console.log(`Parsed ${posts.length} posts from RSS feed for r/${subreddit}`);
+        
+    } catch (error) {
+        console.error('Error parsing RSS feed:', error);
+    }
+    
+    return posts;
+}
+
+// Helper function to extract XML content
+function extractXMLContent(xml: string, tag: string): string {
+    const regex = new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\\/${tag}>`, 'i');
+    const match = xml.match(regex);
+    return match ? match[1].trim() : '';
+}
+
+// Helper function to clean text content
+function cleanText(text: string): string {
+    return text
+        .replace(/<!\[CDATA\[(.*?)\]\]>/g, '$1')
+        .replace(/<[^>]*>/g, '')
+        .replace(/&amp;/g, '&')
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'")
+        .trim();
 }
