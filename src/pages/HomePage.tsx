@@ -12,6 +12,7 @@ import PromptGallery from '../components/PromptGallery';
 import { useAnalytics } from '../components/Analytics';
 import { SEOHead } from '../components/SEOHead';
 // import RelatedStartups from '../components/RelatedStartups';
+import GoogleOneTap from '../components/GoogleOneTap';
 
 // Sample categories removed
 
@@ -30,7 +31,7 @@ const HomePage: React.FC = () => {
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { trackEvent, trackValidation } = useAnalytics();
-    const { user } = useAuth();
+    const { user, signInWithGoogle } = useAuth();
 
     useEffect(() => {
         textareaRef.current?.focus();
@@ -77,6 +78,16 @@ const HomePage: React.FC = () => {
             return (data?.optimizedPrompt as string) || null;
         } catch {
             return null;
+        }
+    };
+
+    const handleGoogleSignIn = async (credential: string) => {
+        try {
+            // You can handle the credential here if needed
+            // For now, we'll use the existing signInWithGoogle function
+            await signInWithGoogle();
+        } catch (error) {
+            console.error('Google sign-in error:', error);
         }
     };
 
@@ -232,6 +243,10 @@ const HomePage: React.FC = () => {
                 description="Get AI-driven market validation for your startup idea in seconds. Analyze demand across X, Reddit, and LinkedIn with actionable insights and social media suggestions."
                 keywords="startup validation, idea validation, market research, AI analysis, startup tools, entrepreneur, indie hacker, business validation, market demand"
             />
+            
+            {/* Google One Tap Sign-In - appears automatically */}
+            {!user && <GoogleOneTap onSignIn={handleGoogleSignIn} />}
+            
             <div className="text-center max-w-4xl mx-auto text-slate-100">
             {/* Enhanced Hero Section - Reduced spacing */}
             <div className="relative mb-0" >
