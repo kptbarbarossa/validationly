@@ -594,6 +594,52 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
       console.log('⚠️ Hacker News API failed, using fallback');
     }
 
+    // Fetch Product Hunt data directly using our new API
+    const phResponse = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/producthunt`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        query: keyword,
+        analysisType: 'comprehensive'
+      })
+    });
+
+    let phData = null;
+    if (phResponse.ok) {
+      phData = await phResponse.json();
+      console.log('✅ Product Hunt data fetched:', {
+        totalResults: phData.totalResults,
+        itemsCount: phData.items?.length || 0
+      });
+    } else {
+      console.log('⚠️ Product Hunt API failed, using fallback');
+    }
+
+    // Fetch GitHub data directly using our new API
+    const ghResponse = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/github`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        query: keyword,
+        analysisType: 'comprehensive'
+      })
+    });
+
+    let ghData = null;
+    if (ghResponse.ok) {
+      ghData = await ghResponse.json();
+      console.log('✅ GitHub data fetched:', {
+        totalResults: ghData.totalResults,
+        itemsCount: ghData.items?.length || 0
+      });
+    } else {
+      console.log('⚠️ GitHub API failed, using fallback');
+    }
+
     // Use existing MultiPlatformService for other platforms
     const multiPlatformService = new MultiPlatformService();
     const analysis = await multiPlatformService.analyzeIdea(keyword, 10);
@@ -635,8 +681,96 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
 
       // Update summary
       analysis.summary.hackernews = hnData.totalResults;
-      analysis.totalItems = analysis.platforms.reduce((sum, p) => sum + p.items.length, 0);
     }
+
+    // Integrate Product Hunt data if available
+    if (phData && phData.items && phData.items.length > 0) {
+      // Find and update Product Hunt platform data
+      const phPlatformIndex = analysis.platforms.findIndex(p => p.platform === 'producthunt');
+      if (phPlatformIndex !== -1) {
+        analysis.platforms[phPlatformIndex] = {
+          platform: 'producthunt',
+          items: phData.items.map((item: any) => ({
+            id: item.id,
+            title: item.name,
+            description: item.tagline,
+            score: item.votesCount,
+            comments: item.commentsCount,
+            created_at: item.createdAt,
+            platform: 'producthunt',
+            source_url: `https://www.producthunt.com/posts/${item.id}`,
+            // Add analysis data
+            analysis: {
+              votes: item.votesCount,
+              comments: item.commentsCount,
+              engagement: item.votesCount + item.commentsCount,
+              topics: item.topics.map((t: any) => t.name)
+            }
+          })),
+          totalResults: phData.totalResults,
+          metadata: {
+            analysis: phData.analysis,
+            averageVotes: phData.analysis.averageVotes,
+            averageComments: phData.analysis.averageComments,
+            sentiment: phData.analysis.sentiment,
+            engagementScore: phData.analysis.engagementScore,
+            marketValidation: phData.analysis.marketValidation
+          }
+        };
+      }
+
+      // Update summary
+      analysis.summary.producthunt = phData.totalResults;
+    }
+
+    // Integrate GitHub data if available
+    if (ghData && ghData.items && ghData.items.length > 0) {
+      // Find and update GitHub platform data
+      const ghPlatformIndex = analysis.platforms.findIndex(p => p.platform === 'github');
+      if (ghPlatformIndex !== -1) {
+        analysis.platforms[ghPlatformIndex] = {
+          platform: 'github',
+          items: ghData.items.map((item: any) => ({
+            id: item.id,
+            title: item.name,
+            description: item.description,
+            score: item.stargazers_count,
+            forks: item.forks_count,
+            issues: item.open_issues_count,
+            language: item.language,
+            created_at: item.created_at,
+            updated_at: item.updated_at,
+            platform: 'github',
+            source_url: item.html_url,
+            // Add analysis data
+            analysis: {
+              stars: item.stargazers_count,
+              forks: item.forks_count,
+              issues: item.open_issues_count,
+              language: item.language,
+              engagement: item.stargazers_count + item.forks_count
+            }
+          })),
+          totalResults: ghData.totalResults,
+          metadata: {
+            analysis: ghData.analysis,
+            averageStars: ghData.analysis.averageStars,
+            averageForks: ghData.analysis.averageForks,
+            averageIssues: ghData.analysis.averageIssues,
+            topLanguages: ghData.analysis.topLanguages,
+            sentiment: ghData.analysis.sentiment,
+            engagementScore: ghData.analysis.engagementScore,
+            marketValidation: ghData.analysis.marketValidation
+          }
+        };
+      }
+
+      // Update summary
+      analysis.summary.github = ghData.totalResults;
+    }
+
+    // Recalculate total items
+    analysis.totalItems = analysis.platforms.reduce((sum, p) => sum + p.items.length, 0);
 
     return {
       ...analysis,
