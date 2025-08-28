@@ -810,6 +810,53 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
       analysis.summary.googlenews = gnData.totalResults;
     }
 
+    // Integrate Stack Overflow data if available
+    if (soData && soData.items && soData.items.length > 0) {
+      // Find and update Stack Overflow platform data
+      const soPlatformIndex = analysis.platforms.findIndex(p => p.platform === 'stackoverflow');
+      if (soPlatformIndex !== -1) {
+        analysis.platforms[soPlatformIndex] = {
+          platform: 'stackoverflow',
+          items: soData.items.map((item: any) => ({
+            id: `so_${item.question_id}`,
+            title: item.title,
+            description: item.body,
+            score: item.score,
+            comments: item.answer_count,
+            created_at: new Date(item.creation_date * 1000).toISOString(),
+            platform: 'stackoverflow',
+            source_url: item.link,
+            tags: item.tags,
+            // Add analysis data
+            analysis: {
+              views: item.view_count,
+              answers: item.answer_count,
+              isAnswered: item.is_answered,
+              tags: item.tags,
+              ownerReputation: item.owner.reputation
+            }
+          })),
+          totalResults: soData.totalResults,
+          metadata: {
+            analysis: soData.analysis,
+            totalQuestions: soData.analysis.totalQuestions,
+            answeredQuestions: soData.analysis.answeredQuestions,
+            unansweredQuestions: soData.analysis.unansweredQuestions,
+            averageScore: soData.analysis.averageScore,
+            averageViews: soData.analysis.averageViews,
+            averageAnswers: soData.analysis.averageAnswers,
+            topTags: soData.analysis.topTags,
+            sentiment: soData.analysis.sentiment,
+            communityEngagement: soData.analysis.communityEngagement,
+            marketValidation: soData.analysis.marketValidation
+          }
+        };
+      }
+
+      // Update summary
+      analysis.summary.stackoverflow = soData.totalResults;
+    }
+
     // Recalculate total items
     analysis.totalItems = analysis.platforms.reduce((sum, p) => sum + p.items.length, 0);
 
