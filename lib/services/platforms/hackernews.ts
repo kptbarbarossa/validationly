@@ -1,6 +1,5 @@
 // Hacker News API integration
-import { cache } from '../cache';
-import { CACHE_TTL } from '../cache';
+import { cache, CACHE_TTL } from '../cache.js';
 
 interface HNSearchResult {
   hits: Array<{
