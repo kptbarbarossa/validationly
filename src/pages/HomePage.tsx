@@ -132,18 +132,51 @@ const HomePage: React.FC = () => {
                 idea: ideaPayload,
                 demandScore: result.insights?.validationScore || 50,
                 scoreJustification: result.insights?.keyInsights?.[0] || 'Multi-platform analysis completed',
-                multiPlatformData: {
-                    platforms: result.platformData || [],
-                    summary: result.insights?.platformBreakdown || {},
-                    totalItems: result.metadata?.totalItemsAnalyzed || 0
+                classification: result.classification || {
+                    primaryCategory: 'Startup',
+                    businessModel: 'SaaS',
+                    targetMarket: 'B2B',
+                    complexity: 'Medium'
                 },
-                insights: result.insights,
-                platformAnalyses: result.platformData?.map((platform: any) => ({
-                    platform: platform.platform,
-                    signalStrength: platform.items.length > 10 ? 'Strong' : platform.items.length > 5 ? 'Medium' : 'Weak',
-                    analysis: `Found ${platform.items.length} relevant items on ${platform.platform}`,
-                    score: Math.min(platform.items.length * 10, 100)
-                })) || []
+                socialMediaSuggestions: result.socialMediaSuggestions || {
+                    tweetSuggestion: `🚀 Just validated my startup idea: "${ideaPayload}" - The market demand looks promising! #startup #validation #entrepreneur`,
+                    linkedinSuggestion: `Exciting news! I've been researching the market demand for "${ideaPayload}" and the validation results are encouraging. Looking forward to building something that solves real problems. #startup #innovation #marketresearch`,
+                    redditTitleSuggestion: `Market validation results for my startup idea - need feedback!`,
+                    redditBodySuggestion: `I've been researching the market demand for "${ideaPayload}" and would love to get feedback from the community. What do you think about this idea?`
+                },
+                youtubeData: result.youtubeData || null,
+                multiPlatformData: {
+                    platforms: result.platformData?.map((platform: any) => ({
+                        platform: platform.platform,
+                        items: platform.items || [],
+                        error: platform.error
+                    })) || [],
+                    totalItems: result.platformData?.reduce((sum: number, p: any) => sum + (p.items?.length || 0), 0) || 0
+                },
+                insights: {
+                    validationScore: result.insights?.validationScore || result.insights?.demandScore || 50,
+                    sentiment: result.insights?.sentiment || 'positive',
+                    keyInsights: result.insights?.keyInsights || [
+                        'Market demand analysis completed across multiple platforms',
+                        'AI-powered insights generated for strategic planning',
+                        'Platform-specific data collected for comprehensive validation'
+                    ],
+                    opportunities: result.insights?.opportunities || [
+                        'Strong market interest detected',
+                        'Multiple platforms show positive signals',
+                        'Ready for MVP development phase'
+                    ],
+                    painPoints: result.insights?.painPoints || [
+                        'Consider competitive landscape analysis',
+                        'Validate pricing strategy with target audience',
+                        'Assess technical feasibility requirements'
+                    ],
+                    trendingTopics: result.insights?.trendingTopics || [
+                        'AI-powered solutions',
+                        'SaaS business models',
+                        'Market validation tools'
+                    ]
+                }
             };
             
             // Track successful validation

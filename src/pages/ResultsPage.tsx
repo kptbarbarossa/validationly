@@ -422,6 +422,22 @@ const ResultsPage: React.FC = () => {
                         </ul>
                       </div>
                     )}
+
+                    {result.insights.trendingTopics && result.insights.trendingTopics.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-purple-400 mb-3 flex items-center gap-2">
+                          <span className="w-2 h-2 bg-purple-400 rounded-full"></span>
+                          Trending Topics
+                        </h4>
+                        <div className="flex flex-wrap gap-2">
+                          {result.insights.trendingTopics.slice(0, 5).map((topic, index) => (
+                            <span key={index} className="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-xs border border-purple-500/30">
+                              {topic}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -443,30 +459,38 @@ const ResultsPage: React.FC = () => {
                       if (!platform.items || platform.items.length === 0) return null;
 
                       const platformConfig = {
-                        reddit: { name: 'Reddit', color: 'bg-orange-500', icon: '🔴' },
-                        hackernews: { name: 'Hacker News', color: 'bg-orange-600', icon: '🟠' },
-                        producthunt: { name: 'Product Hunt', color: 'bg-pink-500', icon: '🚀' },
-                        github: { name: 'GitHub', color: 'bg-gray-600', icon: '⚫' },
-                        stackoverflow: { name: 'Stack Overflow', color: 'bg-yellow-600', icon: '📚' },
-                        googlenews: { name: 'Google News', color: 'bg-blue-600', icon: '/google.png' }
+                        reddit: { name: 'Reddit', color: 'bg-gradient-to-br from-orange-500 to-orange-600', icon: '🔴' },
+                        hackernews: { name: 'Hacker News', color: 'bg-gradient-to-br from-orange-600 to-orange-700', icon: '🟠' },
+                        producthunt: { name: 'Product Hunt', color: 'bg-gradient-to-br from-pink-500 to-pink-600', icon: '🚀' },
+                        github: { name: 'GitHub', color: 'bg-gradient-to-br from-gray-600 to-gray-700', icon: '⚫' },
+                        stackoverflow: { name: 'Stack Overflow', color: 'bg-gradient-to-br from-yellow-600 to-yellow-700', icon: '📚' },
+                        googlenews: { name: 'Google News', color: 'bg-gradient-to-br from-blue-600 to-blue-700', icon: '/google.png' }
                       };
 
                       const config = platformConfig[platform.platform as keyof typeof platformConfig];
                       if (!config) return null;
 
+                      const signalStrength = platform.items.length > 10 ? 'Strong' : platform.items.length > 5 ? 'Medium' : 'Weak';
+                      const signalColor = platform.items.length > 10 ? 'text-emerald-400' : platform.items.length > 5 ? 'text-yellow-400' : 'text-red-400';
+
                       return (
-                        <div key={index} className="flex items-center justify-between p-4 bg-slate-800 rounded-lg">
+                        <div key={index} className="flex items-center justify-between p-4 bg-slate-800 rounded-lg hover:bg-slate-750 transition-all border border-slate-700 hover:border-slate-600">
                           <div className="flex items-center gap-3">
-                            <div className={`w-8 h-8 ${config.color} rounded-lg flex items-center justify-center text-white text-sm`}>
+                            <div className={`w-10 h-10 ${config.color} rounded-lg flex items-center justify-center text-white text-sm shadow-lg`}>
                               {config.icon.startsWith('/') ? (
-                                <img src={config.icon} alt={config.name} className="w-5 h-5" />
+                                <img src={config.icon} alt={config.name} className="w-6 h-6" />
                               ) : (
-                                config.icon
+                                <span className="text-lg">{config.icon}</span>
                               )}
                             </div>
                             <div>
                               <p className="font-medium text-white">{config.name}</p>
-                              <p className="text-xs text-slate-400">{platform.items.length} results found</p>
+                              <div className="flex items-center gap-2">
+                                <p className="text-xs text-slate-400">{platform.items.length} results found</p>
+                                <span className={`text-xs font-medium ${signalColor}`}>
+                                  {signalStrength} Signal
+                                </span>
+                              </div>
                             </div>
                           </div>
                           <div className="text-right">
@@ -481,63 +505,176 @@ const ResultsPage: React.FC = () => {
               )}
             </div>
 
-            {/* Social Media Content */}
+            {/* Action Plan */}
+            <div className="mt-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 border border-slate-700">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-2xl font-bold text-white">Next Steps Action Plan</h3>
+                  <p className="text-slate-300 text-lg">Strategic recommendations based on your validation results</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 100 4m-6 8a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 100 4m0-4v2m0-6V4" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-emerald-400">Immediate Actions</h4>
+                  </div>
+                  <ul className="space-y-2 text-slate-300 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-400 mt-1">•</span>
+                      Share results on social media
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-400 mt-1">•</span>
+                      Research competitors in depth
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-400 mt-1">•</span>
+                      Start building MVP prototype
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-blue-400">Market Research</h4>
+                  </div>
+                  <ul className="space-y-2 text-slate-300 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      Interview potential customers
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      Analyze pricing strategies
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-blue-400 mt-1">•</span>
+                      Study market trends
+                    </li>
+                  </ul>
+                </div>
+
+                <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                      </svg>
+                    </div>
+                    <h4 className="font-semibold text-purple-400">Growth Strategy</h4>
+                  </div>
+                  <ul className="space-y-2 text-slate-300 text-sm">
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-400 mt-1">•</span>
+                      Plan launch campaign
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-400 mt-1">•</span>
+                      Set up analytics tracking
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-purple-400 mt-1">•</span>
+                      Prepare funding pitch
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Enhanced Social Media Content */}
             {result.socialMediaSuggestions && (
               <div className="mt-8 bg-slate-900 rounded-2xl p-6 border border-slate-800">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-10 h-10 bg-gradient-to-br from-green-600 to-green-700 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-bold text-white">Content Suggestions</h3>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">Content Suggestions</h3>
+                    <p className="text-slate-400 text-sm">Ready-to-use social media content for your idea</p>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {result.socialMediaSuggestions.tweetSuggestion && (
-                    <div className="bg-slate-800 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-6 h-6 bg-blue-500 rounded-lg flex items-center justify-center">
-                          <span className="text-xs">🐦</span>
+                    <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 hover:border-slate-600 transition-all hover:shadow-lg">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
+                          <span className="text-sm">🐦</span>
                         </div>
-                        <span className="font-medium text-blue-400">Twitter/X</span>
+                        <div>
+                          <span className="font-semibold text-blue-400">Twitter/X</span>
+                          <p className="text-xs text-slate-500">Perfect for quick updates</p>
+                        </div>
                       </div>
-                      <p className="text-slate-300 text-sm leading-relaxed">
+                      <p className="text-slate-300 text-sm leading-relaxed mb-3">
                         {result.socialMediaSuggestions.tweetSuggestion}
                       </p>
+                      <button className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs py-2 px-3 rounded-lg transition-colors">
+                        Copy Tweet
+                      </button>
                     </div>
                   )}
 
                   {result.socialMediaSuggestions.linkedinSuggestion && (
-                    <div className="bg-slate-800 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-6 h-6 bg-blue-700 rounded-lg flex items-center justify-center">
-                          <span className="text-xs">💼</span>
+                    <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 hover:border-slate-600 transition-all hover:shadow-lg">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-700 to-blue-800 rounded-lg flex items-center justify-center">
+                          <span className="text-sm">💼</span>
                         </div>
-                        <span className="font-medium text-blue-600">LinkedIn</span>
+                        <div>
+                          <span className="font-semibold text-blue-600">LinkedIn</span>
+                          <p className="text-xs text-slate-500">Professional networking</p>
+                        </div>
                       </div>
-                      <p className="text-slate-300 text-sm leading-relaxed">
+                      <p className="text-slate-300 text-sm leading-relaxed mb-3">
                         {result.socialMediaSuggestions.linkedinSuggestion}
                       </p>
+                      <button className="w-full bg-blue-700 hover:bg-blue-800 text-white text-xs py-2 px-3 rounded-lg transition-colors">
+                        Copy Post
+                      </button>
                     </div>
                   )}
 
                   {result.socialMediaSuggestions.redditTitleSuggestion && (
-                    <div className="bg-slate-800 rounded-lg p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-6 h-6 bg-orange-500 rounded-lg flex items-center justify-center">
-                          <span className="text-xs">🔴</span>
+                    <div className="bg-slate-800 rounded-xl p-5 border border-slate-700 hover:border-slate-600 transition-all hover:shadow-lg">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div className="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+                          <span className="text-sm">🔴</span>
                         </div>
-                        <span className="font-medium text-orange-500">Reddit</span>
+                        <div>
+                          <span className="font-semibold text-orange-500">Reddit</span>
+                          <p className="text-xs text-slate-500">Community feedback</p>
+                        </div>
                       </div>
                       <p className="text-slate-300 text-sm leading-relaxed font-medium mb-2">
                         {result.socialMediaSuggestions.redditTitleSuggestion}
                       </p>
                       {result.socialMediaSuggestions.redditBodySuggestion && (
-                        <p className="text-slate-400 text-xs leading-relaxed">
-                          {result.socialMediaSuggestions.redditBodySuggestion.substring(0, 100)}...
+                        <p className="text-slate-400 text-xs leading-relaxed mb-3">
+                          {result.socialMediaSuggestions.redditBodySuggestion.substring(0, 120)}...
                         </p>
                       )}
+                      <button className="w-full bg-orange-600 hover:bg-orange-700 text-white text-xs py-2 px-3 rounded-lg transition-colors">
+                        Copy Post
+                      </button>
                     </div>
                   )}
                 </div>
