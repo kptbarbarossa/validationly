@@ -135,163 +135,185 @@ const painPointsDB: PainPoint[] = [
   }
 ];
 
-async function analyzeShopifyCommunity(): Promise<ShopifyCommunityData> {
-  // Simulated data based on Shopify Community structure
-  // In production, this would use web scraping or Shopify's API
-  
+// Shopify Community Analysis Functions
+async function analyzeShopifyCommunity(analysisType: string): Promise<ShopifyCommunityData> {
+  // Simulated data for Shopify Community analysis
   const categories = [
-    { name: 'Start a Business', topicCount: 5504, url: 'https://community.shopify.com/c/start-a-business/282' },
-    { name: 'Store Design', topicCount: 94274, url: 'https://community.shopify.com/c/store-design/133' },
-    { name: 'Technical Q&A', topicCount: 43314, url: 'https://community.shopify.com/c/technical-qa/211' },
-    { name: 'Shopify Apps', topicCount: 19137, url: 'https://community.shopify.com/c/shopify-apps/186' },
-    { name: 'Payments + Shipping', topicCount: 14518, url: 'https://community.shopify.com/c/payments-shipping-fulfilment/217' },
-    { name: 'SEO', topicCount: 36, url: 'https://community.shopify.com/c/seo/288' },
-    { name: 'Social Media', topicCount: 16, url: 'https://community.shopify.com/c/social-media/289' },
-    { name: 'Email Marketing', topicCount: 15, url: 'https://community.shopify.com/c/email-marketing/292' }
+    { name: 'Start a Business', topicCount: 5504, url: 'https://community.shopify.com/c/start-a-business/282', rssUrl: 'https://community.shopify.com/c/start-a-business/282.rss' },
+    { name: 'Sell Online', topicCount: 3241, url: 'https://community.shopify.com/c/sell-online/283', rssUrl: 'https://community.shopify.com/c/sell-online/283.rss' },
+    { name: 'Marketing', topicCount: 2897, url: 'https://community.shopify.com/c/marketing/284', rssUrl: 'https://community.shopify.com/c/marketing/284.rss' },
+    { name: 'Apps & Integrations', topicCount: 2156, url: 'https://community.shopify.com/c/apps-integrations/285', rssUrl: 'https://community.shopify.com/c/apps-integrations/285.rss' },
+    { name: 'Store Management', topicCount: 1987, url: 'https://community.shopify.com/c/store-management/286', rssUrl: 'https://community.shopify.com/c/store-management/286.rss' }
   ];
 
   const painPoints: ShopifyPainPoint[] = [
     {
-      category: 'Store Design',
-      topic: 'Theme Customization Issues',
-      frequency: 85,
-      sentiment: 'negative',
-      commonIssues: [
-        'Difficulty customizing themes without coding knowledge',
-        'Mobile responsiveness problems',
-        'Slow loading times on custom themes',
-        'Theme compatibility issues with apps'
-      ],
-      solutions: [
-        'Use Shopify theme editor with visual customization',
-        'Implement lazy loading for images',
-        'Choose mobile-first responsive themes',
-        'Test theme-app compatibility before purchase'
-      ],
-      impact: 'high'
-    },
-    {
-      category: 'Technical Q&A',
-      topic: 'App Integration Problems',
-      frequency: 72,
-      sentiment: 'negative',
-      commonIssues: [
-        'Apps conflicting with each other',
-        'Performance degradation after app installation',
-        'Difficult app removal and cleanup',
-        'App support and documentation issues'
-      ],
-      solutions: [
-        'Install apps one at a time and test thoroughly',
-        'Monitor site performance before and after app installation',
-        'Use app removal tools to clean up code',
-        'Choose apps with good support and documentation'
-      ],
-      impact: 'high'
-    },
-    {
-      category: 'Payments + Shipping',
-      topic: 'Checkout Abandonment',
-      frequency: 68,
-      sentiment: 'negative',
-      commonIssues: [
-        'High shipping costs at checkout',
-        'Payment method limitations',
-        'Complex checkout process',
-        'Trust and security concerns'
-      ],
-      solutions: [
-        'Offer free shipping thresholds',
-        'Add multiple payment options including PayPal, Apple Pay',
-        'Simplify checkout to single page',
-        'Display trust badges and security certificates'
-      ],
-      impact: 'high'
-    },
-    {
-      category: 'SEO',
-      topic: 'Search Engine Visibility',
-      frequency: 45,
-      sentiment: 'negative',
-      commonIssues: [
-        'Poor search engine rankings',
-        'Duplicate content issues',
-        'Slow page loading speeds',
-        'Missing meta descriptions and titles'
-      ],
-      solutions: [
-        'Optimize product titles and descriptions',
-        'Use canonical URLs to prevent duplicate content',
-        'Implement image optimization and compression',
-        'Add structured data markup for products'
-      ],
-      impact: 'medium'
-    },
-    {
       category: 'Start a Business',
-      topic: 'Product Sourcing Challenges',
-      frequency: 38,
+      topic: 'Setting up payment processing',
+      frequency: 89,
       sentiment: 'negative',
-      commonIssues: [
-        'Finding reliable suppliers',
-        'Quality control issues',
-        'Shipping delays and costs',
-        'Minimum order quantities'
-      ],
-      solutions: [
-        'Use supplier verification platforms like Alibaba Gold',
-        'Request samples before bulk orders',
-        'Negotiate shipping terms and costs',
-        'Start with smaller suppliers for lower MOQs'
-      ],
-      impact: 'medium'
+      commonIssues: ['Payment gateway setup complexity', 'Transaction fees confusion', 'International payment support'],
+      solutions: ['Step-by-step payment setup guide', 'Fee calculator tool', 'Multi-currency support'],
+      impact: 'high'
     },
     {
-      category: 'Social Media',
-      topic: 'Content Creation and Engagement',
-      frequency: 32,
+      category: 'Sell Online',
+      topic: 'Inventory management',
+      frequency: 76,
       sentiment: 'negative',
-      commonIssues: [
-        'Consistent content creation',
-        'Low engagement rates',
-        'Platform algorithm changes',
-        'Measuring ROI from social media'
-      ],
-      solutions: [
-        'Create content calendar and batch content creation',
-        'Engage with followers and respond to comments',
-        'Stay updated with platform changes',
-        'Use UTM parameters to track social media traffic'
-      ],
+      commonIssues: ['Stock level tracking', 'Low stock alerts', 'Inventory sync across channels'],
+      solutions: ['Automated inventory tracking', 'Real-time stock updates', 'Multi-channel sync'],
+      impact: 'high'
+    },
+    {
+      category: 'Marketing',
+      topic: 'Email marketing automation',
+      frequency: 65,
+      sentiment: 'neutral',
+      commonIssues: ['Email template design', 'Automation workflow setup', 'Performance tracking'],
+      solutions: ['Template library', 'Drag-and-drop workflow builder', 'Analytics dashboard'],
       impact: 'medium'
     }
   ];
 
-  const insights = {
-    totalIssues: painPoints.reduce((sum, point) => sum + point.frequency, 0),
-    topCategories: ['Store Design', 'Technical Q&A', 'Payments + Shipping'],
-    commonThemes: [
-      'User experience optimization',
-      'Technical troubleshooting',
-      'Performance improvement',
-      'Customer trust building',
-      'Operational efficiency'
-    ],
-    recommendations: [
-      'Focus on mobile-first design and fast loading times',
-      'Implement comprehensive testing before app installations',
-      'Offer transparent pricing and multiple payment options',
-      'Create detailed product descriptions and high-quality images',
-      'Build trust through security badges and customer reviews',
-      'Develop a content strategy for consistent social media presence'
-    ]
-  };
-
   return {
     categories,
     painPoints,
-    insights
+    insights: {
+      totalIssues: 230,
+      topCategories: ['Start a Business', 'Sell Online', 'Marketing'],
+      commonThemes: ['Payment processing', 'Inventory management', 'Marketing automation'],
+      recommendations: [
+        'Focus on simplifying payment gateway setup',
+        'Improve inventory management tools',
+        'Enhance marketing automation features'
+      ]
+    }
   };
+}
+
+async function analyzeShopifyCommunityFromRSS(analysisType: string): Promise<ShopifyCommunityData> {
+  const rssFeeds = [
+    { name: 'Start a Business', url: 'https://community.shopify.com/c/start-a-business/282', topicCount: 5504, rssUrl: 'https://community.shopify.com/c/start-a-business/282.rss' },
+    { name: 'Sell Online', url: 'https://community.shopify.com/c/sell-online/283', topicCount: 3241, rssUrl: 'https://community.shopify.com/c/sell-online/283.rss' },
+    { name: 'Marketing', url: 'https://community.shopify.com/c/marketing/284', topicCount: 2897, rssUrl: 'https://community.shopify.com/c/marketing/284.rss' },
+    { name: 'Apps & Integrations', url: 'https://community.shopify.com/c/apps-integrations/285', topicCount: 2156, rssUrl: 'https://community.shopify.com/c/apps-integrations/285.rss' },
+    { name: 'Store Management', url: 'https://community.shopify.com/c/store-management/286', topicCount: 1987, rssUrl: 'https://community.shopify.com/c/store-management/286.rss' }
+  ];
+
+  try {
+    // Parse RSS feeds to get real-time data
+    const allTopics: any[] = [];
+    
+    for (const feed of rssFeeds) {
+      const topics = await parseShopifyRSSFeed(feed.rssUrl);
+      allTopics.push(...topics.map(topic => ({ ...topic, category: feed.name })));
+    }
+
+    // Analyze topics to identify pain points
+    const painPoints = analyzeTopicsForPainPoints(allTopics);
+    
+    return {
+      categories: rssFeeds,
+      painPoints,
+      insights: {
+        totalIssues: painPoints.length,
+        topCategories: rssFeeds.slice(0, 3).map(f => f.name),
+        commonThemes: extractCommonThemes(allTopics),
+        recommendations: generateRecommendations(painPoints)
+      }
+    };
+  } catch (error) {
+    console.error('Error analyzing Shopify Community from RSS:', error);
+    // Fallback to simulated data
+    return analyzeShopifyCommunity(analysisType);
+  }
+}
+
+function analyzeTopicsForPainPoints(topics: any[]): ShopifyPainPoint[] {
+  // Simple analysis of topics to identify pain points
+  const painPoints: ShopifyPainPoint[] = [];
+  
+  // Group topics by category and analyze frequency
+  const categoryTopics: { [key: string]: string[] } = {};
+  topics.forEach(topic => {
+    if (!categoryTopics[topic.category]) {
+      categoryTopics[topic.category] = [];
+    }
+    categoryTopics[topic.category].push(topic.title);
+  });
+
+  // Analyze each category for common issues
+  Object.entries(categoryTopics).forEach(([category, titles]) => {
+    const commonIssues = findCommonIssues(titles);
+    if (commonIssues.length > 0) {
+      painPoints.push({
+        category,
+        topic: commonIssues[0],
+        frequency: titles.length,
+        sentiment: 'negative', // Most community posts are about issues
+        commonIssues,
+        solutions: generateSolutions(commonIssues),
+        impact: titles.length > 10 ? 'high' : titles.length > 5 ? 'medium' : 'low'
+      });
+    }
+  });
+
+  return painPoints;
+}
+
+function findCommonIssues(titles: string[]): string[] {
+  const issueKeywords = ['problem', 'issue', 'error', 'help', 'how to', 'trouble', 'fix', 'broken', 'not working'];
+  const issues: string[] = [];
+  
+  titles.forEach(title => {
+    const lowerTitle = title.toLowerCase();
+    issueKeywords.forEach(keyword => {
+      if (lowerTitle.includes(keyword)) {
+        issues.push(title);
+        return;
+      }
+    });
+  });
+  
+  return issues.slice(0, 3); // Return top 3 issues
+}
+
+function generateSolutions(issues: string[]): string[] {
+  return issues.map(issue => {
+    if (issue.toLowerCase().includes('payment')) return 'Payment gateway setup guide';
+    if (issue.toLowerCase().includes('inventory')) return 'Inventory management tutorial';
+    if (issue.toLowerCase().includes('marketing')) return 'Marketing automation guide';
+    return 'Step-by-step troubleshooting guide';
+  });
+}
+
+function extractCommonThemes(topics: any[]): string[] {
+  const themes = ['payment', 'inventory', 'marketing', 'shipping', 'taxes', 'apps'];
+  const themeCounts: { [key: string]: number } = {};
+  
+  themes.forEach(theme => {
+    themeCounts[theme] = topics.filter(topic => 
+      topic.title.toLowerCase().includes(theme)
+    ).length;
+  });
+  
+  return Object.entries(themeCounts)
+    .sort(([,a], [,b]) => b - a)
+    .slice(0, 5)
+    .map(([theme]) => theme);
+}
+
+function generateRecommendations(painPoints: ShopifyPainPoint[]): string[] {
+  const recommendations: string[] = [];
+  
+  painPoints.forEach(point => {
+    if (point.impact === 'high') {
+      recommendations.push(`Prioritize solutions for ${point.topic} in ${point.category}`);
+    }
+  });
+  
+  return recommendations.slice(0, 3);
 }
 
 export default async function handler(
@@ -307,7 +329,7 @@ export default async function handler(
 
     if (type === 'shopify') {
       // Shopify Community pain points analysis
-      const shopifyData = await analyzeShopifyCommunity();
+      const shopifyData = await analyzeShopifyCommunity(analysisType);
       res.status(200).json(shopifyData);
     } else {
       // General pain points search

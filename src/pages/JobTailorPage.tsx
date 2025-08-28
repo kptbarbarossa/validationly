@@ -85,7 +85,7 @@ const JobTailorPage: React.FC = () => {
         }
 
         try {
-            const response = await fetch('/api/billing/create-checkout', {
+            const response = await fetch('/api/analytics?action=create-checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
