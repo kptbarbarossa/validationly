@@ -42,12 +42,12 @@ const ShopifyPainPointsPage: React.FC = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/pain-points', {
+      const response = await fetch('/api/shopify-pain-points', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ type: 'shopify', analysisType: 'comprehensive' }),
+        body: JSON.stringify({ analysisType: 'comprehensive' }),
       });
 
       if (!response.ok) {
