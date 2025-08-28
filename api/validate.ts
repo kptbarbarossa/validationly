@@ -570,9 +570,73 @@ async function getYouTubeData(keyword: string): Promise<any> {
 async function getMultiPlatformData(keyword: string): Promise<any> {
   try {
     console.log('🌐 Fetching multi-platform data for:', keyword);
-    const multiPlatformService = new MultiPlatformService();
+    
+    // Fetch Hacker News data directly using our new API
+    const hnResponse = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/hackernews`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        query: keyword,
+        analysisType: 'comprehensive'
+      })
+    });
 
+    let hnData = null;
+    if (hnResponse.ok) {
+      hnData = await hnResponse.json();
+      console.log('✅ Hacker News data fetched:', {
+        totalResults: hnData.totalResults,
+        itemsCount: hnData.items?.length || 0
+      });
+    } else {
+      console.log('⚠️ Hacker News API failed, using fallback');
+    }
+
+    // Use existing MultiPlatformService for other platforms
+    const multiPlatformService = new MultiPlatformService();
     const analysis = await multiPlatformService.analyzeIdea(keyword, 10);
+
+    // Integrate Hacker News data if available
+    if (hnData && hnData.items && hnData.items.length > 0) {
+      // Find and update Hacker News platform data
+      const hnPlatformIndex = analysis.platforms.findIndex(p => p.platform === 'hackernews');
+      if (hnPlatformIndex !== -1) {
+        analysis.platforms[hnPlatformIndex] = {
+          platform: 'hackernews',
+          items: hnData.items.map((item: any) => ({
+            id: item.objectID,
+            title: item.title,
+            url: item.url,
+            author: item.author,
+            score: item.points,
+            comments: item.num_comments,
+            created_at: item.created_at,
+            platform: 'hackernews',
+            source_url: `https://news.ycombinator.com/item?id=${item.objectID}`,
+            // Add analysis data
+            analysis: {
+              points: item.points,
+              comments: item.num_comments,
+              engagement: item.points + item.num_comments
+            }
+          })),
+          totalResults: hnData.totalResults,
+          metadata: {
+            analysis: hnData.analysis,
+            averagePoints: hnData.analysis.averagePoints,
+            averageComments: hnData.analysis.averageComments,
+            sentiment: hnData.analysis.sentiment,
+            engagementScore: hnData.analysis.engagementScore
+          }
+        };
+      }
+
+      // Update summary
+      analysis.summary.hackernews = hnData.totalResults;
+      analysis.totalItems = analysis.platforms.reduce((sum, p) => sum + p.items.length, 0);
+    }
 
     return {
       ...analysis,
