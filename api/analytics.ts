@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
 import Stripe from 'stripe';
-import { ValidationlyDB } from '../lib/supabase';
+import { ValidationlyDB } from '../lib/supabase.js';
 
 interface UserPayload {
     id: string;

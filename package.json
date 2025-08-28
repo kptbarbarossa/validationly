@@ -7,6 +7,8 @@
     "dev": "vite",
     "build": "vite build --mode production",
     "build:safe": "SKIP_TYPE_CHECK=true vite build",
+    "build:api": "node build-api.js",
+    "build:all": "npm run build && npm run build:api",
     "preview": "vite preview",
     "test:platforms": "node test-platforms.js",
     "test:youtube": "node test-youtube.js",

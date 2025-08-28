@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import jwt from 'jsonwebtoken';
-import { JobScraper, JobPosting } from '../lib/jobScraper';
+import { JobScraper, JobPosting } from '../lib/jobScraper.js';
 
 interface UserPayload {
     id: string;

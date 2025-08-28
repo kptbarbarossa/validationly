@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { MultiPlatformService } from '../lib/services/multiPlatformService.js';
-import { GoogleGenAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 import { YouTubeService } from '../lib/services/platforms/youtube.js';
-import { ValidationlyDB } from '../lib/supabase';
+import { ValidationlyDB } from '../lib/supabase.js';
 
 // Import our enhanced prompt system
 
@@ -1004,7 +1004,7 @@ async function enhanceYouTubeWithGemini(youtubeData: any, idea: string): Promise
 
     console.log('🤖 Enhancing YouTube data with Gemini AI...');
 
-    const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
+    const gemini = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
     const analysisPrompt = `You are an expert YouTube market analyst and content strategist.
 
@@ -1088,7 +1088,7 @@ async function enhanceTrendsWithGemini(trendsData: any, idea: string): Promise<a
 
     console.log('🤖 Enhancing trends data with Gemini AI...');
 
-    const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
+    const gemini = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
     const analysisPrompt = `You are an expert market analyst and trend interpreter.
 
@@ -1176,7 +1176,7 @@ async function optimizePromptWithAI(inputContent: string): Promise<string> {
   // Try Gemini first
   if (availableModels.gemini) {
     try {
-      const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY!);
+      const gemini = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
       const result = await gemini.models.generateContent({
         model: "gemini-1.5-flash",
         contents: `Optimize this business idea for comprehensive market validation analysis. Transform it into a clear, specific, and actionable description that includes:
@@ -1286,7 +1286,7 @@ function getAI() {
 
   // Auto-select AI model with fallback
   if (availableModels.gemini) {
-    return new GoogleGenAI(process.env.GOOGLE_API_KEY!);
+    return new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
   } else if (availableModels.openai) {
     return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   } else if (availableModels.groq) {
@@ -1655,7 +1655,7 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
           if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
             try {
               console.log(`🚀 Performing enhanced analysis for ${userTier} user...`);
-              const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+              const gemini = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
               const enhancedResult = await performEnhancedAnalysis(
                 inputContent,
                 classification,
@@ -2024,7 +2024,7 @@ Provide realistic, comprehensive, industry-specific analysis for ${classificatio
       if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
         try {
           console.log(`🚀 Performing enhanced analysis for ${userTier} user (normal mode)...`);
-          const gemini = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+          const gemini = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
           const enhancedResult = await performEnhancedAnalysis(
             inputContent,
             classification,
