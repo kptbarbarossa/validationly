@@ -69,6 +69,14 @@ const ToolsPage: React.FC = () => {
                 icon: '🤖',
                 route: '/analysis',
                 features: ['Strategic insights', 'Risk analysis', 'Validation plan', 'GTM strategy']
+            },
+            {
+                id: 'public-validation',
+                title: 'Public Validation',
+                description: 'Validate ideas using real community discussions across Reddit communities and social platforms.',
+                icon: '🔍',
+                route: '/public-validation',
+                features: ['Reddit communities', 'Real discussions', 'Community feedback', 'Social validation']
             }
     ];
 

@@ -253,31 +253,10 @@ const HomePage: React.FC = () => {
                         Get AI-driven market validation across 7+ platforms in seconds. Comprehensive analysis with actionable insights.
                     </p>
 
-                    {/* Multi-Platform Badges */}
-                    <div className="flex flex-wrap justify-center gap-3 mb-8 animate-slide-up delay-300">
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-300 text-sm">
-                            <span>🤖</span> Reddit
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-orange-500/10 border border-orange-500/20 rounded-full text-orange-300 text-sm">
-                            <span>📰</span> Hacker News
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-pink-500/10 border border-pink-500/20 rounded-full text-pink-300 text-sm">
-                            <span>🚀</span> Product Hunt
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-gray-500/10 border border-gray-500/20 rounded-full text-gray-300 text-sm">
-                            <span>💻</span> GitHub
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-yellow-500/10 border border-yellow-500/20 rounded-full text-yellow-300 text-sm">
-                            <span>❓</span> Stack Overflow
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300 text-sm">
-                            <img src="/google.png" alt="Google" className="w-4 h-4" />
-                            Google News
-                        </div>
-                        <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full text-red-300 text-sm">
-                            <span>📺</span> YouTube
-                        </div>
-                    </div>
+                    {/* Platform List as Text */}
+                    <p className="text-lg text-slate-400 mb-8 animate-slide-up delay-300">
+                        Reddit • Hacker News • Product Hunt • GitHub • Stack Overflow • Google News • YouTube
+                    </p>
 
                 </div>
             </div>
@@ -371,21 +350,6 @@ const HomePage: React.FC = () => {
                 {isLoading && <EnhancedLoadingSpinner idea={userInput.idea} isLoading={isLoading} />}
             </form>
 
-            {/* Public Validation CTA */}
-            <div className="mt-6 mb-8 text-center">
-                <button
-                    onClick={() => navigate('/public-validation')}
-                    className="glass glass-border inline-flex items-center gap-3 px-6 py-3 rounded-full text-slate-200 hover:text-white hover:border-purple-400/50 transition-all group"
-                >
-                    <span className="text-lg">🔍</span>
-                    <span className="font-medium">Public Validation</span>
-                    <span className="text-xs text-slate-400 group-hover:text-slate-300">Reddit Communities</span>
-                </button>
-                <p className="text-sm text-slate-400 mt-2">
-                    Validate ideas using real community discussions
-                </p>
-            </div>
-
             {/* Simple Prompt Gallery */}
             <PromptGallery
                 onUse={(text) => {
@@ -400,36 +364,7 @@ const HomePage: React.FC = () => {
                 <RedditPosts />
             </div>
 
-            {/* Premium Tier Selector (Test Mode) */}
-            <div className="mt-8 max-w-2xl mx-auto">
-                <div className="glass glass-border p-6 rounded-2xl">
-                    <h3 className="text-lg font-bold text-center mb-4 text-slate-300">🧪 Test Premium Features</h3>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        {[
-                            { tier: 'free', label: '🆓 Free', desc: 'Basic analysis' },
-                            { tier: 'pro', label: '💎 Pro', desc: 'Deep dive analysis' },
-                            { tier: 'business', label: '🚀 Business', desc: '+ Competitor intel' },
-                            { tier: 'enterprise', label: '👑 Enterprise', desc: '+ Market timing' }
-                        ].map(({ tier, label, desc }) => (
-                            <button
-                                key={tier}
-                                onClick={() => setSelectedTier(tier as any)}
-                                className={`p-3 rounded-xl text-center transition-all ${
-                                    selectedTier === tier
-                                        ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white'
-                                        : 'bg-white/5 text-slate-300 hover:bg-white/10'
-                                }`}
-                            >
-                                <div className="font-semibold text-sm">{label}</div>
-                                <div className="text-xs opacity-75">{desc}</div>
-                            </button>
-                        ))}
-                    </div>
-                    <p className="text-center text-xs text-slate-500 mt-3">
-                        Select tier to test enhanced analysis features
-                    </p>
-                </div>
-            </div>
+
 
             {/* Removed sample ideas section (Prompt Gallery replaces it) */}
 

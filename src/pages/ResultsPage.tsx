@@ -442,7 +442,7 @@ const ResultsPage: React.FC = () => {
                 </div>
               )}
 
-              {/* Platform Data Summary */}
+              {/* Enhanced Platform Analysis - Each Platform in Separate Card */}
               {result.multiPlatformData && (
                 <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800">
                   <div className="flex items-center gap-3 mb-6">
@@ -452,19 +452,62 @@ const ResultsPage: React.FC = () => {
                       </svg>
                     </div>
                     <h3 className="text-xl font-bold text-white">Platform Analysis</h3>
+                    <span className="text-sm text-slate-400">Detailed insights from each platform</span>
                   </div>
 
-                  <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {result.multiPlatformData.platforms.map((platform, index) => {
                       if (!platform.items || platform.items.length === 0) return null;
 
                       const platformConfig = {
-                        reddit: { name: 'Reddit', color: 'bg-gradient-to-br from-orange-500 to-orange-600', icon: '🔴' },
-                        hackernews: { name: 'Hacker News', color: 'bg-gradient-to-br from-orange-600 to-orange-700', icon: '🟠' },
-                        producthunt: { name: 'Product Hunt', color: 'bg-gradient-to-br from-pink-500 to-pink-600', icon: '🚀' },
-                        github: { name: 'GitHub', color: 'bg-gradient-to-br from-gray-600 to-gray-700', icon: '⚫' },
-                        stackoverflow: { name: 'Stack Overflow', color: 'bg-gradient-to-br from-yellow-600 to-yellow-700', icon: '📚' },
-                        googlenews: { name: 'Google News', color: 'bg-gradient-to-br from-blue-600 to-blue-700', icon: '/google.png' }
+                        reddit: { 
+                          name: 'Reddit', 
+                          color: 'bg-gradient-to-br from-orange-500 to-orange-600', 
+                          icon: '🔴',
+                          description: 'Community discussions and sentiment analysis',
+                          bgColor: 'from-orange-500/10 to-orange-600/10',
+                          borderColor: 'border-orange-500/20'
+                        },
+                        hackernews: { 
+                          name: 'Hacker News', 
+                          color: 'bg-gradient-to-br from-orange-600 to-orange-700', 
+                          icon: '🟠',
+                          description: 'Tech community insights and trends',
+                          bgColor: 'from-orange-600/10 to-orange-700/10',
+                          borderColor: 'border-orange-600/20'
+                        },
+                        producthunt: { 
+                          name: 'Product Hunt', 
+                          color: 'bg-gradient-to-br from-pink-500 to-pink-600', 
+                          icon: '🚀',
+                          description: 'Product launches and market validation',
+                          bgColor: 'from-pink-500/10 to-pink-600/10',
+                          borderColor: 'border-pink-500/20'
+                        },
+                        github: { 
+                          name: 'GitHub', 
+                          color: 'bg-gradient-to-br from-gray-600 to-gray-700', 
+                          icon: '⚫',
+                          description: 'Developer activity and open source trends',
+                          bgColor: 'from-gray-600/10 to-gray-700/10',
+                          borderColor: 'border-gray-600/20'
+                        },
+                        stackoverflow: { 
+                          name: 'Stack Overflow', 
+                          color: 'bg-gradient-to-br from-yellow-600 to-yellow-700', 
+                          icon: '📚',
+                          description: 'Technical questions and developer needs',
+                          bgColor: 'from-yellow-600/10 to-yellow-700/10',
+                          borderColor: 'border-yellow-600/20'
+                        },
+                        googlenews: { 
+                          name: 'Google News', 
+                          color: 'bg-gradient-to-br from-blue-600 to-blue-700', 
+                          icon: '/google.png',
+                          description: 'News coverage and media attention',
+                          bgColor: 'from-blue-600/10 to-blue-700/10',
+                          borderColor: 'border-blue-600/20'
+                        }
                       };
 
                       const config = platformConfig[platform.platform as keyof typeof platformConfig];
@@ -472,30 +515,55 @@ const ResultsPage: React.FC = () => {
 
                       const signalStrength = platform.items.length > 10 ? 'Strong' : platform.items.length > 5 ? 'Medium' : 'Weak';
                       const signalColor = platform.items.length > 10 ? 'text-emerald-400' : platform.items.length > 5 ? 'text-yellow-400' : 'text-red-400';
+                      const signalBgColor = platform.items.length > 10 ? 'bg-emerald-500/10' : platform.items.length > 5 ? 'bg-yellow-500/10' : 'bg-red-500/10';
 
                       return (
-                        <div key={index} className="flex items-center justify-between p-4 bg-slate-800 rounded-lg hover:bg-slate-750 transition-all border border-slate-700 hover:border-slate-600">
-                          <div className="flex items-center gap-3">
-                            <div className={`w-10 h-10 ${config.color} rounded-lg flex items-center justify-center text-white text-sm shadow-lg`}>
+                        <div key={index} className={`bg-gradient-to-br ${config.bgColor} rounded-xl p-6 border ${config.borderColor} hover:border-white/20 transition-all hover:shadow-lg`}>
+                          <div className="flex items-center gap-4 mb-4">
+                            <div className={`w-12 h-12 ${config.color} rounded-xl flex items-center justify-center text-white text-lg shadow-lg`}>
                               {config.icon.startsWith('/') ? (
-                                <img src={config.icon} alt={config.name} className="w-6 h-6" />
+                                <img src={config.icon} alt={config.name} className="w-7 h-7" />
                               ) : (
-                                <span className="text-lg">{config.icon}</span>
+                                <span className="text-xl">{config.icon}</span>
                               )}
                             </div>
-                            <div>
-                              <p className="font-medium text-white">{config.name}</p>
-                              <div className="flex items-center gap-2">
-                                <p className="text-xs text-slate-400">{platform.items.length} results found</p>
-                                <span className={`text-xs font-medium ${signalColor}`}>
-                                  {signalStrength} Signal
-                                </span>
-                              </div>
+                            <div className="flex-1">
+                              <h4 className="font-bold text-white text-lg">{config.name}</h4>
+                              <p className="text-slate-300 text-sm">{config.description}</p>
                             </div>
                           </div>
-                          <div className="text-right">
-                            <div className="text-lg font-bold text-white">{platform.items.length}</div>
-                            <div className="text-xs text-slate-400">items</div>
+                          
+                          <div className="space-y-4">
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className={`px-3 py-1 rounded-full text-xs font-medium ${signalBgColor} ${signalColor} border border-current/20`}>
+                                  {signalStrength} Signal
+                                </span>
+                                <span className="text-slate-400 text-sm">{platform.items.length} results</span>
+                              </div>
+                              <div className="text-right">
+                                <div className="text-2xl font-bold text-white">{platform.items.length}</div>
+                                <div className="text-xs text-slate-400">items found</div>
+                              </div>
+                            </div>
+                            
+                            {platform.items.length > 0 && (
+                              <div className="bg-slate-800/50 rounded-lg p-3">
+                                <p className="text-xs text-slate-400 mb-2">Sample results:</p>
+                                <div className="space-y-2">
+                                  {platform.items.slice(0, 3).map((item: any, itemIndex: number) => (
+                                    <div key={itemIndex} className="text-xs text-slate-300 bg-slate-700/50 rounded p-2">
+                                      {item.title || item.name || item.text || 'Result item'}
+                                    </div>
+                                  ))}
+                                  {platform.items.length > 3 && (
+                                    <p className="text-xs text-slate-500 text-center">
+                                      +{platform.items.length - 3} more results
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       );
