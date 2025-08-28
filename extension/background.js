@@ -83,7 +83,7 @@ async function handleCVOptimization(data, sendResponse) {
     }
     
     // Call Job Tailor API
-    const response = await fetch(`${API_BASE}/api/rewrite`, {
+            const response = await fetch(`${API_BASE}/api/jobs?action=rewrite`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

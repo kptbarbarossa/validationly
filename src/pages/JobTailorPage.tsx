@@ -131,7 +131,7 @@ const JobTailorPage: React.FC = () => {
         setResult(null);
 
         try {
-            const response = await fetch('/api/rewrite', {
+            const response = await fetch('/api/jobs?action=rewrite', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
