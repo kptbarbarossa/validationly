@@ -1,10 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { MultiPlatformService } from '../lib/services/multiPlatformService';
+import { MultiPlatformService } from '../lib/services/multiPlatformService.js';
 import { GoogleGenAI } from '@google/generative-ai';
 import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 import { YouTubeService } from '../lib/services/platforms/youtube.js';
-import { ValidationlyDB } from '../lib/supabase.js';
+import { ValidationlyDB } from '../lib/supabase';
 
 // Import our enhanced prompt system
 

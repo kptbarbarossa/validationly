@@ -515,12 +515,7 @@ const ResultsPage: React.FC = () => {
                         color: 'bg-slate-700',
                         description: 'Social media engagement analysis'
                       },
-                      pinterest: { 
-                        name: 'Pinterest', 
-                        icon: 'P',
-                        color: 'bg-slate-700',
-                        description: 'Visual content and inspiration'
-                      }
+
                     };
 
                     const config = platformConfig[platform.platform as keyof typeof platformConfig] || {
