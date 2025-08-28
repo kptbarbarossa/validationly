@@ -73,6 +73,32 @@ const AuthPage: React.FC = () => {
             </p>
           </div>
 
+          {/* Google Sign In Button - Moved to top */}
+          <button
+            onClick={handleGoogleSignIn}
+            disabled={loading}
+            className="w-full gsi-material-button mb-6"
+          >
+            <div className="gsi-material-button-state"></div>
+            <div className="gsi-material-button-content-wrapper">
+              <div className="gsi-material-button-icon">
+                <img src="/google.png" alt="Google" className="w-5 h-5" />
+              </div>
+              <span className="gsi-material-button-contents">Continue with Google</span>
+            </div>
+          </button>
+
+          <div className="mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-600" />
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-slate-800 text-slate-400">Or continue with email</span>
+              </div>
+            </div>
+          </div>
+
           {error && (
             <div className="mb-6 p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-200 text-sm">
               {error}
@@ -136,30 +162,7 @@ const AuthPage: React.FC = () => {
             </button>
           </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-600" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-slate-800 text-slate-400">Or</span>
-              </div>
-            </div>
 
-            <button
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-              className="mt-4 w-full gsi-material-button"
-            >
-              <div className="gsi-material-button-state"></div>
-              <div className="gsi-material-button-content-wrapper">
-                <div className="gsi-material-button-icon">
-                  <img src="/google.png" alt="Google" className="w-5 h-5" />
-                </div>
-                <span className="gsi-material-button-contents">Continue with Google</span>
-              </div>
-            </button>
-          </div>
 
           <div className="mt-6 text-center">
             <button

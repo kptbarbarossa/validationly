@@ -55,19 +55,19 @@ const JobTailorPage: React.FC = () => {
                 setUserPlan({
                     plan: 'free',
                     dailyUsage: 0,
-                    limit: 10, // Trial'da daha fazla limit
-                    trialDaysLeft: 7,
-                    isTrialActive: true
+                    limit: 3,
+                    trialDaysLeft: 0,
+                    isTrialActive: false
                 });
                 localStorage.setItem('jobTailorToken', data.token);
                 localStorage.setItem('jobTailorUserPlan', JSON.stringify({
                     plan: 'free',
                     dailyUsage: 0,
-                    limit: 10,
-                    trialDaysLeft: 7,
-                    isTrialActive: true
+                    limit: 3,
+                    trialDaysLeft: 0,
+                    isTrialActive: false
                 }));
-                alert('🎉 Free trial started! You have 7 days with 10 CV rewrites per day.');
+                alert('🎉 You now have 3 free CV rewrites! Upgrade to Pro for unlimited access.');
             } else {
                 alert(data.error || 'Failed to start trial');
             }
