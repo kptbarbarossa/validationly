@@ -15,6 +15,7 @@ interface ShopifyCommunityData {
     name: string;
     topicCount: number;
     url: string;
+    rssUrl: string;
   }[];
   painPoints: PainPoint[];
   insights: {
@@ -23,6 +24,43 @@ interface ShopifyCommunityData {
     commonThemes: string[];
     recommendations: string[];
   };
+}
+
+// Function to parse RSS feeds from Shopify Community
+async function parseShopifyRSSFeed(rssUrl: string): Promise<any[]> {
+  try {
+    const response = await fetch(rssUrl);
+    if (!response.ok) {
+      console.warn(`Failed to fetch RSS from ${rssUrl}`);
+      return [];
+    }
+    
+    const xmlText = await response.text();
+    
+    // Simple XML parsing for RSS feeds
+    // In production, use a proper XML parser like 'xml2js'
+    const topics: any[] = [];
+    
+    // Extract topic titles and basic info from RSS
+    const titleMatches = xmlText.match(/<title>(.*?)<\/title>/g);
+    const linkMatches = xmlText.match(/<link>(.*?)<\/link>/g);
+    
+    if (titleMatches && linkMatches) {
+      for (let i = 0; i < Math.min(titleMatches.length, linkMatches.length); i++) {
+        const title = titleMatches[i].replace(/<title>|<\/title>/g, '');
+        const link = linkMatches[i].replace(/<link>|<\/link>/g, '');
+        
+        if (title && link && !title.includes('Shopify Community')) {
+          topics.push({ title, link });
+        }
+      }
+    }
+    
+    return topics;
+  } catch (error) {
+    console.error(`Error parsing RSS feed ${rssUrl}:`, error);
+    return [];
+  }
 }
 
 export default async function handler(
@@ -34,11 +72,17 @@ export default async function handler(
   }
 
   try {
-    const { analysisType = 'comprehensive' } = req.body;
+    const { analysisType = 'comprehensive', useRealData = false } = req.body;
 
-    // Simulate Shopify Community analysis
-    // In production, this would scrape the actual Shopify Community forums
-    const shopifyData = await analyzeShopifyCommunity(analysisType);
+    let shopifyData: ShopifyCommunityData;
+
+    if (useRealData) {
+      // Use real RSS feeds from Shopify Community
+      shopifyData = await analyzeShopifyCommunityFromRSS(analysisType);
+    } else {
+      // Use simulated data (current approach)
+      shopifyData = await analyzeShopifyCommunity(analysisType);
+    }
 
     res.status(200).json(shopifyData);
   } catch (error) {
@@ -50,20 +94,133 @@ export default async function handler(
   }
 }
 
-async function analyzeShopifyCommunity(analysisType: string): Promise<ShopifyCommunityData> {
-  // Simulated data based on Shopify Community structure
-  // In production, this would use web scraping or Shopify's API
-  
-  const categories = [
-    { name: 'Start a Business', topicCount: 5504, url: 'https://community.shopify.com/c/start-a-business/282' },
-    { name: 'Store Design', topicCount: 94274, url: 'https://community.shopify.com/c/store-design/133' },
-    { name: 'Technical Q&A', topicCount: 43314, url: 'https://community.shopify.com/c/technical-qa/211' },
-    { name: 'Shopify Apps', topicCount: 19137, url: 'https://community.shopify.com/c/shopify-apps/186' },
-    { name: 'Payments + Shipping', topicCount: 14518, url: 'https://community.shopify.com/c/payments-shipping-fulfilment/217' },
-    { name: 'SEO', topicCount: 36, url: 'https://community.shopify.com/c/seo/288' },
-    { name: 'Social Media', topicCount: 16, url: 'https://community.shopify.com/c/social-media/289' },
-    { name: 'Email Marketing', topicCount: 15, url: 'https://community.shopify.com/c/email-marketing/292' }
+// New function to analyze real RSS feeds
+async function analyzeShopifyCommunityFromRSS(analysisType: string): Promise<ShopifyCommunityData> {
+  const rssFeeds = [
+    { name: 'Start a Business', url: 'https://community.shopify.com/c/start-a-business/282', topicCount: 5504 },
+    { name: 'Store Design', url: 'https://community.shopify.com/c/store-design/133', topicCount: 94274 },
+    { name: 'Technical Q&A', url: 'https://community.shopify.com/c/technical-qa/211', topicCount: 43314 },
+    { name: 'Shopify Apps', url: 'https://community.shopify.com/c/shopify-apps/186', topicCount: 19136 },
+    { name: 'Payments + Shipping', url: 'https://community.shopify.com/c/payments-shipping-fulfilment/217', topicCount: 14518 },
+    { name: 'SEO', url: 'https://community.shopify.com/c/seo/288', topicCount: 36 },
+    { name: 'Social Media', url: 'https://community.shopify.com/c/social-media/289', topicCount: 16 },
+    { name: 'Email Marketing', url: 'https://community.shopify.com/c/email-marketing/292', topicCount: 15 }
   ];
+
+  const categories = rssFeeds.map(feed => ({
+    name: feed.name,
+    topicCount: feed.topicCount,
+    url: feed.url,
+    rssUrl: `${feed.url}.rss`
+  }));
+
+  // Parse real RSS feeds to get current topics
+  const realTopics: any[] = [];
+  for (const category of categories) {
+    const topics = await parseShopifyRSSFeed(category.rssUrl);
+    realTopics.push(...topics.map(topic => ({ ...topic, category: category.name })));
+  }
+
+  // Analyze real topics for pain points
+  const painPoints = analyzeTopicsForPainPoints(realTopics);
+
+  const insights = {
+    totalIssues: painPoints.reduce((sum, point) => sum + point.frequency, 0),
+    topCategories: ['Store Design', 'Technical Q&A', 'Payments + Shipping'],
+    commonThemes: [
+      'User experience optimization',
+      'Technical troubleshooting',
+      'Performance improvement',
+      'Customer trust building',
+      'Operational efficiency'
+    ],
+    recommendations: [
+      'Focus on mobile-first design and fast loading times',
+      'Implement comprehensive testing before app installations',
+      'Offer transparent pricing and multiple payment options',
+      'Create detailed product descriptions and high-quality images',
+      'Build trust through security badges and customer reviews',
+      'Develop a content strategy for consistent social media presence'
+    ]
+  };
+
+  return {
+    categories,
+    painPoints,
+    insights
+  };
+}
+
+// Function to analyze real topics and identify pain points
+function analyzeTopicsForPainPoints(topics: any[]): PainPoint[] {
+  // This is a simplified analysis - in production, use NLP/AI for better results
+  const painPoints: PainPoint[] = [];
+  
+  // Analyze topics for common pain point keywords
+  const painKeywords = {
+    'Store Design': ['theme', 'customization', 'mobile', 'responsive', 'loading', 'speed'],
+    'Technical Q&A': ['app', 'integration', 'conflict', 'performance', 'error', 'bug'],
+    'Payments + Shipping': ['checkout', 'abandonment', 'shipping', 'cost', 'payment', 'trust'],
+    'SEO': ['ranking', 'visibility', 'search', 'optimization', 'meta', 'title'],
+    'Start a Business': ['supplier', 'sourcing', 'quality', 'shipping', 'cost', 'MOQ'],
+    'Social Media': ['content', 'engagement', 'algorithm', 'ROI', 'follower', 'post']
+  };
+
+  // Count frequency of pain-related topics
+  for (const [category, keywords] of Object.entries(painKeywords)) {
+    const categoryTopics = topics.filter(t => t.category === category);
+    let frequency = 0;
+    
+    for (const topic of categoryTopics) {
+      const title = topic.title.toLowerCase();
+      for (const keyword of keywords) {
+        if (title.includes(keyword.toLowerCase())) {
+          frequency++;
+        }
+      }
+    }
+
+    if (frequency > 0) {
+      painPoints.push({
+        category,
+        topic: `Common ${category} Issues`,
+        frequency,
+        sentiment: 'negative',
+        commonIssues: [`Based on ${frequency} recent community discussions`],
+        solutions: ['Check community solutions and best practices'],
+        impact: frequency > 10 ? 'high' : frequency > 5 ? 'medium' : 'low'
+      });
+    }
+  }
+
+  return painPoints;
+}
+
+async function analyzeShopifyCommunity(analysisType: string): Promise<ShopifyCommunityData> {
+  // Real Shopify Community RSS feed URLs
+  const rssFeeds = [
+    { name: 'Start a Business', url: 'https://community.shopify.com/c/start-a-business/282', topicCount: 5504 },
+    { name: 'Store Design', url: 'https://community.shopify.com/c/store-design/133', topicCount: 94274 },
+    { name: 'Technical Q&A', url: 'https://community.shopify.com/c/technical-qa/211', topicCount: 43314 },
+    { name: 'Shopify Apps', url: 'https://community.shopify.com/c/shopify-apps/186', topicCount: 19136 },
+    { name: 'Payments + Shipping', url: 'https://community.shopify.com/c/payments-shipping-fulfilment/217', topicCount: 14518 },
+    { name: 'SEO', url: 'https://community.shopify.com/c/seo/288', topicCount: 36 },
+    { name: 'Social Media', url: 'https://community.shopify.com/c/social-media/289', topicCount: 16 },
+    { name: 'Email Marketing', url: 'https://community.shopify.com/c/email-marketing/292', topicCount: 15 }
+  ];
+
+  // TODO: In production, implement RSS feed parsing from these URLs:
+  // Example RSS feed URLs:
+  // https://community.shopify.com/c/store-design/133.rss
+  // https://community.shopify.com/c/technical-qa/211.rss
+  
+  // For now, using simulated data based on real community structure
+  const categories = rssFeeds.map(feed => ({
+    name: feed.name,
+    topicCount: feed.topicCount,
+    url: feed.url,
+    rssUrl: `${feed.url}.rss` // Potential RSS feed URL
+  }));
 
   const painPoints: PainPoint[] = [
     {
