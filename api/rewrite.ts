@@ -5,6 +5,8 @@ interface UserPayload {
   id: string;
   email: string;
   plan: 'free' | 'pro';
+  trialStartDate?: string;
+  trialEndDate?: string;
 }
 
 interface Usage {
@@ -38,10 +40,19 @@ function verifyAuth(authorization: string | null) {
     }
 }
 
-function checkQuota(userId: string, plan: 'free' | 'pro') {
+function checkQuota(userId: string, plan: 'free' | 'pro', trialEndDate?: string) {
   if (plan === 'pro') return true;
   
-  const freeLimit = 3; // 3 free rewrites per day
+  // Check if trial is still active
+  if (trialEndDate) {
+    const now = new Date();
+    const trialEnd = new Date(trialEndDate);
+    if (now > trialEnd) {
+      return false; // Trial expired
+    }
+  }
+  
+  const freeLimit = 10; // 10 free rewrites per day during trial
   const today = new Date().toDateString();
   const todayCount = usage
     .filter(u => u.userId === userId && new Date(u.dateISO).toDateString() === today)
@@ -112,9 +123,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // Check quota
-    if (!checkQuota(auth.user.id, auth.user.plan)) {
+    if (!checkQuota(auth.user.id, auth.user.plan, auth.user.trialEndDate)) {
       return res.status(402).json({ 
-        error: 'Daily quota exceeded. Upgrade to Pro for unlimited rewrites.' 
+        error: 'Daily quota exceeded or trial expired. Upgrade to Pro for unlimited rewrites.' 
       });
     }
 
