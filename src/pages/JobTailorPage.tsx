@@ -357,6 +357,7 @@ const JobTailorPage: React.FC = () => {
                                     value={tone}
                                     onChange={(e) => setTone(e.target.value as any)}
                                     className="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                    aria-label="Select CV tone and writing style"
                                 >
                                     <option value="formal">Formal</option>
                                     <option value="casual">Casual</option>
@@ -413,52 +414,53 @@ const JobTailorPage: React.FC = () => {
                                     )}
                                 </div>
 
-                            {isLoading && (
-                                <div className="flex items-center justify-center py-12">
-                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
-                                    <span className="ml-3 text-slate-300">AI is optimizing your CV...</span>
-                                </div>
-                            )}
+                                {isLoading && (
+                                    <div className="flex items-center justify-center py-12">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
+                                        <span className="ml-3 text-slate-300">AI is optimizing your CV...</span>
+                                    </div>
+                                )}
 
-                            {result?.error && (
-                                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-                                    <p className="text-red-400">{result.error}</p>
-                                </div>
-                            )}
+                                {result?.error && (
+                                    <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                                        <p className="text-red-400">{result.error}</p>
+                                    </div>
+                                )}
 
+                                {result?.revised && (
+                                    <textarea
+                                        value={result.revised}
+                                        readOnly
+                                        rows={20}
+                                        className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none resize-none"
+                                    />
+                                )}
+
+                                {!isLoading && !result && (
+                                    <div className="text-center py-12 text-slate-400">
+                                        <p>Your optimized CV will appear here</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* CV Export */}
                             {result?.revised && (
-                                <textarea
-                                    value={result.revised}
-                                    readOnly
-                                    rows={20}
-                                    className="w-full px-4 py-3 bg-slate-800 border border-slate-600 rounded-lg text-white focus:outline-none resize-none"
+                                <CVExport
+                                    cvText={result.revised}
+                                    jobTitle={jobDesc.split('\n')[0]?.replace(/^(.*?)\s+at\s+/, '')}
+                                    userPlan={userPlan.plan}
+                                    onUpgrade={() => setShowPricingModal(true)}
                                 />
                             )}
 
-                            {!isLoading && !result && (
-                                <div className="text-center py-12 text-slate-400">
-                                    <p>Your optimized CV will appear here</p>
-                                </div>
-                            )}
-                        </div>
-
-                        {/* CV Export */}
-                        {result?.revised && (
-                            <CVExport
-                                cvText={result.revised}
-                                jobTitle={jobDesc.split('\n')[0]?.replace(/^(.*?)\s+at\s+/, '')}
+                            {/* ATS Checker */}
+                            <ATSChecker
+                                cvText={result?.revised || ''}
+                                jobDescription={jobDesc}
                                 userPlan={userPlan.plan}
                                 onUpgrade={() => setShowPricingModal(true)}
                             />
-                        )}
-
-                        {/* ATS Checker */}
-                        <ATSChecker
-                            cvText={result?.revised || ''}
-                            jobDescription={jobDesc}
-                            userPlan={userPlan.plan}
-                            onUpgrade={() => setShowPricingModal(true)}
-                        />
+                        </div>
                     </div>
                 )}
 
