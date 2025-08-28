@@ -11,7 +11,6 @@ import PromptGallery from '../components/PromptGallery';
 // import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import { SEOHead } from '../components/SEOHead';
-import RedditPosts from '../components/RedditPosts';
 // import RelatedStartups from '../components/RelatedStartups';
 
 // Sample categories removed
@@ -358,13 +357,6 @@ const HomePage: React.FC = () => {
                     textareaRef.current?.focus();
                 }}
             />
-
-            {/* Reddit Posts Section */}
-            <div className="mt-8">
-                <RedditPosts />
-            </div>
-
-
 
             {/* Removed sample ideas section (Prompt Gallery replaces it) */}
 
