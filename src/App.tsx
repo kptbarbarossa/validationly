@@ -19,6 +19,7 @@ import JobTailorPage from './pages/JobTailorPage';
 import DashboardPage from './pages/DashboardPage';
 import AuthPage from './pages/AuthPage';
 import AppsPage from './pages/AppsPage';
+import ShopifyPainPointsPage from './pages/ShopifyPainPointsPage';
 
 import FAQPage from './pages/FAQPage';
 import BlogIndexPage from './pages/BlogIndexPage';
@@ -101,6 +102,7 @@ const App: React.FC = () => {
                 <Route path="/apps" element={<AppsPage />} />
                 <Route path="/analysis" element={<AnalysisPage />} />
                 <Route path="/job-tailor" element={<JobTailorPage />} />
+                <Route path="/shopify-pain-points" element={<ShopifyPainPointsPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/auth" element={<AuthPage />} />
 

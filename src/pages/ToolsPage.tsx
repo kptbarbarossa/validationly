@@ -77,6 +77,14 @@ const ToolsPage: React.FC = () => {
                 icon: '🔍',
                 route: '/public-validation',
                 features: ['Reddit communities', 'Real discussions', 'Community feedback', 'Social validation']
+            },
+            {
+                id: 'shopify-pain-points',
+                title: 'Shopify Pain Points Analyzer',
+                description: 'Discover the most common challenges and pain points faced by Shopify store owners based on community discussions.',
+                icon: '🛍️',
+                route: '/shopify-pain-points',
+                features: ['Community analysis', 'Pain point identification', 'Solution recommendations', 'Trend insights']
             }
     ];
 
