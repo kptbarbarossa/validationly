@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const AuthPage: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -12,6 +12,10 @@ const AuthPage: React.FC = () => {
   
   const { signIn, signUp, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Check if user came from Job Tailor page
+  const redirectTo = searchParams.get('redirect') || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,14 +28,14 @@ const AuthPage: React.FC = () => {
         if (error) {
           setError(error.message);
         } else {
-          navigate('/dashboard');
+          navigate(redirectTo);
         }
       } else {
         const { error } = await signIn(email, password);
         if (error) {
           setError(error.message);
         } else {
-          navigate('/dashboard');
+          navigate(redirectTo);
         }
       }
     } catch (err) {
@@ -49,6 +53,8 @@ const AuthPage: React.FC = () => {
       const { error } = await signInWithGoogle();
       if (error) {
         setError(error.message);
+      } else {
+        navigate(redirectTo);
       }
     } catch (err) {
       setError('An unexpected error occurred');
