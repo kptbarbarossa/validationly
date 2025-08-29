@@ -120,78 +120,7 @@ const PremiumNavBar: React.FC = () => {
               </button>
             )}
 
-            {user ? (
-              <>
-                {/* User Profile Dropdown */}
-                <div className="relative">
-                  <button
-                    onClick={handleProfileClick}
-                    className="flex items-center gap-2 px-2 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
-                    aria-label="User profile menu"
-                  >
-                    {user.photoURL ? (
-                      <img
-                        src={user.photoURL}
-                        alt={user.displayName || user.email || 'User'}
-                        className="w-8 h-8 rounded-full border-2 border-white/20 object-cover"
-                      />
-                    ) : (
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-cyan-400 flex items-center justify-center text-white text-sm font-semibold">
-                        {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
-                      </div>
-                    )}
-                    <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
 
-                  {/* Profile Dropdown Menu */}
-                  {isProfileOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg ring-1 ring-white/10">
-                      <div className="py-2">
-                        <Link
-                          to="/dashboard"
-                          className="flex items-center gap-3 px-4 py-2 text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
-                          onClick={() => setIsProfileOpen(false)}
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          Dashboard
-                        </Link>
-                        <Link
-                          to="/profile"
-                          className="flex items-center gap-3 px-4 py-2 text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
-                          onClick={() => setIsProfileOpen(false)}
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                          Profile
-                        </Link>
-                        <div className="border-t border-white/10 my-1"></div>
-                        <button
-                          onClick={handleSignOut}
-                          className="flex items-center gap-3 px-4 py-2 text-slate-200 hover:text-white hover:bg-white/10 transition-colors w-full text-left"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                          </svg>
-                          Sign Out
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </>
-            ) : (
-              <Link
-                to="/auth"
-                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-indigo-200 hover:text-indigo-100 hover:bg-white/10 transition-colors border border-indigo-400/30"
-              >
-                <span className="text-xs sm:text-sm font-medium">Sign In</span>
-              </Link>
-            )}
 
             {/* X/Twitter Logo */}
             <a
