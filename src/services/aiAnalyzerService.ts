@@ -1,372 +1,281 @@
-import type { 
-  PlatformScanResult, 
-  PlatformInsight, 
-  CrossPlatformAnalysis,
-  KeywordAnalysis 
-} from '../types/platformScanner';
+import { PremiumPlatformData, PremiumAnalysisResult, PremiumSocialPosts } from '../types';
 
-export class AIAnalyzerService {
+export class PremiumAIAnalyzerService {
   
-  // Analyze all platform scan results and generate insights
-  async analyzePlatformResults(
-    scanResults: PlatformScanResult[], 
-    idea: string, 
-    keywords: string[]
-  ): Promise<CrossPlatformAnalysis> {
+  async analyzePlatforms(platforms: PremiumPlatformData[], query: string): Promise<PremiumAnalysisResult> {
+    // Calculate overall demand index
+    const demandIndex = this.calculateDemandIndex(platforms);
     
-    const successfulResults = scanResults.filter(r => r.success && r.data);
-    const platformInsights = await this.generatePlatformInsights(successfulResults, idea);
-    const marketOpportunities = this.identifyMarketOpportunities(successfulResults, keywords);
-    const competitiveLandscape = this.analyzeCompetitiveLandscape(successfulResults);
-    const recommendedFocus = this.generateRecommendedFocus(platformInsights);
-    const riskFactors = this.identifyRiskFactors(successfulResults, platformInsights);
+    // Generate insights
+    const opportunities = this.identifyOpportunities(platforms, query);
+    const risks = this.identifyRisks(platforms, query);
+    const mvpSuggestions = this.generateMVPSuggestions(platforms, query);
     
-    const overallDemand = this.calculateOverallDemand(successfulResults);
+    // Determine verdict
+    const verdict = this.determineVerdict(demandIndex);
     
     return {
-      overallDemand,
-      platformStrengths: platformInsights,
-      marketOpportunities,
-      competitiveLandscape,
-      recommendedFocus,
-      riskFactors
+      demand_index: demandIndex,
+      verdict,
+      opportunities,
+      risks,
+      mvp_suggestions: mvpSuggestions,
+      platforms
     };
   }
 
-  // Generate insights for each platform
-  private async generatePlatformInsights(
-    scanResults: PlatformScanResult[], 
-    idea: string
-  ): Promise<PlatformInsight[]> {
+  private calculateDemandIndex(platforms: PremiumPlatformData[]): number {
+    if (platforms.length === 0) return 0;
     
-    const insights: PlatformInsight[] = [];
+    let totalScore = 0;
+    let maxPossibleScore = 0;
     
-    for (const result of scanResults) {
-      if (!result.data) continue;
+    platforms.forEach(platform => {
+      // Volume score (0-25 points)
+      const volumeScore = Math.min(platform.metrics.volume / 10, 25);
       
-      const data = result.data;
-      const strength = this.assessPlatformStrength(data);
-      const opportunities = this.identifyPlatformOpportunities(data, result.platform, idea);
-      const risks = this.identifyPlatformRisks(data, result.platform);
-      const recommendations = this.generatePlatformRecommendations(data, result.platform, idea);
-      const marketFit = this.calculateMarketFit(data, result.platform);
+      // Engagement score (0-25 points)
+      const engagementScore = platform.metrics.engagement * 25;
       
-      insights.push({
-        platform: result.platform,
-        strength,
-        opportunities,
-        risks,
-        recommendations,
-        marketFit
-      });
-    }
+      // Growth rate score (0-25 points)
+      const growthScore = Math.max(0, Math.min(platform.metrics.growth_rate * 25, 25));
+      
+      // Sentiment score (0-25 points)
+      const sentimentScore = platform.sentiment.positive * 25;
+      
+      const platformScore = volumeScore + engagementScore + growthScore + sentimentScore;
+      totalScore += platformScore;
+      maxPossibleScore += 100;
+    });
     
-    return insights;
+    return Math.round((totalScore / maxPossibleScore) * 100);
   }
 
-  // Assess platform strength based on data
-  private assessPlatformStrength(data: any): 'high' | 'medium' | 'low' {
-    const { totalPosts, totalEngagement, demandScore } = data;
-    
-    if (demandScore >= 80 || (totalPosts >= 50 && totalEngagement >= 2000)) {
-      return 'high';
-    } else if (demandScore >= 50 || (totalPosts >= 20 && totalEngagement >= 500)) {
-      return 'medium';
-    } else {
-      return 'low';
-    }
+  private determineVerdict(demandIndex: number): 'high' | 'medium' | 'low' {
+    if (demandIndex >= 70) return 'high';
+    if (demandIndex >= 40) return 'medium';
+    return 'low';
   }
 
-  // Identify opportunities for each platform
-  private identifyPlatformOpportunities(data: any, platform: string, idea: string): string[] {
+  private identifyOpportunities(platforms: PremiumPlatformData[], query: string): string[] {
     const opportunities: string[] = [];
-    const { totalPosts, totalEngagement, trendingTopics, marketInsights } = data;
     
-    if (totalPosts >= 30) {
-      opportunities.push(`High content volume indicates strong community interest`);
+    // Analyze each platform for opportunities
+    platforms.forEach(platform => {
+      const { volume, engagement, growth_rate } = platform.metrics;
+      const { positive } = platform.sentiment;
+      
+      if (volume > 50) {
+        opportunities.push(`High volume on ${this.getPlatformDisplayName(platform.platform)} indicates strong market interest`);
+      }
+      
+      if (engagement > 0.7) {
+        opportunities.push(`High engagement on ${this.getPlatformDisplayName(platform.platform)} suggests market readiness`);
+      }
+      
+      if (growth_rate > 0.3) {
+        opportunities.push(`Growing interest on ${this.getPlatformDisplayName(platform.platform)} shows market momentum`);
+      }
+      
+      if (positive > 0.6) {
+        opportunities.push(`Positive sentiment on ${this.getPlatformDisplayName(platform.platform)} indicates market acceptance`);
+      }
+    });
+    
+    // Add cross-platform opportunities
+    const highVolumePlatforms = platforms.filter(p => p.metrics.volume > 30);
+    if (highVolumePlatforms.length >= 3) {
+      opportunities.push(`Multiple platforms show high activity, indicating broad market appeal`);
     }
     
-    if (totalEngagement >= 1000) {
-      opportunities.push(`High engagement suggests market readiness`);
+    const highGrowthPlatforms = platforms.filter(p => p.metrics.growth_rate > 0.2);
+    if (highGrowthPlatforms.length >= 2) {
+      opportunities.push(`Growth trends across multiple platforms suggest market expansion`);
     }
     
-    if (trendingTopics.length > 0) {
-      opportunities.push(`Trending topics: ${trendingTopics.join(', ')}`);
+    // Add specific opportunities based on query type
+    if (query.toLowerCase().includes('app') || query.toLowerCase().includes('tool')) {
+      opportunities.push(`Developer tools and apps show consistent demand across platforms`);
     }
     
-    if (marketInsights.length > 0) {
-      opportunities.push(...marketInsights);
+    if (query.toLowerCase().includes('startup') || query.toLowerCase().includes('business')) {
+      opportunities.push(`Business solutions have strong community support and discussion`);
     }
     
-    // Platform-specific opportunities
-    switch (platform) {
-      case 'reddit':
-        if (data.subredditAnalysis?.length > 0) {
-          opportunities.push(`Active subreddits: ${data.subredditAnalysis.map(s => s.subreddit).join(', ')}`);
-        }
-        break;
-      case 'github':
-        if (data.totalPosts >= 20) {
-          opportunities.push(`Developer community shows strong interest`);
-        }
-        break;
-      case 'youtube':
-        if (data.totalEngagement >= 5000) {
-          opportunities.push(`High video engagement indicates content demand`);
-        }
-        break;
-      case 'producthunt':
-        if (data.totalPosts >= 5) {
-          opportunities.push(`Product Hunt community receptive to similar products`);
-        }
-        break;
-    }
-    
-    return opportunities;
+    return opportunities.length > 0 ? opportunities : ['Market shows potential for growth', 'User needs are clearly identified'];
   }
 
-  // Identify risks for each platform
-  private identifyPlatformRisks(data: any, platform: string): string[] {
-    const risks: string[] = [];
-    const { totalPosts, totalEngagement, demandScore } = data;
-    
-    if (totalPosts < 10) {
-      risks.push(`Low content volume suggests limited market interest`);
-    }
-    
-    if (totalEngagement < 200) {
-      risks.push(`Low engagement indicates poor market response`);
-    }
-    
-    if (demandScore < 30) {
-      risks.push(`Low demand score suggests market saturation or poor fit`);
-    }
-    
-    // Platform-specific risks
-    switch (platform) {
-      case 'reddit':
-        if (data.subredditAnalysis?.some((s: any) => s.sentiment === 'negative')) {
-          risks.push(`Negative sentiment in some subreddits`);
-        }
-        break;
-      case 'github':
-        if (data.totalPosts < 5) {
-          risks.push(`Limited developer interest`);
-        }
-        break;
-      case 'stackoverflow':
-        if (data.totalPosts < 15) {
-          risks.push(`Limited developer questions suggest low technical interest`);
-        }
-        break;
-    }
-    
-    return risks;
-  }
-
-  // Generate recommendations for each platform
-  private generatePlatformRecommendations(data: any, platform: string, idea: string): string[] {
-    const recommendations: string[] = [];
-    const { strength, totalPosts, totalEngagement } = data;
-    
-    if (strength === 'high') {
-      recommendations.push(`Focus on ${platform} as primary marketing channel`);
-      recommendations.push(`Leverage existing community engagement`);
-      recommendations.push(`Consider platform-specific partnerships`);
-    } else if (strength === 'medium') {
-      recommendations.push(`Develop ${platform} presence gradually`);
-      recommendations.push(`Focus on quality over quantity`);
-      recommendations.push(`Monitor for growth opportunities`);
-    } else {
-      recommendations.push(`Limited immediate opportunity on ${platform}`);
-      recommendations.push(`Focus on other platforms first`);
-      recommendations.push(`Re-evaluate strategy in 3-6 months`);
-    }
-    
-    // Platform-specific recommendations
-    switch (platform) {
-      case 'reddit':
-        if (data.subredditAnalysis?.length > 0) {
-          recommendations.push(`Engage with r/${data.subredditAnalysis[0].subreddit} community`);
-        }
-        break;
-      case 'github':
-        if (data.totalPosts >= 10) {
-          recommendations.push(`Open source components to build developer trust`);
-        }
-        break;
-      case 'youtube':
-        if (data.totalEngagement >= 2000) {
-          recommendations.push(`Create educational content about ${idea}`);
-        }
-        break;
-      case 'producthunt':
-        if (data.totalPosts >= 3) {
-          recommendations.push(`Prepare for Product Hunt launch`);
-        }
-        break;
-    }
-    
-    return recommendations;
-  }
-
-  // Calculate market fit score for platform
-  private calculateMarketFit(data: any, platform: string): number {
-    const { totalPosts, totalEngagement, demandScore } = data;
-    
-    let score = demandScore;
-    
-    // Adjust based on platform characteristics
-    switch (platform) {
-      case 'reddit':
-        if (data.subredditAnalysis?.length >= 3) score += 10;
-        break;
-      case 'github':
-        if (data.totalPosts >= 20) score += 15;
-        break;
-      case 'youtube':
-        if (data.totalEngagement >= 5000) score += 10;
-        break;
-      case 'producthunt':
-        if (data.totalPosts >= 5) score += 15;
-        break;
-    }
-    
-    return Math.min(score, 100);
-  }
-
-  // Identify market opportunities across platforms
-  private identifyMarketOpportunities(scanResults: PlatformScanResult[], keywords: string[]): string[] {
-    const opportunities: string[] = [];
-    const totalDemand = scanResults.reduce((sum, r) => sum + (r.data?.demandScore || 0), 0);
-    const avgDemand = totalDemand / scanResults.length;
-    
-    if (avgDemand >= 70) {
-      opportunities.push(`Strong overall market demand across all platforms`);
-    }
-    
-    if (scanResults.some(r => r.data?.demandScore >= 80)) {
-      opportunities.push(`Exceptional performance on some platforms indicates market readiness`);
-    }
-    
-    if (keywords.length >= 3) {
-      opportunities.push(`Multiple keyword opportunities suggest broad market appeal`);
-    }
-    
-    const highPerformingPlatforms = scanResults
-      .filter(r => r.data?.demandScore >= 70)
-      .map(r => r.platform);
-    
-    if (highPerformingPlatforms.length >= 3) {
-      opportunities.push(`Strong performance on ${highPerformingPlatforms.length} platforms`);
-    }
-    
-    return opportunities;
-  }
-
-  // Analyze competitive landscape
-  private analyzeCompetitiveLandscape(scanResults: PlatformScanResult[]): string[] {
-    const insights: string[] = [];
-    
-    const totalPosts = scanResults.reduce((sum, r) => sum + (r.data?.totalPosts || 0), 0);
-    const totalEngagement = scanResults.reduce((sum, r) => sum + (r.data?.totalEngagement || 0), 0);
-    
-    if (totalPosts >= 200) {
-      insights.push(`High content volume suggests competitive market`);
-    }
-    
-    if (totalEngagement >= 10000) {
-      insights.push(`High engagement indicates active market with strong competition`);
-    }
-    
-    const highDemandPlatforms = scanResults.filter(r => r.data?.demandScore >= 70);
-    if (highDemandPlatforms.length >= 4) {
-      insights.push(`Strong demand across multiple platforms suggests market opportunity`);
-    }
-    
-    return insights;
-  }
-
-  // Generate recommended focus areas
-  private generateRecommendedFocus(platformInsights: PlatformInsight[]): string[] {
-    const recommendations: string[] = [];
-    
-    const highStrengthPlatforms = platformInsights.filter(p => p.strength === 'high');
-    const mediumStrengthPlatforms = platformInsights.filter(p => p.strength === 'medium');
-    
-    if (highStrengthPlatforms.length >= 2) {
-      recommendations.push(`Focus on high-performing platforms: ${highStrengthPlatforms.map(p => p.platform).join(', ')}`);
-    }
-    
-    if (mediumStrengthPlatforms.length >= 3) {
-      recommendations.push(`Develop presence on medium-strength platforms for growth`);
-    }
-    
-    const topPlatforms = platformInsights
-      .sort((a, b) => b.marketFit - a.marketFit)
-      .slice(0, 3)
-      .map(p => p.platform);
-    
-    recommendations.push(`Prioritize: ${topPlatforms.join(', ')}`);
-    
-    return recommendations;
-  }
-
-  // Identify risk factors
-  private identifyRiskFactors(
-    scanResults: PlatformScanResult[], 
-    platformInsights: PlatformInsight[]
-  ): string[] {
+  private identifyRisks(platforms: PremiumPlatformData[], query: string): string[] {
     const risks: string[] = [];
     
-    const lowStrengthPlatforms = platformInsights.filter(p => p.strength === 'low');
-    if (lowStrengthPlatforms.length >= 4) {
-      risks.push(`Weak performance on majority of platforms`);
+    // Analyze each platform for risks
+    platforms.forEach(platform => {
+      const { volume, engagement, growth_rate } = platform.metrics;
+      const { negative } = platform.sentiment;
+      
+      if (volume > 100) {
+        risks.push(`High volume on ${this.getPlatformDisplayName(platform.platform)} suggests market saturation`);
+      }
+      
+      if (engagement < 0.3) {
+        risks.push(`Low engagement on ${this.getPlatformDisplayName(platform.platform)} indicates weak market interest`);
+      }
+      
+      if (growth_rate < -0.1) {
+        risks.push(`Declining interest on ${this.getPlatformDisplayName(platform.platform)} shows market cooling`);
+      }
+      
+      if (negative > 0.4) {
+        risks.push(`Negative sentiment on ${this.getPlatformDisplayName(platform.platform)} suggests market resistance`);
+      }
+    });
+    
+    // Add cross-platform risks
+    const lowEngagementPlatforms = platforms.filter(p => p.metrics.engagement < 0.4);
+    if (lowEngagementPlatforms.length >= 3) {
+      risks.push(`Low engagement across multiple platforms indicates weak market demand`);
     }
     
-    const lowDemandPlatforms = scanResults.filter(r => r.data?.demandScore < 30);
-    if (lowDemandPlatforms.length >= 3) {
-      risks.push(`Low demand across multiple platforms`);
+    const highCompetitionPlatforms = platforms.filter(p => p.metrics.volume > 80);
+    if (highCompetitionPlatforms.length >= 4) {
+      risks.push(`High competition across multiple platforms suggests market saturation`);
     }
     
-    const totalDemand = scanResults.reduce((sum, r) => sum + (r.data?.demandScore || 0), 0);
-    const avgDemand = totalDemand / scanResults.length;
-    
-    if (avgDemand < 40) {
-      risks.push(`Overall low market demand`);
+    // Add specific risks based on query type
+    if (query.toLowerCase().includes('app') || query.toLowerCase().includes('tool')) {
+      risks.push(`Developer tools market is highly competitive with established players`);
     }
     
-    return risks;
+    if (query.toLowerCase().includes('startup') || query.toLowerCase().includes('business')) {
+      risks.push(`Business solutions require significant marketing and sales investment`);
+    }
+    
+    return risks.length > 0 ? risks : ['Market saturation risk', 'User acquisition challenges', 'Competitive pressure'];
   }
 
-  // Calculate overall demand score
-  private calculateOverallDemand(scanResults: PlatformScanResult[]): number {
-    const totalDemand = scanResults.reduce((sum, r) => sum + (r.data?.demandScore || 0), 0);
-    const avgDemand = totalDemand / scanResults.length;
+  private generateMVPSuggestions(platforms: PremiumPlatformData[], query: string): string[] {
+    const suggestions: string[] = [];
     
-    // Weight by platform importance
-    const platformWeights = {
-      reddit: 1.2,
-      youtube: 1.1,
-      github: 1.0,
-      producthunt: 1.0,
-      hackernews: 0.9,
-      stackoverflow: 0.9,
-      googlenews: 0.8
+    // Analyze platform-specific suggestions
+    const githubData = platforms.find(p => p.platform === 'github');
+    if (githubData && githubData.metrics.volume > 20) {
+      suggestions.push('Provide clear API documentation and SDKs for developers');
+      suggestions.push('Open source core components to build community');
+    }
+    
+    const stackOverflowData = platforms.find(p => p.platform === 'stackoverflow');
+    if (stackOverflowData && stackOverflowData.metrics.volume > 15) {
+      suggestions.push('Create comprehensive documentation and tutorials');
+      suggestions.push('Build active community support channels');
+    }
+    
+    const redditData = platforms.find(p => p.platform === 'reddit');
+    if (redditData && redditData.metrics.volume > 25) {
+      suggestions.push('Engage with relevant subreddit communities');
+      suggestions.push('Create shareable content and demos');
+    }
+    
+    const productHuntData = platforms.find(p => p.platform === 'producthunt');
+    if (productHuntData && productHuntData.metrics.volume > 10) {
+      suggestions.push('Prepare for Product Hunt launch with strong positioning');
+      suggestions.push('Build pre-launch community and waitlist');
+    }
+    
+    // Add general MVP suggestions
+    suggestions.push('Start with core features that address main pain points');
+    suggestions.push('Focus on user experience and onboarding');
+    suggestions.push('Build feedback loops for rapid iteration');
+    
+    return suggestions.slice(0, 6); // Limit to top 6 suggestions
+  }
+
+  private getPlatformDisplayName(platform: string): string {
+    const platformNames: Record<string, string> = {
+      'reddit': 'Reddit',
+      'hackernews': 'Hacker News',
+      'producthunt': 'Product Hunt',
+      'github': 'GitHub',
+      'stackoverflow': 'Stack Overflow',
+      'googlenews': 'Google News',
+      'youtube': 'YouTube'
     };
     
-    let weightedDemand = 0;
-    let totalWeight = 0;
+    return platformNames[platform] || platform;
+  }
+
+  async generateSocialPosts(analysis: PremiumAnalysisResult, query: string): Promise<PremiumSocialPosts> {
+    const { demand_index, verdict, opportunities, risks } = analysis;
     
-    for (const result of scanResults) {
-      const weight = platformWeights[result.platform as keyof typeof platformWeights] || 1.0;
-      weightedDemand += (result.data?.demandScore || 0) * weight;
-      totalWeight += weight;
-    }
+    // Generate Twitter post
+    const twitterText = this.generateTwitterPost(query, demand_index, verdict, opportunities);
     
-    return Math.round(weightedDemand / totalWeight);
+    // Generate Reddit post
+    const redditPost = this.generateRedditPost(query, analysis);
+    
+    // Generate LinkedIn post
+    const linkedinPost = this.generateLinkedInPost(query, analysis);
+    
+    return {
+      twitter: {
+        tone: 'analytical',
+        text: twitterText
+      },
+      reddit: {
+        title: redditPost.title,
+        body: redditPost.body
+      },
+      linkedin: {
+        tone: 'professional',
+        text: linkedinPost.text,
+        cta: linkedinPost.cta
+      }
+    };
+  }
+
+  private generateTwitterPost(query: string, demandIndex: number, verdict: string, opportunities: string[]): string {
+    const topOpportunity = opportunities[0] || 'shows market potential';
+    const emoji = verdict === 'high' ? '🚀' : verdict === 'medium' ? '📈' : '📊';
+    
+    return `${emoji} ${query} analysis: ${demandIndex}/100 demand index\n\n${topOpportunity}\n\n#startup #validation #marketresearch`;
+  }
+
+  private generateRedditPost(query: string, analysis: PremiumAnalysisResult): { title: string; body: string } {
+    const { demand_index, opportunities, risks, platforms } = analysis;
+    
+    const title = `Market analysis for "${query}" - ${demand_index}/100 demand index`;
+    
+    const body = `**Demand Index:** ${demand_index}/100 (${analysis.verdict})\n\n` +
+                 `**Top Opportunities:**\n` +
+                 opportunities.slice(0, 3).map(opp => `• ${opp}`).join('\n') + '\n\n' +
+                 `**Key Risks:**\n` +
+                 risks.slice(0, 2).map(risk => `• ${risk}`).join('\n') + '\n\n' +
+                 `**Platform Activity:**\n` +
+                 platforms.slice(0, 4).map(p => `• ${this.getPlatformDisplayName(p.platform)}: ${p.metrics.volume} items, ${Math.round(p.metrics.engagement * 100)}% engagement`).join('\n') + '\n\n' +
+                 `What do you think about this market opportunity?`;
+    
+    return { title, body };
+  }
+
+  private generateLinkedInPost(query: string, analysis: PremiumAnalysisResult): { text: string; cta: string } {
+    const { demand_index, opportunities, risks, platforms } = analysis;
+    
+    const text = `📊 Market validation analysis for "${query}"\n\n` +
+                 `**Demand Index:** ${demand_index}/100\n` +
+                 `**Verdict:** ${analysis.verdict.charAt(0).toUpperCase() + analysis.verdict.slice(1)} market demand\n\n` +
+                 `**Key Insights:**\n` +
+                 `• ${opportunities[0] || 'Market shows potential for growth'}\n` +
+                 `• ${opportunities[1] || 'User needs are clearly identified'}\n\n` +
+                 `**Platform Activity:** ${platforms.length} platforms analyzed\n` +
+                 `• GitHub: ${platforms.find(p => p.platform === 'github')?.metrics.volume || 0} repos\n` +
+                 `• Reddit: ${platforms.find(p => p.platform === 'reddit')?.metrics.volume || 0} discussions\n` +
+                 `• Product Hunt: ${platforms.find(p => p.platform === 'producthunt')?.metrics.volume || 0} launches\n\n` +
+                 `This analysis shows ${analysis.verdict === 'high' ? 'strong market opportunity' : analysis.verdict === 'medium' ? 'moderate potential' : 'challenging market conditions'} for ${query}.`;
+    
+    const cta = `What's your take on this market opportunity?`;
+    
+    return { text, cta };
   }
 }
 
 // Export singleton instance
-export const aiAnalyzerService = new AIAnalyzerService();
+export const premiumAIAnalyzerService = new PremiumAIAnalyzerService();

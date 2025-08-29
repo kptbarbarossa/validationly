@@ -1,45 +1,18 @@
-// List of supported platforms mirrored from backend platformNameLabel in api/validate.ts
-// Keep this list in sync with the backend mapping
+// Premium MVP - 7 Platform System
+// Focus on API + RSS feed only (no scraping)
 export const SUPPORTED_PLATFORMS: string[] = [
   // Core social + discovery
-  'twitter',       // X
-  'reddit',
-  'linkedin',
-  'instagram',
-  'tiktok',
-  'youtube',
-  'facebook',
-  'producthunt',
-  'pinterest',
-
+  'reddit',        // Reddit API
+  'hackernews',    // Hacker News API
+  'producthunt',   // Product Hunt API
+  
   // Dev & tech
-  'github',
-  'stackoverflow',
-  'hackernews',
-
-  // Business & market intel
-  'angellist',
-  'crunchbase',
-  'medium',
-
-  // Design & creative
-  'dribbble',
-  'behance',
-  'figma',
-  'canva',
-
-  // Pro/creator & knowledge
-  'substack',
-  'notion',
-  'devto',
-  'hashnode',
-  'indiehackers',
-
-  // E‑commerce & retail
-  'etsy',
-  'amazon',
-  'shopify',
-  'woocommerce',
+  'github',        // GitHub API (repos, issues, stars)
+  'stackoverflow', // Stack Overflow API (questions, answers, tags)
+  
+  // News & content
+  'googlenews',    // Google News RSS feed
+  'youtube',       // YouTube Data API (videos, comments)
 ];
 
 export const PLATFORM_COUNT = SUPPORTED_PLATFORMS.length;

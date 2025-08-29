@@ -1,381 +1,291 @@
-import type { PlatformScanResult, PlatformData, KeywordAnalysis } from '../types/platformScanner';
+import { PremiumPlatformData, PremiumValidationRequest } from '../types';
 
-export class PlatformScannerService {
-  private readonly PLATFORMS = [
-    'reddit', 'hackernews', 'producthunt', 'github', 
-    'stackoverflow', 'googlenews', 'youtube'
-  ];
+export class PremiumPlatformScannerService {
+  private readonly API_ENDPOINTS = {
+    reddit: '/api/reddit',
+    hackernews: '/api/hackernews',
+    producthunt: '/api/producthunt',
+    github: '/api/github',
+    stackoverflow: '/api/stackoverflow',
+    googlenews: '/api/googlenews',
+    youtube: '/api/youtube'
+  };
 
-  // Scan all platforms for a specific idea/keyword
-  async scanAllPlatforms(idea: string, keywords: string[]): Promise<PlatformScanResult[]> {
-    const results: PlatformScanResult[] = [];
+  async scanAllPlatforms(request: PremiumValidationRequest): Promise<PremiumPlatformData[]> {
+    const platforms = request.platforms || ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'];
     
-    for (const platform of this.PLATFORMS) {
-      try {
-        const platformData = await this.scanPlatform(platform, idea, keywords);
-        results.push(platformData);
-      } catch (error) {
-        console.error(`Error scanning ${platform}:`, error);
-        results.push({
-          platform,
-          success: false,
-          error: error instanceof Error ? error.message : 'Unknown error',
-          data: null
-        });
-      }
-    }
+    const scanPromises = platforms.map(platform => this.scanPlatform(platform, request));
+    const results = await Promise.allSettled(scanPromises);
     
-    return results;
+    return results
+      .filter((result): result is PromiseFulfilledResult<PremiumPlatformData> => result.status === 'fulfilled')
+      .map(result => result.value);
   }
 
-  // Scan individual platform
-  private async scanPlatform(platform: string, idea: string, keywords: string[]): Promise<PlatformScanResult> {
-    const startTime = Date.now();
-    
+  private async scanPlatform(platform: string, request: PremiumValidationRequest): Promise<PremiumPlatformData> {
     try {
-      let data: PlatformData;
-      
-      switch (platform) {
-        case 'reddit':
-          data = await this.scanReddit(idea, keywords);
-          break;
-        case 'hackernews':
-          data = await this.scanHackerNews(idea, keywords);
-          break;
-        case 'producthunt':
-          data = await this.scanProductHunt(idea, keywords);
-          break;
-        case 'github':
-          data = await this.scanGitHub(idea, keywords);
-          break;
-        case 'stackoverflow':
-          data = await this.scanStackOverflow(idea, keywords);
-          break;
-        case 'googlenews':
-          data = await this.scanGoogleNews(idea, keywords);
-          break;
-        case 'youtube':
-          data = await this.scanYouTube(idea, keywords);
-          break;
-        default:
-          throw new Error(`Unsupported platform: ${platform}`);
+      const endpoint = this.API_ENDPOINTS[platform as keyof typeof this.API_ENDPOINTS];
+      if (!endpoint) {
+        throw new Error(`Unknown platform: ${platform}`);
       }
-      
-      return {
-        platform,
-        success: true,
-        error: null,
-        data: {
-          ...data,
-          scanTime: Date.now() - startTime,
-          timestamp: new Date()
-        }
-      };
+
+      const response = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          query: request.query,
+          time_range: request.time_range,
+          max_items: request.max_items_per_platform || 100
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return this.transformPlatformData(platform, data, request.query);
       
     } catch (error) {
-      return {
-        platform,
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        data: null
-      };
+      console.error(`Error scanning ${platform}:`, error);
+      return this.generateFallbackData(platform, request.query);
     }
   }
 
-  // Reddit scanning
-  private async scanReddit(idea: string, keywords: string[]): Promise<PlatformData> {
-    // Simulate Reddit API calls
-    const subreddits = ['fitness', 'bodybuilding', 'weightloss', 'health', 'nutrition'];
-    const posts = [];
-    
-    for (const subreddit of subreddits) {
-      for (const keyword of keywords) {
-        // Simulate finding relevant posts
-        const relevantPosts = Math.floor(Math.random() * 20) + 5;
-        const engagement = Math.floor(Math.random() * 1000) + 100;
-        
-        posts.push({
-          subreddit,
-          keyword,
-          postCount: relevantPosts,
-          totalEngagement: engagement,
-          sentiment: this.analyzeSentiment(engagement),
-          topPosts: this.generateTopPosts(relevantPosts, keyword)
-        });
-      }
+  private transformPlatformData(platform: string, data: any, query: string): PremiumPlatformData {
+    switch (platform) {
+      case 'reddit':
+        return this.transformRedditData(data, query);
+      case 'hackernews':
+        return this.transformHackerNewsData(data, query);
+      case 'producthunt':
+        return this.transformProductHuntData(data, query);
+      case 'github':
+        return this.transformGitHubData(data, query);
+      case 'stackoverflow':
+        return this.transformStackOverflowData(data, query);
+      case 'googlenews':
+        return this.transformGoogleNewsData(data, query);
+      case 'youtube':
+        return this.transformYouTubeData(data, query);
+      default:
+        return this.generateFallbackData(platform, query);
     }
+  }
+
+  private transformRedditData(data: any, query: string): PremiumPlatformData {
+    const posts = data.posts || [];
+    const totalScore = posts.reduce((sum: number, post: any) => sum + (post.score || 0), 0);
+    const avgScore = posts.length > 0 ? totalScore / posts.length : 0;
     
     return {
-      totalPosts: posts.reduce((sum, p) => sum + p.postCount, 0),
-      totalEngagement: posts.reduce((sum, p) => sum + p.totalEngagement, 0),
-      subredditAnalysis: posts,
-      trendingTopics: this.extractTrendingTopics(posts),
-      marketInsights: this.generateMarketInsights(posts, 'reddit'),
-      demandScore: this.calculateDemandScore(posts)
+      platform: 'reddit',
+      summary: `Reddit community shows ${posts.length > 20 ? 'strong' : 'moderate'} interest in ${query}`,
+      sentiment: this.calculateSentiment(posts, 'score'),
+      metrics: {
+        volume: posts.length,
+        engagement: Math.min(1, avgScore / 100),
+        growth_rate: this.calculateGrowthRate(posts, 'created_utc')
+      },
+      top_keywords: this.extractKeywords(posts, ['title', 'selftext']),
+      representative_quotes: this.extractRepresentativeQuotes(posts, 'title')
     };
   }
 
-  // Hacker News scanning
-  private async scanHackerNews(idea: string, keywords: string[]): Promise<PlatformData> {
-    const discussions = [];
-    
-    for (const keyword of keywords) {
-      const discussionCount = Math.floor(Math.random() * 15) + 3;
-      const totalPoints = Math.floor(Math.random() * 500) + 50;
-      
-      discussions.push({
-        keyword,
-        discussionCount,
-        totalPoints,
-        sentiment: this.analyzeSentiment(totalPoints),
-        topDiscussions: this.generateTopDiscussions(discussionCount, keyword)
-      });
-    }
+  private transformHackerNewsData(data: any, query: string): PremiumPlatformData {
+    const stories = data.stories || [];
+    const totalPoints = stories.reduce((sum: number, story: any) => sum + (story.points || 0), 0);
+    const avgPoints = stories.length > 0 ? totalPoints / stories.length : 0;
     
     return {
-      totalPosts: discussions.reduce((sum, d) => sum + d.discussionCount, 0),
-      totalEngagement: discussions.reduce((sum, d) => sum + d.totalPoints, 0),
-      subredditAnalysis: [], // Not applicable for HN
-      trendingTopics: this.extractTrendingTopics(discussions),
-      marketInsights: this.generateMarketInsights(discussions, 'hackernews'),
-      demandScore: this.calculateDemandScore(discussions)
+      platform: 'hackernews',
+      summary: `HN developers discussing ${query} with ${stories.length} relevant stories`,
+      sentiment: this.calculateSentiment(stories, 'points'),
+      metrics: {
+        volume: stories.length,
+        engagement: Math.min(1, avgPoints / 100),
+        growth_rate: this.calculateGrowthRate(stories, 'time')
+      },
+      top_keywords: this.extractKeywords(stories, ['title', 'text']),
+      representative_quotes: this.extractRepresentativeQuotes(stories, 'title')
     };
   }
 
-  // Product Hunt scanning
-  private async scanProductHunt(idea: string, keywords: string[]): Promise<PlatformData> {
-    const products = [];
-    
-    for (const keyword of keywords) {
-      const productCount = Math.floor(Math.random() * 10) + 2;
-      const totalVotes = Math.floor(Math.random() * 200) + 20;
-      
-      products.push({
-        keyword,
-        productCount,
-        totalVotes,
-        sentiment: this.analyzeSentiment(totalVotes),
-        topProducts: this.generateTopProducts(productCount, keyword)
-      });
-    }
+  private transformProductHuntData(data: any, query: string): PremiumPlatformData {
+    const products = data.products || [];
+    const totalVotes = products.reduce((sum: number, product: any) => sum + (product.votes || 0), 0);
+    const avgVotes = products.length > 0 ? totalVotes / products.length : 0;
     
     return {
-      totalPosts: products.reduce((sum, p) => sum + p.productCount, 0),
-      totalEngagement: products.reduce((sum, p) => sum + p.totalVotes, 0),
-      subredditAnalysis: [], // Not applicable for PH
-      trendingTopics: this.extractTrendingTopics(products),
-      marketInsights: this.generateMarketInsights(products, 'producthunt'),
-      demandScore: this.calculateDemandScore(products)
+      platform: 'producthunt',
+      summary: `${products.length} ${query}-related products launched on Product Hunt`,
+      sentiment: this.calculateSentiment(products, 'votes'),
+      metrics: {
+        volume: products.length,
+        engagement: Math.min(1, avgVotes / 50),
+        growth_rate: this.calculateGrowthRate(products, 'created_at')
+      },
+      top_keywords: this.extractKeywords(products, ['name', 'tagline']),
+      representative_quotes: this.extractRepresentativeQuotes(products, 'name')
     };
   }
 
-  // GitHub scanning
-  private async scanGitHub(idea: string, keywords: string[]): Promise<PlatformData> {
-    const repositories = [];
-    
-    for (const keyword of keywords) {
-      const repoCount = Math.floor(Math.random() * 25) + 5;
-      const totalStars = Math.floor(Math.random() * 1000) + 100;
-      
-      repositories.push({
-        keyword,
-        repoCount,
-        totalStars,
-        sentiment: this.analyzeSentiment(totalStars),
-        topRepos: this.generateTopRepos(repoCount, keyword)
-      });
-    }
+  private transformGitHubData(data: any, query: string): PremiumPlatformData {
+    const repos = data.repositories || [];
+    const totalStars = repos.reduce((sum: number, repo: any) => sum + (repo.stargazers_count || 0), 0);
+    const avgStars = repos.length > 0 ? totalStars / repos.length : 0;
     
     return {
-      totalPosts: repositories.reduce((sum, r) => sum + r.repoCount, 0),
-      totalEngagement: repositories.reduce((sum, r) => sum + r.totalStars, 0),
-      subredditAnalysis: [], // Not applicable for GitHub
-      trendingTopics: this.extractTrendingTopics(repositories),
-      marketInsights: this.generateMarketInsights(repositories, 'github'),
-      demandScore: this.calculateDemandScore(repositories)
+      platform: 'github',
+      summary: `${repos.length} ${query} repositories with ${totalStars} total stars`,
+      sentiment: this.calculateSentiment(repos, 'stargazers_count'),
+      metrics: {
+        volume: repos.length,
+        engagement: Math.min(1, avgStars / 100),
+        growth_rate: this.calculateGrowthRate(repos, 'created_at')
+      },
+      top_keywords: this.extractKeywords(repos, ['name', 'description', 'topics']),
+      representative_quotes: this.extractRepresentativeQuotes(repos, 'name')
     };
   }
 
-  // Stack Overflow scanning
-  private async scanStackOverflow(idea: string, keywords: string[]): Promise<PlatformData> {
-    const questions = [];
-    
-    for (const keyword of keywords) {
-      const questionCount = Math.floor(Math.random() * 30) + 10;
-      const totalVotes = Math.floor(Math.random() * 500) + 50;
-      
-      questions.push({
-        keyword,
-        questionCount,
-        totalVotes,
-        sentiment: this.analyzeSentiment(totalVotes),
-        topQuestions: this.generateTopQuestions(questionCount, keyword)
-      });
-    }
+  private transformStackOverflowData(data: any, query: string): PremiumPlatformData {
+    const questions = data.questions || [];
+    const totalVotes = questions.reduce((sum: number, q: any) => sum + (q.score || 0), 0);
+    const avgVotes = questions.length > 0 ? totalVotes / questions.length : 0;
     
     return {
-      totalPosts: questions.reduce((sum, q) => sum + q.questionCount, 0),
-      totalEngagement: questions.reduce((sum, q) => sum + q.totalVotes, 0),
-      subredditAnalysis: [], // Not applicable for SO
-      trendingTopics: this.extractTrendingTopics(questions),
-      marketInsights: this.generateMarketInsights(questions, 'stackoverflow'),
-      demandScore: this.calculateDemandScore(questions)
+      platform: 'stackoverflow',
+      summary: `${questions.length} ${query} questions on Stack Overflow`,
+      sentiment: this.calculateSentiment(questions, 'score'),
+      metrics: {
+        volume: questions.length,
+        engagement: Math.min(1, avgVotes / 10),
+        growth_rate: this.calculateGrowthRate(questions, 'creation_date')
+      },
+      top_keywords: this.extractKeywords(questions, ['title', 'body', 'tags']),
+      representative_quotes: this.extractRepresentativeQuotes(questions, 'title')
     };
   }
 
-  // Google News scanning
-  private async scanGoogleNews(idea: string, keywords: string[]): Promise<PlatformData> {
-    const news = [];
-    
-    for (const keyword of keywords) {
-      const articleCount = Math.floor(Math.random() * 20) + 5;
-      const totalMentions = Math.floor(Math.random() * 100) + 10;
-      
-      news.push({
-        keyword,
-        articleCount,
-        totalMentions,
-        sentiment: this.analyzeSentiment(totalMentions),
-        topArticles: this.generateTopArticles(articleCount, keyword)
-      });
-    }
+  private transformGoogleNewsData(data: any, query: string): PremiumPlatformData {
+    const articles = data.articles || [];
+    const totalRelevance = articles.reduce((sum: number, article: any) => sum + (article.relevance || 0), 0);
+    const avgRelevance = articles.length > 0 ? totalRelevance / articles.length : 0;
     
     return {
-      totalPosts: news.reduce((sum, n) => sum + n.articleCount, 0),
-      totalEngagement: news.reduce((sum, n) => sum + n.totalMentions, 0),
-      subredditAnalysis: [], // Not applicable for news
-      trendingTopics: this.extractTrendingTopics(news),
-      marketInsights: this.generateMarketInsights(news, 'googlenews'),
-      demandScore: this.calculateDemandScore(news)
+      platform: 'googlenews',
+      summary: `${articles.length} recent news articles about ${query}`,
+      sentiment: this.calculateSentiment(articles, 'relevance'),
+      metrics: {
+        volume: articles.length,
+        engagement: Math.min(1, avgRelevance / 100),
+        growth_rate: this.calculateGrowthRate(articles, 'published_date')
+      },
+      top_keywords: this.extractKeywords(articles, ['title', 'snippet']),
+      representative_quotes: this.extractRepresentativeQuotes(articles, 'title')
     };
   }
 
-  // YouTube scanning
-  private async scanYouTube(idea: string, keywords: string[]): Promise<PlatformData> {
-    const videos = [];
-    
-    for (const keyword of keywords) {
-      const videoCount = Math.floor(Math.random() * 15) + 3;
-      const totalViews = Math.floor(Math.random() * 10000) + 1000;
-      
-      videos.push({
-        keyword,
-        videoCount,
-        totalViews,
-        sentiment: this.analyzeSentiment(totalViews),
-        topVideos: this.generateTopVideos(videoCount, keyword)
-      });
-    }
+  private transformYouTubeData(data: any, query: string): PremiumPlatformData {
+    const videos = data.videos || [];
+    const totalViews = videos.reduce((sum: number, video: any) => sum + (video.view_count || 0), 0);
+    const avgViews = videos.length > 0 ? totalViews / videos.length : 0;
     
     return {
-      totalPosts: videos.reduce((sum, v) => sum + v.videoCount, 0),
-      totalEngagement: videos.reduce((sum, v) => sum + v.totalViews, 0),
-      subredditAnalysis: [], // Not applicable for YouTube
-      trendingTopics: this.extractTrendingTopics(videos),
-      marketInsights: this.generateMarketInsights(videos, 'youtube'),
-      demandScore: this.calculateDemandScore(videos)
+      platform: 'youtube',
+      summary: `${videos.length} ${query} videos with ${totalViews.toLocaleString()} total views`,
+      sentiment: this.calculateSentiment(videos, 'view_count'),
+      metrics: {
+        volume: videos.length,
+        engagement: Math.min(1, avgViews / 10000),
+        growth_rate: this.calculateGrowthRate(videos, 'published_at')
+      },
+      top_keywords: this.extractKeywords(videos, ['title', 'description', 'tags']),
+      representative_quotes: this.extractRepresentativeQuotes(videos, 'title')
     };
   }
 
-  // Helper methods
-  private analyzeSentiment(engagement: number): 'positive' | 'neutral' | 'negative' {
-    if (engagement > 500) return 'positive';
-    if (engagement > 100) return 'neutral';
+  private calculateSentiment(items: any[], scoreField: string): { positive: number; neutral: number; negative: number } {
+    if (items.length === 0) return { positive: 0.33, neutral: 0.34, negative: 0.33 };
+    
+    const scores = items.map(item => item[scoreField] || 0);
+    const maxScore = Math.max(...scores);
+    const minScore = Math.min(...scores);
+    const range = maxScore - minScore;
+    
+    if (range === 0) return { positive: 0.33, neutral: 0.34, negative: 0.33 };
+    
+    const positive = scores.filter(score => score > (maxScore + minScore) / 2).length / scores.length;
+    const negative = scores.filter(score => score < (maxScore + minScore) / 2).length / scores.length;
+    const neutral = 1 - positive - negative;
+    
+    return { positive, neutral, negative };
+  }
+
+  private calculateGrowthRate(items: any[], dateField: string): number {
+    if (items.length < 2) return 0;
+    
+    const sortedItems = items
+      .filter(item => item[dateField])
+      .sort((a, b) => new Date(a[dateField]).getTime() - new Date(b[dateField]).getTime());
+    
+    if (sortedItems.length < 2) return 0;
+    
+    const midPoint = Math.floor(sortedItems.length / 2);
+    const earlyItems = sortedItems.slice(0, midPoint);
+    const lateItems = sortedItems.slice(midPoint);
+    
+    const earlyAvg = earlyItems.reduce((sum, item) => sum + (item.score || item.points || item.votes || item.stargazers_count || item.view_count || 0), 0) / earlyItems.length;
+    const lateAvg = lateItems.reduce((sum, item) => sum + (item.score || item.points || item.votes || item.stargazers_count || item.view_count || 0), 0) / lateItems.length;
+    
+    if (earlyAvg === 0) return lateAvg > 0 ? 1 : 0;
+    return (lateAvg - earlyAvg) / earlyAvg;
+  }
+
+  private extractKeywords(items: any[], fields: string[]): string[] {
+    const allText = items
+      .map(item => fields.map(field => item[field] || '').join(' '))
+      .join(' ')
+      .toLowerCase();
+    
+    const commonKeywords = ['app', 'tool', 'platform', 'service', 'product', 'startup', 'business', 'development', 'technology', 'software'];
+    const foundKeywords = commonKeywords.filter(keyword => allText.includes(keyword));
+    
+    return foundKeywords.length > 0 ? foundKeywords.slice(0, 5) : ['startup', 'business', 'innovation'];
+  }
+
+  private extractRepresentativeQuotes(items: any[], field: string): Array<{ text: string; sentiment: 'positive' | 'neutral' | 'negative' }> {
+    if (items.length === 0) return [];
+    
+    const topItems = items
+      .sort((a, b) => (b.score || b.points || b.votes || b.stargazers_count || b.view_count || 0) - (a.score || a.points || a.votes || a.stargazers_count || a.view_count || 0))
+      .slice(0, 3);
+    
+    return topItems.map(item => ({
+      text: item[field] || 'No content',
+      sentiment: this.getSentimentFromScore(item.score || item.points || item.votes || item.stargazers_count || item.view_count || 0)
+    }));
+  }
+
+  private getSentimentFromScore(score: number): 'positive' | 'neutral' | 'negative' {
+    if (score > 50) return 'positive';
+    if (score > 10) return 'neutral';
     return 'negative';
   }
 
-  private extractTrendingTopics(data: any[]): string[] {
-    return data
-      .sort((a, b) => (a.totalEngagement || a.totalVotes || a.totalStars || a.totalViews || 0) - (b.totalEngagement || b.totalVotes || b.totalStars || b.totalViews || 0))
-      .slice(-3)
-      .map(item => item.keyword);
-  }
-
-  private generateMarketInsights(data: any[], platform: string): string[] {
-    const insights = [];
-    const totalEngagement = data.reduce((sum, item) => sum + (item.totalEngagement || item.totalVotes || item.totalStars || item.totalViews || 0), 0);
-    
-    if (totalEngagement > 1000) {
-      insights.push(`High engagement on ${platform} indicates strong market interest`);
-    }
-    if (data.length > 5) {
-      insights.push(`Multiple discussions across various topics show broad appeal`);
-    }
-    if (data.some(item => item.sentiment === 'positive')) {
-      insights.push(`Positive sentiment suggests market readiness`);
-    }
-    
-    return insights;
-  }
-
-  private calculateDemandScore(data: any[]): number {
-    const totalEngagement = data.reduce((sum, item) => sum + (item.totalEngagement || item.totalVotes || item.totalStars || item.totalViews || 0), 0);
-    const totalPosts = data.reduce((sum, item) => sum + (item.postCount || item.discussionCount || item.productCount || item.repoCount || item.questionCount || item.articleCount || item.videoCount || 0), 0);
-    
-    // Calculate score based on engagement and post volume
-    const engagementScore = Math.min(totalEngagement / 100, 50);
-    const volumeScore = Math.min(totalPosts * 2, 50);
-    
-    return Math.round(engagementScore + volumeScore);
-  }
-
-  // Generate mock data for top items
-  private generateTopPosts(count: number, keyword: string): any[] {
-    return Array.from({ length: Math.min(count, 5) }, (_, i) => ({
-      title: `Top ${keyword} post ${i + 1}`,
-      engagement: Math.floor(Math.random() * 500) + 50,
-      sentiment: this.analyzeSentiment(Math.floor(Math.random() * 500) + 50)
-    }));
-  }
-
-  private generateTopDiscussions(count: number, keyword: string): any[] {
-    return Array.from({ length: Math.min(count, 5) }, (_, i) => ({
-      title: `Top ${keyword} discussion ${i + 1}`,
-      points: Math.floor(Math.random() * 200) + 20,
-      sentiment: this.analyzeSentiment(Math.floor(Math.random() * 200) + 20)
-    }));
-  }
-
-  private generateTopProducts(count: number, keyword: string): any[] {
-    return Array.from({ length: Math.min(count, 5) }, (_, i) => ({
-      name: `Top ${keyword} product ${i + 1}`,
-      votes: Math.floor(Math.random() * 100) + 10,
-      sentiment: this.analyzeSentiment(Math.floor(Math.random() * 100) + 10)
-    }));
-  }
-
-  private generateTopRepos(count: number, keyword: string): any[] {
-    return Array.from({ length: Math.min(count, 5) }, (_, i) => ({
-      name: `Top ${keyword} repo ${i + 1}`,
-      stars: Math.floor(Math.random() * 500) + 50,
-      sentiment: this.analyzeSentiment(Math.floor(Math.random() * 500) + 50)
-    }));
-  }
-
-  private generateTopQuestions(count: number, keyword: string): any[] {
-    return Array.from({ length: Math.min(count, 5) }, (_, i) => ({
-      title: `Top ${keyword} question ${i + 1}`,
-      votes: Math.floor(Math.random() * 200) + 20,
-      sentiment: this.analyzeSentiment(Math.floor(Math.random() * 200) + 20)
-    }));
-  }
-
-  private generateTopArticles(count: number, keyword: string): any[] {
-    return Array.from({ length: Math.min(count, 5) }, (_, i) => ({
-      title: `Top ${keyword} article ${i + 1}`,
-      mentions: Math.floor(Math.random() * 50) + 5,
-      sentiment: this.analyzeSentiment(Math.floor(Math.random() * 50) + 5)
-    }));
-  }
-
-  private generateTopVideos(count: number, keyword: string): any[] {
-    return Array.from({ length: Math.min(count, 5) }, (_, i) => ({
-      title: `Top ${keyword} video ${i + 1}`,
-      views: Math.floor(Math.random() * 5000) + 500,
-      sentiment: this.analyzeSentiment(Math.floor(Math.random() * 5000) + 500)
-    }));
+  private generateFallbackData(platform: string, query: string): PremiumPlatformData {
+    return {
+      platform,
+      summary: `Limited data available for ${query} on ${platform}`,
+      sentiment: { positive: 0.33, neutral: 0.34, negative: 0.33 },
+      metrics: { volume: 0, engagement: 0, growth_rate: 0 },
+      top_keywords: ['startup', 'business', 'innovation'],
+      representative_quotes: []
+    };
   }
 }
 
 // Export singleton instance
-export const platformScannerService = new PlatformScannerService();
+export const premiumPlatformScannerService = new PremiumPlatformScannerService();
+

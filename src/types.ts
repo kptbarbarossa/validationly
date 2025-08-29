@@ -1064,3 +1064,70 @@ export interface AnalysisResult {
     interestLevel: number;
   }>;
 }
+
+// Premium MVP - 7 Platform System Types
+export interface PremiumPlatformData {
+  platform: string;
+  summary: string;
+  sentiment: {
+    positive: number;
+    neutral: number;
+    negative: number;
+  };
+  metrics: {
+    volume: number;
+    engagement: number;
+    growth_rate: number;
+  };
+  top_keywords: string[];
+  representative_quotes: Array<{
+    text: string;
+    sentiment: 'positive' | 'neutral' | 'negative';
+  }>;
+}
+
+export interface PremiumAnalysisResult {
+  demand_index: number;
+  verdict: 'high' | 'medium' | 'low';
+  opportunities: string[];
+  risks: string[];
+  mvp_suggestions: string[];
+  platforms: PremiumPlatformData[];
+}
+
+export interface PremiumSocialPosts {
+  twitter: {
+    tone: 'professional' | 'fun' | 'analytical';
+    text: string;
+  };
+  reddit: {
+    title: string;
+    body: string;
+  };
+  linkedin: {
+    tone: 'professional' | 'fun' | 'analytical';
+    text: string;
+    cta: string;
+  };
+}
+
+export interface PremiumValidationRequest {
+  query: string;
+  time_range?: {
+    from: string; // ISO date
+    to: string;   // ISO date
+  };
+  platforms?: string[]; // default = all 7
+  language?: string;    // auto-detect
+  max_items_per_platform?: number; // default = 100
+  tones_for_posts?: Array<'professional' | 'fun' | 'analytical'>;
+  output_format?: 'json';
+}
+
+export interface PremiumValidationResponse {
+  query: string;
+  language: string;
+  analysis: PremiumAnalysisResult;
+  social_posts: PremiumSocialPosts;
+  generated_at: string;
+}
