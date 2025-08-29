@@ -29,7 +29,8 @@ import LoginToSeePriceGuide from './pages/blog/LoginToSeePriceGuide';
 import UseCaseSaaSPage from './pages/UseCaseSaaSPage';
 import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
 import UseCasesIndexPage from './pages/UseCasesIndexPage';
-import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsOfService from './pages/TermsOfService';
 import PremiumNavBar from './components/PremiumNavBar';
 import Analytics from './components/Analytics';
 
@@ -114,7 +115,7 @@ const App: React.FC = () => {
                 <Route path="/use-cases" element={<UseCasesIndexPage />} />
                 <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
                 <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
-                <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center text-slate-300">Page not found</div>} />
               </Routes>
