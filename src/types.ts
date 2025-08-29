@@ -1052,3 +1052,15 @@ export interface FastValidateResult {
     linkedin: string;
   };
 }
+
+// Results Dashboard Interface
+export interface AnalysisResult {
+  overallScore: number;
+  summary: string;
+  potentialMarket: string;
+  risks: string;
+  platformAnalyses: Array<{
+    platform: string;
+    interestLevel: number;
+  }>;
+}
