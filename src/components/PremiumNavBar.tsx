@@ -78,6 +78,46 @@ const PremiumNavBar: React.FC = () => {
 
           {/* Right: CTAs */}
           <div className="flex items-center gap-2 pr-2 justify-self-end">
+            {/* Buy Me a Coffee */}
+            <a
+              href="https://buymeacoffee.com/kptbarbarossa"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Buy me a coffee"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+                <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zM9.5 7.28l1.5 1.5V11H8V8.78l1.5-1.5zM16 13c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V5h3v1.72l-1.5 1.5V9H8V7.28L9.5 5.78V5h2.5v2.28L13.5 7.28V9h-1.5V8.78L10.5 7.28V5H14v8z"/>
+              </svg>
+            </a>
+
+            {/* Mobile menu button */}
+            {isOpen ? (
+              <button
+                className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-slate-200 hover:text-white hover:bg-white/10 border border-white/10"
+                onClick={() => setIsOpen(false)}
+                aria-label="Close menu"
+                aria-expanded="true"
+                aria-controls="mobile-menu"
+              >
+                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            ) : (
+              <button
+                className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-slate-200 hover:text-white hover:bg-white/10 border border-white/10"
+                onClick={() => setIsOpen(true)}
+                aria-label="Open menu"
+                aria-expanded="false"
+                aria-controls="mobile-menu"
+              >
+                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M3 6h18M3 12h18M3 18h18" />
+                </svg>
+              </button>
+            )}
+
             {user ? (
               <>
                 {/* User Profile Dropdown */}
@@ -163,43 +203,6 @@ const PremiumNavBar: React.FC = () => {
                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
               </svg>
             </a>
-
-            <a
-              href="https://buymeacoffee.com/kptbarbarossa"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10 transition-colors"
-            >
-              <span className="text-base">☕</span>
-              <span className="hidden sm:inline font-medium text-xs sm:text-sm">Buy me a coffee</span>
-            </a>
-
-            {/* Mobile menu button */}
-            {isOpen ? (
-              <button
-                className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-slate-200 hover:text-white hover:bg-white/10 border border-white/10"
-                onClick={() => setIsOpen(false)}
-                aria-label="Close menu"
-                aria-expanded="true"
-                aria-controls="mobile-menu"
-              >
-                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            ) : (
-              <button
-                className="md:hidden inline-flex items-center justify-center rounded-lg p-2 text-slate-200 hover:text-white hover:bg-white/10 border border-white/10"
-                onClick={() => setIsOpen(true)}
-                aria-label="Open menu"
-                aria-expanded="false"
-                aria-controls="mobile-menu"
-              >
-                <svg className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M3 6h18M3 12h18M3 18h18" />
-                </svg>
-              </button>
-            )}
           </div>
         </div>
       </div>
