@@ -9,6 +9,7 @@ export default defineConfig({
     'process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY': JSON.stringify(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
     'process.env.SUPABASE_URL': JSON.stringify(process.env.SUPABASE_URL),
     'process.env.SUPABASE_ANON_KEY': JSON.stringify(process.env.SUPABASE_ANON_KEY),
+    'import.meta.env.VITE_GOOGLE_CLIENT_ID': JSON.stringify(process.env.VITE_GOOGLE_CLIENT_ID),
   },
   plugins: [
     react({

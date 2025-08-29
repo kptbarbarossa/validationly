@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 
 declare global {
@@ -23,8 +23,19 @@ interface GoogleOneTapProps {
 const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
   const { signInWithGoogle } = useAuth();
   const oneTapRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    // Check if Google Client ID is configured
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    
+    if (!clientId || clientId === 'YOUR_GOOGLE_CLIENT_ID') {
+      setError('Google Client ID is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment variables.');
+      setIsLoading(false);
+      return;
+    }
+
     // Wait for Google Identity Services to load
     const initializeGoogleOneTap = () => {
       if (!window.google?.accounts?.id) {
@@ -36,17 +47,22 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
       try {
         // Initialize Google One Tap
         window.google.accounts.id.initialize({
-          client_id: 'YOUR_GOOGLE_CLIENT_ID', // You'll need to replace this
+          client_id: clientId,
           callback: async (response: any) => {
             if (response.credential) {
-              // Handle the credential - you can either:
-              // 1. Use it directly with Supabase
-              // 2. Pass it to your existing signInWithGoogle function
-              if (onSignIn) {
-                onSignIn(response.credential);
-              } else {
-                // Default behavior - trigger Google sign in
-                await signInWithGoogle();
+              try {
+                // Handle the credential - you can either:
+                // 1. Use it directly with Supabase
+                // 2. Pass it to your existing signInWithGoogle function
+                if (onSignIn) {
+                  onSignIn(response.credential);
+                } else {
+                  // Default behavior - trigger Google sign in
+                  await signInWithGoogle();
+                }
+              } catch (signInError) {
+                console.error('Sign in error:', signInError);
+                setError('Failed to sign in with Google. Please try again.');
               }
             }
           },
@@ -62,8 +78,12 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
             console.log('Google One Tap not displayed:', notification.getNotDisplayedReason());
           }
         });
+
+        setIsLoading(false);
       } catch (error) {
         console.error('Error initializing Google One Tap:', error);
+        setError('Failed to initialize Google One Tap. Please refresh the page and try again.');
+        setIsLoading(false);
       }
     };
 
@@ -77,6 +97,34 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
       }
     };
   }, [signInWithGoogle, onSignIn]);
+
+  if (error) {
+    return (
+      <div className="fixed top-4 right-4 z-50 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div className="flex items-center gap-2">
+          <span className="text-red-500">⚠️</span>
+          <span className="text-sm">{error}</span>
+        </div>
+        <button 
+          onClick={() => setError(null)} 
+          className="text-red-500 hover:text-red-700 text-xs mt-1"
+        >
+          Dismiss
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="fixed top-4 right-4 z-50 bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded">
+        <div className="flex items-center gap-2">
+          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500"></div>
+          <span className="text-sm">Loading Google Sign-In...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
