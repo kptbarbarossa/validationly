@@ -124,6 +124,7 @@ const App: React.FC = () => {
             <footer className="text-center py-8 text-slate-400 text-sm border-t border-white/10">
               <p className="mb-2">&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
               <div className="flex justify-center space-x-6">
+                <a href="/faq" className="underline hover:text-slate-300 transition-colors">FAQ</a>
                 <a href="/privacy" className="underline hover:text-slate-300 transition-colors">Privacy Policy</a>
                 <a href="/terms-of-service" className="underline hover:text-slate-300 transition-colors">Terms of Service</a>
               </div>

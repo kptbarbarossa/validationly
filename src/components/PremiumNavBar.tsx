@@ -7,7 +7,6 @@ import Logo from './Logo';
 const navItems: Array<{ to: string; label: string; external?: boolean }> = [
   { to: '/tools', label: 'Tools' },
   { to: '/apps', label: 'Apps' },
-  { to: '/faq', label: 'FAQ' },
   { to: '/blog', label: 'Blog' },
   // { to: '/use-cases', label: 'Use Cases' }, // hidden from nav for SEO-only exposure
 ];
@@ -16,9 +15,19 @@ const PremiumNavBar: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const { user, signOut } = useAuth();
 
   const isActive = (to: string) => (to === '/' ? location.pathname === '/' : location.pathname.startsWith(to));
+
+  const handleProfileClick = () => {
+    setIsProfileOpen(!isProfileOpen);
+  };
+
+  const handleSignOut = () => {
+    signOut();
+    setIsProfileOpen(false);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
@@ -71,21 +80,68 @@ const PremiumNavBar: React.FC = () => {
           <div className="flex items-center gap-2 pr-2 justify-self-end">
             {user ? (
               <>
-                <Link
-                  to="/dashboard"
-                  className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  <span className="hidden lg:inline text-xs sm:text-sm">Dashboard</span>
-                </Link>
-                <button
-                  onClick={signOut}
-                  className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
-                >
-                  <span className="hidden lg:inline text-xs sm:text-sm">Sign Out</span>
-                </button>
+                {/* User Profile Dropdown */}
+                <div className="relative">
+                  <button
+                    onClick={handleProfileClick}
+                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
+                    aria-label="User profile menu"
+                  >
+                    {user.photoURL ? (
+                      <img
+                        src={user.photoURL}
+                        alt={user.displayName || user.email || 'User'}
+                        className="w-8 h-8 rounded-full border-2 border-white/20"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-cyan-400 flex items-center justify-center text-white text-sm font-semibold">
+                        {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                      </div>
+                    )}
+                    <span className="hidden lg:inline text-xs sm:text-sm">{user.displayName || user.email}</span>
+                    <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+
+                  {/* Profile Dropdown Menu */}
+                  {isProfileOpen && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg ring-1 ring-white/10">
+                      <div className="py-2">
+                        <Link
+                          to="/dashboard"
+                          className="flex items-center gap-3 px-4 py-2 text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          Dashboard
+                        </Link>
+                        <Link
+                          to="/profile"
+                          className="flex items-center gap-3 px-4 py-2 text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
+                          onClick={() => setIsProfileOpen(false)}
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          Profile
+                        </Link>
+                        <div className="border-t border-white/10 my-1"></div>
+                        <button
+                          onClick={handleSignOut}
+                          className="flex items-center gap-3 px-4 py-2 text-slate-200 hover:text-white hover:bg-white/10 transition-colors w-full text-left"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                          </svg>
+                          Sign Out
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </>
             ) : (
               <Link
@@ -96,17 +152,17 @@ const PremiumNavBar: React.FC = () => {
               </Link>
             )}
             
+            {/* X/Twitter Logo */}
             <a
               href="https://x.com/kptbarbarossa"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
-              aria-label="Give Feedback on X/Twitter"
+              className="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Follow us on X/Twitter"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" className="opacity-90">
-                <path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
               </svg>
-              <span className="hidden lg:inline text-xs sm:text-sm">Feedback</span>
             </a>
 
             <a
