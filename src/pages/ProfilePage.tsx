@@ -67,7 +67,7 @@ const ProfilePage: React.FC = () => {
                 {/* User Info */}
                 <div className="flex-1 text-center md:text-left">
                   <h2 className="text-2xl font-bold text-white mb-2">
-                    {user.displayName || 'User'}
+                    {user.displayName || user.fullName || 'User'}
                   </h2>
                   <p className="text-gray-400 mb-4">{user.email}</p>
                   <div className="flex flex-wrap gap-2 justify-center md:justify-start">
@@ -77,6 +77,11 @@ const ProfilePage: React.FC = () => {
                     <span className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">
                       Premium User
                     </span>
+                    {user.photoURL && (
+                      <span className="px-3 py-1 bg-orange-500/20 text-orange-400 rounded-full text-sm">
+                        Google Account
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -143,7 +148,7 @@ const ProfilePage: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Display Name</label>
                       <input
                         type="text"
-                        defaultValue={user.displayName || ''}
+                        defaultValue={user.displayName || user.fullName || ''}
                         disabled={!isEditing}
                         className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white disabled:opacity-50"
                       />
@@ -160,28 +165,33 @@ const ProfilePage: React.FC = () => {
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Company</label>
-                      <input
-                        type="text"
-                        placeholder="Your company name"
-                        disabled={!isEditing}
-                        className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white disabled:opacity-50"
-                      />
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Profile Picture</label>
+                      <div className="flex items-center space-x-4">
+                        {user.photoURL ? (
+                          <img
+                            src={user.photoURL}
+                            alt="Profile"
+                            className="w-16 h-16 rounded-full border-2 border-white/20 object-cover"
+                          />
+                        ) : (
+                          <div className="w-16 h-16 rounded-full bg-gradient-to-r from-indigo-400 to-cyan-400 flex items-center justify-center text-white text-lg font-semibold">
+                            {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
+                          </div>
+                        )}
+                        <div className="text-sm text-gray-400">
+                          {user.photoURL ? 'Google Profile Picture' : 'No profile picture'}
+                        </div>
+                      </div>
                     </div>
                     
                     <div>
-                      <label className="block text-sm font-medium text-gray-300 mb-2">Role</label>
-                      <select
-                        disabled={!isEditing}
-                        className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white disabled:opacity-50"
-                      >
-                        <option>Founder</option>
-                        <option>Product Manager</option>
-                        <option>Developer</option>
-                        <option>Designer</option>
-                        <option>Marketing</option>
-                        <option>Other</option>
-                      </select>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Account Type</label>
+                      <input
+                        type="text"
+                        value={user.photoURL ? 'Google Account' : 'Email Account'}
+                        disabled
+                        className="w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-lg text-white opacity-50"
+                      />
                     </div>
                   </div>
 

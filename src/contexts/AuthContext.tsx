@@ -2,8 +2,17 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
 
+interface AuthUser {
+  id: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  fullName?: string;
+  avatarUrl?: string;
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: AuthUser | null;
   session: Session | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error?: any }>;
@@ -22,8 +31,26 @@ export const useAuth = () => {
   return context;
 };
 
+// Helper function to extract user info from Supabase user
+const extractUserInfo = (user: User | null): AuthUser | null => {
+  if (!user) return null;
+
+  // Extract Google profile info from user metadata
+  const userMetadata = user.user_metadata || {};
+  const appMetadata = user.app_metadata || {};
+
+  return {
+    id: user.id,
+    email: user.email || '',
+    displayName: userMetadata.full_name || userMetadata.name || user.user_metadata?.user_name,
+    photoURL: userMetadata.avatar_url || userMetadata.picture || user.user_metadata?.avatar_url,
+    fullName: userMetadata.full_name || userMetadata.name,
+    avatarUrl: userMetadata.avatar_url || userMetadata.picture,
+  };
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      setUser(extractUserInfo(session?.user ?? null));
       setLoading(false);
     });
 
@@ -40,7 +67,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      setUser(session?.user ?? null);
+      setUser(extractUserInfo(session?.user ?? null));
       setLoading(false);
     });
 
@@ -77,6 +104,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     });
     return { error };
