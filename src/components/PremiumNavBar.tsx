@@ -84,21 +84,20 @@ const PremiumNavBar: React.FC = () => {
                 <div className="relative">
                   <button
                     onClick={handleProfileClick}
-                    className="flex items-center gap-2 px-3 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
+                    className="flex items-center gap-2 px-2 py-1.5 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
                     aria-label="User profile menu"
                   >
                     {user.photoURL ? (
                       <img
                         src={user.photoURL}
                         alt={user.displayName || user.email || 'User'}
-                        className="w-8 h-8 rounded-full border-2 border-white/20"
+                        className="w-8 h-8 rounded-full border-2 border-white/20 object-cover"
                       />
                     ) : (
                       <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-400 to-cyan-400 flex items-center justify-center text-white text-sm font-semibold">
                         {user.displayName?.charAt(0) || user.email?.charAt(0) || 'U'}
                       </div>
                     )}
-                    <span className="hidden lg:inline text-xs sm:text-sm">{user.displayName || user.email}</span>
                     <svg className="w-4 h-4 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>

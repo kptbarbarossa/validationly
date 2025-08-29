@@ -31,6 +31,7 @@ import UseCaseEcommercePage from './pages/UseCaseEcommercePage';
 import UseCasesIndexPage from './pages/UseCasesIndexPage';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsOfService from './pages/TermsOfService';
+import ProfilePage from './pages/ProfilePage';
 import PremiumNavBar from './components/PremiumNavBar';
 import Analytics from './components/Analytics';
 
@@ -106,6 +107,7 @@ const App: React.FC = () => {
                 <Route path="/shopify-pain-points" element={<ShopifyPainPointsPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/auth" element={<AuthPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
 
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/blog" element={<BlogIndexPage />} />
