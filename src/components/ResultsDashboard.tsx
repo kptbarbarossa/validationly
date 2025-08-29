@@ -3,6 +3,7 @@ import type { AnalysisResult } from '../types';
 import DemandScoreGauge from './DemandScoreGauge';
 import InterestChart from './InterestChart';
 import PlatformCard from './PlatformCard';
+import AICoFounderChat from './AICoFounderChat';
 import { PLATFORMS } from '../constants';
 import { ShareIcon } from './icons';
 
@@ -15,6 +16,9 @@ interface ResultsDashboardProps {
 const ResultsDashboard: React.FC<ResultsDashboardProps> = ({ result, idea, onReset }) => {
   const platformDataMap = new Map(PLATFORMS.map(p => [p.name, p]));
   const [shareStatus, setShareStatus] = useState<'idle' | 'copied'>('idle');
+  
+  // Generate a simple user ID for demo purposes
+  const userId = `user_${Date.now()}`;
 
   const handleShare = async () => {
     const platformDetails = result.platformAnalyses
@@ -102,6 +106,19 @@ Analyzed with TrendPulse AI.
             return <PlatformCard key={analysis.platform} analysis={analysis} platformInfo={platformInfo} />;
           })}
         </div>
+      </div>
+
+      {/* AI Co-founder Chat Section */}
+      <div className="p-6 bg-gray-800/50 rounded-xl border border-white/10">
+        <div className="text-center mb-6">
+          <h3 className="text-2xl font-bold text-white mb-2">🤖 AI Co-founder</h3>
+          <p className="text-gray-400">Get personalized business advice based on your validation results</p>
+        </div>
+        <AICoFounderChat 
+          userId={userId}
+          currentIdea={idea}
+          className="max-w-4xl mx-auto"
+        />
       </div>
 
       <div className="text-center pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
