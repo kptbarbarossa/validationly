@@ -86,13 +86,11 @@ const PremiumNavBar: React.FC = () => {
               className="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
               aria-label="Buy me a coffee"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
-                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-                <line x1="6" y1="1" x2="6" y2="4"/>
-                <line x1="10" y1="1" x2="10" y2="4"/>
-                <line x1="14" y1="1" x2="14" y2="4"/>
-              </svg>
+              <img 
+                src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHNqM2FvYzU3ejRlZTF0Yjg1emJydGp2NHJ0dWZhb2RlYXB5MXZ2ciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/TDQOtnWgsBx99cNoyH/giphy.gif"
+                alt="Coffee"
+                className="w-6 h-6 rounded"
+              />
             </a>
 
             {/* Mobile menu button */}
@@ -313,13 +311,11 @@ const PremiumNavBar: React.FC = () => {
                 className="mt-2 mb-2 inline-flex items-center justify-center gap-2 px-3 py-3 rounded-full text-amber-200 hover:text-amber-100 hover:bg-white/10"
                 onClick={() => setIsOpen(false)}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
-                  <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-                  <line x1="6" y1="1" x2="6" y2="4"/>
-                  <line x1="10" y1="1" x2="10" y2="4"/>
-                  <line x1="14" y1="1" x2="14" y2="4"/>
-                </svg>
+                <img 
+                  src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeHNqM2FvYzU3ejRlZTF0Yjg1emJydGp2NHJ0dWZhb2RlYXB5MXZ2ciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/TDQOtnWgsBx99cNoyH/giphy.gif"
+                  alt="Coffee"
+                  className="w-6 h-6 rounded"
+                />
               </a>
             </nav>
           </div>
