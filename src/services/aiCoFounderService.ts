@@ -216,7 +216,7 @@ export class AICoFounderService {
 
   // Generate strategy-focused response
   private generateStrategyResponse(context: UserContext, rememberedIdeas?: string[]): string {
-    let response = "Strateji konusunda size yardımcı olayım! ";
+    let response = "Strateji konusunda size yardimci olayim! ";
     
     if (rememberedIdeas && rememberedIdeas.length > 0) {
       const latestIdea = rememberedIdeas[0];
@@ -224,12 +224,12 @@ export class AICoFounderService {
     }
     
     if (context.businessStage === 'idea') {
-      response += "Şu anda idea stage'desiniz. MVP geliştirme ve market validation odaklanmanız gereken alanlar. ";
+      response += "Su anda idea stage'desiniz. MVP gelistirme ve market validation odaklanmaniz gereken alanlar. ";
     } else if (context.businessStage === 'mvp') {
-      response += "MVP'niz hazır. Şimdi user acquisition ve product-market fit'e odaklanmalısınız. ";
+      response += "MVP'niz hazir. Simdi user acquisition ve product-market fit'e odaklanmalisiniz. ";
     }
     
-    response += "Hangi konuda daha detaylı strateji istiyorsunuz?";
+          response += "Hangi konuda daha detayli strateji istiyorsunuz?";
     
     return response;
   }
@@ -242,7 +242,7 @@ export class AICoFounderService {
       suggestions.push({
         type: 'platform',
         title: 'Reddit Deep Dive',
-        description: 'Reddit\'te güçlü sinyaller alıyorsunuz. Subreddit-specific analiz yapalım.',
+        description: 'Reddit\'te guclu sinyaller aliyorsunuz. Subreddit-specific analiz yapalim.',
         confidence: 85,
         reasoning: 'Previous validations show high Reddit engagement',
         actionItems: ['Subreddit sentiment analysis', 'Community pain points', 'Competitor mentions']
@@ -253,7 +253,7 @@ export class AICoFounderService {
       suggestions.push({
         type: 'strategy',
         title: 'Validation Pattern Analysis',
-        description: 'Çok sayıda validation yaptınız. Pattern'ları analiz edelim.',
+        description: 'Cok sayida validation yaptiniz. Pattern\'lari analiz edelim.',
         confidence: 90,
         reasoning: 'Multiple validations provide pattern insights',
         actionItems: ['Trend analysis', 'Platform performance comparison', 'Idea evolution tracking']
@@ -271,7 +271,7 @@ export class AICoFounderService {
       suggestions.push({
         type: 'strategy',
         title: 'MVP Roadmap',
-        description: 'Idea stage\'den MVP\'ye geçiş planı oluşturalım.',
+        description: 'Idea stage\'den MVP\'ye gecis plani olusturalim.',
         confidence: 80,
         reasoning: 'User is in idea stage, needs MVP guidance',
         actionItems: ['Feature prioritization', 'Technical requirements', 'Timeline planning']

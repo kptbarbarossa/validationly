@@ -46,7 +46,7 @@ const AICoFounderChat: React.FC<AICoFounderChatProps> = ({
     try {
       const response = await aiCoFounderService.processMessage(
         userId, 
-        "Merhaba! Size nasıl yardımcı olabilirim?", 
+        "Merhaba! Size nasil yardimci olabilirim?", 
         currentIdea
       );
       
@@ -104,7 +104,7 @@ const AICoFounderChat: React.FC<AICoFounderChatProps> = ({
       const errorMessage = {
         id: `error_${Date.now()}`,
         type: 'ai' as const,
-        content: 'Üzgünüm, bir hata oluştu. Lütfen tekrar deneyin.',
+        content: 'Uzgunum, bir hata olustu. Lutfen tekrar deneyin.',
         timestamp: new Date()
       };
 
