@@ -57,8 +57,8 @@ const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
-  const [scanProgress, setScanProgress] => useState(0);
-  const [currentPlatform, setCurrentPlatform] => useState('');
+  const [scanProgress, setScanProgress] = useState(0);
+  const [currentPlatform, setCurrentPlatform] = useState('');
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [activeTab, setActiveTab] = useState<'twitter' | 'reddit' | 'linkedin'>('twitter');
   const [filterPlatform, setFilterPlatform] = useState<string>('all');
