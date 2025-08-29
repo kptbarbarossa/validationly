@@ -222,11 +222,17 @@ const ResultsPage: React.FC = () => {
 
   const getDemandText = (verdict: string) => {
     switch (verdict) {
-      case 'high': return '🔥 High';
-      case 'medium': return '🌿 Medium';
-      case 'low': return '❄️ Low';
-      default: return '❓ Unknown';
+      case 'high': return 'High Demand';
+      case 'medium': return 'Medium Demand';
+      case 'low': return 'Low Demand';
+      default: return 'Unknown';
     }
+  };
+
+  const formatNumber = (num: number): string => {
+    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+    if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+    return num.toString();
   };
 
   const handleShare = async (platform: string, content: string) => {

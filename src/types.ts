@@ -1078,12 +1078,23 @@ export interface PremiumPlatformData {
     volume: number;
     engagement: number;
     growth_rate: number;
+    total_stars?: number;
+    total_forks?: number;
+    total_comments?: number;
+    total_views?: number;
+    total_likes?: number;
+    total_votes?: number;
+    total_answers?: number;
+    avg_score?: number;
+    avg_points?: number;
+    avg_relevance?: number;
   };
   top_keywords: string[];
   representative_quotes: Array<{
     text: string;
     sentiment: 'positive' | 'neutral' | 'negative';
   }>;
+  additional_insights?: string[];
 }
 
 export interface PremiumAnalysisResult {
