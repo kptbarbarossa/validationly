@@ -29,6 +29,7 @@ export class PremiumPlatformScannerService {
         throw new Error(`Unknown platform: ${platform}`);
       }
 
+      // Use the existing backend API endpoints
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,8 +75,9 @@ export class PremiumPlatformScannerService {
   }
 
   private transformRedditData(data: any, query: string): PremiumPlatformData {
-    const posts = data.posts || [];
-    const totalScore = posts.reduce((sum: number, post: any) => sum + (post.score || 0), 0);
+    // Transform Reddit API response to our format
+    const posts = data.posts || data.data || [];
+    const totalScore = posts.reduce((sum: number, post: any) => sum + (post.score || post.ups || 0), 0);
     const avgScore = posts.length > 0 ? totalScore / posts.length : 0;
     
     return {
@@ -93,8 +95,9 @@ export class PremiumPlatformScannerService {
   }
 
   private transformHackerNewsData(data: any, query: string): PremiumPlatformData {
-    const stories = data.stories || [];
-    const totalPoints = stories.reduce((sum: number, story: any) => sum + (story.points || 0), 0);
+    // Transform Hacker News API response
+    const stories = data.stories || data.data || [];
+    const totalPoints = stories.reduce((sum: number, story: any) => sum + (story.points || story.score || 0), 0);
     const avgPoints = stories.length > 0 ? totalPoints / stories.length : 0;
     
     return {
@@ -112,8 +115,9 @@ export class PremiumPlatformScannerService {
   }
 
   private transformProductHuntData(data: any, query: string): PremiumPlatformData {
-    const products = data.products || [];
-    const totalVotes = products.reduce((sum: number, product: any) => sum + (product.votes || 0), 0);
+    // Transform Product Hunt API response
+    const products = data.products || data.data || [];
+    const totalVotes = products.reduce((sum: number, product: any) => sum + (product.votes || product.vote_count || 0), 0);
     const avgVotes = products.length > 0 ? totalVotes / products.length : 0;
     
     return {
@@ -131,8 +135,9 @@ export class PremiumPlatformScannerService {
   }
 
   private transformGitHubData(data: any, query: string): PremiumPlatformData {
-    const repos = data.repositories || [];
-    const totalStars = repos.reduce((sum: number, repo: any) => sum + (repo.stargazers_count || 0), 0);
+    // Transform GitHub API response
+    const repos = data.repositories || data.data || [];
+    const totalStars = repos.reduce((sum: number, repo: any) => sum + (repo.stargazers_count || repo.stars || 0), 0);
     const avgStars = repos.length > 0 ? totalStars / repos.length : 0;
     
     return {
@@ -150,8 +155,9 @@ export class PremiumPlatformScannerService {
   }
 
   private transformStackOverflowData(data: any, query: string): PremiumPlatformData {
-    const questions = data.questions || [];
-    const totalVotes = questions.reduce((sum: number, q: any) => sum + (q.score || 0), 0);
+    // Transform Stack Overflow API response
+    const questions = data.questions || data.data || [];
+    const totalVotes = questions.reduce((sum: number, q: any) => sum + (q.score || q.vote_count || 0), 0);
     const avgVotes = questions.length > 0 ? totalVotes / questions.length : 0;
     
     return {
@@ -169,8 +175,9 @@ export class PremiumPlatformScannerService {
   }
 
   private transformGoogleNewsData(data: any, query: string): PremiumPlatformData {
-    const articles = data.articles || [];
-    const totalRelevance = articles.reduce((sum: number, article: any) => sum + (article.relevance || 0), 0);
+    // Transform Google News API response
+    const articles = data.articles || data.data || [];
+    const totalRelevance = articles.reduce((sum: number, article: any) => sum + (article.relevance || article.score || 0), 0);
     const avgRelevance = articles.length > 0 ? totalRelevance / articles.length : 0;
     
     return {
@@ -188,8 +195,9 @@ export class PremiumPlatformScannerService {
   }
 
   private transformYouTubeData(data: any, query: string): PremiumPlatformData {
-    const videos = data.videos || [];
-    const totalViews = videos.reduce((sum: number, video: any) => sum + (video.view_count || 0), 0);
+    // Transform YouTube API response
+    const videos = data.videos || data.data || [];
+    const totalViews = videos.reduce((sum: number, video: any) => sum + (video.view_count || video.views || 0), 0);
     const avgViews = videos.length > 0 ? totalViews / videos.length : 0;
     
     return {
