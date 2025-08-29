@@ -115,15 +115,17 @@ const App: React.FC = () => {
                 <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
                 <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
                 <Route path="/privacy" element={<PrivacyPolicyPage />} />
+                <Route path="/terms-of-service" element={<TermsOfService />} />
                 <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center text-slate-300">Page not found</div>} />
               </Routes>
             </main>
             
             <footer className="text-center py-8 text-slate-400 text-sm border-t border-white/10">
               <p className="mb-2">&copy; {new Date().getFullYear()} Validationly. All rights reserved.</p>
-              <p>
-                <a href="/privacy" className="underline hover:text-slate-300">Privacy Policy</a>
-              </p>
+              <div className="flex justify-center space-x-6">
+                <a href="/privacy" className="underline hover:text-slate-300 transition-colors">Privacy Policy</a>
+                <a href="/terms-of-service" className="underline hover:text-slate-300 transition-colors">Terms of Service</a>
+              </div>
             </footer>
           </BrowserRouter>
         </div>
