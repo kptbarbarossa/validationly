@@ -78,7 +78,7 @@ const PremiumNavBar: React.FC = () => {
 
           {/* Right: CTAs */}
           <div className="flex items-center gap-2 pr-2 justify-self-end">
-            {/* Buy Me a Coffee */}
+            {/* Coffee Icon */}
             <a
               href="https://buymeacoffee.com/kptbarbarossa"
               target="_blank"
@@ -86,9 +86,7 @@ const PremiumNavBar: React.FC = () => {
               className="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-full text-slate-200/90 hover:text-white hover:bg-white/10 transition-colors"
               aria-label="Buy me a coffee"
             >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="opacity-90">
-                <path d="M20 3H4v10c0 2.21 1.79 4 4 4h6c2.21 0 4-1.79 4-4v-3h2c1.11 0 2-.89 2-2V5c0-1.11-.89-2-2-2zM9.5 7.28l1.5 1.5V11H8V8.78l1.5-1.5zM16 13c0 1.1-.9 2-2 2H8c-1.1 0-2-.9-2-2V5h3v1.72l-1.5 1.5V9H8V7.28L9.5 5.78V5h2.5v2.28L13.5 7.28V9h-1.5V8.78L10.5 7.28V5H14v8z"/>
-              </svg>
+              <span className="text-lg">☕</span>
             </a>
 
             {/* Mobile menu button */}
@@ -246,7 +244,6 @@ const PremiumNavBar: React.FC = () => {
                 onClick={() => setIsOpen(false)}
               >
                 <span className="text-lg">☕</span>
-                <span className="font-medium">Buy me a coffee</span>
               </a>
             </nav>
           </div>
