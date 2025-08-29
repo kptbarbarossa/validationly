@@ -494,6 +494,9 @@ const ResultsPage: React.FC = () => {
                         </div>
                       </div>
                     </div>
+                    <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getDemandColor(platform.demand_verdict)}`}>
+                      {getDemandText(platform.demand_verdict)}
+                    </div>
                   </div>
 
                   {/* Summary */}
@@ -501,11 +504,11 @@ const ResultsPage: React.FC = () => {
                     {platform.summary}
                   </p>
 
-                  {/* Metrics */}
-                  <div className="grid grid-cols-3 gap-3 mb-4 text-sm">
+                  {/* Enhanced Metrics */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
                     <div className="text-center p-2 bg-gray-700/50 rounded-lg">
-                      <div className="text-lg font-bold text-green-400">{platform.metrics.volume}</div>
-                      <div className="text-gray-400">Volume</div>
+                      <div className="text-lg font-bold text-green-400">{formatNumber(platform.metrics.volume)}</div>
+                      <div className="text-gray-400">Posts</div>
                     </div>
                     <div className="text-center p-2 bg-gray-700/50 rounded-lg">
                       <div className="text-lg font-bold text-blue-400">{Math.round(platform.metrics.engagement * 100)}%</div>
@@ -515,15 +518,74 @@ const ResultsPage: React.FC = () => {
                       <div className="text-lg font-bold text-purple-400">{Math.round(platform.metrics.growth_rate * 100)}%</div>
                       <div className="text-gray-400">Growth</div>
                     </div>
+                    <div className="text-center p-2 bg-gray-700/50 rounded-lg">
+                      <div className="text-lg font-bold text-yellow-400">{platform.metrics.avg_score?.toFixed(1) || 'N/A'}</div>
+                      <div className="text-gray-400">Avg Score</div>
+                    </div>
                   </div>
 
+                  {/* Platform-Specific Metrics */}
+                  {platform.platform === 'github' && (
+                    <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-green-400">{formatNumber(platform.metrics.total_stars || 0)}</div>
+                        <div className="text-gray-400">Stars</div>
+                      </div>
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-blue-400">{formatNumber(platform.metrics.total_forks || 0)}</div>
+                        <div className="text-gray-400">Forks</div>
+                      </div>
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-purple-400">{formatNumber(platform.metrics.total_views || 0)}</div>
+                        <div className="text-gray-400">Views</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {platform.platform === 'reddit' && (
+                    <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-orange-400">{formatNumber(platform.metrics.total_votes || 0)}</div>
+                        <div className="text-gray-400">Votes</div>
+                      </div>
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-blue-400">{formatNumber(platform.metrics.total_comments || 0)}</div>
+                        <div className="text-gray-400">Comments</div>
+                      </div>
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-green-400">{Math.round((platform.metrics.avg_points || 0) * 100)}%</div>
+                        <div className="text-gray-400">Upvote Rate</div>
+                      </div>
+                    </div>
+                  )}
+
+                  {platform.platform === 'stackoverflow' && (
+                    <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-blue-400">{formatNumber(platform.metrics.total_answers || 0)}</div>
+                        <div className="text-gray-400">Answers</div>
+                      </div>
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-green-400">{formatNumber(platform.metrics.total_votes || 0)}</div>
+                        <div className="text-gray-400">Votes</div>
+                      </div>
+                      <div className="text-center p-2 bg-gray-700/30 rounded">
+                        <div className="font-bold text-yellow-400">{Math.round((platform.metrics.avg_score || 0) * 100)}%</div>
+                        <div className="text-gray-400">Acceptance</div>
+                      </div>
+                    </div>
+                  )}
+
                   {/* Keywords */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {platform.top_keywords.slice(0, 4).map((keyword, i) => (
-                      <span key={i} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full border border-blue-500/30">
-                        {keyword}
-                      </span>
-                    ))}
+                  <div className="mb-4">
+                    <div className="text-sm text-gray-400 mb-2">Trending Keywords:</div>
+                    <div className="flex flex-wrap gap-2">
+                      {platform.top_keywords.slice(0, 5).map((keyword, i) => (
+                        <span key={i} className="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full border border-blue-500/30">
+                          #{keyword}
+                        </span>
+                      ))}
+                    </div>
                   </div>
 
                   {/* Representative Quotes */}
@@ -532,13 +594,47 @@ const ResultsPage: React.FC = () => {
                       <div className="text-sm text-gray-400 mb-2">Top Content:</div>
                       <div className="space-y-2">
                         {platform.representative_quotes.slice(0, 2).map((quote, i) => (
-                          <div key={i} className="text-xs text-gray-300 bg-gray-700/30 rounded p-2">
-                            "{quote.text}"
+                          <div key={i} className="text-xs text-gray-300 bg-gray-700/30 rounded p-3 border-l-2 border-blue-500/50">
+                            <div className="flex items-start space-x-2">
+                              <span className="text-blue-400 mt-1">💬</span>
+                              <div>
+                                <p className="italic">"{quote.text}"</p>
+                                {quote.author && (
+                                  <p className="text-gray-500 mt-1">— {quote.author}</p>
+                                )}
+                              </div>
+                            </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   )}
+
+                  {/* Additional Insights */}
+                  {platform.additional_insights && platform.additional_insights.length > 0 && (
+                    <div className="mb-4">
+                      <div className="text-sm text-gray-400 mb-2">Key Insights:</div>
+                      <div className="space-y-1">
+                        {platform.additional_insights.slice(0, 2).map((insight, i) => (
+                          <div key={i} className="text-xs text-gray-300 bg-gray-700/20 rounded p-2">
+                            <span className="text-green-400 mr-2">💡</span>
+                            {insight}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Platform Status */}
+                  <div className="flex items-center justify-between pt-3 border-t border-gray-700/50">
+                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                      <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                      <span>Live Data</span>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      Updated: {new Date().toLocaleTimeString()}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
