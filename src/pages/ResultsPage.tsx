@@ -62,8 +62,33 @@ const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<string[]>([]);
 
   const result: ValidationResult = location.state?.result;
+
+  // Toggle sidebar for mobile
+  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+
+  // Close sidebar when clicking outside
+  const closeSidebar = () => setSidebarOpen(false);
+
+  // Smooth scrolling navigation
+  const scrollToSection = (sectionId: string) => {
+    document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Toggle section expansion
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections(prev => 
+      prev.includes(sectionId) 
+        ? prev.filter(id => id !== sectionId)
+        : [...prev, sectionId]
+    );
+  };
+
+  // Check if section is expanded
+  const isSectionExpanded = (sectionId: string) => expandedSections.includes(sectionId);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
@@ -128,10 +153,54 @@ const ResultsPage: React.FC = () => {
       />
 
       <div className="min-h-screen bg-slate-950 text-white">
+        {/* Mobile Menu Button */}
+        <div className="lg:hidden fixed top-4 left-4 z-50">
+          <button
+            onClick={toggleSidebar}
+            aria-label="Toggle navigation menu"
+            aria-expanded={sidebarOpen}
+            aria-controls="sidebar-navigation"
+            className="p-2 bg-slate-800 rounded-lg text-white hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-slate-950"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Mobile Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            onClick={closeSidebar}
+          />
+        )}
+
         {/* Modern Dashboard Layout */}
         <div className="flex">
           {/* Sidebar */}
-          <div className="w-64 bg-slate-900 border-r border-slate-800 min-h-screen p-6">
+          <div 
+            id="sidebar-navigation"
+            role="navigation"
+            aria-label="Main navigation"
+            className={`
+              fixed lg:static inset-y-0 left-0 z-40 w-64 bg-slate-900 border-r border-slate-800 min-h-screen p-6
+              transform transition-transform duration-300 ease-in-out
+              ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            `}
+          >
+            {/* Mobile Close Button */}
+            <div className="lg:hidden flex justify-end mb-4">
+              <button
+                onClick={closeSidebar}
+                className="p-2 text-slate-400 hover:text-white transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
             <div className="mb-8">
               <button
                 onClick={() => navigate('/')}
@@ -145,31 +214,47 @@ const ResultsPage: React.FC = () => {
             </div>
 
             {/* Navigation */}
-            <nav className="space-y-2">
-              <a href="#overview" className="flex items-center gap-3 px-4 py-3 bg-indigo-600 text-white rounded-lg">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <nav className="space-y-2" role="navigation" aria-label="Page sections">
+              <button 
+                onClick={() => scrollToSection('overview')}
+                className="w-full flex items-center gap-3 px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+                aria-label="Go to overview section"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
                 <span>Overview</span>
-              </a>
-              <a href="#insights" className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </button>
+              <button 
+                onClick={() => scrollToSection('insights')}
+                className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+                aria-label="Go to AI insights section"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                 </svg>
                 <span>AI Insights</span>
-              </a>
-              <a href="#platforms" className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </button>
+              <button 
+                onClick={() => scrollToSection('platforms')}
+                className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+                aria-label="Go to platforms section"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
                 </svg>
                 <span>Platforms</span>
-              </a>
-              <a href="#content" className="flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              </button>
+              <button 
+                onClick={() => scrollToSection('content')}
+                className="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900"
+                aria-label="Go to content section"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 <span>Content</span>
-              </a>
+              </button>
             </nav>
 
             {/* Actions */}
@@ -192,7 +277,7 @@ const ResultsPage: React.FC = () => {
           {/* Main Content */}
           <div className="flex-1 p-8">
             {/* Header */}
-            <div className="mb-8">
+            <div id="overview" className="mb-8">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h1 className="text-3xl font-bold text-white mb-2">Validation Results</h1>
@@ -247,99 +332,99 @@ const ResultsPage: React.FC = () => {
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-              <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
-                    </svg>
-                  </div>
-                  <span className="text-2xl">📊</span>
-                </div>
-                <div className="text-3xl font-bold text-white mb-1">{activePlatforms}</div>
-                <p className="text-slate-400 text-sm">Active Platforms</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div
-                      className="bg-indigo-600 h-2 rounded-full transition-all duration-1000"
-                      style={{ width: `${(activePlatforms / 7) * 100}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-xs text-slate-500">{Math.round((activePlatforms / 7) * 100)}%</span>
-                </div>
-              </div>
+                         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                              <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-xl p-6 border border-slate-700/50 hover:border-indigo-500/50 hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/20">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-lg">
+                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                     </svg>
+                   </div>
+                   <span className="text-2xl">📊</span>
+                 </div>
+                 <div className="text-3xl font-bold text-white mb-1">{activePlatforms}</div>
+                 <p className="text-slate-400 text-sm">Active Platforms</p>
+                 <div className="mt-3 flex items-center gap-2">
+                   <div className="flex-1 bg-slate-800/50 rounded-full h-2">
+                     <div
+                       className="bg-gradient-to-r from-indigo-500 to-indigo-600 h-2 rounded-full transition-all duration-1000"
+                       style={{ width: `${(activePlatforms / 7) * 100}%` }}
+                     ></div>
+                   </div>
+                   <span className="text-xs text-slate-500">{Math.round((activePlatforms / 7) * 100)}%</span>
+                 </div>
+               </div>
 
-              <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-cyan-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </div>
-                  <span className="text-2xl">📈</span>
-                </div>
-                <div className="text-3xl font-bold text-white mb-1">{totalResults}</div>
-                <p className="text-slate-400 text-sm">Total Results</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div
-                      className="bg-cyan-600 h-2 rounded-full transition-all duration-1000"
-                      style={{ width: `${Math.min((totalResults / 100) * 100, 100)}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-xs text-slate-500">{Math.min(Math.round((totalResults / 100) * 100), 100)}%</span>
-                </div>
-              </div>
+                             <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-xl p-6 border border-slate-700/50 hover:border-cyan-500/50 hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/20">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="w-10 h-10 bg-gradient-to-br from-cyan-600 to-cyan-700 rounded-lg flex items-center justify-center shadow-lg">
+                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                     </svg>
+                   </div>
+                   <span className="text-2xl">📈</span>
+                 </div>
+                 <div className="text-3xl font-bold text-white mb-1">{totalResults}</div>
+                 <p className="text-slate-400 text-sm">Total Results</p>
+                 <div className="mt-3 flex items-center gap-2">
+                   <div className="flex-1 bg-slate-800/50 rounded-full h-2">
+                     <div
+                       className="bg-gradient-to-r from-cyan-500 to-cyan-600 h-2 rounded-full transition-all duration-1000"
+                       style={{ width: `${Math.min((totalResults / 100) * 100, 100)}%` }}
+                     ></div>
+                   </div>
+                   <span className="text-xs text-slate-500">{Math.min(Math.round((totalResults / 100) * 100), 100)}%</span>
+                 </div>
+               </div>
 
-              <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                  </div>
-                  <span className="text-2xl">🧠</span>
-                </div>
-                <div className="text-3xl font-bold text-white mb-1">{aiInsights}</div>
-                <p className="text-slate-400 text-sm">AI Insights</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all duration-1000 ${result.insights?.sentiment === 'positive' ? 'bg-green-600' :
-                        result.insights?.sentiment === 'negative' ? 'bg-red-600' : 'bg-purple-600'
-                        }`}
-                      style={{ width: '75%' }}
-                    ></div>
-                  </div>
-                  <span className="text-xs text-slate-500">
-                    {result.insights?.sentiment === 'positive' ? 'Positive' :
-                      result.insights?.sentiment === 'negative' ? 'Negative' : 'Neutral'}
-                  </span>
-                </div>
-              </div>
+                             <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-xl p-6 border border-slate-700/50 hover:border-purple-500/50 hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-purple-500/20">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center shadow-lg">
+                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                     </svg>
+                   </div>
+                   <span className="text-2xl">🧠</span>
+                 </div>
+                 <div className="text-3xl font-bold text-white mb-1">{aiInsights}</div>
+                 <p className="text-slate-400 text-sm">AI Insights</p>
+                 <div className="mt-3 flex items-center gap-2">
+                   <div className="flex-1 bg-slate-800/50 rounded-full h-2">
+                     <div
+                       className={`h-2 rounded-full transition-all duration-1000 ${result.insights?.sentiment === 'positive' ? 'bg-gradient-to-r from-green-500 to-green-600' :
+                         result.insights?.sentiment === 'negative' ? 'bg-gradient-to-r from-red-500 to-red-600' : 'bg-gradient-to-r from-purple-500 to-purple-600'
+                         }`}
+                       style={{ width: '75%' }}
+                     ></div>
+                   </div>
+                   <span className="text-xs text-slate-500">
+                     {result.insights?.sentiment === 'positive' ? 'Positive' :
+                       result.insights?.sentiment === 'negative' ? 'Negative' : 'Neutral'}
+                   </span>
+                 </div>
+               </div>
 
-              <div className="bg-slate-900 rounded-xl p-6 border border-slate-800">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                  </div>
-                  <span className="text-2xl">🎯</span>
-                </div>
-                <div className="text-3xl font-bold text-white mb-1">{result.insights?.validationScore || result.demandScore}</div>
-                <p className="text-slate-400 text-sm">Market Score</p>
-                <div className="mt-3 flex items-center gap-2">
-                  <div className="flex-1 bg-slate-800 rounded-full h-2">
-                    <div
-                      className="bg-emerald-600 h-2 rounded-full transition-all duration-1000"
-                      style={{ width: `${(result.insights?.validationScore || result.demandScore)}%` }}
-                    ></div>
-                  </div>
-                  <span className="text-xs text-slate-500">{result.insights?.validationScore || result.demandScore}%</span>
-                </div>
-              </div>
+                             <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-xl p-6 border border-slate-700/50 hover:border-emerald-500/50 hover:scale-105 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20">
+                 <div className="flex items-center justify-between mb-4">
+                   <div className="w-10 h-10 bg-gradient-to-br from-emerald-600 to-emerald-700 rounded-lg flex items-center justify-center shadow-lg">
+                     <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                     </svg>
+                   </div>
+                   <span className="text-2xl">🎯</span>
+                 </div>
+                 <div className="text-3xl font-bold text-white mb-1">{result.insights?.validationScore || result.demandScore}</div>
+                 <p className="text-slate-400 text-sm">Market Score</p>
+                 <div className="mt-3 flex items-center gap-2">
+                   <div className="flex-1 bg-slate-800/50 rounded-full h-2">
+                     <div
+                       className="bg-gradient-to-r from-emerald-500 to-emerald-600 h-2 rounded-full transition-all duration-1000"
+                       style={{ width: `${(result.insights?.validationScore || result.demandScore)}%` }}
+                     ></div>
+                   </div>
+                   <span className="text-xs text-slate-500">{result.insights?.validationScore || result.demandScore}%</span>
+                 </div>
+               </div>
             </div>
 
             {/* Analysis Summary */}
@@ -358,20 +443,31 @@ const ResultsPage: React.FC = () => {
             </div>
 
             {/* Content Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div id="insights" className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {/* AI Insights */}
-              {result.insights && (
-                <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800">
-                  <div className="flex items-center gap-3 mb-6">
-                    <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                      </svg>
+              {result.insights ? (
+                <div className="bg-gradient-to-br from-slate-900/80 to-slate-800/80 backdrop-blur-md rounded-2xl p-6 border border-slate-700/50 hover:border-purple-500/50 transition-all duration-300">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-purple-700 rounded-lg flex items-center justify-center shadow-lg">
+                        <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                        </svg>
+                      </div>
+                      <h3 className="text-xl font-bold text-white">AI Insights</h3>
                     </div>
-                    <h3 className="text-xl font-bold text-white">AI Insights</h3>
+                    <button
+                      onClick={() => toggleSection('insights')}
+                      className="p-2 text-slate-400 hover:text-white transition-colors"
+                    >
+                      <svg className={`w-5 h-5 transition-transform duration-200 ${isSectionExpanded('insights') ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
                   </div>
 
-                  <div className="space-y-6">
+                                     <div className={`space-y-6 transition-all duration-300 ${isSectionExpanded('insights') ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+                     <div className="space-y-6">
                     {result.insights.keyInsights && result.insights.keyInsights.length > 0 && (
                       <div>
                         <h4 className="font-semibold text-cyan-400 mb-3 flex items-center gap-2">
@@ -443,7 +539,7 @@ const ResultsPage: React.FC = () => {
               )}
 
               {/* Platform Cards Section - Similar to the image design */}
-              <div className="bg-slate-900 rounded-2xl p-6 border border-slate-800 mb-8">
+              <div id="platforms" className="bg-slate-900 rounded-2xl p-6 border border-slate-800 mb-8">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="text-2xl font-bold text-white">Platform Cards Sorted by Score (Top 8)</h3>
                   <button className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors">
@@ -725,7 +821,7 @@ const ResultsPage: React.FC = () => {
             </div>
 
             {/* Action Plan */}
-            <div className="mt-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 border border-slate-700">
+            <div id="content" className="mt-8 bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-8 border border-slate-700">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
