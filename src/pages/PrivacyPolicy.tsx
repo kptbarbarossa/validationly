@@ -328,38 +328,6 @@ const PrivacyPolicy: React.FC = () => {
               </p>
             </section>
 
-            {/* Contact Information */}
-            <section className="bg-gray-800/50 rounded-2xl p-8 border border-white/10">
-              <h2 className="text-2xl font-bold text-white mb-4">13. Contact Us</h2>
-              <p className="text-gray-300 mb-4">
-                If you have any questions about this Privacy Policy or our data practices, please contact us:
-              </p>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold text-blue-300 mb-3">Data Protection Officer</h3>
-                  <div className="text-gray-300 space-y-2">
-                    <p>• Email: privacy@validationly.com</p>
-                    <p>• Phone: +1 (555) 123-4567</p>
-                    <p>• Address: [Your Business Address]</p>
-                  </div>
-                </div>
-                
-                <div>
-                  <h3 className="text-lg font-semibold text-blue-300 mb-3">General Inquiries</h3>
-                  <div className="text-gray-300 space-y-2">
-                    <p>• Website: validationly.com</p>
-                    <p>• Support: support@validationly.com</p>
-                    <p>• Business: business@validationly.com</p>
-                  </div>
-                </div>
-              </div>
-              
-              <p className="text-gray-300 mt-4">
-                We are committed to responding to your privacy inquiries promptly and thoroughly.
-              </p>
-            </section>
-
             {/* Back to Home */}
             <div className="text-center pt-8">
               <Link
