@@ -184,6 +184,15 @@ const PremiumNavBar: React.FC = () => {
                   )}
                 </div>
               </>
+            ) : (
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-indigo-200 hover:text-indigo-100 hover:bg-white/10 transition-colors border border-indigo-400/30"
+              >
+                <span className="text-xs sm:text-sm font-medium">Sign In</span>
+              </Link>
+            )}
+
             {/* X/Twitter Logo */}
             <a
               href="https://x.com/kptbarbarossa"
