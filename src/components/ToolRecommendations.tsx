@@ -158,7 +158,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                 <span className="text-white font-bold text-lg">C</span>
               </div>
             </div>
-            
+
             {/* Content */}
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-2">
@@ -167,12 +167,12 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                   AI Assistant
                 </span>
               </div>
-              
+
               <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                AI-powered knowledge management and team collaboration platform. 
+                AI-powered knowledge management and team collaboration platform.
                 Perfect for startups to organize ideas, automate workflows, and scale efficiently.
               </p>
-              
+
               {/* Key Features */}
               <div className="grid grid-cols-2 gap-2 mb-4">
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
@@ -192,7 +192,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                   <span>Workflow optimization</span>
                 </div>
               </div>
-              
+
               {/* CTA */}
               <a
                 href="https://capacity.so/?via=barbaros"
