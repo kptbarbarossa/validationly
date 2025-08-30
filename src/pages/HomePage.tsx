@@ -783,21 +783,6 @@ const HomePage: React.FC = () => {
                         </div>
                     </div>
                 </div>
-                                    target="_blank"
-                                    rel="nofollow noopener"
-                                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
-                                >
-                                    <span>🛍️</span>
-                                    <span>View App</span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Removed sample ideas section (Prompt Gallery replaces it) */}
-
-                {/* Feedback wall removed by request */}
 
                 {/* RelatedStartups section removed by request */}
             </div>
