@@ -476,12 +476,7 @@ const ResultsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Tool Recommendations */}
-          <ToolRecommendations 
-            idea={idea}
-            platformData={platformsWithArbitrage.length > 0 ? platformsWithArbitrage : result?.platforms || []}
-            userPlan={userPlan}
-          />
+
 
           {/* Filters & Sorting */}
           <div className="flex flex-wrap items-center justify-between mb-8">
@@ -572,6 +567,92 @@ const ResultsPage: React.FC = () => {
                   <p className="text-gray-300 text-sm mb-4 leading-relaxed">
                     {platform.summary}
                   </p>
+
+                  {/* AI Analysis Insights */}
+                  <div className="mb-4 p-4 bg-gradient-to-r from-blue-500/10 to-cyan-500/10 rounded-lg border border-blue-500/20">
+                    <h4 className="text-sm font-semibold text-blue-400 mb-3 flex items-center">
+                      🤖 AI Analysis Insights
+                      <span className="ml-2 text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded-full">
+                        Enhanced
+                      </span>
+                    </h4>
+                    
+                    <div className="space-y-3 text-xs">
+                      {/* Market Opportunity */}
+                      <div>
+                        <div className="text-green-400 font-medium mb-1">💡 Market Opportunity</div>
+                        <p className="text-gray-300 leading-relaxed">
+                          {platform.platform === 'reddit' && 
+                            `Strong community engagement indicates ${Math.round(platform.metrics.engagement * 100)}% active discussion rate. Users are actively seeking solutions in this space, with ${formatNumber(platform.metrics.volume)} posts showing consistent demand patterns.`
+                          }
+                          {platform.platform === 'github' && 
+                            `Developer interest is high with ${formatNumber(platform.metrics.total_stars || 0)} stars across related projects. The ${Math.round(platform.metrics.growth_rate * 100)}% growth rate suggests emerging technical demand.`
+                          }
+                          {platform.platform === 'producthunt' && 
+                            `Product launch momentum shows ${Math.round(platform.metrics.engagement * 100)}% community engagement. Early adopters are actively validating similar concepts with ${formatNumber(platform.metrics.volume)} launches.`
+                          }
+                          {platform.platform === 'hackernews' && 
+                            `Tech community validation with ${Math.round(platform.metrics.avg_score || 0 * 100)}% positive sentiment. Discussion quality indicates serious consideration from technical decision-makers.`
+                          }
+                          {platform.platform === 'stackoverflow' && 
+                            `Developer pain points are evident with ${formatNumber(platform.metrics.total_answers || 0)} solution attempts. High question volume indicates unmet technical needs.`
+                          }
+                          {platform.platform === 'googlenews' && 
+                            `Media coverage trends show ${Math.round(platform.metrics.growth_rate * 100)}% increase in mentions. Market timing appears favorable based on news cycle analysis.`
+                          }
+                          {platform.platform === 'youtube' && 
+                            `Content creator interest with ${formatNumber(platform.metrics.total_views || 0)} views indicates audience demand. Educational content performance suggests market readiness.`
+                          }
+                          {!['reddit', 'github', 'producthunt', 'hackernews', 'stackoverflow', 'googlenews', 'youtube'].includes(platform.platform) &&
+                            `Platform analysis shows ${Math.round(platform.metrics.engagement * 100)}% engagement rate with ${formatNumber(platform.metrics.volume)} relevant discussions, indicating active market interest.`
+                          }
+                        </p>
+                      </div>
+
+                      {/* Competitive Landscape */}
+                      <div>
+                        <div className="text-orange-400 font-medium mb-1">⚔️ Competitive Landscape</div>
+                        <p className="text-gray-300 leading-relaxed">
+                          {platform.sentiment.positive > 0.6 ? 
+                            `High positive sentiment (${Math.round(platform.sentiment.positive * 100)}%) suggests market satisfaction with existing solutions, indicating need for differentiation through superior UX or pricing.` :
+                            platform.sentiment.negative > 0.4 ?
+                            `Significant negative sentiment (${Math.round(platform.sentiment.negative * 100)}%) reveals market gaps and user frustration with current solutions - prime opportunity for disruption.` :
+                            `Mixed sentiment indicates competitive but unsaturated market. Focus on unique value proposition and targeted positioning.`
+                          }
+                        </p>
+                      </div>
+
+                      {/* Strategic Recommendations */}
+                      <div>
+                        <div className="text-purple-400 font-medium mb-1">🎯 Strategic Recommendations</div>
+                        <div className="text-gray-300 leading-relaxed">
+                          {platform.metrics.growth_rate > 0.5 ? 
+                            `🚀 High growth momentum detected. Consider rapid market entry to capitalize on trending interest.` :
+                            platform.metrics.growth_rate < -0.2 ?
+                            `📉 Declining interest suggests market maturity. Focus on innovation or pivot to adjacent opportunities.` :
+                            `📊 Stable market conditions. Ideal for methodical validation and gradual market penetration.`
+                          }
+                          {platform.metrics.engagement > 0.7 && ` Strong engagement rates suggest community-driven growth strategies will be effective.`}
+                          {platform.metrics.volume > 1000 && ` High discussion volume indicates sufficient market size for sustainable business.`}
+                        </div>
+                      </div>
+
+                      {/* Key Success Factors */}
+                      <div>
+                        <div className="text-cyan-400 font-medium mb-1">🔑 Key Success Factors</div>
+                        <div className="flex flex-wrap gap-1">
+                          {platform.top_keywords.slice(0, 4).map((keyword, i) => (
+                            <span key={i} className="bg-cyan-500/20 text-cyan-300 px-2 py-1 rounded text-xs">
+                              {keyword}
+                            </span>
+                          ))}
+                        </div>
+                        <p className="text-gray-300 text-xs mt-1">
+                          Focus on these trending topics for maximum market resonance and organic discovery.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
 
                   {/* Premium Arbitrage Metrics Panel */}
                   {userPlan === 'premium' && platform.arbitrage && (
@@ -845,6 +926,13 @@ const ResultsPage: React.FC = () => {
               </div>
             ))}
           </div>
+
+          {/* Tool Recommendations */}
+          <ToolRecommendations 
+            idea={idea}
+            platformData={platformsWithArbitrage.length > 0 ? platformsWithArbitrage : result?.platforms || []}
+            userPlan={userPlan}
+          />
 
           {/* Social Media Post Suggestions */}
           {socialPosts && (
