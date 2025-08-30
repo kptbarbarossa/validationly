@@ -85,23 +85,31 @@ const JobTailorPage: React.FC = () => {
         }
 
         try {
-            const response = await fetch('/api/analytics?action=create-checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${currentToken}`
-                },
-                body: JSON.stringify({ 
-                    priceId,
-                    successUrl: window.location.origin + '/job-tailor?success=true',
-                    cancelUrl: window.location.origin + '/job-tailor?canceled=true'
-                })
-            });
+            // TODO: Analytics endpoint removed - implement alternative checkout
+            // const response = await fetch('/api/analytics?action=create-checkout', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'Authorization': `Bearer ${currentToken}`
+            //     },
+            //     body: JSON.stringify({ 
+            //         priceId,
+            //         successUrl: window.location.origin + '/job-tailor?success=true',
+            //         cancelUrl: window.location.origin + '/job-tailor?canceled=true'
+            //     })
+            // });
 
-            const data = await response.json();
-            if (response.ok && data.url) {
-                window.location.href = data.url;
-            } else {
+            // const data = await response.json();
+            // if (response.ok && data.url) {
+            //     window.location.href = data.url;
+            // } else {
+            
+            // Temporary: Show message instead of redirect
+            alert('Checkout functionality temporarily disabled (analytics endpoint removed)');
+            setIsLoading(false);
+            return;
+            
+            if (false) { // Disable the error handling block
                 alert(data.error || 'Failed to create checkout session');
             }
         } catch (error) {
