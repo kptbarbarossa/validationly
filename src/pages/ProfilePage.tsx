@@ -129,9 +129,9 @@ const ProfilePage: React.FC = () => {
             <div className="flex items-center space-x-6">
               {/* Profile Picture */}
               <div className="w-24 h-24 rounded-full overflow-hidden bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                {user.profilePicture ? (
+                {user.photoURL ? (
                   <img
-                    src={user.profilePicture}
+                    src={user.photoURL}
                     alt="Profile"
                     className="w-full h-full object-cover"
                   />
@@ -157,7 +157,7 @@ const ProfilePage: React.FC = () => {
                   </span>
                   <span className="text-gray-500">•</span>
                   <span className="text-gray-300">
-                    Member since {new Date(user.createdAt || Date.now()).toLocaleDateString()}
+                    Member since {new Date().toLocaleDateString()}
                   </span>
                 </div>
               </div>
@@ -190,8 +190,8 @@ const ProfilePage: React.FC = () => {
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex-1 flex items-center justify-center space-x-2 px-6 py-3 rounded-lg font-medium transition-all ${activeTab === tab.id
-                    ? 'bg-white/10 text-white border border-white/20'
-                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  ? 'bg-white/10 text-white border border-white/20'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
                   }`}
               >
                 <span>{tab.icon}</span>
@@ -279,17 +279,17 @@ const ProfilePage: React.FC = () => {
                           <button
                             onClick={() => toggleFavorite(validation.id, validation.is_favorite)}
                             className={`p-2 rounded-lg transition-colors ${validation.is_favorite
-                                ? 'text-yellow-400 hover:text-yellow-300'
-                                : 'text-gray-400 hover:text-yellow-400'
+                              ? 'text-yellow-400 hover:text-yellow-300'
+                              : 'text-gray-400 hover:text-yellow-400'
                               }`}
                           >
                             ⭐
                           </button>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${(validation.demand_score || 0) >= 70
-                              ? 'bg-green-500/20 text-green-400'
-                              : (validation.demand_score || 0) >= 50
-                                ? 'bg-yellow-500/20 text-yellow-400'
-                                : 'bg-red-500/20 text-red-400'
+                            ? 'bg-green-500/20 text-green-400'
+                            : (validation.demand_score || 0) >= 50
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-red-500/20 text-red-400'
                             }`}>
                             {(validation.demand_score || 0) >= 70 ? 'High' : (validation.demand_score || 0) >= 50 ? 'Medium' : 'Low'}
                           </span>
@@ -339,9 +339,9 @@ const ProfilePage: React.FC = () => {
                             <span>•</span>
                             <span>{new Date(validation.created_at).toLocaleDateString()}</span>
                           </div>
-                          {validation.score_justification && (
+                          {validation.justification && (
                             <p className="text-gray-300 text-sm">
-                              {validation.score_justification.slice(0, 200)}...
+                              {validation.justification.slice(0, 200)}...
                             </p>
                           )}
                         </div>
@@ -349,17 +349,17 @@ const ProfilePage: React.FC = () => {
                           <button
                             onClick={() => toggleFavorite(validation.id, validation.is_favorite)}
                             className={`p-2 rounded-lg transition-colors ${validation.is_favorite
-                                ? 'text-yellow-400 hover:text-yellow-300'
-                                : 'text-gray-400 hover:text-yellow-400'
+                              ? 'text-yellow-400 hover:text-yellow-300'
+                              : 'text-gray-400 hover:text-yellow-400'
                               }`}
                           >
                             ⭐
                           </button>
                           <span className={`px-3 py-1 rounded-full text-xs font-medium ${(validation.demand_score || 0) >= 70
-                              ? 'bg-green-500/20 text-green-400'
-                              : (validation.demand_score || 0) >= 50
-                                ? 'bg-yellow-500/20 text-yellow-400'
-                                : 'bg-red-500/20 text-red-400'
+                            ? 'bg-green-500/20 text-green-400'
+                            : (validation.demand_score || 0) >= 50
+                              ? 'bg-yellow-500/20 text-yellow-400'
+                              : 'bg-red-500/20 text-red-400'
                             }`}>
                             {(validation.demand_score || 0) >= 70 ? 'High' : (validation.demand_score || 0) >= 50 ? 'Medium' : 'Low'}
                           </span>
