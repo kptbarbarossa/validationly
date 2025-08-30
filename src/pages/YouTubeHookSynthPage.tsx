@@ -38,6 +38,17 @@ const YouTubeHookSynthPage: React.FC = () => {
 
   const userPlan: UserPlan = user?.plan || 'free';
 
+  // Language detection helper
+  const detectLanguage = (text: string): string => {
+    const turkishChars = /[çğıöşüÇĞIİÖŞÜ]/;
+    const turkishWords = /\b(ve|ile|için|olan|bir|bu|şu|o|uygulama|sistem|program|yazılım|platform|site|web|mobil|app|fitness|sağlık|eğitim|oyun|müzik|video|fotoğraf|sosyal|medya|iş|finans|alışveriş|yemek|seyahat|haber|spor|teknoloji)\b/i;
+    
+    if (turkishChars.test(text) || turkishWords.test(text)) {
+      return 'tr';
+    }
+    return 'en';
+  };
+
   const tones = [
     { value: 'energetic', label: '⚡ Energetic', description: 'High energy, exciting, motivational' },
     { value: 'analytical', label: '📊 Analytical', description: 'Data-driven, logical, informative' },
@@ -74,17 +85,6 @@ const YouTubeHookSynthPage: React.FC = () => {
     setError(null);
     
     try {
-      // Detect language from category input
-      const detectLanguage = (text: string): string => {
-        const turkishChars = /[çğıöşüÇĞIİÖŞÜ]/;
-        const turkishWords = /\b(ve|ile|için|olan|bir|bu|şu|o|uygulama|sistem|program|yazılım|platform|site|web|mobil|app|fitness|sağlık|eğitim|oyun|müzik|video|fotoğraf|sosyal|medya|iş|finans|alışveriş|yemek|seyahat|haber|spor|teknoloji)\b/i;
-        
-        if (turkishChars.test(text) || turkishWords.test(text)) {
-          return 'tr';
-        }
-        return 'en';
-      };
-
       const detectedLanguage = detectLanguage(category.trim());
 
       const request: HookSynthRequest = {
@@ -164,6 +164,126 @@ const YouTubeHookSynthPage: React.FC = () => {
       setAnalysisError(err instanceof Error ? err.message : 'Failed to analyze competitive videos');
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  const generateSingleThumbnail = async (design: any, designIndex: number) => {
+    if (!result || !result.hooks || result.hooks.length === 0) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      console.log('🎨 Generating single thumbnail...', design);
+      
+      // Use the first hook for context
+      const firstHook = result.hooks[0];
+      
+      const response = await fetch('/api/ai-thumbnail', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hookText: firstHook.text,
+          hookType: firstHook.type,
+          category: category.trim(),
+          tone,
+          goal,
+          language: detectLanguage(category.trim())
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`AI thumbnail API error: ${response.status}`);
+      }
+
+      const newThumbnailDesign = await response.json();
+      
+      // Update the specific design in the result
+      const updatedResult = { ...result };
+      updatedResult.ab_test_pack.thumbnail_designs[designIndex] = {
+        ...design,
+        generated_url: newThumbnailDesign.generated_url,
+        prompt: newThumbnailDesign.prompt
+      };
+      
+      setResult(updatedResult);
+      console.log('✅ Single thumbnail generated successfully');
+      
+    } catch (err) {
+      console.error('Error generating single thumbnail:', err);
+      setError(err instanceof Error ? err.message : 'Failed to generate thumbnail');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const generateAllThumbnails = async () => {
+    if (!result || !result.hooks || result.hooks.length === 0 || !result.ab_test_pack?.thumbnail_designs) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      console.log('🎨 Generating all thumbnails...');
+      
+      const firstHook = result.hooks[0];
+      const detectedLanguage = detectLanguage(category.trim());
+      
+      // Generate all thumbnails in parallel
+      const generatePromises = result.ab_test_pack.thumbnail_designs.map(async (design: any, index: number) => {
+        try {
+          const response = await fetch('/api/ai-thumbnail', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              hookText: firstHook.text,
+              hookType: firstHook.type,
+              category: category.trim(),
+              tone,
+              goal,
+              language: detectedLanguage
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`AI thumbnail API error: ${response.status}`);
+          }
+
+          const newThumbnailDesign = await response.json();
+          return {
+            index,
+            design: {
+              ...design,
+              generated_url: newThumbnailDesign.generated_url,
+              prompt: newThumbnailDesign.prompt
+            }
+          };
+        } catch (err) {
+          console.error(`Error generating thumbnail ${index}:`, err);
+          return { index, design }; // Return original design on error
+        }
+      });
+      
+      const results = await Promise.all(generatePromises);
+      
+      // Update all designs
+      const updatedResult = { ...result };
+      results.forEach(({ index, design }) => {
+        updatedResult.ab_test_pack.thumbnail_designs[index] = design;
+      });
+      
+      setResult(updatedResult);
+      console.log('✅ All thumbnails generated successfully');
+      
+    } catch (err) {
+      console.error('Error generating all thumbnails:', err);
+      setError(err instanceof Error ? err.message : 'Failed to generate thumbnails');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -694,9 +814,18 @@ const YouTubeHookSynthPage: React.FC = () => {
                     </div>
 
                     <div className="bg-gray-800/50 backdrop-blur rounded-xl p-6 border border-white/10">
-                      <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-                        🎨 AI Thumbnail Designs
-                      </h3>
+                      <div className="flex items-center justify-between mb-4">
+                        <h3 className="text-xl font-bold text-white flex items-center">
+                          🎨 AI Thumbnail Designs
+                        </h3>
+                        <button
+                          onClick={generateAllThumbnails}
+                          disabled={isLoading}
+                          className="px-4 py-2 bg-gradient-to-r from-green-600 to-blue-600 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all disabled:opacity-50"
+                        >
+                          {isLoading ? '🔄 Generating...' : '🎨 Generate All'}
+                        </button>
+                      </div>
                       <div className="space-y-4">
                         {result.ab_test_pack.thumbnail_designs.map((design, i) => (
                           <div key={i} className="bg-gray-700/30 rounded-lg p-4 border border-white/5">
@@ -707,12 +836,21 @@ const YouTubeHookSynthPage: React.FC = () => {
                                 </span>
                                 <span className="text-gray-400 text-sm">#{design.id}</span>
                               </div>
-                              <button
-                                onClick={() => copyHook(design.prompt, `design-${i}`)}
-                                className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm font-medium transition-colors"
-                              >
-                                {copiedHook === `design-${i}` ? '✓' : 'Copy Prompt'}
-                              </button>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => generateSingleThumbnail(design, i)}
+                                  disabled={isLoading}
+                                  className="px-3 py-1 bg-green-600 hover:bg-green-700 rounded text-sm font-medium transition-colors disabled:opacity-50"
+                                >
+                                  {isLoading ? '🔄' : '🎨 Generate'}
+                                </button>
+                                <button
+                                  onClick={() => copyHook(design.prompt, `design-${i}`)}
+                                  className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm font-medium transition-colors"
+                                >
+                                  {copiedHook === `design-${i}` ? '✓' : 'Copy Prompt'}
+                                </button>
+                              </div>
                             </div>
                             
                             {/* Design Elements */}
