@@ -207,6 +207,64 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </div>
         </div>
 
+        {/* StoryShort.ai Affiliate Card */}
+        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10">
+          <div className="flex items-start space-x-4">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-lg">S</span>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <h3 className="text-lg font-bold text-white">StoryShort</h3>
+                <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs font-medium">
+                  AI Video Creator
+                </span>
+              </div>
+              
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                Transform your ideas into engaging short videos with AI. 
+                Perfect for content marketing, social media, and startup storytelling.
+              </p>
+              
+              {/* Key Features */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>AI video generation</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Social media ready</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Multiple formats</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Quick creation</span>
+                </div>
+              </div>
+              
+              {/* CTA */}
+              <a
+                href="https://storyshort.ai/?via=barbaros"
+                target="_blank"
+                rel="nofollow noopener"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+              >
+                <span>🎬</span>
+                <span>Create Videos with AI</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
         {/* Tool Recommendations Coming Soon */}
         <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10">
           <div className="text-center">
