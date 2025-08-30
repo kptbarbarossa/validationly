@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SEOHead from '../components/SEOHead';
-import ShhhhPricingBlock from '../components/ShhhhPricingBlock';
 
 const posts = [
   { slug: 'login-to-see-price-guide', title: 'Login to See Price: Hide Prices App for Shopify', desc: 'Boost customer registrations by hiding prices from guests. Perfect for B2B, wholesale, and membership stores.', date: '2025-01-27' },
@@ -53,7 +52,6 @@ const BlogIndexPage: React.FC = () => {
           </Link>
         ))}
       </div>
-      <ShhhhPricingBlock />
     </div>
   );
 };
