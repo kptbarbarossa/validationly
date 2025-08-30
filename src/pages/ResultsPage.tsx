@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
+import { ToolRecommendations } from '../components/ToolRecommendations';
 import { PLATFORMS } from '../constants';
 import { 
   PremiumPlatformData, 
@@ -474,6 +475,13 @@ const ResultsPage: React.FC = () => {
               ))}
             </div>
           </div>
+
+          {/* Tool Recommendations */}
+          <ToolRecommendations 
+            idea={idea}
+            platformData={platformsWithArbitrage.length > 0 ? platformsWithArbitrage : result?.platforms || []}
+            userPlan={userPlan}
+          />
 
           {/* Filters & Sorting */}
           <div className="flex flex-wrap items-center justify-between mb-8">

@@ -1143,6 +1143,61 @@ export interface PremiumValidationResponse {
   generated_at: string;
 }
 
+// Tool Recommendation System Types
+export interface ToolRecommendation {
+  id: string;
+  name: string;
+  category: ToolCategory;
+  description: string;
+  useCase: string;
+  pricing: {
+    free: boolean;
+    startingPrice?: string;
+    currency: string;
+  };
+  affiliateLink: string;
+  commission: number; // percentage
+  relevanceScore: number; // 0-100
+  reason: string; // why this tool is recommended for this idea
+  features: string[];
+  pros: string[];
+  cons: string[];
+  alternatives?: string[];
+}
+
+export type ToolCategory = 
+  | 'analytics'
+  | 'marketing'
+  | 'development'
+  | 'design'
+  | 'productivity'
+  | 'hosting'
+  | 'database'
+  | 'payment'
+  | 'communication'
+  | 'automation'
+  | 'security'
+  | 'testing';
+
+export interface ToolRecommendationRequest {
+  idea: string;
+  platformData: PremiumPlatformData[];
+  userPlan: UserPlan;
+  budget?: 'low' | 'medium' | 'high';
+  stage?: 'idea' | 'mvp' | 'launch' | 'growth';
+}
+
+export interface ToolRecommendationResponse {
+  recommendations: ToolRecommendation[];
+  totalCount: number;
+  categories: ToolCategory[];
+  estimatedMonthlyCost: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+}
+
 // Social Arbitrage Types - Phase 1 Premium Feature
 export interface SocialArbitrageMetrics {
   attention_imbalance: number;      // AII ∈ [0,1] - social vs news balance

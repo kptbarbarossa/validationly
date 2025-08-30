@@ -582,6 +582,141 @@ const YouTubeHookSynthPage: React.FC = () => {
                             </div>
                           </div>
                         </div>
+
+                        {/* Video Description */}
+                        {analysisResult.video.description && (
+                          <div className="bg-gray-700/30 rounded-xl p-6 mt-6">
+                            <h5 className="text-lg font-bold text-white mb-3 flex items-center">
+                              📝 Video Description
+                            </h5>
+                            <div className="text-gray-300 text-sm leading-relaxed whitespace-pre-line max-h-48 overflow-y-auto">
+                              {analysisResult.video.description}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Detailed Analysis */}
+                        {(analysisResult as any).detailed_analysis && (
+                          <div className="space-y-6 mt-6">
+                            
+                            {/* Content Breakdown */}
+                            <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 rounded-xl p-6 border border-blue-500/20">
+                              <h5 className="text-lg font-bold text-white mb-4 flex items-center">
+                                🧠 Content Breakdown
+                              </h5>
+                              <div className="grid md:grid-cols-2 gap-4">
+                                <div>
+                                  <h6 className="text-blue-400 font-semibold mb-2">Intro Hook Analysis</h6>
+                                  <p className="text-gray-300 text-sm">{(analysisResult as any).detailed_analysis.content_breakdown.intro_hook}</p>
+                                </div>
+                                <div>
+                                  <h6 className="text-blue-400 font-semibold mb-2">Value Proposition</h6>
+                                  <p className="text-gray-300 text-sm">{(analysisResult as any).detailed_analysis.content_breakdown.value_proposition}</p>
+                                </div>
+                                <div>
+                                  <h6 className="text-blue-400 font-semibold mb-2">Proof Elements</h6>
+                                  <div className="space-y-1">
+                                    {(analysisResult as any).detailed_analysis.content_breakdown.proof_elements.map((element: string, i: number) => (
+                                      <div key={i} className="text-gray-300 text-sm">• {element}</div>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div>
+                                  <h6 className="text-blue-400 font-semibold mb-2">Target Audience</h6>
+                                  <p className="text-gray-300 text-sm">{(analysisResult as any).detailed_analysis.content_breakdown.target_audience}</p>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Hook Effectiveness Scores */}
+                            <div className="bg-gradient-to-br from-green-900/30 to-teal-900/30 rounded-xl p-6 border border-green-500/20">
+                              <h5 className="text-lg font-bold text-white mb-4 flex items-center">
+                                🎯 Hook Effectiveness Analysis
+                              </h5>
+                              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                                <div className="text-center">
+                                  <div className="text-2xl font-bold text-green-400">
+                                    {(analysisResult as any).detailed_analysis.hook_effectiveness.curiosity_gap}/10
+                                  </div>
+                                  <div className="text-xs text-gray-400">Curiosity Gap</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-2xl font-bold text-blue-400">
+                                    {(analysisResult as any).detailed_analysis.hook_effectiveness.credibility_signals}/10
+                                  </div>
+                                  <div className="text-xs text-gray-400">Credibility</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-2xl font-bold text-purple-400">
+                                    {(analysisResult as any).detailed_analysis.hook_effectiveness.specificity}/10
+                                  </div>
+                                  <div className="text-xs text-gray-400">Specificity</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-2xl font-bold text-yellow-400">
+                                    {(analysisResult as any).detailed_analysis.hook_effectiveness.emotional_trigger}/10
+                                  </div>
+                                  <div className="text-xs text-gray-400">Emotion</div>
+                                </div>
+                                <div className="text-center">
+                                  <div className="text-3xl font-bold text-gradient bg-gradient-to-r from-green-400 to-blue-400 bg-clip-text text-transparent">
+                                    {(analysisResult as any).detailed_analysis.hook_effectiveness.overall_score}/10
+                                  </div>
+                                  <div className="text-xs text-gray-400">Overall Score</div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Engagement Patterns */}
+                            <div className="bg-gradient-to-br from-purple-900/30 to-pink-900/30 rounded-xl p-6 border border-purple-500/20">
+                              <h5 className="text-lg font-bold text-white mb-4 flex items-center">
+                                📊 Engagement Patterns
+                              </h5>
+                              <div className="space-y-4">
+                                <div>
+                                  <h6 className="text-purple-400 font-semibold mb-2">Peak Engagement</h6>
+                                  <p className="text-gray-300 text-sm">{(analysisResult as any).detailed_analysis.engagement_patterns.peak_engagement_time}</p>
+                                </div>
+                                <div>
+                                  <h6 className="text-purple-400 font-semibold mb-2">Drop-off Points</h6>
+                                  <div className="space-y-1">
+                                    {(analysisResult as any).detailed_analysis.engagement_patterns.drop_off_points.map((point: string, i: number) => (
+                                      <div key={i} className="text-gray-300 text-sm">• {point}</div>
+                                    ))}
+                                  </div>
+                                </div>
+                                <div>
+                                  <h6 className="text-purple-400 font-semibold mb-2">Comment Themes</h6>
+                                  <div className="flex flex-wrap gap-2">
+                                    {(analysisResult as any).detailed_analysis.engagement_patterns.comment_themes.map((theme: string, i: number) => (
+                                      <span key={i} className="px-3 py-1 bg-purple-600/30 rounded-full text-xs text-purple-300">
+                                        {theme}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Improvement Suggestions */}
+                            <div className="bg-gradient-to-br from-orange-900/30 to-red-900/30 rounded-xl p-6 border border-orange-500/20">
+                              <h5 className="text-lg font-bold text-white mb-4 flex items-center">
+                                💡 Improvement Suggestions
+                              </h5>
+                              <div className="space-y-3">
+                                {(analysisResult as any).detailed_analysis.improvement_suggestions.map((suggestion: string, i: number) => (
+                                  <div key={i} className="flex items-start gap-3">
+                                    <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0 mt-0.5">
+                                      {i + 1}
+                                    </div>
+                                    <p className="text-gray-300 text-sm">{suggestion}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                          </div>
+                        )}
                       </div>
                     )}
 

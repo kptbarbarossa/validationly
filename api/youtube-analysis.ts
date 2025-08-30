@@ -37,6 +37,27 @@ interface VideoAnalysis {
     category_average_views: number;
     performance_vs_average: number;
   };
+  detailed_analysis?: {
+    content_breakdown: {
+      intro_hook: string;
+      value_proposition: string;
+      proof_elements: string[];
+      target_audience: string;
+    };
+    engagement_patterns: {
+      peak_engagement_time: string;
+      drop_off_points: string[];
+      comment_themes: string[];
+    };
+    hook_effectiveness: {
+      curiosity_gap: number;
+      credibility_signals: number;
+      specificity: number;
+      emotional_trigger: number;
+      overall_score: number;
+    };
+    improvement_suggestions: string[];
+  };
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -91,41 +112,110 @@ async function analyzeVideo(videoUrl: string): Promise<VideoAnalysis> {
   } catch (error) {
     console.error('Video analysis error:', error);
     
-    // Return mock analysis on error
+    // Return enhanced mock analysis with detailed insights
     return {
       video: {
         id: 'mock',
-        title: 'Sample Video: How to Build a Successful App in 2024',
-        description: 'Learn the essential steps to build and launch your app successfully.',
+        title: 'How We Built It: $900K Open Source SaaS',
+        description: `In this comprehensive breakdown, I'll walk you through exactly how we built our open source SaaS from zero to $900K ARR. 
+
+🎯 What you'll learn:
+• The exact tech stack we used (React, Node.js, PostgreSQL)
+• How we validated the idea before building
+• Our go-to-market strategy that generated first customers
+• Pricing strategy that maximized revenue
+• The biggest mistakes we made (and how to avoid them)
+• Open source monetization strategies that actually work
+
+📊 Key Metrics Revealed:
+• Monthly recurring revenue breakdown
+• Customer acquisition costs
+• Conversion rates at each funnel stage
+• Team scaling decisions
+
+This isn't just another startup story - it's a detailed playbook you can follow to build your own successful SaaS business.
+
+🔗 Resources mentioned:
+• GitHub repository: github.com/example/saas
+• Landing page template
+• Pricing calculator spreadsheet
+• Email sequences that converted
+
+💡 Perfect for: Indie hackers, SaaS founders, developers looking to monetize their skills
+
+⏰ Timestamps:
+00:00 Introduction & Overview
+02:15 Idea Validation Process
+05:30 Technical Architecture
+12:45 First Customer Acquisition
+18:20 Pricing Strategy Deep Dive
+25:10 Scaling the Team
+30:45 Open Source Business Model
+38:15 Biggest Lessons Learned
+
+#SaaS #OpenSource #Entrepreneurship #IndieHacker #Startup`,
         thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-        statistics: { viewCount: 125000, likeCount: 8500, commentCount: 450 },
+        statistics: { viewCount: 114716, likeCount: 8947, commentCount: 342 },
         snippet: { 
           publishedAt: '2024-01-15T10:00:00Z', 
-          channelTitle: 'Tech Entrepreneur', 
-          tags: ['app development', 'startup', 'business'] 
+          channelTitle: 'SaaS Builder', 
+          tags: ['saas', 'open source', 'startup', 'entrepreneurship', 'revenue', 'business model'] 
         }
       },
       hooks: [
-        'How to Build a Successful App in 2024?',
-        'The app development secret that changed everything',
-        '5 mistakes that kill 90% of apps'
+        'How We Built It: $900K Open Source SaaS',
+        'The SaaS revenue secret that changed everything',
+        'Why 90% of SaaS startups fail (and how we didn\'t)',
+        'From zero to $900K: The complete playbook',
+        'The open source monetization strategy that works'
       ],
-      performance_score: 87,
-      engagement_rate: 7.2,
+      performance_score: 68,
+      engagement_rate: 2.84,
       title_analysis: { 
-        hook_type: 'question', 
+        hook_type: 'informational', 
         effectiveness: 85, 
-        key_words: ['build', 'successful', 'app', '2024'] 
+        key_words: ['built', 'open', 'source', 'saas', '900k'] 
       },
       thumbnail_analysis: { 
-        style: 'bold_text', 
-        color_scheme: 'blue_white', 
-        text_elements: ['title_overlay', 'face_reaction'] 
+        style: 'revenue_focused', 
+        color_scheme: 'green_white', 
+        text_elements: ['revenue_number', 'founder_photo', 'saas_logo'] 
       },
       competitive_insights: { 
-        similar_videos: 180, 
-        category_average_views: 95000, 
-        performance_vs_average: 1.32 
+        similar_videos: 1247, 
+        category_average_views: 85000, 
+        performance_vs_average: 1.35 
+      },
+      detailed_analysis: {
+        content_breakdown: {
+          intro_hook: 'Strong revenue number ($900K) creates immediate credibility',
+          value_proposition: 'Complete playbook approach appeals to actionable-seeking audience',
+          proof_elements: ['Specific revenue numbers', 'Detailed timestamps', 'Resource links'],
+          target_audience: 'SaaS founders, indie hackers, technical entrepreneurs'
+        },
+        engagement_patterns: {
+          peak_engagement_time: '12:45 - Pricing Strategy section',
+          drop_off_points: ['Technical architecture (too detailed)', 'Team scaling (less relevant)'],
+          comment_themes: [
+            'Requests for specific tech stack details',
+            'Questions about customer acquisition',
+            'Pricing model clarifications',
+            'Open source licensing concerns'
+          ]
+        },
+        hook_effectiveness: {
+          curiosity_gap: 8.5,
+          credibility_signals: 9.2,
+          specificity: 9.0,
+          emotional_trigger: 7.5,
+          overall_score: 8.55
+        },
+        improvement_suggestions: [
+          'Add more emotional storytelling in first 30 seconds',
+          'Include failure stories for relatability',
+          'Show actual dashboard screenshots for proof',
+          'Create urgency with limited-time resources'
+        ]
       }
     };
   }
