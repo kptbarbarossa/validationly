@@ -12,7 +12,7 @@ import {
   UserPlan 
 } from '../types';
 import { youtubeHookSynthService } from '../services/youtubeHookSynthService';
-import { youtubeAnalysisService } from '../services/youtubeAnalysisService';
+// import { youtubeAnalysisService } from '../services/youtubeAnalysisService'; // Now using backend API
 import { socialKitService } from '../services/socialKitService';
 
 const YouTubeHookSynthPage: React.FC = () => {
@@ -127,7 +127,22 @@ const YouTubeHookSynthPage: React.FC = () => {
     
     try {
       console.log('🔍 Analyzing YouTube video...', videoUrl);
-      const analysis = await youtubeAnalysisService.analyzeVideo(videoUrl);
+      
+      // Call backend API instead of client-side service
+      const response = await fetch('/api/youtube-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          action: 'analyze_video',
+          videoUrl: videoUrl 
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const analysis = await response.json();
       setAnalysisResult(analysis);
       
       // Auto-populate hook creation form with insights
@@ -148,17 +163,25 @@ const YouTubeHookSynthPage: React.FC = () => {
     setAnalysisError(null);
     
     try {
-      const request: HookSynthRequest = {
-        category: category.trim(),
-        persona: persona.trim(),
-        tone,
-        goal,
-        user_plan: userPlan
-      };
+      console.log('🔍 Analyzing competitive videos...', category);
       
-      console.log('🔍 Analyzing competitive videos...', request);
-      const analyses = await youtubeAnalysisService.analyzeCompetitiveVideos(request);
-      setAnalysisResult({ competitive_videos: analyses });
+      // Call backend API for competitive analysis
+      const response = await fetch('/api/youtube-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          action: 'competitive_analysis',
+          category: category,
+          persona: persona
+        })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+      
+      const result = await response.json();
+      setAnalysisResult(result);
       
     } catch (err) {
       console.error('Error analyzing competitive videos:', err);
