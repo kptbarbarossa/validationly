@@ -1204,11 +1204,11 @@ export interface PlanLimits {
 
 export const PLAN_CONFIGS: Record<UserPlan, PlanLimits> = {
   free: {
-    queries_per_month: 3,
-    platforms: ['reddit', 'googlenews'],
-    exports: false,
-    arbitrage_metrics: false,
-    comparison: false,
+    queries_per_month: -1, // unlimited for now
+    platforms: ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'],
+    exports: true,
+    arbitrage_metrics: true, // enable for testing
+    comparison: true,
     alerts: false,
     automation: false
   },
