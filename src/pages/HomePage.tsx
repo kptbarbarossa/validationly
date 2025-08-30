@@ -41,7 +41,7 @@ const HomePage: React.FC = () => {
     const validateInput = (idea: string): UserInput => {
         // Ensure idea is a string and handle null/undefined cases
         const safeIdea = idea || '';
-        
+
         // Sanitize input to prevent XSS
         const sanitizedIdea = DOMPurify.sanitize(safeIdea, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
         const trimmedIdea = sanitizedIdea.trim();
@@ -86,7 +86,7 @@ const HomePage: React.FC = () => {
         try {
             const resp = await fetch('/api/validate', {
                 method: 'POST',
-                headers: { 
+                headers: {
                     'Content-Type': 'application/json',
                     ...(user && { 'x-user-id': user.id })
                 },
@@ -143,7 +143,7 @@ const HomePage: React.FC = () => {
                     'Content-Type': 'application/json',
                     ...(user && { 'x-user-id': user.id })
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     content: ideaPayload,
                     analysisType: 'comprehensive'
                 })
@@ -155,7 +155,7 @@ const HomePage: React.FC = () => {
 
             const result = await response.json();
             console.log('Multi-platform API call successful', result);
-            
+
             // Transform the new API response to match the expected format
             const transformedResult = {
                 idea: ideaPayload,
@@ -207,14 +207,14 @@ const HomePage: React.FC = () => {
                     ]
                 }
             };
-            
+
             // Track successful validation
             trackValidation(userInput.idea, transformedResult.demandScore);
-            
+
             navigate('/results', { state: { idea: userInput.idea, result: transformedResult, fastMode: true } });
         } catch (err) {
             console.error('API call failed:', err);
-            
+
             // Track validation error
             trackEvent('validation_error', {
                 event_category: 'error',
@@ -223,7 +223,7 @@ const HomePage: React.FC = () => {
                     error_message: err instanceof Error ? err.message : 'Unknown error'
                 }
             });
-            
+
             if (err instanceof Error) {
                 setUserInput(prev => ({
                     ...prev,
@@ -257,321 +257,381 @@ const HomePage: React.FC = () => {
 
     return (
         <>
-            <SEOHead 
+            <SEOHead
                 title="Validationly - Validate Your Startup Idea Before You Build It"
                 description="Get AI-driven market validation for your startup idea in seconds. Analyze demand across X, Reddit, and LinkedIn with actionable insights and social media suggestions."
                 keywords="startup validation, idea validation, market research, AI analysis, startup tools, entrepreneur, indie hacker, business validation, market demand"
             />
-            
+
             {/* Google One Tap Sign-In - appears automatically */}
             {!user && <GoogleOneTap onSignIn={handleGoogleSignIn} />}
-            
+
             <div className="text-center max-w-4xl mx-auto text-slate-100">
-            {/* Enhanced Hero Section - Reduced spacing */}
-            <div className="relative mb-0" >
-                <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
+                {/* Enhanced Hero Section - Reduced spacing */}
+                <div className="relative mb-0" >
+                    <div className="absolute inset-0 bg-gradient-to-tr from-indigo-600/20 via-indigo-500/10 to-cyan-600/20 rounded-3xl blur-3xl"></div>
 
-                <div className="relative z-10 py-8">
-                    {/* Logo removed by request */}
+                    <div className="relative z-10 py-8">
+                        {/* Logo removed by request */}
 
-					<h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up delay-100">
-                        <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
-                            Validate your idea
-                        </span>
-                        <br />
-                        <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
-                    </h1>
+                        <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up delay-100">
+                            <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
+                                Validate your idea
+                            </span>
+                            <br />
+                            <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
+                        </h1>
 
-                    <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
-                    Get instant insights from 7+ platforms and find the exact tools to build smarter.
-                    </p>
+                        <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
+                            Get instant insights from 7+ platforms and find the exact tools to build smarter.
+                        </p>
 
-                    {/* Platform List as Text */}
-                    <p className="text-lg text-slate-400 mb-8 animate-slide-up delay-300">
-                        Reddit • Hacker News • Product Hunt • GitHub • Stack Overflow • Google News • YouTube
-                    </p>
+                        {/* Platform List as Text */}
+                        <p className="text-lg text-slate-400 mb-8 animate-slide-up delay-300">
+                            Reddit • Hacker News • Product Hunt • GitHub • Stack Overflow • Google News • YouTube
+                        </p>
 
 
 
+                    </div>
                 </div>
-            </div>
 
-            <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
-                <div className="mb-4">
-                    <div className="relative group">
-                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+                    <div className="mb-4">
+                        <div className="relative group">
+                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
-                        <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
-                            
-                            <textarea
-                                ref={textareaRef}
-                                value={userInput.idea}
-                                onChange={handleInputChange}
-                                onKeyDown={handleKeyDown}
-                                placeholder={'Describe your startup idea...'}
-                                className="glass-scroll w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
-                                rows={4}
-                                disabled={isLoading}
-                                aria-describedby={userInput.errorMessage ? "error-message" : undefined}
-                            />
+                            <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
 
-                            {/* Character counter */}
-                            <div className="absolute bottom-3 left-6 text-sm text-slate-400">
-                                {userInput.idea.length}/1000
-                            </div>
+                                <textarea
+                                    ref={textareaRef}
+                                    value={userInput.idea}
+                                    onChange={handleInputChange}
+                                    onKeyDown={handleKeyDown}
+                                    placeholder={'Describe your startup idea...'}
+                                    className="glass-scroll w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
+                                    rows={4}
+                                    disabled={isLoading}
+                                    aria-describedby={userInput.errorMessage ? "error-message" : undefined}
+                                />
 
-                            {/* Enhanced action bar: Submit + Enhance + Gallery */}
-                            <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                                {/* fast mode removed by request */}
+                                {/* Character counter */}
+                                <div className="absolute bottom-3 left-6 text-sm text-slate-400">
+                                    {userInput.idea.length}/1000
+                                </div>
 
-                                <button
-                                    type="button"
-                                    onClick={async () => {
-                                        if (isLoading || isOptimizing) return;
-                                        setIsOptimizing(true);
-                                        const optimized = await optimizePromptRemotely(userInput.idea);
-                                        if (optimized) {
-                                            const validation = validateInput(optimized);
-                                            setUserInput(validation);
-                                        }
-                                        setIsOptimizing(false);
-                                    }}
-                                    className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isOptimizing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
-                                    aria-label="Optimize prompt"
-                                    title="Optimize prompt"
-                                    disabled={isOptimizing || isLoading}
-                                >
-                                    {isOptimizing ? (
-                                        <span className="inline-flex items-center gap-1">
-                                            <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
-                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
-                                            </svg>
-                                            Optimizing…
-                                        </span>
-                                    ) : (
-                                        '✨'
-                                    )}
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={triggerValidation}
-                                    disabled={!userInput.isValid || isLoading}
-                                    className={`group relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 bg-gradient-to-r from-indigo-600 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg overflow-hidden ${userInput.isValid && !isLoading
-                                        ? 'hover:scale-110 cursor-pointer opacity-100 hover:shadow-xl hover:shadow-indigo-500/25 hover:from-indigo-500 hover:to-cyan-500 active:scale-95'
-                                        : 'cursor-not-allowed opacity-50 grayscale'
-                                    }`}
-                                    aria-label="Submit idea for validation"
-                                >
-                                    {/* Animated background gradient */}
-                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-gradient-x"></div>
-                                    
-                                    {/* Ripple effect on click */}
-                                    <div className="absolute inset-0 rounded-full bg-white/20 scale-0 animate-ping opacity-0 group-active:scale-100 group-active:opacity-100 transition-all duration-200"></div>
-                                    
-                                    {/* Icon container */}
-                                    <div className="relative z-10 flex items-center justify-center">
-                                        {isLoading ? (
-                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                {/* Enhanced action bar: Submit + Enhance + Gallery */}
+                                <div className="absolute bottom-3 right-3 flex items-center gap-2">
+                                    {/* fast mode removed by request */}
+
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            if (isLoading || isOptimizing) return;
+                                            setIsOptimizing(true);
+                                            const optimized = await optimizePromptRemotely(userInput.idea);
+                                            if (optimized) {
+                                                const validation = validateInput(optimized);
+                                                setUserInput(validation);
+                                            }
+                                            setIsOptimizing(false);
+                                        }}
+                                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isOptimizing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
+                                        aria-label="Optimize prompt"
+                                        title="Optimize prompt"
+                                        disabled={isOptimizing || isLoading}
+                                    >
+                                        {isOptimizing ? (
+                                            <span className="inline-flex items-center gap-1">
+                                                <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
+                                                </svg>
+                                                Optimizing…
+                                            </span>
                                         ) : (
-                                            <svg 
-                                                className="w-5 h-5 text-white transition-transform duration-200 group-hover:scale-110" 
-                                                fill="none" 
-                                                stroke="currentColor" 
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path 
-                                                    strokeLinecap="round" 
-                                                    strokeLinejoin="round" 
-                                                    strokeWidth={2} 
-                                                    d="M13 7l5 5m0 0l-5 5m5-5H6" 
-                                                />
-                                            </svg>
+                                            '✨'
                                         )}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={triggerValidation}
+                                        disabled={!userInput.isValid || isLoading}
+                                        className={`group relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 bg-gradient-to-r from-indigo-600 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg overflow-hidden ${userInput.isValid && !isLoading
+                                            ? 'hover:scale-110 cursor-pointer opacity-100 hover:shadow-xl hover:shadow-indigo-500/25 hover:from-indigo-500 hover:to-cyan-500 active:scale-95'
+                                            : 'cursor-not-allowed opacity-50 grayscale'
+                                            }`}
+                                        aria-label="Submit idea for validation"
+                                    >
+                                        {/* Animated background gradient */}
+                                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-gradient-x"></div>
+
+                                        {/* Ripple effect on click */}
+                                        <div className="absolute inset-0 rounded-full bg-white/20 scale-0 animate-ping opacity-0 group-active:scale-100 group-active:opacity-100 transition-all duration-200"></div>
+
+                                        {/* Icon container */}
+                                        <div className="relative z-10 flex items-center justify-center">
+                                            {isLoading ? (
+                                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                            ) : (
+                                                <svg
+                                                    className="w-5 h-5 text-white transition-transform duration-200 group-hover:scale-110"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth={2}
+                                                        d="M13 7l5 5m0 0l-5 5m5-5H6"
+                                                    />
+                                                </svg>
+                                            )}
+                                        </div>
+
+                                        {/* Glow effect */}
+                                        <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 blur-md opacity-50 -z-10 group-hover:opacity-75 transition-opacity duration-300"></div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+                    {userInput.errorMessage && (
+                        <div id="error-message" className="text-red-400 text-sm mt-2 text-left">
+                            {userInput.errorMessage}
+                        </div>
+                    )}
+                    {isLoading && <EnhancedLoadingSpinner idea={userInput.idea} isLoading={isLoading} />}
+                </form>
+
+                {/* Simple Prompt Gallery */}
+                <PromptGallery
+                    onUse={(text) => {
+                        const validation = validateInput(text);
+                        setUserInput(validation);
+                        textareaRef.current?.focus();
+                    }}
+                />
+
+                {/* Capacity.so Affiliate Card */}
+                <div className="mt-12 mb-8">
+                    <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10 max-w-2xl mx-auto">
+                        <div className="flex items-start space-x-4">
+                            {/* Logo */}
+                            <div className="flex-shrink-0">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+                                    <img
+                                        src="https://capacity.so/favicon.ico"
+                                        alt="Capacity Logo"
+                                        className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                            // Fallback to text logo if image fails
+                                            const target = e.target as HTMLImageElement;
+                                            target.style.display = 'none';
+                                            const parent = target.parentElement;
+                                            if (parent) {
+                                                parent.className = "w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center";
+                                                parent.innerHTML = '<span class="text-white font-bold text-lg">C</span>';
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <h3 className="text-lg font-bold text-white">Capacity</h3>
+                                    <span className="bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full text-xs font-medium">
+                                        AI Assistant
+                                    </span>
+                                </div>
+
+                                <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                                    AI-powered knowledge management and team collaboration platform.
+                                    Perfect for startups to organize ideas, automate workflows, and scale efficiently.
+                                </p>
+
+                                {/* Key Features */}
+                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>AI-powered automation</span>
                                     </div>
-                                    
-                                    {/* Glow effect */}
-                                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 blur-md opacity-50 -z-10 group-hover:opacity-75 transition-opacity duration-300"></div>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Team collaboration</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Knowledge management</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Workflow optimization</span>
+                                    </div>
+                                </div>
 
-                </div>
-                
-                {userInput.errorMessage && (
-                    <div id="error-message" className="text-red-400 text-sm mt-2 text-left">
-                        {userInput.errorMessage}
-                    </div>
-                )}
-                {isLoading && <EnhancedLoadingSpinner idea={userInput.idea} isLoading={isLoading} />}
-            </form>
-
-            {/* Simple Prompt Gallery */}
-            <PromptGallery
-                onUse={(text) => {
-                    const validation = validateInput(text);
-                    setUserInput(validation);
-                    textareaRef.current?.focus();
-                }}
-            />
-
-            {/* Capacity.so Affiliate Card */}
-            <div className="mt-12 mb-8">
-                <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10 max-w-2xl mx-auto">
-                    <div className="flex items-start space-x-4">
-                        {/* Logo */}
-                        <div className="flex-shrink-0">
-                            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
-                                <img 
-                                    src="https://capacity.so/favicon.ico" 
-                                    alt="Capacity Logo"
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                        // Fallback to text logo if image fails
-                                        const target = e.target as HTMLImageElement;
-                                        target.style.display = 'none';
-                                        const parent = target.parentElement;
-                                        if (parent) {
-                                            parent.className = "w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center";
-                                            parent.innerHTML = '<span class="text-white font-bold text-lg">C</span>';
-                                        }
-                                    }}
-                                />
+                                {/* CTA */}
+                                <a
+                                    href="https://capacity.so/?via=barbaros"
+                                    target="_blank"
+                                    rel="nofollow noopener"
+                                    className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                                >
+                                    <span>🚀</span>
+                                    <span>Try Capacity Free</span>
+                                </a>
                             </div>
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-2">
-                                <h3 className="text-lg font-bold text-white">Capacity</h3>
-                                <span className="bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full text-xs font-medium">
-                                    AI Assistant
-                                </span>
-                            </div>
-                            
-                            <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                                AI-powered knowledge management and team collaboration platform. 
-                                Perfect for startups to organize ideas, automate workflows, and scale efficiently.
-                            </p>
-                            
-                            {/* Key Features */}
-                            <div className="grid grid-cols-2 gap-2 mb-4">
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>AI-powered automation</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>Team collaboration</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>Knowledge management</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>Workflow optimization</span>
-                                </div>
-                            </div>
-                            
-                            {/* CTA */}
-                            <a
-                                href="https://capacity.so/?via=barbaros"
-                                target="_blank"
-                                rel="nofollow noopener"
-                                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
-                            >
-                                <span>🚀</span>
-                                <span>Try Capacity Free</span>
-                            </a>
                         </div>
                     </div>
                 </div>
+
+                {/* StoryShort.ai Affiliate Card */}
+                <div className="mt-8 mb-8">
+                    <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10 max-w-2xl mx-auto">
+                        <div className="flex items-start space-x-4">
+                            {/* Logo */}
+                            <div className="flex-shrink-0">
+                                <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+                                    <img
+                                        src="https://storyshort.ai/favicon.ico"
+                                        alt="StoryShort Logo"
+                                        className="w-full h-full object-contain"
+                                        onError={(e) => {
+                                            // Fallback to text logo if image fails
+                                            const target = e.target as HTMLImageElement;
+                                            target.style.display = 'none';
+                                            const parent = target.parentElement;
+                                            if (parent) {
+                                                parent.className = "w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center";
+                                                parent.innerHTML = '<span class="text-white font-bold text-lg">S</span>';
+                                            }
+                                        }}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Content */}
+                            <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <h3 className="text-lg font-bold text-white">StoryShort</h3>
+                                    <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs font-medium">
+                                        AI Video Creator
+                                    </span>
+                                </div>
+
+                                <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                                    Transform your ideas into engaging short videos with AI.
+                                    Perfect for content marketing, social media, and startup storytelling.
+                                </p>
+
+                                {/* Key Features */}
+                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>AI video generation</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Social media ready</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Multiple formats</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Quick creation</span>
+                                    </div>
+                                </div>
+
+                                {/* CTA */}
+                                <a
+                                    href="https://storyshort.ai/?via=barbaros"
+                                    target="_blank"
+                                    rel="nofollow noopener"
+                                    className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                                >
+                                    <span>🎬</span>
+                                    <span>Create Videos with AI</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Login to See Price Affiliate Card */}
+                <div className="mt-8 mb-8">
+                    <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10 max-w-2xl mx-auto">
+                        <div className="flex items-start space-x-4">
+                            {/* Logo */}
+                            <div className="flex-shrink-0">
+                                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                                    <span className="text-white font-bold text-lg">B2B</span>
+                                </div>
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                    <h3 className="text-lg font-bold text-white">Login to See Price - Price Hider</h3>
+                                    <span className="bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded-full text-xs font-medium">
+                                        Shopify App
+                                    </span>
+                                </div>
+                                
+                                <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                                    Hide product prices from guests to drive account signups and grow your email list. 
+                                    Perfect for B2B stores, wholesale, and exclusive pricing strategies.
+                                </p>
+                                
+                                {/* Key Features */}
+                                <div className="grid grid-cols-2 gap-2 mb-4">
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Easy installation</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>B2B & wholesale ready</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Mobile optimized</span>
+                                    </div>
+                                    <div className="flex items-center space-x-2 text-xs text-gray-400">
+                                        <span className="text-green-400">✓</span>
+                                        <span>Zero maintenance</span>
+                                    </div>
+                                </div>
+                                
+                                {/* CTA */}
+                                <a
+                                    href="https://apps.shopify.com/shhhh-pricing"
+                                    target="_blank"
+                                    rel="nofollow noopener"
+                                    className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                                >
+                                    <span>🛍️</span>
+                                    <span>View on Shopify App Store</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Removed sample ideas section (Prompt Gallery replaces it) */}
+
+                {/* Feedback wall removed by request */}
+
+                {/* RelatedStartups section removed by request */}
             </div>
-
-            {/* StoryShort.ai Affiliate Card */}
-            <div className="mt-8 mb-8">
-                <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10 max-w-2xl mx-auto">
-                    <div className="flex items-start space-x-4">
-                        {/* Logo */}
-                        <div className="flex-shrink-0">
-                            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
-                                <img 
-                                    src="https://storyshort.ai/favicon.ico" 
-                                    alt="StoryShort Logo"
-                                    className="w-full h-full object-contain"
-                                    onError={(e) => {
-                                        // Fallback to text logo if image fails
-                                        const target = e.target as HTMLImageElement;
-                                        target.style.display = 'none';
-                                        const parent = target.parentElement;
-                                        if (parent) {
-                                            parent.className = "w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center";
-                                            parent.innerHTML = '<span class="text-white font-bold text-lg">S</span>';
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        
-                        {/* Content */}
-                        <div className="flex-1">
-                            <div className="flex items-center space-x-2 mb-2">
-                                <h3 className="text-lg font-bold text-white">StoryShort</h3>
-                                <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs font-medium">
-                                    AI Video Creator
-                                </span>
-                            </div>
-                            
-                            <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                                Transform your ideas into engaging short videos with AI. 
-                                Perfect for content marketing, social media, and startup storytelling.
-                            </p>
-                            
-                            {/* Key Features */}
-                            <div className="grid grid-cols-2 gap-2 mb-4">
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>AI video generation</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>Social media ready</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>Multiple formats</span>
-                                </div>
-                                <div className="flex items-center space-x-2 text-xs text-gray-400">
-                                    <span className="text-green-400">✓</span>
-                                    <span>Quick creation</span>
-                                </div>
-                            </div>
-                            
-                            {/* CTA */}
-                            <a
-                                href="https://storyshort.ai/?via=barbaros"
-                                target="_blank"
-                                rel="nofollow noopener"
-                                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
-                            >
-                                <span>🎬</span>
-                                <span>Create Videos with AI</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Removed sample ideas section (Prompt Gallery replaces it) */}
-
-            {/* Feedback wall removed by request */}
-
-				{/* RelatedStartups section removed by request */}
-        </div>
         </>
     );
 };
