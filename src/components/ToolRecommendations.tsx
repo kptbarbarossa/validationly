@@ -149,6 +149,64 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </div>
         </div>
 
+        {/* Capacity.so Affiliate Card */}
+        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10">
+          <div className="flex items-start space-x-4">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-lg">C</span>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <h3 className="text-lg font-bold text-white">Capacity</h3>
+                <span className="bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full text-xs font-medium">
+                  AI Assistant
+                </span>
+              </div>
+              
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                AI-powered knowledge management and team collaboration platform. 
+                Perfect for startups to organize ideas, automate workflows, and scale efficiently.
+              </p>
+              
+              {/* Key Features */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>AI-powered automation</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Team collaboration</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Knowledge management</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Workflow optimization</span>
+                </div>
+              </div>
+              
+              {/* CTA */}
+              <a
+                href="https://capacity.so/?via=barbaros"
+                target="_blank"
+                rel="nofollow noopener"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+              >
+                <span>🚀</span>
+                <span>Try Capacity Free</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
         {/* Tool Recommendations Coming Soon */}
         <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10">
           <div className="text-center">
