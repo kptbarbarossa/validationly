@@ -36,6 +36,14 @@ const ResultsPage: React.FC = () => {
   const idea = location.state?.idea || queryFromUrl || 'Your business idea';
   const userPlan: UserPlan = user?.plan || 'free';
 
+  // Debug logging
+  console.log('🔍 ResultsPage Debug:', {
+    locationState: location.state,
+    queryFromUrl,
+    finalIdea: idea,
+    locationSearch: location.search
+  });
+
   useEffect(() => {
     // Always use real API analysis
     startPremiumAnalysis();
@@ -60,9 +68,14 @@ const ResultsPage: React.FC = () => {
       
       const scanner = new PremiumPlatformScannerService();
       
+      // Validate idea parameter
+      if (!idea || idea === 'Your business idea') {
+        throw new Error('No valid business idea provided');
+      }
+
       // Create premium validation request
       const request: PremiumValidationRequest = {
-        query: idea || 'business idea',
+        query: idea,
         platforms: ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'],
         time_range: '3months',
         max_items_per_platform: 100,
@@ -72,6 +85,7 @@ const ResultsPage: React.FC = () => {
       };
 
       console.log(`🚀 Starting real API analysis for: "${request.query}"`);
+      console.log('📋 Full request object:', request);
 
       // Scan all 7 platforms with real API calls + arbitrage metrics
       const platforms_data = await scanner.scanAllPlatforms(request, userPlan);
@@ -106,8 +120,16 @@ const ResultsPage: React.FC = () => {
       console.log('✅ Real API analysis completed successfully');
       
     } catch (err) {
-      console.error('Error in premium analysis:', err);
-      setError(err instanceof Error ? err.message : 'Failed to analyze platforms');
+      console.error('❌ Error in premium analysis:', err);
+      console.error('❌ Error details:', {
+        message: err instanceof Error ? err.message : 'Unknown error',
+        idea,
+        userPlan,
+        locationState: location.state
+      });
+      
+      const errorMessage = err instanceof Error ? err.message : 'Failed to analyze platforms';
+      setError(`Analysis Error: ${errorMessage}`);
       
       // Create fallback result instead of using mock function
       const fallbackResult: PremiumAnalysisResult = {
