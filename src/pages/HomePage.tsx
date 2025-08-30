@@ -576,7 +576,7 @@ const HomePage: React.FC = () => {
                                     <span className="text-white font-bold text-lg">B2B</span>
                                 </div>
                             </div>
-                            
+
                             {/* Content */}
                             <div className="flex-1">
                                 <div className="flex items-center space-x-2 mb-2">
@@ -585,12 +585,12 @@ const HomePage: React.FC = () => {
                                         Shopify App
                                     </span>
                                 </div>
-                                
+
                                 <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                                    Hide product prices from guests to drive account signups and grow your email list. 
+                                    Hide product prices from guests to drive account signups and grow your email list.
                                     Perfect for B2B stores, wholesale, and exclusive pricing strategies.
                                 </p>
-                                
+
                                 {/* Key Features */}
                                 <div className="grid grid-cols-2 gap-2 mb-4">
                                     <div className="flex items-center space-x-2 text-xs text-gray-400">
@@ -610,7 +610,7 @@ const HomePage: React.FC = () => {
                                         <span>Zero maintenance</span>
                                     </div>
                                 </div>
-                                
+
                                 {/* CTA */}
                                 <a
                                     href="https://apps.shopify.com/shhhh-pricing"
