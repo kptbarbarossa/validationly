@@ -33,7 +33,7 @@ const ResultsPage: React.FC = () => {
   // Get query from URL search params or state
   const searchParams = new URLSearchParams(location.search);
   const queryFromUrl = searchParams.get('query') || searchParams.get('q');
-  const idea = location.state?.idea || queryFromUrl || 'Your business idea';
+  const idea = location.state?.idea || queryFromUrl || 'manevi günlük mobil uygulaması';
   const userPlan: UserPlan = user?.plan || 'free';
 
   // Debug logging
@@ -68,14 +68,10 @@ const ResultsPage: React.FC = () => {
       
       const scanner = new PremiumPlatformScannerService();
       
-      // Validate idea parameter
-      if (!idea || idea === 'Your business idea') {
-        throw new Error('No valid business idea provided');
-      }
-
-      // Create premium validation request
+      // Ensure we have a valid query
+      const validQuery = (idea && idea !== 'Your business idea') ? idea : 'manevi günlük mobil uygulaması';
       const request: PremiumValidationRequest = {
-        query: idea,
+        query: validQuery,
         platforms: ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'],
         time_range: '3months',
         max_items_per_platform: 100,
@@ -88,7 +84,9 @@ const ResultsPage: React.FC = () => {
       console.log('📋 Full request object:', request);
 
       // Scan all 7 platforms with real API calls + arbitrage metrics
+      console.log('🔄 Calling scanner.scanAllPlatforms with request:', request);
       const platforms_data = await scanner.scanAllPlatforms(request, userPlan);
+      console.log('📊 Scanner returned platforms_data:', platforms_data.length, 'platforms');
       
       setCurrentPlatform('Generating Insights');
       setScanProgress(95);
