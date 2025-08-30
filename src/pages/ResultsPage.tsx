@@ -2,23 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import { PLATFORMS } from '../constants';
-import { PremiumPlatformData, PremiumAnalysisResult, PremiumSocialPosts, PremiumValidationRequest } from '../types';
+import { 
+  PremiumPlatformData, 
+  PremiumAnalysisResult, 
+  PremiumSocialPosts, 
+  PremiumValidationRequest,
+  PremiumPlatformDataWithArbitrage,
+  UserPlan,
+  SocialArbitrageMetrics
+} from '../types';
 import { PremiumPlatformScannerService } from '../services/platformScannerService';
 import { premiumAIAnalyzerService } from '../services/aiAnalyzerService';
+import { useAuth } from '../contexts/AuthContext';
 
 const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [scanProgress, setScanProgress] = useState(0);
   const [currentPlatform, setCurrentPlatform] = useState('');
   const [result, setResult] = useState<PremiumAnalysisResult | null>(null);
   const [socialPosts, setSocialPosts] = useState<PremiumSocialPosts | null>(null);
+  const [platformsWithArbitrage, setPlatformsWithArbitrage] = useState<PremiumPlatformDataWithArbitrage[]>([]);
   const [activeTab, setActiveTab] = useState<'twitter' | 'reddit' | 'linkedin'>('twitter');
   const [filterPlatform, setFilterPlatform] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<'impact' | 'arbitrage' | 'engagement'>('impact');
   const [error, setError] = useState<string | null>(null);
 
   const idea = location.state?.idea || 'Your business idea';
+  const userPlan: UserPlan = user?.plan || 'free';
 
   useEffect(() => {
     // Always use real API analysis
@@ -57,14 +70,27 @@ const ResultsPage: React.FC = () => {
 
       console.log(`🚀 Starting real API analysis for: "${request.query}"`);
 
-      // Scan all 7 platforms with real API calls
-      const platforms_data = await scanner.scanAllPlatforms(request);
+      // Scan all 7 platforms with real API calls + arbitrage metrics
+      const platforms_data = await scanner.scanAllPlatforms(request, userPlan);
       
       setCurrentPlatform('Generating Insights');
       setScanProgress(95);
       
-      // Analyze with AI
-      const analysis = await premiumAIAnalyzerService.analyzePlatforms(platforms_data, request.query);
+      // Store platforms with arbitrage data
+      setPlatformsWithArbitrage(platforms_data);
+      
+      // Analyze with AI (convert to basic format for compatibility)
+      const basicPlatforms: PremiumPlatformData[] = platforms_data.map(p => ({
+        platform: p.platform,
+        summary: p.summary,
+        sentiment: p.sentiment,
+        metrics: p.metrics,
+        top_keywords: p.top_keywords,
+        representative_quotes: p.representative_quotes,
+        additional_insights: p.additional_insights
+      }));
+      
+      const analysis = await premiumAIAnalyzerService.analyzePlatforms(basicPlatforms, request.query);
       
       // Generate social posts
       const posts = await premiumAIAnalyzerService.generateSocialPosts(analysis, request.query);
@@ -159,6 +185,65 @@ const ResultsPage: React.FC = () => {
     alert(`${format.toUpperCase()} report downloading...`);
   };
 
+  // Arbitrage helper functions
+  const getArbitrageColor = (mispricing_gap: number) => {
+    if (mispricing_gap >= 0.7) return 'text-red-400 bg-red-500/20 border-red-500/30'; // High opportunity
+    if (mispricing_gap >= 0.5) return 'text-orange-400 bg-orange-500/20 border-orange-500/30'; // Medium
+    if (mispricing_gap >= 0.3) return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30'; // Low
+    return 'text-gray-400 bg-gray-500/20 border-gray-500/30'; // None
+  };
+
+  const getArbitrageText = (mispricing_gap: number) => {
+    if (mispricing_gap >= 0.7) return 'High Arbitrage';
+    if (mispricing_gap >= 0.5) return 'Med Arbitrage';
+    if (mispricing_gap >= 0.3) return 'Low Arbitrage';
+    return 'No Arbitrage';
+  };
+
+  const getEdgeTypeIcon = (edge_type: string) => {
+    switch (edge_type) {
+      case 'content': return '📝';
+      case 'distribution': return '📢';
+      case 'product': return '⚡';
+      default: return '💭';
+    }
+  };
+
+  const getUrgencyColor = (urgency: string) => {
+    switch (urgency) {
+      case 'high': return 'text-red-400';
+      case 'medium': return 'text-yellow-400';
+      case 'low': return 'text-green-400';
+      default: return 'text-gray-400';
+    }
+  };
+
+  // Sort platforms based on selected criteria
+  const getSortedPlatforms = () => {
+    const platforms = platformsWithArbitrage.length > 0 ? platformsWithArbitrage : result?.platforms || [];
+    
+    switch (sortBy) {
+      case 'arbitrage':
+        return [...platforms].sort((a, b) => {
+          const aGap = a.arbitrage?.mispricing_gap || 0;
+          const bGap = b.arbitrage?.mispricing_gap || 0;
+          return bGap - aGap;
+        });
+      case 'engagement':
+        return [...platforms].sort((a, b) => b.metrics.engagement - a.metrics.engagement);
+      default: // impact
+        return [...platforms].sort((a, b) => {
+          const aScore = a.metrics.engagement * a.metrics.volume;
+          const bScore = b.metrics.engagement * b.metrics.volume;
+          return bScore - aScore;
+        });
+    }
+  };
+
+  const filteredAndSortedPlatforms = getSortedPlatforms().filter(p => 
+    filterPlatform === 'all' || p.platform === filterPlatform
+  );
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-900 text-white">
@@ -232,9 +317,7 @@ const ResultsPage: React.FC = () => {
     );
   }
 
-  const filteredPlatforms = filterPlatform === 'all' 
-    ? result.platforms 
-    : result.platforms.filter(p => p.platform === filterPlatform);
+  // This line is now replaced by filteredAndSortedPlatforms above
 
   return (
     <>
@@ -247,7 +330,7 @@ const ResultsPage: React.FC = () => {
       <div className="min-h-screen bg-gray-900 text-white">
         <div className="container mx-auto px-6 py-12">
           
-          {/* Header */}
+        {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               Premium Platform Analysis
@@ -255,8 +338,21 @@ const ResultsPage: React.FC = () => {
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
               "{idea}" - 7 Premium Platforms Analyzed with AI
             </p>
-            <div className="mt-4 inline-block px-4 py-2 bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
-              ✅ Real Backend APIs Connected
+            <div className="mt-4 flex items-center justify-center gap-4">
+              <div className="inline-block px-4 py-2 bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
+                ✅ Real Backend APIs Connected
+              </div>
+              <div className={`inline-block px-4 py-2 rounded-full border ${
+                userPlan === 'premium' 
+                  ? 'bg-purple-500/20 text-purple-400 border-purple-500/30' 
+                  : userPlan === 'pro'
+                  ? 'bg-blue-500/20 text-blue-400 border-blue-500/30'
+                  : 'bg-gray-500/20 text-gray-400 border-gray-500/30'
+              }`}>
+                {userPlan === 'premium' && '💎 Premium Plan'}
+                {userPlan === 'pro' && '⚡ Pro Plan'}
+                {userPlan === 'free' && '🆓 Free Plan'}
+              </div>
             </div>
           </div>
 
@@ -284,12 +380,12 @@ const ResultsPage: React.FC = () => {
                       <div className="text-sm text-gray-400">Demand Index</div>
                       <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getDemandColor(result.verdict)}`}>
                         {getDemandText(result.verdict)} ({result.demand_index}/100)
-                      </div>
-                    </div>
-                  </div>
+                </div>
+              </div>
+              </div>
                   <div className="text-gray-300 leading-relaxed">
                     <strong>Verdict:</strong> {result.verdict.charAt(0).toUpperCase() + result.verdict.slice(1)} market demand detected across {result.platforms.length} platforms.
-                  </div>
+              </div>
                 </div>
               </div>
                
@@ -306,8 +402,8 @@ const ResultsPage: React.FC = () => {
                         </li>
                       ))}
                     </ul>
-                  </div>
-                  <div>
+            </div>
+                <div>
                     <h4 className="text-red-400 font-medium mb-2">⚠️ Risks</h4>
                     <ul className="space-y-2 text-sm text-gray-300">
                       {result.risks.slice(0, 2).map((risk, i) => (
@@ -336,7 +432,7 @@ const ResultsPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Filters */}
+          {/* Filters & Sorting */}
           <div className="flex flex-wrap items-center justify-between mb-8">
             <div className="flex items-center space-x-4">
               <select
@@ -345,15 +441,28 @@ const ResultsPage: React.FC = () => {
                 className="bg-gray-800/50 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500/50"
                 aria-label="Filter platforms"
               >
-                <option value="all">All 7 Platforms</option>
-                {result.platforms.map(p => (
+                <option value="all">All Platforms</option>
+                {(result?.platforms || platformsWithArbitrage).map(p => (
                   <option key={p.platform} value={p.platform}>
                     {PLATFORMS.find(pl => pl.name === p.platform)?.displayName || p.platform}
                   </option>
                 ))}
               </select>
+              
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as 'impact' | 'arbitrage' | 'engagement')}
+                className="bg-gray-800/50 border border-white/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-purple-500/50"
+                aria-label="Sort platforms"
+              >
+                <option value="impact">Sort by Impact</option>
+                <option value="engagement">Sort by Engagement</option>
+                {userPlan === 'premium' && (
+                  <option value="arbitrage">Sort by Arbitrage 💎</option>
+                )}
+              </select>
             </div>
-             
+
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => exportReport('pdf')}
@@ -380,8 +489,8 @@ const ResultsPage: React.FC = () => {
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-2xl">
                         {PLATFORMS.find(p => p.name === platform.platform)?.icon || '📱'}
-                      </div>
-                      <div>
+                  </div>
+                  <div>
                         <h3 className="text-xl font-bold text-white">
                           {PLATFORMS.find(p => p.name === platform.platform)?.displayName || platform.platform}
                         </h3>
@@ -393,8 +502,8 @@ const ResultsPage: React.FC = () => {
                             {Math.round(platform.metrics.engagement * 100)}% engagement
                           </span>
                         </div>
-                      </div>
-                    </div>
+                  </div>
+                </div>
                     <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getDemandColor(platform.demand_verdict)}`}>
                       {getDemandText(platform.demand_verdict)}
                     </div>
@@ -456,26 +565,26 @@ const ResultsPage: React.FC = () => {
                       <div className="text-center p-2 bg-gray-700/30 rounded">
                         <div className="font-bold text-green-400">{Math.round((platform.metrics.avg_points || 0) * 100)}%</div>
                         <div className="text-gray-400">Upvote Rate</div>
-                      </div>
-                    </div>
-                  )}
+                </div>
+              </div>
+            )}
 
                   {platform.platform === 'stackoverflow' && (
                     <div className="grid grid-cols-3 gap-2 mb-4 text-xs">
                       <div className="text-center p-2 bg-gray-700/30 rounded">
                         <div className="font-bold text-blue-400">{formatNumber(platform.metrics.total_answers || 0)}</div>
                         <div className="text-gray-400">Answers</div>
-                      </div>
+                  </div>
                       <div className="text-center p-2 bg-gray-700/30 rounded">
                         <div className="font-bold text-green-400">{formatNumber(platform.metrics.total_votes || 0)}</div>
                         <div className="text-gray-400">Votes</div>
-                      </div>
+                  </div>
                       <div className="text-center p-2 bg-gray-700/30 rounded">
                         <div className="font-bold text-yellow-400">{Math.round((platform.metrics.avg_score || 0) * 100)}%</div>
                         <div className="text-gray-400">Acceptance</div>
-                      </div>
-                    </div>
-                  )}
+                </div>
+              </div>
+            )}
 
                   {/* Keywords */}
                   <div className="mb-4">
@@ -498,18 +607,18 @@ const ResultsPage: React.FC = () => {
                           <div key={i} className="text-xs text-gray-300 bg-gray-700/30 rounded p-3 border-l-2 border-blue-500/50">
                             <div className="flex items-start space-x-2">
                               <span className="text-blue-400 mt-1">💬</span>
-                              <div>
+                  <div>
                                 <p className="italic">"{quote.text}"</p>
                                 {quote.author && (
                                   <p className="text-gray-500 mt-1">— {quote.author}</p>
                                 )}
-                              </div>
-                            </div>
-                          </div>
+                  </div>
+                </div>
+                  </div>
                         ))}
-                      </div>
-                    </div>
-                  )}
+                </div>
+              </div>
+            )}
 
                   {/* Additional Insights */}
                   {platform.additional_insights && platform.additional_insights.length > 0 && (
@@ -520,7 +629,7 @@ const ResultsPage: React.FC = () => {
                           <div key={i} className="text-xs text-gray-300 bg-gray-700/20 rounded p-2">
                             <span className="text-green-400 mr-2">💡</span>
                             {insight}
-                          </div>
+                  </div>
                         ))}
                       </div>
                     </div>
@@ -562,12 +671,12 @@ const ResultsPage: React.FC = () => {
                       {tab === 'twitter' ? '🐦 Twitter' : tab === 'reddit' ? '📱 Reddit' : '💼 LinkedIn'}
                     </button>
                   ))}
-                </div>
+              </div>
 
                 {/* Post Content */}
                 <div className="space-y-4">
                   {activeTab === 'twitter' && (
-                    <div>
+              <div>
                       <label className="block text-sm font-medium text-gray-400 mb-2">Tweet</label>
                       <div className="bg-gray-900/50 border border-white/20 rounded-lg p-3 text-white">
                         {socialPosts.twitter.text}
@@ -584,8 +693,8 @@ const ResultsPage: React.FC = () => {
                         >
                           🐦 Tweet
                         </button>
-                      </div>
-                    </div>
+              </div>
+            </div>
                   )}
 
                   {activeTab === 'reddit' && (
@@ -597,7 +706,7 @@ const ResultsPage: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-400 mb-2">Body</label>
                       <div className="bg-gray-900/50 border border-white/20 rounded-lg p-3 text-white whitespace-pre-wrap mb-3">
                         {socialPosts.reddit.body}
-                      </div>
+                  </div>
                       <div className="flex justify-end">
                         <button
                           onClick={() => handleShare('reddit', `${socialPosts.reddit.title}\n\n${socialPosts.reddit.body}`)}
@@ -605,8 +714,8 @@ const ResultsPage: React.FC = () => {
                         >
                           📋 Copy
                         </button>
-                      </div>
-                    </div>
+                </div>
+              </div>
                   )}
 
                   {activeTab === 'linkedin' && (
@@ -614,7 +723,7 @@ const ResultsPage: React.FC = () => {
                       <label className="block text-sm font-medium text-gray-400 mb-2">Post</label>
                       <div className="bg-gray-900/50 border border-white/20 rounded-lg p-3 text-white whitespace-pre-wrap mb-3">
                         {socialPosts.linkedin.text}
-                      </div>
+                  </div>
                       <div className="flex justify-end">
                         <button
                           onClick={() => handleShare('linkedin', `${socialPosts.linkedin.text}\n\n${socialPosts.linkedin.cta}`)}
@@ -622,8 +731,8 @@ const ResultsPage: React.FC = () => {
                         >
                           📋 Copy
                         </button>
-                      </div>
-                    </div>
+                </div>
+              </div>
                   )}
                 </div>
               </div>
