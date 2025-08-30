@@ -139,26 +139,43 @@ const JobTailorPage: React.FC = () => {
         setResult(null);
 
         try {
-            const response = await fetch('/api/jobs?action=rewrite', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${currentToken}`
-                },
-                body: JSON.stringify({ jobDesc, cvText, tone })
-            });
+            // API endpoint removed to stay under Vercel's 12 function limit
+            // Showing mock result for demonstration
+            await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate API delay
+            
+            const mockResult = {
+                revised: `**OPTIMIZED CV FOR THIS ROLE**
 
-            const data = await response.json();
+**PROFESSIONAL SUMMARY**
+${tone === 'professional' ? 'Results-driven professional' : tone === 'creative' ? 'Innovative and creative professional' : 'Dynamic professional'} with proven experience in the technologies and skills mentioned in the job description. Demonstrated ability to deliver high-quality results and contribute to team success.
 
-            if (response.ok) {
-                setResult({ revised: data.revised });
-                // Update usage count for free users
-                if (userPlan.plan === 'free') {
-                    setUserPlan(prev => ({ ...prev, dailyUsage: prev.dailyUsage + 1 }));
-                }
-            } else {
-                setResult({ revised: '', error: data.error || 'Failed to rewrite CV' });
+**KEY SKILLS & EXPERTISE**
+• Technical skills aligned with job requirements
+• Strong problem-solving and analytical abilities  
+• Excellent communication and collaboration skills
+• Experience with relevant tools and methodologies
+
+**PROFESSIONAL EXPERIENCE**
+[Your experience has been optimized to highlight relevant achievements and responsibilities that match the job requirements]
+
+**EDUCATION & CERTIFICATIONS**
+[Relevant education and certifications emphasized]
+
+**ACHIEVEMENTS**
+• Delivered projects that align with the role's objectives
+• Contributed to team success through collaboration
+• Demonstrated expertise in required skill areas
+
+*Note: This is a demo version. The full JobTailor service is temporarily unavailable.*`
+            };
+            
+            setResult(mockResult);
+            // Update usage count for free users
+            if (userPlan.plan === 'free') {
+                setUserPlan(prev => ({ ...prev, dailyUsage: prev.dailyUsage + 1 }));
             }
+            
+            // Mock success - result already set above
         } catch (error) {
             setResult({ revised: '', error: 'Network error. Please try again.' });
         } finally {
