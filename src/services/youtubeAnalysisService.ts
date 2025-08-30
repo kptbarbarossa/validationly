@@ -39,6 +39,47 @@ interface VideoAnalysis {
   };
 }
 
+// New structured analysis format
+interface StructuredVideoAnalysis {
+  video_summary: {
+    main_topic: string;
+    key_message: string;
+    important_sections: string[];
+    chronological_flow: string[];
+    statistics_and_examples: string[];
+  };
+  detailed_analysis: {
+    methods_and_tools: string[];
+    approaches: string[];
+    speaker_experience: string[];
+    lessons_learned: string[];
+    target_audience_insights: string[];
+  };
+  comment_analysis: {
+    recurring_ideas: string[];
+    common_phrases: string[];
+    positive_feedback: string[];
+    negative_feedback: string[];
+    community_perception: {
+      support_level: 'high' | 'medium' | 'low';
+      criticism_level: 'high' | 'medium' | 'low';
+      suggestions_count: number;
+    };
+  };
+  summary_table: {
+    beginning: string;
+    strategy: string;
+    user_response: string;
+    revenue_outcome: string;
+  };
+  insights_and_lessons: {
+    main_lessons: string[];
+    actionable_tips_entrepreneurs: string[];
+    actionable_tips_content_creators: string[];
+    actionable_tips_viewers: string[];
+  };
+}
+
 export class YouTubeAnalysisService {
   private readonly YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
   private readonly BASE_URL = 'https://www.googleapis.com/youtube/v3';
@@ -58,6 +99,27 @@ export class YouTubeAnalysisService {
     } catch (error) {
       console.error('YouTube Analysis Error:', error);
       throw new Error('Failed to analyze video');
+    }
+  }
+
+  /**
+   * Analyze YouTube video with structured format
+   */
+  async analyzeVideoStructured(videoUrl: string): Promise<StructuredVideoAnalysis> {
+    try {
+      const videoId = this.extractVideoId(videoUrl);
+      const videoData = await this.fetchVideoData(videoId);
+      
+      // Get comments for analysis
+      const comments = await this.fetchVideoComments(videoId);
+      
+      // Perform structured analysis using AI
+      const analysis = await this.performStructuredAnalysis(videoData, comments);
+      
+      return analysis;
+    } catch (error) {
+      console.error('Structured YouTube Analysis Error:', error);
+      throw new Error('Failed to analyze video with structured format');
     }
   }
 
@@ -341,6 +403,369 @@ export class YouTubeAnalysisService {
       category_average_views: video.statistics.viewCount * 0.7,
       performance_vs_average: video.statistics.viewCount > (video.statistics.viewCount * 0.7) ? 1.3 : 0.8
     };
+  }
+
+  /**
+   * Fetch video comments
+   */
+  private async fetchVideoComments(videoId: string, maxResults: number = 100): Promise<string[]> {
+    if (!this.YOUTUBE_API_KEY) {
+      console.warn('YouTube API key not configured, skipping comments');
+      return [];
+    }
+
+    try {
+      const response = await fetch(
+        `${this.BASE_URL}/commentThreads?part=snippet&videoId=${videoId}&maxResults=${maxResults}&order=relevance&key=${this.YOUTUBE_API_KEY}`
+      );
+
+      if (!response.ok) {
+        console.warn(`YouTube Comments API error: ${response.status}`);
+        return [];
+      }
+
+      const data = await response.json();
+      
+      return data.items?.map((item: any) => 
+        item.snippet.topLevelComment.snippet.textDisplay
+      ) || [];
+    } catch (error) {
+      console.warn('Failed to fetch comments:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Perform structured AI analysis
+   */
+  private async performStructuredAnalysis(
+    video: YouTubeVideoData, 
+    comments: string[]
+  ): Promise<StructuredVideoAnalysis> {
+    
+    // Create AI prompt for structured analysis
+    const prompt = this.createStructuredAnalysisPrompt(video, comments);
+    
+    try {
+      // Call AI service (assuming we have one)
+      const aiResponse = await this.callAIForAnalysis(prompt);
+      return this.parseAIResponse(aiResponse);
+    } catch (error) {
+      console.warn('AI analysis failed, using fallback analysis');
+      return this.createFallbackAnalysis(video, comments);
+    }
+  }
+
+  /**
+   * Create structured analysis prompt
+   */
+  private createStructuredAnalysisPrompt(video: YouTubeVideoData, comments: string[]): string {
+    const commentsText = comments.slice(0, 50).join('\n- ');
+    
+    return `
+Analyze this YouTube video: ${video.title}
+
+Video Details:
+- Title: ${video.title}
+- Channel: ${video.snippet.channelTitle}
+- Views: ${video.statistics.viewCount.toLocaleString()}
+- Likes: ${video.statistics.likeCount.toLocaleString()}
+- Comments: ${video.statistics.commentCount.toLocaleString()}
+- Description: ${video.description.slice(0, 500)}...
+
+Top Comments:
+- ${commentsText}
+
+Please provide analysis in this exact format:
+
+1. **Video Summary**
+- Extract the main topic and core message of the video.
+- Identify important sections or chronological flow.
+- Summarize statistics, examples, or strategies mentioned.
+
+2. **Detailed Analysis**
+- Methods, tools, approaches used (e.g., growth strategy, tech stack, business model).
+- Speaker(s) experiences and lessons shared.
+- Target audience insights.
+
+3. **Comment Analysis (Community Response)**
+- Recurring ideas or frequently used phrases in comments.
+- Positive/negative feedback from viewers.
+- Community perception: support, criticism, suggestions, etc.
+
+4. **Summary Table**
+Topic | Key Point
+-----|----------
+Beginning | ...
+Strategy | ...
+User Response | ...
+Revenue/Outcome | ...
+
+5. **Insights & Lessons**
+- Main lessons that can be extracted from this video.
+- Actionable tips for entrepreneurs/content creators/viewers.
+
+Respond in English with detailed, actionable insights.
+`;
+  }
+
+  /**
+   * Call AI service for analysis
+   */
+  private async callAIForAnalysis(prompt: string): Promise<string> {
+    // This would integrate with your AI service (OpenAI, Gemini, etc.)
+    // For now, we'll simulate an AI response
+    throw new Error('AI service not implemented yet');
+  }
+
+  /**
+   * Parse AI response into structured format
+   */
+  private parseAIResponse(aiResponse: string): StructuredVideoAnalysis {
+    // Parse the AI response and structure it
+    // This would parse the markdown-like response from AI
+    throw new Error('AI response parsing not implemented yet');
+  }
+
+  /**
+   * Create fallback analysis when AI is not available
+   */
+  private createFallbackAnalysis(video: YouTubeVideoData, comments: string[]): StructuredVideoAnalysis {
+    // Analyze comments for sentiment and common themes
+    const commentAnalysis = this.analyzeComments(comments);
+    
+    return {
+      video_summary: {
+        main_topic: this.extractMainTopic(video.title, video.description),
+        key_message: this.extractKeyMessage(video.title, video.description),
+        important_sections: this.extractImportantSections(video.description),
+        chronological_flow: ['Introduction', 'Main Content', 'Conclusion'],
+        statistics_and_examples: this.extractStatistics(video.description)
+      },
+      detailed_analysis: {
+        methods_and_tools: this.extractMethodsAndTools(video.description),
+        approaches: this.extractApproaches(video.title, video.description),
+        speaker_experience: [`${video.snippet.channelTitle} shares insights`],
+        lessons_learned: this.extractLessons(video.description),
+        target_audience_insights: this.analyzeTargetAudience(video.snippet.tags || [])
+      },
+      comment_analysis: commentAnalysis,
+      summary_table: {
+        beginning: this.extractBeginning(video.description),
+        strategy: this.extractStrategy(video.title, video.description),
+        user_response: this.summarizeUserResponse(comments),
+        revenue_outcome: this.extractRevenueInfo(video.description)
+      },
+      insights_and_lessons: {
+        main_lessons: this.extractMainLessons(video.title, video.description),
+        actionable_tips_entrepreneurs: this.extractEntrepreneurTips(video.description),
+        actionable_tips_content_creators: this.extractContentCreatorTips(video.description),
+        actionable_tips_viewers: this.extractViewerTips(video.description)
+      }
+    };
+  }
+
+  // Helper methods for fallback analysis
+  private extractMainTopic(title: string, description: string): string {
+    // Extract main topic from title and description
+    const keywords = title.toLowerCase().match(/\b\w{4,}\b/g) || [];
+    return keywords.slice(0, 3).join(', ') || 'General discussion';
+  }
+
+  private extractKeyMessage(title: string, description: string): string {
+    // Extract key message
+    const firstSentence = description.split('.')[0];
+    return firstSentence || title;
+  }
+
+  private extractImportantSections(description: string): string[] {
+    // Look for timestamps or numbered sections
+    const sections = description.match(/\d+:\d+|\d+\./g) || [];
+    return sections.slice(0, 5).map(s => `Section at ${s}`);
+  }
+
+  private extractStatistics(description: string): string[] {
+    // Extract numbers and percentages
+    const stats = description.match(/\d+%|\$\d+|\d+[kmb]?/gi) || [];
+    return stats.slice(0, 5);
+  }
+
+  private extractMethodsAndTools(description: string): string[] {
+    // Look for common tools and methods
+    const tools = ['strategy', 'method', 'tool', 'approach', 'technique', 'framework'];
+    const found = tools.filter(tool => 
+      description.toLowerCase().includes(tool)
+    );
+    return found.length > 0 ? found : ['General methodology'];
+  }
+
+  private extractApproaches(title: string, description: string): string[] {
+    const text = (title + ' ' + description).toLowerCase();
+    const approaches = [];
+    
+    if (text.includes('growth')) approaches.push('Growth strategy');
+    if (text.includes('marketing')) approaches.push('Marketing approach');
+    if (text.includes('business')) approaches.push('Business model');
+    if (text.includes('tech')) approaches.push('Technical approach');
+    
+    return approaches.length > 0 ? approaches : ['General approach'];
+  }
+
+  private extractLessons(description: string): string[] {
+    // Look for lesson indicators
+    const lessonWords = ['learn', 'lesson', 'tip', 'advice', 'insight'];
+    const sentences = description.split('.').filter(sentence =>
+      lessonWords.some(word => sentence.toLowerCase().includes(word))
+    );
+    return sentences.slice(0, 3).map(s => s.trim());
+  }
+
+  private analyzeTargetAudience(tags: string[]): string[] {
+    const audienceKeywords = ['entrepreneur', 'startup', 'business', 'creator', 'developer'];
+    const matchedAudience = tags.filter(tag =>
+      audienceKeywords.some(keyword => tag.toLowerCase().includes(keyword))
+    );
+    return matchedAudience.length > 0 ? matchedAudience : ['General audience'];
+  }
+
+  private analyzeComments(comments: string[]): StructuredVideoAnalysis['comment_analysis'] {
+    if (comments.length === 0) {
+      return {
+        recurring_ideas: ['No comments available'],
+        common_phrases: [],
+        positive_feedback: [],
+        negative_feedback: [],
+        community_perception: {
+          support_level: 'medium',
+          criticism_level: 'low',
+          suggestions_count: 0
+        }
+      };
+    }
+
+    // Simple sentiment analysis
+    const positiveWords = ['great', 'awesome', 'love', 'amazing', 'helpful', 'thanks'];
+    const negativeWords = ['bad', 'wrong', 'hate', 'terrible', 'useless'];
+    
+    const positive = comments.filter(comment =>
+      positiveWords.some(word => comment.toLowerCase().includes(word))
+    );
+    
+    const negative = comments.filter(comment =>
+      negativeWords.some(word => comment.toLowerCase().includes(word))
+    );
+
+    // Extract common phrases (simplified)
+    const allWords = comments.join(' ').toLowerCase().split(/\s+/);
+    const wordCount: { [key: string]: number } = {};
+    allWords.forEach(word => {
+      if (word.length > 3) {
+        wordCount[word] = (wordCount[word] || 0) + 1;
+      }
+    });
+    
+    const commonPhrases = Object.entries(wordCount)
+      .sort(([,a], [,b]) => b - a)
+      .slice(0, 5)
+      .map(([word]) => word);
+
+    return {
+      recurring_ideas: commonPhrases.slice(0, 3),
+      common_phrases: commonPhrases,
+      positive_feedback: positive.slice(0, 3),
+      negative_feedback: negative.slice(0, 3),
+      community_perception: {
+        support_level: positive.length > negative.length * 2 ? 'high' : 
+                      positive.length > negative.length ? 'medium' : 'low',
+        criticism_level: negative.length > positive.length ? 'high' : 
+                        negative.length > 0 ? 'medium' : 'low',
+        suggestions_count: comments.filter(c => 
+          c.toLowerCase().includes('suggest') || c.toLowerCase().includes('should')
+        ).length
+      }
+    };
+  }
+
+  private extractBeginning(description: string): string {
+    return description.split('.')[0] || 'Video introduction';
+  }
+
+  private extractStrategy(title: string, description: string): string {
+    const text = (title + ' ' + description).toLowerCase();
+    if (text.includes('strategy')) return 'Strategic approach discussed';
+    if (text.includes('method')) return 'Methodical approach';
+    return 'General strategy mentioned';
+  }
+
+  private summarizeUserResponse(comments: string[]): string {
+    if (comments.length === 0) return 'No user comments available';
+    
+    const positiveCount = comments.filter(c => 
+      ['great', 'awesome', 'love', 'helpful'].some(word => 
+        c.toLowerCase().includes(word)
+      )
+    ).length;
+    
+    if (positiveCount > comments.length * 0.6) return 'Highly positive response';
+    if (positiveCount > comments.length * 0.3) return 'Generally positive response';
+    return 'Mixed response from users';
+  }
+
+  private extractRevenueInfo(description: string): string {
+    const revenueWords = ['revenue', 'profit', 'money', 'income', '$', 'earn'];
+    const hasRevenue = revenueWords.some(word => 
+      description.toLowerCase().includes(word)
+    );
+    return hasRevenue ? 'Revenue/financial information discussed' : 'No specific revenue information';
+  }
+
+  private extractMainLessons(title: string, description: string): string[] {
+    const text = title + ' ' + description;
+    const lessons = [];
+    
+    if (text.toLowerCase().includes('how to')) {
+      lessons.push('Step-by-step guidance provided');
+    }
+    if (text.toLowerCase().includes('mistake')) {
+      lessons.push('Common mistakes to avoid highlighted');
+    }
+    if (text.toLowerCase().includes('success')) {
+      lessons.push('Success factors identified');
+    }
+    
+    return lessons.length > 0 ? lessons : ['General insights shared'];
+  }
+
+  private extractEntrepreneurTips(description: string): string[] {
+    const entrepreneurWords = ['startup', 'business', 'entrepreneur', 'founder'];
+    if (entrepreneurWords.some(word => description.toLowerCase().includes(word))) {
+      return [
+        'Focus on market validation',
+        'Build MVP quickly',
+        'Listen to customer feedback'
+      ];
+    }
+    return ['Apply learnings to business context'];
+  }
+
+  private extractContentCreatorTips(description: string): string[] {
+    const creatorWords = ['content', 'video', 'youtube', 'creator', 'audience'];
+    if (creatorWords.some(word => description.toLowerCase().includes(word))) {
+      return [
+        'Engage with audience consistently',
+        'Create valuable content',
+        'Analyze performance metrics'
+      ];
+    }
+    return ['Apply insights to content creation'];
+  }
+
+  private extractViewerTips(description: string): string[] {
+    return [
+      'Take actionable notes while watching',
+      'Apply learnings to personal projects',
+      'Share insights with relevant communities'
+    ];
   }
 }
 

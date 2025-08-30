@@ -20,6 +20,7 @@ import DashboardPage from './pages/DashboardPage';
 import SignalDigestPage from './pages/SignalDigestPage';
 import PainExtractorPage from './pages/PainExtractorPage';
 import YouTubeHookSynthPage from './pages/YouTubeHookSynthPage';
+import { YouTubeAnalysisPage } from './pages/YouTubeAnalysisPage';
 import AuthPage from './pages/AuthPage';
 import AppsPage from './pages/AppsPage';
 import ShopifyPainPointsPage from './pages/ShopifyPainPointsPage';
@@ -100,6 +101,7 @@ const App: React.FC = () => {
                 <Route path="/signal-digest" element={<SignalDigestPage />} />
                 <Route path="/pain-extractor" element={<PainExtractorPage />} />
                 <Route path="/youtube-hook-synth" element={<YouTubeHookSynthPage />} />
+                <Route path="/youtube-analysis" element={<YouTubeAnalysisPage />} />
                 <Route path="/public-validation" element={<PublicValidationPage />} />
                 <Route path="/tweet-generator" element={<AITweetGenerator />} />
                 <Route path="/trend-hunter" element={<TrendHunterPage />} />

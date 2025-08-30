@@ -7,104 +7,9 @@ interface ToolRecommendationsProps {
   userPlan: UserPlan;
 }
 
-// Mock tool database - bu daha sonra gerçek affiliate linklerinle değiştirilecek
-const MOCK_TOOLS: ToolRecommendation[] = [
-  {
-    id: 'notion',
-    name: 'Notion',
-    category: 'productivity',
-    description: 'All-in-one workspace for notes, docs, and project management',
-    useCase: 'Perfect for organizing your startup ideas, roadmaps, and team collaboration',
-    pricing: { free: true, startingPrice: '$8/month', currency: 'USD' },
-    affiliateLink: '#notion-affiliate', // Placeholder
-    commission: 25,
-    relevanceScore: 85,
-    reason: 'Essential for organizing startup documentation and team collaboration',
-    features: ['Databases', 'Templates', 'Team collaboration', 'API access'],
-    pros: ['Flexible structure', 'Great templates', 'Strong community'],
-    cons: ['Learning curve', 'Can be slow with large databases'],
-    alternatives: ['Obsidian', 'Roam Research']
-  },
-  {
-    id: 'vercel',
-    name: 'Vercel',
-    category: 'hosting',
-    description: 'Frontend cloud platform for deploying web applications',
-    useCase: 'Deploy your MVP quickly with automatic scaling and global CDN',
-    pricing: { free: true, startingPrice: '$20/month', currency: 'USD' },
-    affiliateLink: '#vercel-affiliate', // Placeholder
-    commission: 30,
-    relevanceScore: 90,
-    reason: 'Perfect for rapid MVP deployment and scaling',
-    features: ['Automatic deployments', 'Global CDN', 'Serverless functions', 'Analytics'],
-    pros: ['Zero config', 'Excellent performance', 'Great DX'],
-    cons: ['Can get expensive at scale', 'Vendor lock-in'],
-    alternatives: ['Netlify', 'Railway']
-  },
-  {
-    id: 'mixpanel',
-    name: 'Mixpanel',
-    category: 'analytics',
-    description: 'Advanced product analytics for user behavior tracking',
-    useCase: 'Track user engagement and validate product-market fit with detailed analytics',
-    pricing: { free: true, startingPrice: '$25/month', currency: 'USD' },
-    affiliateLink: '#mixpanel-affiliate', // Placeholder
-    commission: 20,
-    relevanceScore: 80,
-    reason: 'Critical for understanding user behavior and validating assumptions',
-    features: ['Event tracking', 'Funnel analysis', 'Cohort analysis', 'A/B testing'],
-    pros: ['Powerful segmentation', 'Real-time data', 'Great visualizations'],
-    cons: ['Complex setup', 'Expensive for high volume'],
-    alternatives: ['Amplitude', 'PostHog']
-  },
-  {
-    id: 'stripe',
-    name: 'Stripe',
-    category: 'payment',
-    description: 'Complete payment infrastructure for the internet',
-    useCase: 'Accept payments from day one with minimal setup and maximum flexibility',
-    pricing: { free: false, startingPrice: '2.9% + 30¢', currency: 'USD' },
-    affiliateLink: '#stripe-affiliate', // Placeholder
-    commission: 15,
-    relevanceScore: 95,
-    reason: 'Industry standard for online payments with excellent developer experience',
-    features: ['Global payments', 'Subscriptions', 'Marketplace', 'Mobile SDKs'],
-    pros: ['Excellent docs', 'Global reach', 'Reliable'],
-    cons: ['Transaction fees', 'Complex for advanced use cases'],
-    alternatives: ['PayPal', 'Square']
-  },
-  {
-    id: 'figma',
-    name: 'Figma',
-    category: 'design',
-    description: 'Collaborative interface design tool',
-    useCase: 'Design your product interface and collaborate with your team in real-time',
-    pricing: { free: true, startingPrice: '$12/month', currency: 'USD' },
-    affiliateLink: '#figma-affiliate', // Placeholder
-    commission: 20,
-    relevanceScore: 85,
-    reason: 'Essential for creating professional UI/UX designs and prototypes',
-    features: ['Real-time collaboration', 'Prototyping', 'Design systems', 'Developer handoff'],
-    pros: ['Browser-based', 'Great collaboration', 'Strong community'],
-    cons: ['Requires internet', 'Limited offline access'],
-    alternatives: ['Sketch', 'Adobe XD']
-  },
-  {
-    id: 'mailchimp',
-    name: 'Mailchimp',
-    category: 'marketing',
-    description: 'All-in-one marketing platform for email campaigns',
-    useCase: 'Build your email list and nurture leads with automated marketing campaigns',
-    pricing: { free: true, startingPrice: '$10/month', currency: 'USD' },
-    affiliateLink: '#mailchimp-affiliate', // Placeholder
-    commission: 30,
-    relevanceScore: 75,
-    reason: 'Perfect for building and engaging your early user base',
-    features: ['Email campaigns', 'Automation', 'Landing pages', 'Analytics'],
-    pros: ['Easy to use', 'Good templates', 'Reliable delivery'],
-    cons: ['Limited customization', 'Expensive at scale'],
-    alternatives: ['ConvertKit', 'Beehiiv']
-  }
+// Tool database - gerçek affiliate linkleri eklenecek
+const AVAILABLE_TOOLS: ToolRecommendation[] = [
+  // Buraya gerçek affiliate linkli toollar eklenecek
 ];
 
 const CATEGORY_ICONS: Record<ToolCategory, string> = {
@@ -153,51 +58,25 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
 
   const generateRecommendations = async () => {
     setIsLoading(true);
-    
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Smart filtering based on idea and platform data
-    const filteredTools = MOCK_TOOLS.filter(tool => {
-      // Always include essential tools
-      if (['stripe', 'vercel', 'notion'].includes(tool.id)) return true;
-      
-      // Include analytics if high engagement detected
-      if (tool.category === 'analytics') {
-        const avgEngagement = platformData.reduce((acc, p) => acc + p.metrics.engagement, 0) / platformData.length;
-        return avgEngagement > 0.3;
-      }
-      
-      // Include marketing tools if social platforms show potential
-      if (tool.category === 'marketing') {
-        return platformData.some(p => ['reddit', 'twitter', 'linkedin'].includes(p.platform));
-      }
-      
-      // Include design tools for consumer-facing ideas
-      if (tool.category === 'design') {
-        return idea.toLowerCase().includes('app') || idea.toLowerCase().includes('platform') || idea.toLowerCase().includes('website');
-      }
-      
-      return Math.random() > 0.3; // Random selection for demo
-    });
 
-    // Sort by relevance score
-    const sortedTools = filteredTools.sort((a, b) => b.relevanceScore - a.relevanceScore);
-    
-    setRecommendations(sortedTools);
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    // Şu anda hiç tool yok - affiliate linkler eklenene kadar boş
+    setRecommendations(AVAILABLE_TOOLS);
     setIsLoading(false);
   };
 
   const handleAffiliateClick = (tool: ToolRecommendation) => {
     // Track click for analytics
     console.log(`Affiliate click tracked: ${tool.name}`);
-    
+
     // In production, this would open the actual affiliate link
     alert(`Redirecting to ${tool.name}... (Demo mode - affiliate link: ${tool.affiliateLink})`);
   };
 
-  const filteredRecommendations = selectedCategory === 'all' 
-    ? recommendations 
+  const filteredRecommendations = selectedCategory === 'all'
+    ? recommendations
     : recommendations.filter(tool => tool.category === selectedCategory);
 
   const categories = Array.from(new Set(recommendations.map(tool => tool.category)));
@@ -207,6 +86,29 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
       const price = parseFloat(tool.pricing.startingPrice?.replace(/[^0-9.]/g, '') || '0');
       return acc + price;
     }, 0);
+
+  // Eğer hiç tool yoksa, boş state göster
+  if (!isLoading && recommendations.length === 0) {
+    return (
+      <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10 mb-12">
+        <div className="text-center">
+          <div className="text-6xl mb-4">🛠️</div>
+          <h2 className="text-2xl font-bold text-white mb-4">
+            Tool Recommendations Coming Soon
+          </h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            We're curating the best tools for your startup journey.
+            Affiliate partnerships will be added soon to help you build your "{idea}" with the right stack.
+          </p>
+          <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+            <p className="text-blue-300 text-sm">
+              💡 This section will show personalized tool recommendations based on your platform analysis
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
@@ -254,11 +156,10 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
       <div className="flex flex-wrap gap-3 mb-8">
         <button
           onClick={() => setSelectedCategory('all')}
-          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-            selectedCategory === 'all'
+          className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${selectedCategory === 'all'
               ? 'bg-white text-gray-900'
               : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-          }`}
+            }`}
         >
           All ({recommendations.length})
         </button>
@@ -266,11 +167,10 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           <button
             key={category}
             onClick={() => setSelectedCategory(category)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center space-x-2 ${
-              selectedCategory === category
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center space-x-2 ${selectedCategory === category
                 ? 'bg-white text-gray-900'
                 : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
+              }`}
           >
             <span>{CATEGORY_ICONS[category]}</span>
             <span className="capitalize">{category}</span>
@@ -384,7 +284,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                         </li>
                       ))}
                     </ul>
-                    
+
                     <h4 className="text-red-400 font-medium mb-2">❌ Cons</h4>
                     <ul className="space-y-1 text-sm text-gray-300">
                       {tool.cons.map((con, i) => (

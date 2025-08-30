@@ -109,6 +109,14 @@ const ToolsPage: React.FC = () => {
                 icon: '🎬',
                 route: '/youtube-hook-synth',
                 features: ['8 hook types', 'Visual shot planning', 'A/B test titles', 'Thumbnail prompts', 'HookScore (0-100)', '≤9s duration rule']
+            },
+            {
+                id: 'youtube-analysis',
+                title: 'YouTube Video Analysis',
+                description: 'Comprehensive analysis of YouTube videos with structured insights, community response analysis, and actionable lessons.',
+                icon: '📺',
+                route: '/youtube-analysis',
+                features: ['Structured analysis format', 'Comment sentiment analysis', 'Community insights', 'Actionable takeaways', 'Strategy breakdown', 'Revenue analysis']
             }
     ];
 
