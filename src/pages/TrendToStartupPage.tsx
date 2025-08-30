@@ -79,6 +79,7 @@ const TrendToStartupPage: React.FC = () => {
   const validateIdea = (idea: StartupIdea) => {
     navigate('/results', { 
       state: { 
+        idea: idea.title,
         fromTrendToStartup: true,
         startupIdea: idea.title,
         startupDescription: idea.description 

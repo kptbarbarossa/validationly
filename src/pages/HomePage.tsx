@@ -211,7 +211,7 @@ const HomePage: React.FC = () => {
             // Track successful validation
             trackValidation(userInput.idea, transformedResult.demandScore);
             
-            navigate('/results', { state: { result: transformedResult, fastMode: true } });
+            navigate('/results', { state: { idea: userInput.idea, result: transformedResult, fastMode: true } });
         } catch (err) {
             console.error('API call failed:', err);
             

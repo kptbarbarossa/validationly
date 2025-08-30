@@ -93,6 +93,7 @@ const TrendHunterPage: React.FC = () => {
   const validateIdea = (idea: StartupIdea) => {
     navigate('/results', { 
       state: { 
+        idea: idea.idea,
         fromTrendHunter: true,
         trendIdea: idea.idea,
         trendDescription: idea.description 

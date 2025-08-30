@@ -30,7 +30,10 @@ const ResultsPage: React.FC = () => {
   const [sortBy, setSortBy] = useState<'impact' | 'arbitrage' | 'engagement'>('impact');
   const [error, setError] = useState<string | null>(null);
 
-  const idea = location.state?.idea || 'Your business idea';
+  // Get query from URL search params or state
+  const searchParams = new URLSearchParams(location.search);
+  const queryFromUrl = searchParams.get('query') || searchParams.get('q');
+  const idea = location.state?.idea || queryFromUrl || 'Your business idea';
   const userPlan: UserPlan = user?.plan || 'free';
 
   useEffect(() => {

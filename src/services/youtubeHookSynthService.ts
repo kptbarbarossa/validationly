@@ -360,7 +360,7 @@ export class YouTubeHookSynthService {
     
     return {
       titles,
-      thumbnail_prompts
+      thumbnail_prompts: thumbnailPrompts
     };
   }
 
