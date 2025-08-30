@@ -424,8 +424,22 @@ const HomePage: React.FC = () => {
                     <div className="flex items-start space-x-4">
                         {/* Logo */}
                         <div className="flex-shrink-0">
-                            <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">C</span>
+                            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+                                <img 
+                                    src="https://capacity.so/favicon.ico" 
+                                    alt="Capacity Logo"
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                        // Fallback to text logo if image fails
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                        const parent = target.parentElement;
+                                        if (parent) {
+                                            parent.className = "w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center";
+                                            parent.innerHTML = '<span class="text-white font-bold text-lg">C</span>';
+                                        }
+                                    }}
+                                />
                             </div>
                         </div>
                         
@@ -484,8 +498,22 @@ const HomePage: React.FC = () => {
                     <div className="flex items-start space-x-4">
                         {/* Logo */}
                         <div className="flex-shrink-0">
-                            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                                <span className="text-white font-bold text-lg">S</span>
+                            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+                                <img 
+                                    src="https://storyshort.ai/favicon.ico" 
+                                    alt="StoryShort Logo"
+                                    className="w-full h-full object-contain"
+                                    onError={(e) => {
+                                        // Fallback to text logo if image fails
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                        const parent = target.parentElement;
+                                        if (parent) {
+                                            parent.className = "w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center";
+                                            parent.innerHTML = '<span class="text-white font-bold text-lg">S</span>';
+                                        }
+                                    }}
+                                />
                             </div>
                         </div>
                         
