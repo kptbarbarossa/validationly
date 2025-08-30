@@ -109,6 +109,13 @@ export class YouTubeAnalysisService {
     try {
       const videoId = this.extractVideoId(videoUrl);
       
+      // Debug: Check API key
+      console.log('🔑 YouTube API Key check:', {
+        hasKey: !!this.YOUTUBE_API_KEY,
+        keyLength: this.YOUTUBE_API_KEY?.length || 0,
+        keyStart: this.YOUTUBE_API_KEY?.substring(0, 10) || 'undefined'
+      });
+      
       // Check if API key is available
       if (!this.YOUTUBE_API_KEY) {
         console.warn('YouTube API key not configured, using demo analysis');
