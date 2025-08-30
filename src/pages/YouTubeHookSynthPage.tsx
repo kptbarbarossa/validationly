@@ -57,12 +57,7 @@ const YouTubeHookSynthPage: React.FC = () => {
     contrarian: '🔄'
   };
 
-  useEffect(() => {
-    // Auto-generate for demo
-    if (category && persona && !result && !isLoading) {
-      generateHooks();
-    }
-  }, [category, persona, tone, goal]);
+  // Removed auto-generation - user must click Generate Hooks button
 
   const generateHooks = async () => {
     if (!category.trim() || !persona.trim()) return;
@@ -71,12 +66,25 @@ const YouTubeHookSynthPage: React.FC = () => {
     setError(null);
     
     try {
+      // Detect language from category input
+      const detectLanguage = (text: string): string => {
+        const turkishChars = /[çğıöşüÇĞIİÖŞÜ]/;
+        const turkishWords = /\b(ve|ile|için|olan|bir|bu|şu|o|uygulama|sistem|program|yazılım|platform|site|web|mobil|app|fitness|sağlık|eğitim|oyun|müzik|video|fotoğraf|sosyal|medya|iş|finans|alışveriş|yemek|seyahat|haber|spor|teknoloji)\b/i;
+        
+        if (turkishChars.test(text) || turkishWords.test(text)) {
+          return 'tr';
+        }
+        return 'en';
+      };
+
+      const detectedLanguage = detectLanguage(category.trim());
+
       const request: HookSynthRequest = {
         category: category.trim(),
         persona: persona.trim(),
         tone,
         goal,
-        language: 'tr',
+        language: detectedLanguage,
         user_plan: userPlan
       };
 

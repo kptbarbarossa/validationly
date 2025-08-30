@@ -6,6 +6,7 @@ interface ThumbnailGenerationRequest {
   category: string;
   tone: string;
   goal: string;
+  language?: string;
 }
 
 interface GeminiResponse {
@@ -34,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { hookText, hookType, category, tone, goal }: ThumbnailGenerationRequest = req.body;
+    const { hookText, hookType, category, tone, goal, language = 'en' }: ThumbnailGenerationRequest = req.body;
 
     if (!hookText || !hookType || !category) {
       return res.status(400).json({ error: 'Missing required fields' });
@@ -120,14 +121,16 @@ RULES:
 - Include professional photography terms
 - Keep text readable on mobile devices
 - Ensure brand safety
+- Generate response in ${request.language === 'tr' ? 'Turkish' : 'English'} language
 
 Hook Type: ${request.hookType}
 Category: ${request.category}
 Tone: ${request.tone}
 Goal: ${request.goal}
+Language: ${request.language}
 Hook Text: "${request.hookText}"
 
-Generate a detailed prompt for FLUX/Stable Diffusion that will create a high-performing YouTube thumbnail. Focus on visual elements, not explanations.`;
+Generate a detailed prompt for FLUX/Stable Diffusion that will create a high-performing YouTube thumbnail. Focus on visual elements, not explanations. Respond in ${request.language === 'tr' ? 'Turkish' : 'English'}.`;
 
   const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
     method: 'POST',

@@ -92,8 +92,10 @@ export class YouTubeHookSynthService {
   private getHookTemplates(hookType: HookType, request: HookSynthRequest): string[] {
     const category = request.category.toLowerCase();
     const persona = request.persona.toLowerCase();
+    const language = request.language || 'en';
     
-    const templates = {
+    // Turkish templates
+    const templatesTR = {
       question: [
         `${category} kullanırken bu hatayı yapıyor musun?`,
         `Neden ${category} ile istediğin sonucu alamıyorsun?`,
@@ -144,6 +146,59 @@ export class YouTubeHookSynthService {
       ]
     };
 
+    // English templates
+    const templatesEN = {
+      question: [
+        `Are you making this ${category} mistake?`,
+        `Why isn't your ${category} working?`,
+        `Do you know the biggest ${category} myth?`,
+        `Why won't anyone tell you this ${category} trick?`
+      ],
+      bold_claim: [
+        `Everything you know about ${category} is wrong!`,
+        `${category} will change your life in 30 days`,
+        `I cracked the secret ${category} formula`,
+        `This ${category} method is 90% more effective`
+      ],
+      curiosity_gap: [
+        `${category} experts won't tell you this but...`,
+        `The hidden truth about ${category}:`,
+        `You'll be shocked when you learn this ${category} secret`,
+        `The darkest secret of the ${category} world`
+      ],
+      pattern_interrupt: [
+        `Stop! You're making a huge ${category} mistake`,
+        `Stop! This ${category} trick should be illegal`,
+        `Wait... that's not how you use ${category}!`,
+        `Wrong! Here's the right way to ${category}`
+      ],
+      fomo: [
+        `${category} trend exploded in the last 24 hours`,
+        `Don't miss this ${category} opportunity - today only!`,
+        `The ${category} world is changing, don't get left behind`,
+        `Everyone's doing this for ${category}, why aren't you?`
+      ],
+      challenge: [
+        `Can you become a ${category} master in 7 days?`,
+        `${category} challenge: Results are incredible!`,
+        `30-day ${category} experiment - shocking results`,
+        `Test yourself with ${category} - surprising results`
+      ],
+      authority: [
+        `As a ${category} expert, I'm telling you:`,
+        `With 10 years of ${category} experience, I discovered`,
+        `I worked 15 years in ${category}, the truth is:`,
+        `I've consulted thousands on ${category}`
+      ],
+      contrarian: [
+        `Everyone's wrong about ${category}`,
+        `Popular ${category} advice is complete nonsense`,
+        `${category} trends are fooling you`,
+        `${category} 'experts' are lying to you`
+      ]
+    };
+
+    const templates = language === 'tr' ? templatesTR : templatesEN;
     return templates[hookType] || [];
   }
 
@@ -391,7 +446,8 @@ export class YouTubeHookSynthService {
         hookType: hook.type,
         category: request.category,
         tone: request.tone,
-        goal: request.goal
+        goal: request.goal,
+        language: request.language || 'en'
       })
     });
 
