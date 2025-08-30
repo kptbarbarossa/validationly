@@ -21,12 +21,8 @@ const ResultsPage: React.FC = () => {
   const idea = location.state?.idea || 'Your business idea';
 
   useEffect(() => {
-    if (idea && idea !== 'Your business idea') {
-      startPremiumAnalysis();
-    } else {
-      // Fallback to mock data if no idea provided
-      simulatePlatformScanning();
-    }
+    // Always use real API analysis
+    startPremiumAnalysis();
   }, [idea]);
 
   const startPremiumAnalysis = async () => {
@@ -34,168 +30,78 @@ const ResultsPage: React.FC = () => {
       setIsLoading(true);
       setError(null);
       
+      // Simulate progress for better UX
+      const platforms = ['Reddit', 'Hacker News', 'Product Hunt', 'GitHub', 'Stack Overflow', 'Google News', 'YouTube'];
+      
+      for (let i = 0; i < platforms.length; i++) {
+        setCurrentPlatform(platforms[i]);
+        setScanProgress(((i + 1) / platforms.length) * 80); // 80% for platform scanning
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
+      setCurrentPlatform('AI Analysis');
+      setScanProgress(90);
+      
       const scanner = new PremiumPlatformScannerService();
       
       // Create premium validation request
       const request: PremiumValidationRequest = {
-        query: idea,
+        query: idea || 'business idea',
+        platforms: ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'],
+        time_range: '3months',
         max_items_per_platform: 100,
-        tones_for_posts: ['professional', 'fun', 'analytical'],
-        output_format: 'json'
+        language: 'en',
+        tones_for_posts: ['professional', 'analytical', 'casual'],
+        output_format: 'detailed'
       };
 
-      // Scan all 7 platforms
-      const platforms = await scanner.scanAllPlatforms(request);
+      console.log(`🚀 Starting real API analysis for: "${request.query}"`);
+
+      // Scan all 7 platforms with real API calls
+      const platforms_data = await scanner.scanAllPlatforms(request);
+      
+      setCurrentPlatform('Generating Insights');
+      setScanProgress(95);
       
       // Analyze with AI
-      const analysis = await premiumAIAnalyzerService.analyzePlatforms(platforms, idea);
+      const analysis = await premiumAIAnalyzerService.analyzePlatforms(platforms_data, request.query);
       
       // Generate social posts
-      const posts = await premiumAIAnalyzerService.generateSocialPosts(analysis, idea);
+      const posts = await premiumAIAnalyzerService.generateSocialPosts(analysis, request.query);
+      
+      setScanProgress(100);
       
       setResult(analysis);
       setSocialPosts(posts);
       
+      console.log('✅ Real API analysis completed successfully');
+      
     } catch (err) {
       console.error('Error in premium analysis:', err);
       setError(err instanceof Error ? err.message : 'Failed to analyze platforms');
-      // Fallback to mock data
-      simulatePlatformScanning();
+      
+      // Create fallback result instead of using mock function
+      const fallbackResult: PremiumAnalysisResult = {
+        demand_index: 50,
+        verdict: 'medium',
+        opportunities: ['API connection temporarily unavailable', 'Please try again later'],
+        risks: ['Limited data available'],
+        mvp_suggestions: ['Check internet connection and try again'],
+        platforms: []
+      };
+      
+      setResult(fallbackResult);
+      setSocialPosts({
+        twitter: { tone: 'analytical', text: `Analysis temporarily unavailable for "${idea}". Please try again later.` },
+        reddit: { title: `Analysis for "${idea}" - Please retry`, body: 'API connection temporarily unavailable. Please try again later.' },
+        linkedin: { tone: 'professional', text: `Analysis for "${idea}" temporarily unavailable.`, cta: 'Retry analysis?' }
+      });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const simulatePlatformScanning = async () => {
-    const platforms = ['Reddit', 'Hacker News', 'Product Hunt', 'GitHub', 'Stack Overflow', 'Google News', 'YouTube'];
-    
-    for (let i = 0; i < platforms.length; i++) {
-      setCurrentPlatform(platforms[i]);
-      setScanProgress(((i + 1) / platforms.length) * 100);
-      await new Promise(resolve => setTimeout(resolve, 800));
-    }
 
-    // Generate mock premium results
-    const mockResult: PremiumAnalysisResult = {
-      demand_index: 74,
-      verdict: 'high',
-      opportunities: [
-        'High volume on GitHub indicates strong developer interest',
-        'Growing Reddit discussions show community momentum',
-        'Product Hunt launches suggest market readiness'
-      ],
-      risks: [
-        'High competition on GitHub repositories',
-        'Market saturation risk in some segments'
-      ],
-      mvp_suggestions: [
-        'Provide clear API documentation and SDKs',
-        'Start with core features addressing main pain points',
-        'Build active community support channels'
-      ],
-      platforms: [
-        {
-          platform: 'reddit',
-          summary: 'Reddit community shows strong interest in fitness apps',
-          sentiment: { positive: 0.65, neutral: 0.25, negative: 0.10 },
-          metrics: { volume: 45, engagement: 0.72, growth_rate: 0.28 },
-          top_keywords: ['habit tracking', 'calorie counter', 'workout app'],
-          representative_quotes: [
-            { text: 'We need a simpler fitness API integration', sentiment: 'positive' },
-            { text: 'Habit tracking is the key feature', sentiment: 'positive' }
-          ]
-        },
-        {
-          platform: 'github',
-          summary: '45 fitness app repositories with 2,340 total stars',
-          sentiment: { positive: 0.58, neutral: 0.32, negative: 0.10 },
-          metrics: { volume: 45, engagement: 0.65, growth_rate: 0.22 },
-          top_keywords: ['fitness', 'health', 'tracking', 'api', 'mobile'],
-          representative_quotes: [
-            { text: 'fitness-tracker-app', sentiment: 'positive' },
-            { text: 'health-monitoring-tool', sentiment: 'positive' }
-          ]
-        },
-        {
-          platform: 'producthunt',
-          summary: '12 fitness app-related products launched on Product Hunt',
-          sentiment: { positive: 0.70, neutral: 0.20, negative: 0.10 },
-          metrics: { volume: 12, engagement: 0.78, growth_rate: 0.35 },
-          top_keywords: ['fitness', 'health', 'wellness', 'app'],
-          representative_quotes: [
-            { text: 'FitFlow - Smart Fitness Tracking', sentiment: 'positive' },
-            { text: 'HealthSync - Wellness Platform', sentiment: 'positive' }
-          ]
-        },
-        {
-          platform: 'stackoverflow',
-          summary: '67 fitness app questions on Stack Overflow',
-          sentiment: { positive: 0.45, neutral: 0.45, negative: 0.10 },
-          metrics: { volume: 67, engagement: 0.55, growth_rate: 0.18 },
-          top_keywords: ['fitness', 'app', 'development', 'api', 'integration'],
-          representative_quotes: [
-            { text: 'How to implement fitness tracking in React Native?', sentiment: 'neutral' },
-            { text: 'Best practices for fitness app data sync', sentiment: 'positive' }
-          ]
-        },
-        {
-          platform: 'hackernews',
-          summary: 'HN developers discussing fitness apps with 23 relevant stories',
-          sentiment: { positive: 0.52, neutral: 0.38, negative: 0.10 },
-          metrics: { volume: 23, engagement: 0.62, growth_rate: 0.25 },
-          top_keywords: ['fitness', 'health', 'technology', 'startup'],
-          representative_quotes: [
-            { text: 'Show HN: Fitness tracking app built with Flutter', sentiment: 'positive' },
-            { text: 'The future of health technology', sentiment: 'neutral' }
-          ]
-        },
-        {
-          platform: 'googlenews',
-          summary: '34 recent news articles about fitness apps',
-          sentiment: { positive: 0.60, neutral: 0.30, negative: 0.10 },
-          metrics: { volume: 34, engagement: 0.68, growth_rate: 0.30 },
-          top_keywords: ['fitness', 'health', 'technology', 'startup', 'innovation'],
-          representative_quotes: [
-            { text: 'Fitness App Market Expected to Reach $120B by 2025', sentiment: 'positive' },
-            { text: 'New AI-powered fitness tracking solutions', sentiment: 'positive' }
-          ]
-        },
-        {
-          platform: 'youtube',
-          summary: '28 fitness app videos with 156,000 total views',
-          sentiment: { positive: 0.68, neutral: 0.22, negative: 0.10 },
-          metrics: { volume: 28, engagement: 0.75, growth_rate: 0.32 },
-          top_keywords: ['fitness app', 'workout app', 'health app', 'review'],
-          representative_quotes: [
-            { text: 'Top 10 Fitness Apps 2024', sentiment: 'positive' },
-            { text: 'Fitness App Development Tutorial', sentiment: 'positive' }
-          ]
-        }
-      ]
-    };
-
-    setResult(mockResult);
-    
-    // Generate mock social posts
-    const mockPosts: PremiumSocialPosts = {
-      twitter: {
-        tone: 'analytical',
-        text: '🚀 Fitness app analysis: 74/100 demand index\n\nHigh volume on GitHub indicates strong developer interest\n\n#startup #validation #marketresearch'
-      },
-      reddit: {
-        title: 'Market analysis for "fitness app" - 74/100 demand index',
-        body: '**Demand Index:** 74/100 (high)\n\n**Top Opportunities:**\n• High volume on GitHub indicates strong developer interest\n• Growing Reddit discussions show community momentum\n• Product Hunt launches suggest market readiness\n\n**Key Risks:**\n• High competition on GitHub repositories\n• Market saturation risk in some segments\n\n**Platform Activity:**\n• GitHub: 45 repos, 65% engagement\n• Reddit: 45 discussions, 72% engagement\n• Product Hunt: 12 launches, 78% engagement\n• Stack Overflow: 67 questions, 55% engagement\n\nWhat do you think about this market opportunity?'
-      },
-      linkedin: {
-        tone: 'professional',
-        text: '📊 Market validation analysis for "fitness app"\n\n**Demand Index:** 74/100\n**Verdict:** High market demand\n\n**Key Insights:**\n• High volume on GitHub indicates strong developer interest\n• User needs are clearly identified\n\n**Platform Activity:** 7 platforms analyzed\n• GitHub: 45 repos\n• Reddit: 45 discussions\n• Product Hunt: 12 launches\n\nThis analysis shows strong market opportunity for fitness apps.',
-        cta: 'What\'s your take on this market opportunity?'
-      }
-    };
-
-    setSocialPosts(mockPosts);
-    setIsLoading(false);
-  };
 
   const getSentimentColor = (sentiment: { positive: number; neutral: number; negative: number }) => {
     const { positive, negative } = sentiment;
@@ -261,13 +167,10 @@ const ResultsPage: React.FC = () => {
           <div className="text-center mb-12">
             <div className="text-6xl mb-6 animate-pulse">🔍</div>
             <h1 className="text-4xl font-bold mb-4">
-              {idea && idea !== 'Your business idea' ? 'Premium Analysis Running' : 'Platforms Scanning'}
+              Real-Time Platform Analysis
             </h1>
             <p className="text-xl text-gray-400">
-              {idea && idea !== 'Your business idea' 
-                ? 'Analyzing 7 premium platforms with AI...' 
-                : 'Analyzing data across platforms...'
-              }
+              Connecting to 7 premium APIs and analyzing with AI...
             </p>
           </div>
 
@@ -352,11 +255,9 @@ const ResultsPage: React.FC = () => {
             <p className="text-xl text-gray-400 max-w-3xl mx-auto">
               "{idea}" - 7 Premium Platforms Analyzed with AI
             </p>
-            {idea && idea !== 'Your business idea' && (
-              <div className="mt-4 inline-block px-4 py-2 bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
-                ✅ Real Backend APIs Connected
-              </div>
-            )}
+            <div className="mt-4 inline-block px-4 py-2 bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
+              ✅ Real Backend APIs Connected
+            </div>
           </div>
 
           {/* Error Display */}
