@@ -53,6 +53,63 @@ export class AIThumbnailService {
   }
 
   /**
+   * Get optimal facial expression for hook type
+   */
+  private getFacialExpressionForHook(hookType: string): string {
+    switch (hookType) {
+      case 'question': return 'curious, raised eyebrow, questioning look';
+      case 'bold_claim': return 'confident, determined, direct eye contact';
+      case 'curiosity_gap': return 'surprised, wide eyes, mouth slightly open';
+      case 'listicle': return 'friendly smile, approachable, pointing gesture';
+      case 'challenge': return 'intense focus, serious expression, determined';
+      case 'story': return 'emotional, expressive, engaging storyteller';
+      case 'authority': return 'professional, confident, expert demeanor';
+      case 'contrarian': return 'skeptical, smirk, challenging expression';
+      default: return 'engaging, positive, direct eye contact';
+    }
+  }
+
+  /**
+   * Get optimal color scheme for category
+   */
+  private getOptimalColors(category: string): string {
+    const categoryLower = category.toLowerCase();
+    
+    if (categoryLower.includes('fitness') || categoryLower.includes('health')) {
+      return 'bright green and orange, energetic colors';
+    } else if (categoryLower.includes('tech') || categoryLower.includes('app')) {
+      return 'electric blue and white, modern tech colors';
+    } else if (categoryLower.includes('business') || categoryLower.includes('finance')) {
+      return 'professional blue and gold, corporate colors';
+    } else if (categoryLower.includes('food') || categoryLower.includes('cooking')) {
+      return 'warm red and yellow, appetizing colors';
+    } else if (categoryLower.includes('travel') || categoryLower.includes('lifestyle')) {
+      return 'vibrant turquoise and sunset orange';
+    } else {
+      return 'high contrast red and white, attention-grabbing';
+    }
+  }
+
+  /**
+   * Get optimal background style for category
+   */
+  private getBackgroundStyle(category: string): string {
+    const categoryLower = category.toLowerCase();
+    
+    if (categoryLower.includes('tech') || categoryLower.includes('app')) {
+      return 'modern gradient background, clean tech environment';
+    } else if (categoryLower.includes('fitness') || categoryLower.includes('health')) {
+      return 'gym or outdoor fitness setting, energetic environment';
+    } else if (categoryLower.includes('business')) {
+      return 'professional office or clean studio background';
+    } else if (categoryLower.includes('food')) {
+      return 'kitchen or restaurant setting, food photography style';
+    } else {
+      return 'clean studio background with dramatic lighting';
+    }
+  }
+
+  /**
    * Use Gemini to optimize thumbnail prompt for better performance
    */
   private async optimizePromptWithGemini(request: ThumbnailGenerationRequest): Promise<string> {
@@ -62,24 +119,29 @@ export class AIThumbnailService {
       throw new Error('Gemini API key not configured');
     }
 
-    const systemPrompt = `You are an expert YouTube thumbnail designer. Create a detailed, professional prompt for AI image generation that will maximize CTR (click-through rate) and retention.
+    const systemPrompt = `You are an expert YouTube thumbnail designer who creates viral, high-CTR thumbnails. Create a detailed prompt for AI image generation that follows YouTube's best practices.
 
-RULES:
-- Focus on high-contrast, eye-catching visuals
-- Include specific facial expressions and emotions
-- Specify exact text overlays and positioning
-- Mention optimal colors for mobile viewing
-- Include professional photography terms
-- Keep text readable on mobile devices
-- Ensure brand safety
+YOUTUBE THUMBNAIL REQUIREMENTS:
+- Aspect ratio: 16:9 (1280x720 pixels)
+- High contrast colors (bright vs dark)
+- Large, bold, readable text (minimum 24pt font)
+- Maximum 3-4 words of text
+- Clear focal point (person's face or main object)
+- Bright, saturated colors that pop on mobile
+- Professional lighting and composition
+
+VISUAL ELEMENTS TO INCLUDE:
+- Specific facial expression: ${this.getFacialExpressionForHook(request.hookType)}
+- Color scheme: ${this.getOptimalColors(request.category)}
+- Text style: Bold, sans-serif, high contrast
+- Background: ${this.getBackgroundStyle(request.category)}
+- Composition: Rule of thirds, clear hierarchy
 
 Hook Type: ${request.hookType}
 Category: ${request.category}
-Tone: ${request.tone}
-Goal: ${request.goal}
 Hook Text: "${request.hookText}"
 
-Generate a detailed prompt for FLUX/Stable Diffusion that will create a high-performing YouTube thumbnail. Focus on visual elements, not explanations.`;
+Create a FLUX/Stable Diffusion prompt that generates a professional YouTube thumbnail with these specifications. Focus on visual details, lighting, and composition.`;
 
     const response = await fetch(`${this.GEMINI_API_URL}?key=${geminiApiKey}`, {
       method: 'POST',
@@ -126,7 +188,7 @@ Generate a detailed prompt for FLUX/Stable Diffusion that will create a high-per
     }
 
     // Add YouTube thumbnail specifications to prompt
-    const enhancedPrompt = `${prompt}, YouTube thumbnail, 1280x720 resolution, high quality, professional, eye-catching, optimized for mobile viewing, sharp details, vibrant colors`;
+    const enhancedPrompt = `${prompt}, YouTube thumbnail format, 1280x720 resolution, 16:9 aspect ratio, high quality, professional photography, eye-catching design, optimized for mobile viewing, sharp details, vibrant colors, high contrast, readable text overlay`;
 
     const response = await fetch(this.HUGGINGFACE_API_URL, {
       method: 'POST',
@@ -137,10 +199,10 @@ Generate a detailed prompt for FLUX/Stable Diffusion that will create a high-per
       body: JSON.stringify({
         inputs: enhancedPrompt,
         parameters: {
-          width: 1280,
-          height: 720,
-          num_inference_steps: 4, // Fast generation with FLUX Schnell
-          guidance_scale: 3.5,
+          width: 1280, // YouTube standard width
+          height: 720, // YouTube standard height (16:9 aspect ratio)
+          num_inference_steps: 8, // Better quality with more steps
+          guidance_scale: 7.5, // Higher guidance for better adherence to prompt
         }
       })
     });

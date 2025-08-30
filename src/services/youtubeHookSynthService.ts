@@ -59,16 +59,17 @@ export class YouTubeHookSynthService {
     const hooks: Hook[] = [];
     const hookTypes: HookType[] = ['question', 'bold_claim', 'curiosity_gap', 'pattern_interrupt', 'fomo', 'challenge', 'authority', 'contrarian'];
     
-    // Generate 2-3 hooks per type for variety
+    // Generate 1-2 high-quality hooks per type for better focus
     for (const hookType of hookTypes) {
       const typeHooks = this.generateHooksByType(hookType, request);
-      hooks.push(...typeHooks);
+      // Only take the best hook from each type
+      hooks.push(...typeHooks.slice(0, 1));
     }
     
-    // Sort by hook score and return top 15-20
+    // Sort by hook score and return top 5 quality hooks
     return hooks
       .sort((a, b) => b.hook_score - a.hook_score)
-      .slice(0, Math.min(20, request.user_plan === 'premium' ? 20 : request.user_plan === 'pro' ? 15 : 10));
+      .slice(0, 5); // Always return 5 high-quality hooks regardless of plan
   }
 
   /**
@@ -94,31 +95,31 @@ export class YouTubeHookSynthService {
     const persona = request.persona.toLowerCase();
     const language = request.language || 'en';
     
-    // Turkish templates
+    // High-quality Turkish templates - Viral & Engaging
     const templatesTR = {
       question: [
-        `${category} kullanırken bu hatayı yapıyor musun?`,
-        `Neden ${category} ile istediğin sonucu alamıyorsun?`,
-        `${category}'de en büyük yanılgı nedir biliyor musun?`,
-        `Bu ${category} hilesi neden kimse söylemiyor?`
+        `${category} ile milyonlar kazanmanın sırrı ne?`,
+        `${category}'de başarısız olanların ortak hatası?`,
+        `${category} uzmanlarının gizlediği gerçek ne?`,
+        `${category}'yi yanlış mı kullanıyorsun?`
       ],
       bold_claim: [
-        `${category} hakkında bildiğin her şey yanlış!`,
-        `30 günde ${category} ile hayatın değişecek`,
-        `${category}'nin gizli formülünü çözdüm`,
-        `Bu ${category} yöntemi %90 daha etkili`
+        `${category} dünyasını değiştirecek devrim!`,
+        `${category} ile 30 günde hayat değişimi`,
+        `Bu ${category} yöntemi %300 daha etkili`,
+        `${category}'nin gizli milyar dolarlık formülü`
       ],
       curiosity_gap: [
-        `${category} uzmanları bunu söylemiyor ama...`,
-        `${category}'de gizli kalan gerçek şu:`,
-        `Bu ${category} sırrını öğrenince şaşıracaksın`,
-        `${category} dünyasının en karanlık sırrı`
+        `${category} milyarderleri bu sırrı saklıyor...`,
+        `${category}'de kimsenin bilmediği gerçek`,
+        `Bu ${category} sırrı yasaklanmalı!`,
+        `${category} endüstrisinin en karanlık sırrı`
       ],
       pattern_interrupt: [
-        `Dur! ${category} seçiminde büyük hata yapıyorsun`,
-        `Stop! Bu ${category} hilesi illegal olmalı`,
-        `Bekle... ${category} böyle kullanılmaz!`,
-        `Yanlış! ${category} için doğru yöntem bu`
+        `STOP! ${category} seçiminde büyük hata`,
+        `DUR! Bu ${category} hilesi illegal olmalı`,
+        `BEKLE! ${category} böyle kullanılmıyor`,
+        `YANLIŞ! ${category} için tek doğru yol`
       ],
       fomo: [
         `Son 24 saatte ${category} trendi patladı`,
@@ -146,31 +147,31 @@ export class YouTubeHookSynthService {
       ]
     };
 
-    // English templates
+    // High-quality English templates - Viral & Click-worthy
     const templatesEN = {
       question: [
-        `Are you making this ${category} mistake?`,
-        `Why isn't your ${category} working?`,
-        `Do you know the biggest ${category} myth?`,
-        `Why won't anyone tell you this ${category} trick?`
+        `What's the secret to making millions with ${category}?`,
+        `Why do 99% of people fail at ${category}?`,
+        `What are ${category} experts hiding from you?`,
+        `Are you using ${category} completely wrong?`
       ],
       bold_claim: [
-        `Everything you know about ${category} is wrong!`,
-        `${category} will change your life in 30 days`,
-        `I cracked the secret ${category} formula`,
-        `This ${category} method is 90% more effective`
+        `This ${category} revolution will change everything!`,
+        `${category} life transformation in 30 days`,
+        `This ${category} method is 300% more effective`,
+        `The billion-dollar ${category} formula revealed`
       ],
       curiosity_gap: [
-        `${category} experts won't tell you this but...`,
-        `The hidden truth about ${category}:`,
-        `You'll be shocked when you learn this ${category} secret`,
-        `The darkest secret of the ${category} world`
+        `${category} billionaires are hiding this secret...`,
+        `The ${category} truth nobody talks about`,
+        `This ${category} secret should be banned!`,
+        `The darkest secret of the ${category} industry`
       ],
       pattern_interrupt: [
-        `Stop! You're making a huge ${category} mistake`,
-        `Stop! This ${category} trick should be illegal`,
-        `Wait... that's not how you use ${category}!`,
-        `Wrong! Here's the right way to ${category}`
+        `STOP! Huge ${category} mistake everyone makes`,
+        `STOP! This ${category} hack should be illegal`,
+        `WAIT! You're doing ${category} completely wrong`,
+        `WRONG! The only right way to do ${category}`
       ],
       fomo: [
         `${category} trend exploded in the last 24 hours`,
