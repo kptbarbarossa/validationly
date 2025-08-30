@@ -436,19 +436,63 @@ const YouTubeHookSynthPage: React.FC = () => {
 
                     <div className="bg-gray-800/50 backdrop-blur rounded-xl p-6 border border-white/10">
                       <h3 className="text-xl font-bold text-white mb-4 flex items-center">
-                        🖼️ Thumbnail Prompts
+                        🎨 AI Thumbnail Designs
                       </h3>
-                      <div className="space-y-3">
-                        {result.ab_test_pack.thumbnail_prompts.map((prompt, i) => (
-                          <div key={i} className="bg-gray-700/30 rounded p-3">
-                            <div className="flex items-start justify-between">
-                              <span className="text-gray-300 flex-1 text-sm">{prompt}</span>
+                      <div className="space-y-4">
+                        {result.ab_test_pack.thumbnail_designs.map((design, i) => (
+                          <div key={i} className="bg-gray-700/30 rounded-lg p-4 border border-white/5">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center space-x-2">
+                                <span className="px-2 py-1 bg-purple-600 rounded text-xs font-bold">
+                                  {design.style.replace('_', ' ').toUpperCase()}
+                                </span>
+                                <span className="text-gray-400 text-sm">#{design.id}</span>
+                              </div>
                               <button
-                                onClick={() => copyHook(prompt, `thumb-${i}`)}
-                                className="ml-2 px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm font-medium transition-colors"
+                                onClick={() => copyHook(design.prompt, `design-${i}`)}
+                                className="px-3 py-1 bg-purple-600 hover:bg-purple-700 rounded text-sm font-medium transition-colors"
                               >
-                                {copiedHook === `thumb-${i}` ? '✓' : 'Copy'}
+                                {copiedHook === `design-${i}` ? '✓' : 'Copy Prompt'}
                               </button>
+                            </div>
+                            
+                            {/* Design Elements */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                              <div>
+                                <span className="text-xs text-gray-500 uppercase">Main Text</span>
+                                <div className="text-white font-bold">{design.elements.main_text}</div>
+                              </div>
+                              <div>
+                                <span className="text-xs text-gray-500 uppercase">Expression</span>
+                                <div className="text-gray-300 text-sm">{design.elements.face_expression}</div>
+                              </div>
+                            </div>
+                            
+                            <div className="mb-3">
+                              <span className="text-xs text-gray-500 uppercase">Color Scheme</span>
+                              <div className="text-gray-300 text-sm">{design.elements.color_scheme}</div>
+                            </div>
+                            
+                            {/* Performance Predictions */}
+                            <div className="grid grid-cols-3 gap-3 mb-3">
+                              <div className="text-center">
+                                <div className="text-lg font-bold text-green-400">{design.performance_prediction.ctr_score}%</div>
+                                <div className="text-xs text-gray-500">CTR Score</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-lg font-bold text-blue-400">{design.performance_prediction.retention_score}%</div>
+                                <div className="text-xs text-gray-500">Retention</div>
+                              </div>
+                              <div className="text-center">
+                                <div className="text-lg font-bold text-yellow-400">{design.performance_prediction.brand_safety}%</div>
+                                <div className="text-xs text-gray-500">Brand Safe</div>
+                              </div>
+                            </div>
+                            
+                            {/* AI Prompt */}
+                            <div className="bg-gray-800/50 rounded p-3">
+                              <span className="text-xs text-gray-500 uppercase block mb-1">AI Generation Prompt</span>
+                              <div className="text-gray-300 text-sm">{design.prompt}</div>
                             </div>
                           </div>
                         ))}

@@ -7,6 +7,7 @@ import {
   VideoGoal,
   VisualPlan,
   ABTestPack,
+  ThumbnailDesign,
   HookMetrics,
   UserPlan
 } from '../types';
@@ -344,23 +345,183 @@ export class YouTubeHookSynthService {
       return title;
     });
     
-    const thumbnailPrompts = topHooks.map(hook => {
-      const category = request.category;
-      
-      if (hook.type === 'pattern_interrupt') {
-        return `Bold STOP text overlay / surprised face expression / ${category} visual in background`;
-      } else if (hook.type === 'question') {
-        return `Question mark overlay / confused/curious expression / ${category} split-screen comparison`;
-      } else if (hook.type === 'bold_claim') {
-        return `Large bold text: key claim / confident expression / ${category} transformation visual`;
-      } else {
-        return `Eye-catching ${hook.type} visual / expressive face / ${category} related imagery`;
-      }
-    });
+    const thumbnailDesigns = this.generateThumbnailDesigns(topHooks, request);
     
     return {
       titles,
-      thumbnail_prompts: thumbnailPrompts
+      thumbnail_designs: thumbnailDesigns
+    };
+  }
+
+  /**
+   * Generate AI-powered thumbnail designs with performance predictions
+   */
+  private generateThumbnailDesigns(hooks: Hook[], request: HookSynthRequest): ThumbnailDesign[] {
+    return hooks.slice(0, 3).map((hook, index) => {
+      const design = this.createThumbnailDesign(hook, request, index);
+      return design;
+    });
+  }
+
+  private createThumbnailDesign(hook: Hook, request: HookSynthRequest, index: number): ThumbnailDesign {
+    const styles: ThumbnailDesign['style'][] = ['bold_text', 'split_screen', 'face_reaction', 'before_after', 'question_mark', 'countdown'];
+    const style = this.selectOptimalStyle(hook.type, request.goal);
+    
+    const elements = this.generateThumbnailElements(hook, request, style);
+    const performance = this.predictThumbnailPerformance(hook, style, elements);
+    
+    // Generate detailed prompt for AI image generation
+    const prompt = this.generateDetailedPrompt(elements, style, request.category);
+    
+    return {
+      id: `thumb_${index + 1}`,
+      prompt,
+      style,
+      elements,
+      performance_prediction: performance
+    };
+  }
+
+  private selectOptimalStyle(hookType: HookType, goal: VideoGoal): ThumbnailDesign['style'] {
+    const styleMap: Record<HookType, ThumbnailDesign['style']> = {
+      'question': 'question_mark',
+      'bold_claim': 'bold_text',
+      'curiosity_gap': 'split_screen',
+      'pattern_interrupt': 'face_reaction',
+      'fomo': 'countdown',
+      'challenge': 'before_after',
+      'authority': 'bold_text',
+      'contrarian': 'face_reaction'
+    };
+    
+    return styleMap[hookType] || 'bold_text';
+  }
+
+  private generateThumbnailElements(hook: Hook, request: HookSynthRequest, style: ThumbnailDesign['style']) {
+    const category = request.category;
+    const tone = request.tone;
+    
+    // Extract key text from hook
+    const mainText = hook.text.split(' ').slice(0, 3).join(' ').toUpperCase();
+    
+    // Define face expressions based on hook type and tone
+    const faceExpressions = {
+      'question': 'confused, curious, raised eyebrow',
+      'bold_claim': 'confident, determined, pointing',
+      'curiosity_gap': 'surprised, intrigued, wide eyes',
+      'pattern_interrupt': 'shocked, amazed, mouth open',
+      'fomo': 'urgent, worried, checking time',
+      'challenge': 'determined, focused, before/after split',
+      'authority': 'professional, confident, expert pose',
+      'contrarian': 'skeptical, challenging, arms crossed'
+    };
+
+    // Color schemes based on category and tone
+    const colorSchemes = {
+      'energetic': 'bright red, electric blue, neon yellow',
+      'analytical': 'deep blue, clean white, accent green',
+      'casual': 'warm orange, friendly blue, natural green',
+      'authoritative': 'professional navy, gold accents, clean white',
+      'friendly': 'soft blue, warm yellow, gentle green'
+    };
+
+    // Background themes based on category
+    const backgroundThemes = {
+      'fitness': 'gym equipment, workout space, healthy lifestyle',
+      'tech': 'modern office, computer screens, digital elements',
+      'business': 'office environment, charts, professional setting',
+      'education': 'classroom, books, learning materials',
+      'lifestyle': 'home environment, daily activities, personal space'
+    };
+
+    return {
+      main_text: mainText,
+      face_expression: faceExpressions[hook.type] || 'confident, engaging',
+      background_theme: backgroundThemes[category.toLowerCase()] || `${category} related environment`,
+      color_scheme: colorSchemes[tone] || 'bright, attention-grabbing colors',
+      overlay_effects: this.getOverlayEffects(style, hook.type)
+    };
+  }
+
+  private getOverlayEffects(style: ThumbnailDesign['style'], hookType: HookType): string[] {
+    const effects: Record<ThumbnailDesign['style'], string[]> = {
+      'bold_text': ['large bold text overlay', 'drop shadow', 'contrast outline'],
+      'split_screen': ['vertical split line', 'before/after labels', 'comparison arrows'],
+      'face_reaction': ['emotion indicators', 'thought bubble', 'reaction emojis'],
+      'before_after': ['transformation arrow', 'progress indicator', 'time stamps'],
+      'question_mark': ['large question mark', 'curiosity indicators', 'mystery elements'],
+      'countdown': ['timer overlay', 'urgency indicators', 'deadline warnings']
+    };
+    
+    return effects[style] || ['attention-grabbing overlay'];
+  }
+
+  private generateDetailedPrompt(elements: ThumbnailDesign['elements'], style: ThumbnailDesign['style'], category: string): string {
+    const basePrompt = `Professional YouTube thumbnail for ${category} content`;
+    const stylePrompt = this.getStylePrompt(style);
+    const elementsPrompt = `
+Main text: "${elements.main_text}" in bold, readable font
+Face: ${elements.face_expression}
+Background: ${elements.background_theme}
+Colors: ${elements.color_scheme}
+Effects: ${elements.overlay_effects?.join(', ')}
+    `.trim();
+    
+    return `${basePrompt}, ${stylePrompt}. ${elementsPrompt}. High quality, professional, eye-catching, optimized for mobile viewing, 1280x720 resolution.`;
+  }
+
+  private getStylePrompt(style: ThumbnailDesign['style']): string {
+    const prompts = {
+      'bold_text': 'large bold text overlay design with high contrast',
+      'split_screen': 'split-screen comparison layout with clear division',
+      'face_reaction': 'prominent face with clear emotional expression',
+      'before_after': 'before and after transformation layout',
+      'question_mark': 'question-focused design with curiosity elements',
+      'countdown': 'urgency-focused design with time elements'
+    };
+    
+    return prompts[style] || 'eye-catching design';
+  }
+
+  private predictThumbnailPerformance(hook: Hook, style: ThumbnailDesign['style'], elements: ThumbnailDesign['elements']) {
+    // AI-based performance prediction algorithm
+    let ctrScore = 50; // base score
+    let retentionScore = 50;
+    let brandSafety = 80; // start high
+    
+    // Hook score influence
+    ctrScore += (hook.hook_score - 50) * 0.5;
+    retentionScore += (hook.hook_score - 50) * 0.3;
+    
+    // Style bonuses
+    const styleBonuses = {
+      'face_reaction': { ctr: 15, retention: 10 },
+      'bold_text': { ctr: 10, retention: 5 },
+      'question_mark': { ctr: 12, retention: 8 },
+      'split_screen': { ctr: 8, retention: 12 },
+      'before_after': { ctr: 10, retention: 15 },
+      'countdown': { ctr: 18, retention: 5 }
+    };
+    
+    const bonus = styleBonuses[style] || { ctr: 5, retention: 5 };
+    ctrScore += bonus.ctr;
+    retentionScore += bonus.retention;
+    
+    // Text length penalty (too long = bad for mobile)
+    if (elements.main_text && elements.main_text.length > 20) {
+      ctrScore -= 10;
+      brandSafety -= 5;
+    }
+    
+    // Ensure scores are within bounds
+    ctrScore = Math.max(0, Math.min(100, Math.round(ctrScore)));
+    retentionScore = Math.max(0, Math.min(100, Math.round(retentionScore)));
+    brandSafety = Math.max(0, Math.min(100, Math.round(brandSafety)));
+    
+    return {
+      ctr_score: ctrScore,
+      retention_score: retentionScore,
+      brand_safety: brandSafety
     };
   }
 

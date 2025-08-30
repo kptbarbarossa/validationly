@@ -1573,9 +1573,28 @@ export interface Hook {
   reasons: string[];
 }
 
+export interface ThumbnailDesign {
+  id: string;
+  prompt: string;
+  generated_url?: string;
+  style: 'bold_text' | 'split_screen' | 'face_reaction' | 'before_after' | 'question_mark' | 'countdown';
+  elements: {
+    main_text?: string;
+    face_expression?: string;
+    background_theme?: string;
+    color_scheme?: string;
+    overlay_effects?: string[];
+  };
+  performance_prediction: {
+    ctr_score: number; // 0-100
+    retention_score: number; // 0-100
+    brand_safety: number; // 0-100
+  };
+}
+
 export interface ABTestPack {
   titles: string[];
-  thumbnail_prompts: string[];
+  thumbnail_designs: ThumbnailDesign[];
 }
 
 export interface HookSynthResult {
