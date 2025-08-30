@@ -87,30 +87,11 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
       return acc + price;
     }, 0);
 
-  // Eğer hiç tool yoksa, boş state göster
-  if (!isLoading && recommendations.length === 0) {
+  // Ana içerik olarak Login to See Price bloğunu göster
+  if (!isLoading) {
     return (
       <div className="space-y-8 mb-12">
-        {/* Empty State */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10">
-          <div className="text-center">
-            <div className="text-6xl mb-4">🛠️</div>
-            <h2 className="text-2xl font-bold text-white mb-4">
-              Tool Recommendations Coming Soon
-            </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              We're curating the best tools for your startup journey.
-              Affiliate partnerships will be added soon to help you build your "{idea}" with the right stack.
-            </p>
-            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-              <p className="text-blue-300 text-sm">
-                💡 This section will show personalized tool recommendations based on your platform analysis
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Login to See Price Block */}
+        {/* Login to See Price Block - Ana İçerik */}
         <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10">
           <div className="flex items-start space-x-4">
             {/* Logo */}
@@ -164,6 +145,25 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                 <span>🛍️</span>
                 <span>View on Shopify App Store</span>
               </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Tool Recommendations Coming Soon */}
+        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🛠️</div>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Tool Recommendations Coming Soon
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              We're curating the best tools for your startup journey.
+              Affiliate partnerships will be added soon to help you build your "{idea}" with the right stack.
+            </p>
+            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <p className="text-blue-300 text-sm">
+                💡 This section will show personalized tool recommendations based on your platform analysis
+              </p>
             </div>
           </div>
         </div>
