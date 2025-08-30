@@ -13,6 +13,7 @@ import {
 } from '../types';
 import { youtubeHookSynthService } from '../services/youtubeHookSynthService';
 import { youtubeAnalysisService } from '../services/youtubeAnalysisService';
+import { socialKitService } from '../services/socialKitService';
 
 const YouTubeHookSynthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -454,6 +455,9 @@ const YouTubeHookSynthPage: React.FC = () => {
                 <div className="bg-gray-800/50 rounded-2xl p-6 border border-white/10">
                   <h3 className="text-xl font-bold text-white mb-4 flex items-center">
                     🔍 Analyze Single Video
+                    <span className="ml-2 px-2 py-1 bg-blue-600 text-xs rounded font-bold">
+                      SocialKit Powered
+                    </span>
                   </h3>
                   <div className="flex gap-4">
                     <input
