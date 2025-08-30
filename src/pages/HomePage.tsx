@@ -283,7 +283,7 @@ const HomePage: React.FC = () => {
                     </h1>
 
                     <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
-                        Get AI-driven market validation across 7+ platforms in seconds. Comprehensive analysis with actionable insights.
+                    Get instant insights from 7+ platforms and find the exact tools to build smarter.
                     </p>
 
                     {/* Platform List as Text */}
@@ -357,17 +357,41 @@ const HomePage: React.FC = () => {
                                     type="button"
                                     onClick={triggerValidation}
                                     disabled={!userInput.isValid || isLoading}
-                                    className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 bg-white/5 border border-white/10 backdrop-blur-sm shadow-sm ${userInput.isValid && !isLoading
-                                        ? 'hover:scale-110 cursor-pointer opacity-100 hover:bg-white/10 hover:border-white/20'
-                                        : 'cursor-not-allowed opacity-50'
+                                    className={`group relative w-10 h-10 flex items-center justify-center rounded-full transition-all duration-300 bg-gradient-to-r from-indigo-600 to-cyan-600 border border-white/20 backdrop-blur-sm shadow-lg overflow-hidden ${userInput.isValid && !isLoading
+                                        ? 'hover:scale-110 cursor-pointer opacity-100 hover:shadow-xl hover:shadow-indigo-500/25 hover:from-indigo-500 hover:to-cyan-500 active:scale-95'
+                                        : 'cursor-not-allowed opacity-50 grayscale'
                                     }`}
                                     aria-label="Submit idea for validation"
                                 >
-                                    <img
-                                        src="/logo.png"
-                                        alt="Submit"
-                                        className="w-6 h-6 object-contain"
-                                    />
+                                    {/* Animated background gradient */}
+                                    <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-gradient-x"></div>
+                                    
+                                    {/* Ripple effect on click */}
+                                    <div className="absolute inset-0 rounded-full bg-white/20 scale-0 animate-ping opacity-0 group-active:scale-100 group-active:opacity-100 transition-all duration-200"></div>
+                                    
+                                    {/* Icon container */}
+                                    <div className="relative z-10 flex items-center justify-center">
+                                        {isLoading ? (
+                                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        ) : (
+                                            <svg 
+                                                className="w-5 h-5 text-white transition-transform duration-200 group-hover:scale-110" 
+                                                fill="none" 
+                                                stroke="currentColor" 
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path 
+                                                    strokeLinecap="round" 
+                                                    strokeLinejoin="round" 
+                                                    strokeWidth={2} 
+                                                    d="M13 7l5 5m0 0l-5 5m5-5H6" 
+                                                />
+                                            </svg>
+                                        )}
+                                    </div>
+                                    
+                                    {/* Glow effect */}
+                                    <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 blur-md opacity-50 -z-10 group-hover:opacity-75 transition-opacity duration-300"></div>
                                 </button>
                             </div>
                         </div>

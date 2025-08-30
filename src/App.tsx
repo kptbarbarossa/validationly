@@ -113,7 +113,7 @@ const App: React.FC = () => {
                 <Route path="/analysis" element={<AnalysisPage />} />
                 <Route path="/job-tailor" element={<JobTailorPage />} />
                 <Route path="/shopify-pain-points" element={<ShopifyPainPointsPage />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/dashboard" element={<ProfilePage />} />
                 <Route path="/auth" element={<AuthPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
 

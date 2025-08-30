@@ -165,14 +165,14 @@ const PremiumNavBar: React.FC = () => {
                     <div className="absolute right-0 mt-2 w-48 rounded-xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-lg ring-1 ring-white/10">
                       <div className="py-2">
                         <Link
-                          to="/dashboard"
+                          to="/profile"
                           className="flex items-center gap-3 px-4 py-2 text-slate-200 hover:text-white hover:bg-white/10 transition-colors"
                           onClick={() => setIsProfileOpen(false)}
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z" />
                           </svg>
-                          Dashboard
+                          Profile Dashboard
                         </Link>
                         <Link
                           to="/profile"

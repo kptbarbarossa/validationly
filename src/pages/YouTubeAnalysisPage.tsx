@@ -148,16 +148,37 @@ export const YouTubeAnalysisPage: React.FC = () => {
             <button
               onClick={handleAnalyze}
               disabled={isLoading || !videoUrl.trim()}
-              className="w-full py-4 bg-gradient-to-r from-red-600 to-pink-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className={`group relative w-full py-4 rounded-xl font-semibold transition-all duration-300 overflow-hidden ${
+                isLoading || !videoUrl.trim()
+                  ? 'bg-gray-600 cursor-not-allowed opacity-50'
+                  : 'bg-gradient-to-r from-red-600 to-pink-600 hover:from-red-500 hover:to-pink-500 hover:shadow-xl hover:shadow-red-500/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer'
+              }`}
             >
-              {isLoading ? (
-                <div className="flex items-center justify-center space-x-2">
-                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                  <span>Analyzing Video...</span>
-                </div>
-              ) : (
-                'Analyze Video'
-              )}
+              {/* Animated background gradient */}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-pink-600 to-red-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-gradient-x"></div>
+              
+              {/* Ripple effect on click */}
+              <div className="absolute inset-0 bg-white/20 scale-0 group-active:scale-100 opacity-0 group-active:opacity-100 transition-all duration-200 rounded-xl"></div>
+              
+              {/* Button content */}
+              <div className="relative z-10 flex items-center justify-center space-x-2 text-white">
+                {isLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    <span>Analyzing Video...</span>
+                  </>
+                ) : (
+                  <>
+                    <svg className="w-5 h-5 transition-transform duration-200 group-hover:scale-110" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Analyze Video</span>
+                  </>
+                )}
+              </div>
+              
+              {/* Glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-pink-600 blur-md opacity-50 -z-10 group-hover:opacity-75 transition-opacity duration-300 rounded-xl"></div>
             </button>
 
             {/* Format Preview */}

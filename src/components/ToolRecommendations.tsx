@@ -90,20 +90,81 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
   // Eğer hiç tool yoksa, boş state göster
   if (!isLoading && recommendations.length === 0) {
     return (
-      <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10 mb-12">
-        <div className="text-center">
-          <div className="text-6xl mb-4">🛠️</div>
-          <h2 className="text-2xl font-bold text-white mb-4">
-            Tool Recommendations Coming Soon
-          </h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">
-            We're curating the best tools for your startup journey.
-            Affiliate partnerships will be added soon to help you build your "{idea}" with the right stack.
-          </p>
-          <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-            <p className="text-blue-300 text-sm">
-              💡 This section will show personalized tool recommendations based on your platform analysis
+      <div className="space-y-8 mb-12">
+        {/* Empty State */}
+        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10">
+          <div className="text-center">
+            <div className="text-6xl mb-4">🛠️</div>
+            <h2 className="text-2xl font-bold text-white mb-4">
+              Tool Recommendations Coming Soon
+            </h2>
+            <p className="text-gray-400 max-w-2xl mx-auto">
+              We're curating the best tools for your startup journey.
+              Affiliate partnerships will be added soon to help you build your "{idea}" with the right stack.
             </p>
+            <div className="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <p className="text-blue-300 text-sm">
+                💡 This section will show personalized tool recommendations based on your platform analysis
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Login to See Price Block */}
+        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10">
+          <div className="flex items-start space-x-4">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-lg">B2B</span>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <h3 className="text-lg font-bold text-white">Login to See Price - Price Hider</h3>
+                <span className="bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded-full text-xs font-medium">
+                  Shopify App
+                </span>
+              </div>
+              
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                Hide product prices from guests to drive account signups and grow your email list. 
+                Perfect for B2B stores, wholesale, and exclusive pricing strategies.
+              </p>
+              
+              {/* Key Features */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Easy installation</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>B2B & wholesale ready</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Mobile optimized</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Zero maintenance</span>
+                </div>
+              </div>
+              
+              {/* CTA */}
+              <a
+                href="https://apps.shopify.com/shhhh-pricing"
+                target="_blank"
+                rel="nofollow noopener"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+              >
+                <span>🛍️</span>
+                <span>View on Shopify App Store</span>
+              </a>
+            </div>
           </div>
         </div>
       </div>
