@@ -24,7 +24,7 @@ export class YouTubeHookSynthService {
       const hooks = await this.createHooks(request);
       
       // Generate A/B test pack
-      const abTestPack = this.generateABTestPack(hooks, request);
+      const abTestPack = await this.generateABTestPack(hooks, request);
       
       const result: HookSynthResult = {
         brief: {
@@ -333,7 +333,7 @@ export class YouTubeHookSynthService {
   /**
    * Generate A/B test pack with titles and thumbnails
    */
-  private generateABTestPack(hooks: Hook[], request: HookSynthRequest): ABTestPack {
+  private async generateABTestPack(hooks: Hook[], request: HookSynthRequest): Promise<ABTestPack> {
     const topHooks = hooks.slice(0, 3);
     
     const titles = topHooks.map(hook => {
@@ -345,7 +345,7 @@ export class YouTubeHookSynthService {
       return title;
     });
     
-    const thumbnailDesigns = this.generateThumbnailDesigns(topHooks, request);
+    const thumbnailDesigns = await this.generateThumbnailDesigns(topHooks, request);
     
     return {
       titles,
@@ -356,11 +356,51 @@ export class YouTubeHookSynthService {
   /**
    * Generate AI-powered thumbnail designs with performance predictions
    */
-  private generateThumbnailDesigns(hooks: Hook[], request: HookSynthRequest): ThumbnailDesign[] {
-    return hooks.slice(0, 3).map((hook, index) => {
-      const design = this.createThumbnailDesign(hook, request, index);
-      return design;
+  private async generateThumbnailDesigns(hooks: Hook[], request: HookSynthRequest): Promise<ThumbnailDesign[]> {
+    const designs: ThumbnailDesign[] = [];
+    
+    // Generate AI thumbnails for top 3 hooks
+    for (let i = 0; i < Math.min(3, hooks.length); i++) {
+      const hook = hooks[i];
+      try {
+        // Call AI thumbnail generation API
+        const aiDesign = await this.generateAIThumbnail(hook, request);
+        designs.push(aiDesign);
+      } catch (error) {
+        console.error(`AI thumbnail generation failed for hook ${i}:`, error);
+        // Fallback to mock design
+        const fallbackDesign = this.createThumbnailDesign(hook, request, i);
+        designs.push(fallbackDesign);
+      }
+    }
+    
+    return designs;
+  }
+
+  /**
+   * Generate AI thumbnail using Gemini + Hugging Face
+   */
+  private async generateAIThumbnail(hook: Hook, request: HookSynthRequest): Promise<ThumbnailDesign> {
+    const response = await fetch('/api/ai-thumbnail', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        hookText: hook.text,
+        hookType: hook.type,
+        category: request.category,
+        tone: request.tone,
+        goal: request.goal
+      })
     });
+
+    if (!response.ok) {
+      throw new Error(`AI thumbnail API error: ${response.status}`);
+    }
+
+    const aiDesign = await response.json();
+    return aiDesign as ThumbnailDesign;
   }
 
   private createThumbnailDesign(hook: Hook, request: HookSynthRequest, index: number): ThumbnailDesign {

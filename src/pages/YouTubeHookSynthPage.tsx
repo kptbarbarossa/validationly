@@ -489,6 +489,26 @@ const YouTubeHookSynthPage: React.FC = () => {
                               </div>
                             </div>
                             
+                            {/* Generated Image */}
+                            {design.generated_url && (
+                              <div className="mb-3">
+                                <span className="text-xs text-gray-500 uppercase block mb-2">Generated Thumbnail</span>
+                                <div className="relative bg-gray-800/50 rounded-lg overflow-hidden">
+                                  <img 
+                                    src={design.generated_url} 
+                                    alt={`AI generated thumbnail for ${design.elements.main_text}`}
+                                    className="w-full h-auto max-h-48 object-cover rounded-lg"
+                                    loading="lazy"
+                                  />
+                                  <div className="absolute top-2 right-2">
+                                    <span className="px-2 py-1 bg-green-600 text-white text-xs rounded font-bold">
+                                      AI Generated
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
                             {/* AI Prompt */}
                             <div className="bg-gray-800/50 rounded p-3">
                               <span className="text-xs text-gray-500 uppercase block mb-1">AI Generation Prompt</span>
