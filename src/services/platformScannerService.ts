@@ -330,7 +330,13 @@ export class PremiumPlatformScannerService {
 
   private transformYouTubeData(data: any, query: string): PremiumPlatformData {
     // Enhanced YouTube data transformation
-    const videos = data.videos || data.data || [];
+    const videos = data.data?.videos || data.videos || data.data || [];
+    
+    // Ensure videos is an array
+    if (!Array.isArray(videos)) {
+      console.warn('⚠️ YouTube videos data is not an array:', videos);
+      return this.generateFallbackData('youtube', query);
+    }
     const totalViews = videos.reduce((sum: number, video: any) => sum + (video.view_count || video.views || 0), 0);
     const totalLikes = videos.reduce((sum: number, video: any) => sum + (video.like_count || video.likes || 0), 0);
     const totalComments = videos.reduce((sum: number, video: any) => sum + (video.comment_count || 0), 0);

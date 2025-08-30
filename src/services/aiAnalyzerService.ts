@@ -7,7 +7,7 @@ export class PremiumAIAnalyzerService {
     console.log(`📊 Analyzing ${platforms.length} platforms...`);
     
     // Calculate overall demand index with enhanced algorithm
-    const demandIndex = this.calculateEnhancedDemandIndex(platforms);
+    const demandIndex = this.calculateEnhancedDemandIndex(platforms, query);
     
     // Generate comprehensive insights
     const opportunities = this.identifyAdvancedOpportunities(platforms, query);
@@ -29,7 +29,7 @@ export class PremiumAIAnalyzerService {
     };
   }
 
-  private calculateEnhancedDemandIndex(platforms: PremiumPlatformData[]): number {
+  private calculateEnhancedDemandIndex(platforms: PremiumPlatformData[], query: string): number {
     if (platforms.length === 0) return 0;
     
     let totalScore = 0;
