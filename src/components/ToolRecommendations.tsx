@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ToolRecommendation, ToolCategory, PremiumPlatformData, UserPlan } from '../types';
+import { ToolRecommendation, ToolCategory, PremiumPlatformData } from '../types';
 
 interface ToolRecommendationsProps {
   idea: string;
   platformData: PremiumPlatformData[];
-  userPlan: UserPlan;
 }
 
 // Tool database - gerçek affiliate linkleri eklenecek
@@ -44,8 +43,7 @@ const CATEGORY_COLORS: Record<ToolCategory, string> = {
 
 export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
   idea,
-  platformData,
-  userPlan
+  platformData
 }) => {
   const [recommendations, setRecommendations] = useState<ToolRecommendation[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ToolCategory | 'all'>('all');
@@ -101,12 +99,12 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </p>
         </div>
         {/* Login to See Price Block - Ana İçerik */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10">
-          <div className="flex items-start space-x-4">
+        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
+          <div className="flex items-start space-x-3">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">B2B</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs">B2B</span>
               </div>
             </div>
 
@@ -159,7 +157,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
         </div>
 
         {/* Capacity.so Affiliate Card */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10">
+        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
           <div className="flex items-start space-x-4">
             {/* Logo */}
             <div className="flex-shrink-0">
@@ -231,7 +229,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
         </div>
 
         {/* StoryShort.ai Affiliate Card */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-6 border border-white/10">
+        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
           <div className="flex items-start space-x-4">
             {/* Logo */}
             <div className="flex-shrink-0">
