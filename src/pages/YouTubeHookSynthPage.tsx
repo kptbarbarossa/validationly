@@ -12,6 +12,7 @@ import {
   UserPlan 
 } from '../types';
 import { youtubeHookSynthService } from '../services/youtubeHookSynthService';
+import { youtubeAnalysisService } from '../services/youtubeAnalysisService';
 
 const YouTubeHookSynthPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,14 +20,21 @@ const YouTubeHookSynthPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState<HookSynthResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'create' | 'analyze'>('create');
   
-  // Form state
+  // Hook Creation state
   const [category, setCategory] = useState('fitness app');
   const [persona, setPersona] = useState('beginner');
   const [tone, setTone] = useState<VideoTone>('energetic');
   const [goal, setGoal] = useState<VideoGoal>('free_trial_signups');
   const [selectedHook, setSelectedHook] = useState<Hook | null>(null);
   const [copiedHook, setCopiedHook] = useState<string | null>(null);
+  
+  // Video Analysis state
+  const [videoUrl, setVideoUrl] = useState('');
+  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const userPlan: UserPlan = user?.plan || 'free';
 
@@ -110,6 +118,55 @@ const YouTubeHookSynthPage: React.FC = () => {
     }
   };
 
+  const analyzeVideo = async () => {
+    if (!videoUrl.trim()) return;
+    
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+    
+    try {
+      console.log('🔍 Analyzing YouTube video...', videoUrl);
+      const analysis = await youtubeAnalysisService.analyzeVideo(videoUrl);
+      setAnalysisResult(analysis);
+      
+      // Auto-populate hook creation form with insights
+      if (analysis.title_analysis.key_words.length > 0) {
+        setCategory(analysis.title_analysis.key_words[0]);
+      }
+      
+    } catch (err) {
+      console.error('Error analyzing video:', err);
+      setAnalysisError(err instanceof Error ? err.message : 'Failed to analyze video');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
+  const analyzeCompetitive = async () => {
+    setIsAnalyzing(true);
+    setAnalysisError(null);
+    
+    try {
+      const request: HookSynthRequest = {
+        category: category.trim(),
+        persona: persona.trim(),
+        tone,
+        goal,
+        user_plan: userPlan
+      };
+      
+      console.log('🔍 Analyzing competitive videos...', request);
+      const analyses = await youtubeAnalysisService.analyzeCompetitiveVideos(request);
+      setAnalysisResult({ competitive_videos: analyses });
+      
+    } catch (err) {
+      console.error('Error analyzing competitive videos:', err);
+      setAnalysisError(err instanceof Error ? err.message : 'Failed to analyze competitive videos');
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+
   const getHookScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400 bg-green-500/20 border-green-500/30';
     if (score >= 60) return 'text-blue-400 bg-blue-500/20 border-blue-500/30';
@@ -178,12 +235,40 @@ const YouTubeHookSynthPage: React.FC = () => {
               YouTube Hook Synth
             </h1>
             <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-6">
-              Generate high-converting video hooks with visual planning & A/B test packs
+              Create hooks & analyze videos - Your complete YouTube optimization suite
             </p>
             
-            {/* Form Controls */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
-              <input
+            {/* Tab Navigation */}
+            <div className="flex justify-center mb-8">
+              <div className="bg-gray-800/50 rounded-2xl p-2 border border-white/10">
+                <button
+                  onClick={() => setActiveTab('create')}
+                  className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                    activeTab === 'create'
+                      ? 'bg-gradient-to-r from-red-600 to-purple-600 text-white shadow-lg'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  🎬 Create Hooks
+                </button>
+                <button
+                  onClick={() => setActiveTab('analyze')}
+                  className={`px-6 py-3 rounded-xl font-medium transition-all ${
+                    activeTab === 'analyze'
+                      ? 'bg-gradient-to-r from-red-600 to-purple-600 text-white shadow-lg'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                >
+                  🔍 Analyze Videos
+                </button>
+              </div>
+            </div>
+            
+            {/* Create Hooks Tab Content */}
+            {activeTab === 'create' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
+                  <input
                 type="text"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
@@ -220,22 +305,188 @@ const YouTubeHookSynthPage: React.FC = () => {
                   <option key={g.value} value={g.value}>{g.label}</option>
                 ))}
               </select>
-            </div>
+                </div>
 
-            <button
-              onClick={generateHooks}
-              disabled={isLoading || !category.trim() || !persona.trim()}
-              className="px-8 py-3 bg-gradient-to-r from-red-600 to-purple-600 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
-            >
-              🎬 Generate Hooks
-            </button>
+                <div className="text-center">
+                  <button
+                    onClick={generateHooks}
+                    disabled={isLoading || !category.trim() || !persona.trim()}
+                    className="px-8 py-3 bg-gradient-to-r from-red-600 to-purple-600 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+                  >
+                    🎬 Generate Hooks
+                  </button>
 
-            {/* Plan Info */}
-            <div className="mt-4 text-sm text-gray-400">
-              {userPlan === 'premium' && '💎 Premium: 20 hooks + visual planning + A/B tests'}
-              {userPlan === 'pro' && '⚡ Pro: 15 hooks + visual planning'}
-              {userPlan === 'free' && '🆓 Free: 10 hooks'}
-            </div>
+                  {/* Plan Info */}
+                  <div className="mt-4 text-sm text-gray-400">
+                    {userPlan === 'premium' && '💎 Premium: 20 hooks + visual planning + A/B tests'}
+                    {userPlan === 'pro' && '⚡ Pro: 15 hooks + visual planning'}
+                    {userPlan === 'free' && '🆓 Free: 10 hooks'}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Analyze Videos Tab Content */}
+            {activeTab === 'analyze' && (
+              <div className="max-w-4xl mx-auto space-y-6">
+                
+                {/* Video URL Input */}
+                <div className="bg-gray-800/50 rounded-2xl p-6 border border-white/10">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                    🔍 Analyze Single Video
+                  </h3>
+                  <div className="flex gap-4">
+                    <input
+                      type="url"
+                      value={videoUrl}
+                      onChange={(e) => setVideoUrl(e.target.value)}
+                      placeholder="https://youtube.com/watch?v=..."
+                      className="flex-1 bg-gray-700/50 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-red-500/50"
+                    />
+                    <button
+                      onClick={analyzeVideo}
+                      disabled={isAnalyzing || !videoUrl.trim()}
+                      className="px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+                    >
+                      {isAnalyzing ? '🔄 Analyzing...' : '🔍 Analyze'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Competitive Analysis */}
+                <div className="bg-gray-800/50 rounded-2xl p-6 border border-white/10">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                    📊 Competitive Analysis
+                  </h3>
+                  <p className="text-gray-400 mb-4">
+                    Analyze top-performing videos in your category to discover successful patterns
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <input
+                      type="text"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder="Category (e.g. fitness app)"
+                      className="bg-gray-700/50 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500/50"
+                    />
+                    <input
+                      type="text"
+                      value={persona}
+                      onChange={(e) => setPersona(e.target.value)}
+                      placeholder="Target persona"
+                      className="bg-gray-700/50 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500/50"
+                    />
+                    <button
+                      onClick={analyzeCompetitive}
+                      disabled={isAnalyzing || !category.trim()}
+                      className="px-6 py-3 bg-gradient-to-r from-green-600 to-blue-600 rounded-lg font-semibold hover:shadow-lg transition-all disabled:opacity-50"
+                    >
+                      {isAnalyzing ? '🔄 Analyzing...' : '📊 Analyze Category'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Analysis Results */}
+                {analysisResult && (
+                  <div className="bg-gray-800/50 rounded-2xl p-6 border border-white/10">
+                    <h3 className="text-xl font-bold text-white mb-4 flex items-center">
+                      📈 Analysis Results
+                    </h3>
+                    
+                    {/* Single Video Analysis */}
+                    {analysisResult.video && (
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-4">
+                          <img 
+                            src={analysisResult.video.thumbnail} 
+                            alt="Video thumbnail"
+                            className="w-32 h-18 rounded-lg object-cover"
+                          />
+                          <div className="flex-1">
+                            <h4 className="font-bold text-white mb-2">{analysisResult.video.title}</h4>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                              <div>
+                                <span className="text-gray-400">Performance:</span>
+                                <div className="text-lg font-bold text-green-400">{analysisResult.performance_score}/100</div>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Engagement:</span>
+                                <div className="text-lg font-bold text-blue-400">{analysisResult.engagement_rate}%</div>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Views:</span>
+                                <div className="text-lg font-bold text-purple-400">
+                                  {analysisResult.video.statistics.viewCount.toLocaleString()}
+                                </div>
+                              </div>
+                              <div>
+                                <span className="text-gray-400">Hook Type:</span>
+                                <div className="text-lg font-bold text-yellow-400">{analysisResult.title_analysis.hook_type}</div>
+                              </div>
+                            </div>
+                            
+                            {/* Extracted Hooks */}
+                            <div className="mt-4">
+                              <span className="text-gray-400 text-sm">Extracted Hooks:</span>
+                              <div className="mt-2 space-y-2">
+                                {analysisResult.hooks.map((hook: string, i: number) => (
+                                  <div key={i} className="bg-gray-700/30 rounded p-2 text-sm text-gray-300">
+                                    "{hook}"
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Competitive Analysis Results */}
+                    {analysisResult.competitive_videos && (
+                      <div className="space-y-4">
+                        <h4 className="font-bold text-white">Top Performing Videos:</h4>
+                        {analysisResult.competitive_videos.slice(0, 5).map((analysis: any, i: number) => (
+                          <div key={i} className="bg-gray-700/30 rounded-lg p-4">
+                            <div className="flex items-start gap-3">
+                              <img 
+                                src={analysis.video.thumbnail} 
+                                alt="Video thumbnail"
+                                className="w-24 h-14 rounded object-cover"
+                              />
+                              <div className="flex-1">
+                                <h5 className="font-medium text-white text-sm mb-1">{analysis.video.title}</h5>
+                                <div className="flex gap-4 text-xs text-gray-400">
+                                  <span>Score: {analysis.performance_score}/100</span>
+                                  <span>Views: {analysis.video.statistics.viewCount.toLocaleString()}</span>
+                                  <span>Type: {analysis.title_analysis.hook_type}</span>
+                                </div>
+                                <div className="mt-2">
+                                  <button
+                                    onClick={() => copyHook(analysis.video.title, `competitive-${i}`)}
+                                    className="text-xs px-2 py-1 bg-blue-600 hover:bg-blue-700 rounded transition-colors"
+                                  >
+                                    {copiedHook === `competitive-${i}` ? '✓ Copied' : 'Copy Title'}
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Analysis Error */}
+                {analysisError && (
+                  <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 text-center">
+                    <div className="text-red-400 text-xl mb-2">⚠️</div>
+                    <h3 className="text-red-400 font-semibold mb-2">Analysis Error</h3>
+                    <p className="text-red-300">{analysisError}</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Error Display */}
