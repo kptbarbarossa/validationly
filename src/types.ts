@@ -1243,3 +1243,118 @@ export interface AuthUser {
   plan?: UserPlan;
   subscription_status?: 'active' | 'canceled' | 'expired';
 }
+
+// ==========================================
+// SIGNAL DIGEST SYSTEM TYPES
+// ==========================================
+
+export interface WeeklyDigestRequest {
+  category: string;
+  time_range: {
+    from: string;
+    to: string;
+  };
+  language?: string;
+  user_plan?: UserPlan;
+}
+
+export interface Signal {
+  title: string;
+  signal_score: number;
+  demand_index: number;
+  arbitrage: SocialArbitrageMetrics;
+  evidence: PlatformEvidence;
+  platforms_covered: string[];
+  risk_flags: string[];
+  notes: string[];
+  novelty_score?: number;
+  cross_evidence_score?: number;
+}
+
+export interface PlatformEvidence {
+  github?: Array<{
+    repo: string;
+    stars_7d: number;
+    url: string;
+    description?: string;
+  }>;
+  reddit?: Array<{
+    post: string;
+    upvotes: number;
+    url: string;
+    subreddit?: string;
+  }>;
+  hackernews?: Array<{
+    story: string;
+    points: number;
+    url: string;
+    comments?: number;
+  }>;
+  producthunt?: Array<{
+    post: string;
+    eta?: string;
+    url: string;
+    votes?: number;
+  }>;
+  stackoverflow?: Array<{
+    question: string;
+    unanswered: boolean;
+    url: string;
+    views?: number;
+  }>;
+  googlenews?: Array<{
+    headline: string;
+    url: string;
+    published?: string;
+  }>;
+  youtube?: Array<{
+    video: string;
+    views: number;
+    url: string;
+    channel?: string;
+  }>;
+}
+
+export interface ActionablePlay {
+  type: 'diligence' | 'sourcing' | 'market_making';
+  where: string;
+  why: string;
+  cta: string;
+  urgency: 'high' | 'medium' | 'low';
+  estimated_window_hours: number;
+  templates: {
+    email_subject: string;
+    email_body: string;
+    linkedin_message?: string;
+  };
+}
+
+export interface WeeklyDigest {
+  category: string;
+  time_range: {
+    from: string;
+    to: string;
+  };
+  language: string;
+  sar: number;
+  horizon_days: number;
+  summary: {
+    one_liner: string;
+    top_takeaways: string[];
+    risks: string[];
+    confidence: number;
+  };
+  top_signals: Signal[];
+  plays: ActionablePlay[];
+  appendix: {
+    platform_stats: Record<string, any>;
+    methodology_notes: string[];
+  };
+  export_options: {
+    pdf: boolean;
+    markdown: boolean;
+    notion: boolean;
+  };
+  notes: string[];
+  created_at: string;
+}

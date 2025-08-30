@@ -17,6 +17,7 @@ import SocialValidationPage from './pages/SocialValidationPage';
 import AnalysisPage from './pages/AnalysisPage';
 import JobTailorPage from './pages/JobTailorPage';
 import DashboardPage from './pages/DashboardPage';
+import SignalDigestPage from './pages/SignalDigestPage';
 import AuthPage from './pages/AuthPage';
 import AppsPage from './pages/AppsPage';
 import ShopifyPainPointsPage from './pages/ShopifyPainPointsPage';
@@ -94,6 +95,7 @@ const App: React.FC = () => {
                 <Route path="/pain-point/:id" element={<PainPointDetailPage />} />
 
                 <Route path="/results" element={<ResultsPage />} />
+                <Route path="/signal-digest" element={<SignalDigestPage />} />
                 <Route path="/public-validation" element={<PublicValidationPage />} />
                 <Route path="/tweet-generator" element={<AITweetGenerator />} />
                 <Route path="/trend-hunter" element={<TrendHunterPage />} />
