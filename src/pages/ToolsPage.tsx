@@ -85,6 +85,30 @@ const ToolsPage: React.FC = () => {
                 icon: '🛍️',
                 route: '/shopify-pain-points',
                 features: ['Community analysis', 'Pain point identification', 'Solution recommendations', 'Trend insights']
+            },
+            {
+                id: 'signal-digest',
+                title: 'Signal Digest for Investors',
+                description: 'Weekly category digest with Top 5 Signals + 3 Actionable Plays. Early opportunity detection with social arbitrage insights.',
+                icon: '📊',
+                route: '/signal-digest',
+                features: ['Weekly investor digest', 'Top 5 ranked signals', '3 actionable plays', 'Social arbitrage metrics', 'Email templates']
+            },
+            {
+                id: 'pain-extractor',
+                title: 'ICP Pain Extractor',
+                description: 'Extract persona-specific pain patterns and generate actionable copy hooks for your ideal customer profile.',
+                icon: '🔍',
+                route: '/pain-extractor',
+                features: ['8-category pain taxonomy', 'Persona-based scoring', 'Copy hook generation', 'MVP feature suggestions', 'Social post drafts']
+            },
+            {
+                id: 'youtube-hook-synth',
+                title: 'YouTube Hook Synth',
+                description: 'Generate high-converting YouTube video hooks with visual planning and A/B test packs. Optimize for 30s retention and CTR.',
+                icon: '🎬',
+                route: '/youtube-hook-synth',
+                features: ['8 hook types', 'Visual shot planning', 'A/B test titles', 'Thumbnail prompts', 'HookScore (0-100)', '≤9s duration rule']
             }
     ];
 

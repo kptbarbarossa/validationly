@@ -1358,3 +1358,242 @@ export interface WeeklyDigest {
   notes: string[];
   created_at: string;
 }
+
+// ==========================================
+// ICP PAIN EXTRACTOR SYSTEM TYPES
+// ==========================================
+
+export type PainCategory = 
+  | 'Functional' 
+  | 'Integration' 
+  | 'Performance' 
+  | 'UX' 
+  | 'Onboarding' 
+  | 'Pricing' 
+  | 'Docs' 
+  | 'Security';
+
+export type PersonaType = 'founder' | 'pm' | 'dev' | 'vc';
+
+export interface PainExtractionRequest {
+  query: string;
+  persona: PersonaType;
+  time_range: {
+    from: string;
+    to: string;
+  };
+  language?: string;
+  user_plan?: UserPlan;
+}
+
+export interface PainMention {
+  text: string;
+  platform: string;
+  sentiment: 'negative' | 'neutral' | 'positive';
+  intent: 'complaint' | 'feature_request' | 'question' | 'praise' | 'announcement';
+  confidence: number;
+  taxonomy: PainCategory[];
+  author_karma?: number;
+}
+
+export interface PainCluster {
+  cluster_id: string;
+  label: string;
+  taxonomy: PainCategory[];
+  keywords: string[];
+  metrics: {
+    freq: number;        // frequency (0-1)
+    sev: number;         // severity (0-1)
+    urg: number;         // urgency (0-1)
+    imp: number;         // impact (0-1)
+    addr: number;        // addressability (0-1)
+    comp_gap: number;    // competition gap (0-1)
+    pain_score: number;  // 0-100
+    opp_score: number;   // 0-100
+  };
+  intent_breakdown: {
+    complaint: number;
+    feature_request: number;
+    question: number;
+    praise?: number;
+    announcement?: number;
+  };
+  representative_quotes: Array<{
+    text: string;
+    platform: string;
+    sentiment: string;
+    author?: string;
+  }>;
+  solutions_mentioned: Array<{
+    type: 'producthunt' | 'github' | 'other';
+    name: string;
+    url: string;
+    description?: string;
+  }>;
+  actions: {
+    mvp_features: string[];
+    gtm: string[];
+    success_metrics: string[];
+  };
+  arbitrage?: SocialArbitrageMetrics;
+}
+
+export interface PainExtractionResult {
+  query: string;
+  persona: PersonaType;
+  time_range: {
+    from: string;
+    to: string;
+  };
+  language: string;
+  summary: {
+    top_pains: Array<{
+      label: string;
+      pain_score: number;
+      opp_score: number;
+      why: string[];
+      quick_wins: string[];
+      copy_hooks: string[];
+    }>;
+    persona_hint: PersonaType;
+    confidence: number;
+  };
+  pain_clusters: PainCluster[];
+  social_posts: {
+    twitter: {
+      tone: string;
+      text: string;
+    };
+    reddit: {
+      title: string;
+      body: string;
+    };
+    linkedin: {
+      tone: string;
+      text: string;
+      cta: string;
+    };
+  };
+  filters?: {
+    taxonomy: PainCategory[];
+    platforms: string[];
+  };
+  notes: string[];
+}
+
+export interface PersonaWeights {
+  [key in PersonaType]: {
+    [category in PainCategory]: number;
+  };
+}
+
+export const PERSONA_WEIGHTS: PersonaWeights = {
+  founder: {
+    Functional: 0.20,
+    Integration: 0.10,
+    Performance: 0.10,
+    UX: 0.10,
+    Onboarding: 0.20,
+    Pricing: 0.25,
+    Docs: 0.03,
+    Security: 0.02
+  },
+  pm: {
+    Functional: 0.25,
+    Integration: 0.10,
+    Performance: 0.15,
+    UX: 0.20,
+    Onboarding: 0.15,
+    Pricing: 0.10,
+    Docs: 0.03,
+    Security: 0.02
+  },
+  dev: {
+    Functional: 0.15,
+    Integration: 0.25,
+    Performance: 0.20,
+    UX: 0.05,
+    Onboarding: 0.05,
+    Pricing: 0.05,
+    Docs: 0.15,
+    Security: 0.10
+  },
+  vc: {
+    Functional: 0.20,
+    Integration: 0.10,
+    Performance: 0.15,
+    UX: 0.10,
+    Onboarding: 0.15,
+    Pricing: 0.20,
+    Docs: 0.05,
+    Security: 0.05
+  }
+};
+
+// ==========================================
+// YOUTUBE HOOK SYNTH SYSTEM TYPES
+// ==========================================
+
+export type HookType = 
+  | 'question' 
+  | 'bold_claim' 
+  | 'curiosity_gap' 
+  | 'pattern_interrupt' 
+  | 'fomo' 
+  | 'challenge' 
+  | 'authority' 
+  | 'contrarian';
+
+export type VideoTone = 'energetic' | 'analytical' | 'casual' | 'authoritative' | 'friendly';
+export type VideoGoal = 'free_trial_signups' | 'engagement' | 'subscriber_growth' | 'product_sales' | 'brand_awareness';
+
+export interface HookSynthRequest {
+  category: string;
+  persona: string;
+  tone: VideoTone;
+  goal: VideoGoal;
+  language?: string;
+  user_plan?: UserPlan;
+}
+
+export interface VisualPlan {
+  t: string; // timestamp like "0.0", "2.5"
+  shot: string; // description of visual
+  overlay?: string; // text overlay
+  sfx?: string; // sound effect
+}
+
+export interface Hook {
+  type: HookType;
+  text: string;
+  duration_sec: number;
+  visual_plan: VisualPlan[];
+  variants: string[];
+  hook_score: number;
+  reasons: string[];
+}
+
+export interface ABTestPack {
+  titles: string[];
+  thumbnail_prompts: string[];
+}
+
+export interface HookSynthResult {
+  brief: {
+    category: string;
+    persona: string;
+    tone: VideoTone;
+    goal: VideoGoal;
+  };
+  hooks: Hook[];
+  ab_test_pack: ABTestPack;
+  notes: string[];
+  created_at: string;
+}
+
+export interface HookMetrics {
+  retention_pred: number;    // predicted 30s retention (0-1)
+  click_pred: number;        // predicted click rate (0-1)
+  novelty: number;          // novelty score (0-1)
+  persona_fit: number;      // persona alignment (0-1)
+}
