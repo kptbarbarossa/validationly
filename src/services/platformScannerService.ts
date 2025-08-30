@@ -1,4 +1,11 @@
-import { PremiumPlatformData, PremiumValidationRequest } from '../types';
+import { 
+  PremiumPlatformData, 
+  PremiumValidationRequest,
+  PremiumPlatformDataWithArbitrage,
+  UserPlan,
+  PLAN_CONFIGS
+} from '../types';
+import { arbitrageMetricsService } from './arbitrageMetricsService';
 
 export class PremiumPlatformScannerService {
   private readonly API_ENDPOINTS = {
@@ -11,22 +18,33 @@ export class PremiumPlatformScannerService {
     youtube: '/api/youtube'
   };
 
-  async scanAllPlatforms(request: PremiumValidationRequest): Promise<PremiumPlatformData[]> {
-    const platforms = request.platforms || ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'];
+  async scanAllPlatforms(
+    request: PremiumValidationRequest,
+    userPlan: UserPlan = 'free'
+  ): Promise<PremiumPlatformDataWithArbitrage[]> {
+    // Apply plan restrictions
+    const planConfig = PLAN_CONFIGS[userPlan];
+    const allowedPlatforms = request.platforms?.filter(p => planConfig.platforms.includes(p)) || planConfig.platforms;
     
     console.log(`🚀 Starting premium platform scan for: "${request.query}"`);
-    console.log(`📊 Scanning ${platforms.length} platforms...`);
+    console.log(`📊 Scanning ${allowedPlatforms.length} platforms (${userPlan} plan)...`);
     
-    const scanPromises = platforms.map(platform => this.scanPlatform(platform, request));
+    const scanPromises = allowedPlatforms.map(platform => this.scanPlatform(platform, request));
     const results = await Promise.allSettled(scanPromises);
     
     const successfulResults = results
       .filter((result): result is PromiseFulfilledResult<PremiumPlatformData> => result.status === 'fulfilled')
       .map(result => result.value);
     
-    console.log(`✅ Successfully scanned ${successfulResults.length}/${platforms.length} platforms`);
+    console.log(`✅ Successfully scanned ${successfulResults.length}/${allowedPlatforms.length} platforms`);
     
-    return successfulResults;
+    // Add arbitrage metrics if premium plan
+    if (planConfig.arbitrage_metrics && successfulResults.length > 0) {
+      return this.enhanceWithArbitrageMetrics(successfulResults, request.query);
+    }
+    
+    // Return basic data for non-premium plans
+    return successfulResults.map(platform => ({ ...platform }));
   }
 
   private async scanPlatform(platform: string, request: PremiumValidationRequest): Promise<PremiumPlatformData> {
@@ -933,6 +951,64 @@ export class PremiumPlatformScannerService {
       ],
       additional_insights: [`Limited data available for ${platform}`]
     };
+  }
+
+  /**
+   * Enhance platform data with Social Arbitrage metrics (Premium feature)
+   */
+  private enhanceWithArbitrageMetrics(
+    platforms: PremiumPlatformData[], 
+    query: string
+  ): PremiumPlatformDataWithArbitrage[] {
+    console.log('🧠 Enhancing platforms with Social Arbitrage metrics...');
+    
+    return platforms.map(platform => {
+      try {
+        // Calculate arbitrage metrics
+        const arbitrageMetrics = arbitrageMetricsService.calculateArbitrageMetrics(platform, platforms);
+        
+        // Generate catalysts
+        const catalysts = arbitrageMetricsService.generateCatalysts(platform);
+        
+        // Generate plays
+        const plays = arbitrageMetricsService.generatePlays(platform, arbitrageMetrics);
+        
+        const enhancedPlatform: PremiumPlatformDataWithArbitrage = {
+          ...platform,
+          arbitrage: arbitrageMetrics,
+          catalysts,
+          plays
+        };
+        
+        console.log(`✨ ${platform.platform} enhanced with arbitrage metrics (MG: ${(arbitrageMetrics.mispricing_gap * 100).toFixed(1)}%)`);
+        
+        return enhancedPlatform;
+      } catch (error) {
+        console.warn(`⚠️ Failed to enhance ${platform.platform} with arbitrage metrics:`, error);
+        // Return platform without arbitrage data
+        return { ...platform };
+      }
+    });
+  }
+
+  /**
+   * Sort platforms by arbitrage opportunity (Premium feature)
+   */
+  sortByArbitrage(platforms: PremiumPlatformDataWithArbitrage[]): PremiumPlatformDataWithArbitrage[] {
+    return platforms.sort((a, b) => {
+      const aGap = a.arbitrage?.mispricing_gap || 0;
+      const bGap = b.arbitrage?.mispricing_gap || 0;
+      
+      if (aGap !== bGap) {
+        return bGap - aGap; // Higher gap first
+      }
+      
+      // Secondary sort by influencer momentum
+      const aMomentum = a.arbitrage?.influencer_momentum || 0;
+      const bMomentum = b.arbitrage?.influencer_momentum || 0;
+      
+      return bMomentum - aMomentum;
+    });
   }
 }
 

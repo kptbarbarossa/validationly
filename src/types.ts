@@ -1142,3 +1142,104 @@ export interface PremiumValidationResponse {
   social_posts: PremiumSocialPosts;
   generated_at: string;
 }
+
+// Social Arbitrage Types - Phase 1 Premium Feature
+export interface SocialArbitrageMetrics {
+  attention_imbalance: number;      // AII ∈ [0,1] - social vs news balance
+  lag_minutes: number;              // CPL - cross-platform lag
+  sentiment_velocity: number;       // SV ∈ [-1,1] - sentiment change rate
+  influencer_momentum: number;      // IWM ∈ [0,1] - influencer-weighted momentum
+  narrative_concentration: number;  // NC ∈ [0,1] - narrative focus (Herfindahl)
+  catalyst_proximity: number;       // CPS ∈ [0,1] - proximity to catalysts
+  mispricing_gap: number;          // MG ∈ [0,1] - composite arbitrage gap
+  edge_type: 'content' | 'distribution' | 'product' | 'none';
+  confidence: number;               // model confidence in metrics
+}
+
+export interface ArbitrageCatalyst {
+  type: 'ph_launch' | 'gh_release' | 'conf' | 'video' | 'news';
+  eta: string;                     // ISO date
+  likelihood: number;              // ∈ [0,1]
+  description?: string;
+}
+
+export interface ArbitragePlay {
+  type: 'content' | 'distribution' | 'product';
+  where: string;                   // target platform
+  why: string;                     // reasoning
+  cta: string;                     // call to action
+  urgency: 'high' | 'medium' | 'low';
+  estimated_window_hours: number;  // opportunity window
+}
+
+// Enhanced Platform Data with Arbitrage
+export interface PremiumPlatformDataWithArbitrage extends PremiumPlatformData {
+  arbitrage?: SocialArbitrageMetrics;
+  catalysts?: ArbitrageCatalyst[];
+  plays?: ArbitragePlay[];
+}
+
+// Enhanced Analysis Result with Arbitrage
+export interface PremiumAnalysisResultWithArbitrage extends PremiumAnalysisResult {
+  social_arbitrage_rating: number;  // SAR ∈ [0,100]
+  arbitrage_horizon_days: number;   // expected window before mainstream
+  arbitrage_decay_half_life: number; // how fast edge fades
+  top_catalysts: ArbitrageCatalyst[];
+  recommended_plays: ArbitragePlay[];
+  platforms: PremiumPlatformDataWithArbitrage[];
+}
+
+// Plan-Based Feature Access
+export type UserPlan = 'free' | 'pro' | 'premium';
+
+export interface PlanLimits {
+  queries_per_month: number;
+  platforms: string[];
+  exports: boolean;
+  arbitrage_metrics: boolean;
+  comparison: boolean;
+  alerts: boolean;
+  automation: boolean;
+}
+
+export const PLAN_CONFIGS: Record<UserPlan, PlanLimits> = {
+  free: {
+    queries_per_month: 3,
+    platforms: ['reddit', 'googlenews'],
+    exports: false,
+    arbitrage_metrics: false,
+    comparison: false,
+    alerts: false,
+    automation: false
+  },
+  pro: {
+    queries_per_month: -1, // unlimited
+    platforms: ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'],
+    exports: true,
+    arbitrage_metrics: false,
+    comparison: true,
+    alerts: false,
+    automation: false
+  },
+  premium: {
+    queries_per_month: -1, // unlimited
+    platforms: ['reddit', 'hackernews', 'producthunt', 'github', 'stackoverflow', 'googlenews', 'youtube'],
+    exports: true,
+    arbitrage_metrics: true,
+    comparison: true,
+    alerts: true,
+    automation: true
+  }
+};
+
+// User Context for Plan-Based Features
+export interface AuthUser {
+  id: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  fullName?: string;
+  avatarUrl?: string;
+  plan?: UserPlan;
+  subscription_status?: 'active' | 'canceled' | 'expired';
+}
