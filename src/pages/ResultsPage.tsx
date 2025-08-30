@@ -368,7 +368,7 @@ const ResultsPage: React.FC = () => {
             </div>
           )}
 
-          {/* General Analysis */}
+                    {/* General Analysis */}
           <div className="bg-gray-800/50 backdrop-blur rounded-3xl p-8 border border-white/10 mb-12">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <div>
@@ -380,11 +380,31 @@ const ResultsPage: React.FC = () => {
                       <div className="text-sm text-gray-400">Demand Index</div>
                       <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium border ${getDemandColor(result.verdict)}`}>
                         {getDemandText(result.verdict)} ({result.demand_index}/100)
+                      </div>
+                    </div>
                 </div>
+                  
+                  {/* Premium Arbitrage Overview */}
+                  {userPlan === 'premium' && platformsWithArbitrage.length > 0 && (
+                    <div className="flex items-center space-x-3">
+                      <span className="text-2xl">💎</span>
+                      <div>
+                        <div className="text-sm text-gray-400">Social Arbitrage Rating</div>
+                        <div className="inline-block px-3 py-1 rounded-full text-sm font-medium border bg-purple-500/20 text-purple-400 border-purple-500/30">
+                          {Math.round(platformsWithArbitrage.reduce((acc, p) => acc + (p.arbitrage?.mispricing_gap || 0), 0) / platformsWithArbitrage.length * 100)}/100 
+                          <span className="ml-1 text-xs">avg gap</span>
               </div>
               </div>
+                </div>
+                  )}
+                  
                   <div className="text-gray-300 leading-relaxed">
                     <strong>Verdict:</strong> {result.verdict.charAt(0).toUpperCase() + result.verdict.slice(1)} market demand detected across {result.platforms.length} platforms.
+                    {userPlan === 'premium' && platformsWithArbitrage.some(p => p.arbitrage && p.arbitrage.mispricing_gap > 0.5) && (
+                      <span className="block mt-2 text-purple-300">
+                        <strong>Arbitrage Opportunity:</strong> High-value arbitrage gaps detected on {platformsWithArbitrage.filter(p => p.arbitrage && p.arbitrage.mispricing_gap > 0.5).length} platforms.
+                      </span>
+                    )}
               </div>
                 </div>
               </div>
@@ -481,7 +501,7 @@ const ResultsPage: React.FC = () => {
 
           {/* Platform Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-            {filteredPlatforms.map((platform, index) => (
+            {filteredAndSortedPlatforms.map((platform, index) => (
               <div key={index} className="bg-gray-800/50 backdrop-blur rounded-xl border border-white/10 hover:border-white/20 transition-all duration-200 hover:scale-105">
                 <div className="p-6">
                   {/* Header */}
@@ -504,8 +524,16 @@ const ResultsPage: React.FC = () => {
                         </div>
                   </div>
                 </div>
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getDemandColor(platform.demand_verdict)}`}>
-                      {getDemandText(platform.demand_verdict)}
+                    <div className="flex items-center space-x-2">
+                      <div className={`px-3 py-1 rounded-full text-xs font-medium border ${getDemandColor(platform.demand_verdict)}`}>
+                        {getDemandText(platform.demand_verdict)}
+                      </div>
+                      {/* Premium Arbitrage Badge */}
+                      {userPlan === 'premium' && platform.arbitrage && (
+                        <div className={`px-2 py-1 rounded-full text-xs font-medium border ${getArbitrageColor(platform.arbitrage.mispricing_gap)}`}>
+                          {getEdgeTypeIcon(platform.arbitrage.edge_type)} {getArbitrageText(platform.arbitrage.mispricing_gap)}
+                        </div>
+                      )}
                     </div>
                   </div>
 
@@ -513,6 +541,57 @@ const ResultsPage: React.FC = () => {
                   <p className="text-gray-300 text-sm mb-4 leading-relaxed">
                     {platform.summary}
                   </p>
+
+                  {/* Premium Arbitrage Metrics Panel */}
+                  {userPlan === 'premium' && platform.arbitrage && (
+                    <div className="mb-4 p-4 bg-gradient-to-r from-purple-500/10 to-blue-500/10 rounded-lg border border-purple-500/20">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="text-sm font-semibold text-purple-400 flex items-center">
+                          💎 Social Arbitrage Metrics
+                          <span className="ml-2 text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full">
+                            {Math.round(platform.arbitrage.confidence * 100)}% confidence
+                          </span>
+                        </h4>
+                      </div>
+                      
+                      {/* Key Metrics Grid */}
+                      <div className="grid grid-cols-2 gap-3 mb-3 text-xs">
+                        <div className="bg-gray-700/30 rounded p-2 text-center">
+                          <div className="font-bold text-orange-400">{Math.round(platform.arbitrage.mispricing_gap * 100)}%</div>
+                          <div className="text-gray-400">Mispricing Gap</div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded p-2 text-center">
+                          <div className="font-bold text-blue-400">{Math.round(platform.arbitrage.attention_imbalance * 100)}%</div>
+                          <div className="text-gray-400">Attention Imbalance</div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded p-2 text-center">
+                          <div className="font-bold text-green-400">{platform.arbitrage.lag_minutes}m</div>
+                          <div className="text-gray-400">Cross-Platform Lag</div>
+                        </div>
+                        <div className="bg-gray-700/30 rounded p-2 text-center">
+                          <div className="font-bold text-purple-400">{Math.round(platform.arbitrage.influencer_momentum * 100)}%</div>
+                          <div className="text-gray-400">Influencer Momentum</div>
+                        </div>
+                      </div>
+
+                      {/* Edge Type & Sentiment Velocity */}
+                      <div className="flex items-center justify-between text-xs">
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-400">Edge Type:</span>
+                          <span className="text-white font-medium">
+                            {getEdgeTypeIcon(platform.arbitrage.edge_type)} {platform.arbitrage.edge_type}
+                          </span>
+                  </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-gray-400">Sentiment Velocity:</span>
+                          <span className={`font-medium ${platform.arbitrage.sentiment_velocity > 0 ? 'text-green-400' : platform.arbitrage.sentiment_velocity < 0 ? 'text-red-400' : 'text-gray-400'}`}>
+                            {platform.arbitrage.sentiment_velocity > 0 ? '↗️' : platform.arbitrage.sentiment_velocity < 0 ? '↘️' : '→'} 
+                            {Math.abs(platform.arbitrage.sentiment_velocity * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Enhanced Metrics */}
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4 text-sm">
@@ -635,11 +714,97 @@ const ResultsPage: React.FC = () => {
                     </div>
                   )}
 
+                  {/* Premium Catalysts & Plays */}
+                  {userPlan === 'premium' && platform.arbitrage && (
+                    <>
+                      {/* Catalysts Section */}
+                      {platform.catalysts && platform.catalysts.length > 0 && (
+                        <div className="mb-4">
+                          <div className="text-sm text-purple-400 font-medium mb-2 flex items-center">
+                            ⚡ Upcoming Catalysts
+                            <span className="ml-2 text-xs bg-purple-500/20 text-purple-300 px-2 py-1 rounded-full">
+                              {Math.round(platform.arbitrage.catalyst_proximity * 100)}% proximity
+                            </span>
+                          </div>
+                          <div className="space-y-2">
+                            {platform.catalysts.slice(0, 2).map((catalyst, i) => (
+                              <div key={i} className="bg-purple-500/10 border border-purple-500/20 rounded p-3 text-xs">
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-purple-300 font-medium">
+                                    {catalyst.type === 'ph_launch' && '🚀 Product Hunt Launch'}
+                                    {catalyst.type === 'gh_release' && '📦 GitHub Release'}
+                                    {catalyst.type === 'conf' && '🎤 Conference'}
+                                    {catalyst.type === 'video' && '📺 Video Content'}
+                                    {catalyst.type === 'news' && '📰 News Event'}
+                                  </span>
+                                  <span className="text-green-400 font-bold">
+                                    {Math.round(catalyst.likelihood * 100)}% likely
+                                  </span>
+                                </div>
+                                <div className="text-gray-300 mb-1">
+                                  ETA: {new Date(catalyst.eta).toLocaleDateString()}
+                                </div>
+                                {catalyst.description && (
+                                  <div className="text-gray-400 italic">
+                                    {catalyst.description}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Arbitrage Plays Section */}
+                      {platform.plays && platform.plays.length > 0 && (
+                        <div className="mb-4">
+                          <div className="text-sm text-orange-400 font-medium mb-2">
+                            🎯 Recommended Plays
+                          </div>
+                          <div className="space-y-2">
+                            {platform.plays.slice(0, 2).map((play, i) => (
+                              <div key={i} className="bg-orange-500/10 border border-orange-500/20 rounded p-3 text-xs">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-orange-300 font-medium flex items-center">
+                                    {play.type === 'content' && '📝 Content Play'}
+                                    {play.type === 'distribution' && '📢 Distribution Play'}
+                                    {play.type === 'product' && '⚡ Product Play'}
+                                    <span className="ml-2 text-xs bg-orange-500/20 px-2 py-1 rounded">
+                                      {play.where}
+                                    </span>
+                                  </span>
+                                  <span className={`text-xs font-bold ${getUrgencyColor(play.urgency)}`}>
+                                    {play.urgency.toUpperCase()}
+                                  </span>
+                                </div>
+                                <div className="text-gray-300 mb-1">
+                                  <strong>Why:</strong> {play.why}
+                                </div>
+                                <div className="text-orange-200 font-medium mb-1">
+                                  <strong>Action:</strong> {play.cta}
+                                </div>
+                                <div className="text-gray-400 text-xs">
+                                  Window: ~{play.estimated_window_hours}h
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
+
                   {/* Platform Status */}
                   <div className="flex items-center justify-between pt-3 border-t border-gray-700/50">
                     <div className="flex items-center space-x-2 text-xs text-gray-400">
                       <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                       <span>Live Data</span>
+                      {userPlan === 'premium' && platform.arbitrage && (
+                        <>
+                          <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+                          <span className="text-purple-400">💎 Arbitrage Enabled</span>
+                        </>
+                      )}
                     </div>
                     <div className="text-xs text-gray-500">
                       Updated: {new Date().toLocaleTimeString()}
