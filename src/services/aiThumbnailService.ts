@@ -56,7 +56,7 @@ export class AIThumbnailService {
    * Use Gemini to optimize thumbnail prompt for better performance
    */
   private async optimizePromptWithGemini(request: ThumbnailGenerationRequest): Promise<string> {
-    const geminiApiKey = process.env.GOOGLE_GENAI_API_KEY;
+    const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENAI_API_KEY;
     
     if (!geminiApiKey) {
       throw new Error('Gemini API key not configured');

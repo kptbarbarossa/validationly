@@ -104,7 +104,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 
 async function optimizePromptWithGemini(request: ThumbnailGenerationRequest): Promise<string> {
-  const geminiApiKey = process.env.GOOGLE_GENAI_API_KEY;
+  const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GOOGLE_GENAI_API_KEY;
   
   if (!geminiApiKey) {
     throw new Error('Gemini API key not configured');
