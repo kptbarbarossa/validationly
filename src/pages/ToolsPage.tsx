@@ -129,19 +129,15 @@ const ToolsPage: React.FC = () => {
             />
 
             <div className="text-white">
-                <div className="container mx-auto px-6 py-8">
+                <div className="container mx-auto px-6 py-6">
                     {/* Header */}
-                    <div className="text-center mb-16">
+                    <div className="text-center mb-8">
                         <h1 className="text-4xl md:text-6xl font-bold mb-6">
                             <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
                                 Startup Tools
                             </span>
                         </h1>
-                        <p className="text-xl text-slate-300 max-w-2xl mx-auto">
-                            AI-powered tools to validate your ideas, create content, and grow your startup with data-driven insights.
-                        </p>
                     </div>
-
                     {/* Recommended Tools Section */}
                     <div className="mb-16 text-center">
                         <h2 className="text-2xl font-bold text-white mb-2 flex items-center justify-center gap-2">
