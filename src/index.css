@@ -85,8 +85,32 @@ body {
   50% { opacity: 0.8; }
 }
 
+@keyframes rotateLight {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulseGlow {
+  0%, 100% { 
+    opacity: 0.5; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 1; 
+    transform: scale(1.05);
+  }
+}
+
 .animate-pulse-subtle {
   animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-rotate-light {
+  animation: rotateLight 3s linear infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
 }
 
 .animate-fade-in {

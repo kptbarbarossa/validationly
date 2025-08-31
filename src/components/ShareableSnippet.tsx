@@ -79,10 +79,10 @@ const ShareableSnippet: React.FC<ShareableSnippetProps> = ({ ideaTitle, score, p
         <div className="text-xs text-slate-400">{dateStr}</div>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <button onClick={handleCopy} className="text-xs px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-slate-200 hover:border-white/20">Copy Text</button>
-        <button onClick={handleTweet} className="text-xs px-3 py-1.5 rounded-lg bg-blue-600/20 border border-blue-600/30 text-blue-200 hover:bg-blue-600/25">Tweet</button>
-        <button onClick={handleLinkedIn} className="text-xs px-3 py-1.5 rounded-lg bg-indigo-600/20 border border-indigo-600/30 text-indigo-200 hover:bg-indigo-600/25">LinkedIn</button>
-        <button onClick={handleReddit} className="text-xs px-3 py-1.5 rounded-lg bg-orange-600/20 border border-orange-600/30 text-orange-200 hover:bg-orange-600/25">Reddit</button>
+        <button onClick={handleCopy} className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-slate-200 hover:border-white/20">Copy Text</button>
+        <button onClick={handleTweet} className="text-xs px-3 py-1.5 rounded-full bg-blue-600/20 border border-blue-600/30 text-blue-200 hover:bg-blue-600/25">Tweet</button>
+        <button onClick={handleLinkedIn} className="text-xs px-3 py-1.5 rounded-full bg-indigo-600/20 border border-indigo-600/30 text-indigo-200 hover:bg-indigo-600/25">LinkedIn</button>
+        <button onClick={handleReddit} className="text-xs px-3 py-1.5 rounded-full bg-orange-600/20 border border-orange-600/30 text-orange-200 hover:bg-orange-600/25">Reddit</button>
       </div>
     </div>
   );

@@ -24,14 +24,14 @@ const Header: React.FC = () => {
                     <nav className="hidden md:flex items-center gap-6">
                         <button
                             onClick={() => navigate('/tools')}
-                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors px-4 py-2 rounded-full hover:bg-gray-100"
                         >
                             Tools
                         </button>
 
                         <button
                             onClick={() => navigate('/apps')}
-                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors px-4 py-2 rounded-full hover:bg-gray-100"
                         >
                             Apps
                         </button>

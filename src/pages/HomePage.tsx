@@ -299,7 +299,9 @@ const HomePage: React.FC = () => {
                 <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
                     <div className="mb-4">
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+                            {/* Rotating light effect around placeholder */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity animate-rotate-light"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 rounded-2xl blur opacity-15 animate-pulse-glow"></div>
 
                             <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
 
@@ -320,39 +322,9 @@ const HomePage: React.FC = () => {
                                     {userInput.idea.length}/1000
                                 </div>
 
-                                {/* Enhanced action bar: Submit + Enhance + Gallery */}
+                                {/* Enhanced action bar: Submit only */}
                                 <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                                    {/* fast mode removed by request */}
-
-                                    <button
-                                        type="button"
-                                        onClick={async () => {
-                                            if (isLoading || isOptimizing) return;
-                                            setIsOptimizing(true);
-                                            const optimized = await optimizePromptRemotely(userInput.idea);
-                                            if (optimized) {
-                                                const validation = validateInput(optimized);
-                                                setUserInput(validation);
-                                            }
-                                            setIsOptimizing(false);
-                                        }}
-                                        className={`text-xs px-3 py-1.5 rounded-full border transition-colors bg-white/5 text-slate-300 border-white/10 hover:border-white/20 hover:bg-white/10 ${isOptimizing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}`}
-                                        aria-label="Optimize prompt"
-                                        title="Optimize prompt"
-                                        disabled={isOptimizing || isLoading}
-                                    >
-                                        {isOptimizing ? (
-                                            <span className="inline-flex items-center gap-1">
-                                                <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3"></circle>
-                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v3a5 5 0 00-5 5H4z"></path>
-                                                </svg>
-                                                Optimizing…
-                                            </span>
-                                        ) : (
-                                            '✨'
-                                        )}
-                                    </button>
+                                    {/* Prompt optimizer button removed as requested */
                                     <button
                                         type="button"
                                         onClick={triggerValidation}
@@ -363,8 +335,12 @@ const HomePage: React.FC = () => {
                                             }`}
                                         aria-label="Submit idea for validation"
                                     >
+                                        {/* Rotating light effect around submit button */}
+                                        <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 rounded-full opacity-75 blur animate-rotate-light"></div>
+                                        <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 rounded-full opacity-50 blur animate-pulse-glow"></div>
+                                        
                                         {/* Animated background gradient */}
-                                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-gradient-x"></div>
+                                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-gradient-x rounded-full"></div>
 
                                         {/* Ripple effect on click */}
                                         <div className="absolute inset-0 rounded-full bg-white/20 scale-0 animate-ping opacity-0 group-active:scale-100 group-active:opacity-100 transition-all duration-200"></div>
@@ -454,8 +430,8 @@ const HomePage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Content */}
-                            <div className="flex-1">
+                                                            {/* Content */}
+                            <div className="flex-1 text-left">
                                 <div className="flex items-center space-x-2 mb-1">
                                     <h3 className="text-base font-bold text-white">Capacity</h3>
                                     <span className="bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full text-xs font-medium">
@@ -463,7 +439,7 @@ const HomePage: React.FC = () => {
                                     </span>
                                 </div>
 
-                                <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                <p className="text-gray-300 text-xs mb-3 leading-relaxed text-left">
                                     AI-powered knowledge management and team collaboration platform.
                                     Perfect for startups to organize ideas and automate workflows.
                                 </p>
@@ -493,7 +469,7 @@ const HomePage: React.FC = () => {
                                     href="https://capacity.so/?via=barbaros"
                                     target="_blank"
                                     rel="nofollow noopener"
-                                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
                                 >
                                     <span>🚀</span>
                                     <span>Try Free</span>
@@ -526,8 +502,8 @@ const HomePage: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Content */}
-                            <div className="flex-1">
+                                                            {/* Content */}
+                            <div className="flex-1 text-left">
                                 <div className="flex items-center space-x-2 mb-1">
                                     <h3 className="text-base font-bold text-white">StoryShort</h3>
                                     <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full text-xs font-medium">
@@ -535,7 +511,7 @@ const HomePage: React.FC = () => {
                                     </span>
                                 </div>
 
-                                <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                <p className="text-gray-300 text-xs mb-3 leading-relaxed text-left">
                                     Transform your ideas into engaging short videos with AI.
                                     Perfect for content marketing and social media.
                                 </p>
@@ -565,7 +541,7 @@ const HomePage: React.FC = () => {
                                     href="https://storyshort.ai/?via=barbaros"
                                     target="_blank"
                                     rel="nofollow noopener"
-                                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-full hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
                                 >
                                     <span>🎬</span>
                                     <span>Create Videos</span>
@@ -599,7 +575,7 @@ const HomePage: React.FC = () => {
                             </div>
 
                             {/* Content */}
-                            <div className="flex-1">
+                            <div className="flex-1 text-left">
                                 <div className="flex items-center space-x-2 mb-1">
                                     <h3 className="text-base font-bold text-white">Login to See Price</h3>
                                     <span className="bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full text-xs font-medium">
@@ -607,7 +583,7 @@ const HomePage: React.FC = () => {
                                     </span>
                                 </div>
 
-                                <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                <p className="text-gray-300 text-xs mb-3 leading-relaxed text-left">
                                     Hide product prices from guests to drive account signups and grow your email list.
                                     Perfect for B2B stores, wholesale, and exclusive pricing strategies.
                                 </p>
@@ -637,7 +613,7 @@ const HomePage: React.FC = () => {
                                     href="https://apps.shopify.com/shhhh-pricing"
                                     target="_blank"
                                     rel="nofollow noopener"
-                                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
                                 >
                                     <span>🛍️</span>
                                     <span>View on Shopify App Store</span>

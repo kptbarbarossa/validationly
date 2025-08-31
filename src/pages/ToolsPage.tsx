@@ -407,7 +407,7 @@ const ToolsPage: React.FC = () => {
                                         </div>
 
                                         {/* CTA Button */}
-                                        <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-lg text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25 text-sm">
+                                        <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-full text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25 text-sm">
                                             Use Tool →
                                         </button>
                                     </div>
