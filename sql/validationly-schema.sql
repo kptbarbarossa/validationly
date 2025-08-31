@@ -195,7 +195,7 @@ CREATE POLICY "Admin can view all affiliation applications" ON public.affiliatio
     EXISTS (
       SELECT 1 FROM public.users 
       WHERE id = auth.uid() 
-      AND email = 'kaptan3k@gmail.com'
+      AND email = 'mustafakoklu@gmail.com'
     )
   );
 
@@ -204,7 +204,7 @@ CREATE POLICY "Admin can update affiliation applications" ON public.affiliation_
     EXISTS (
       SELECT 1 FROM public.users 
       WHERE id = auth.uid() 
-      AND email = 'kaptan3k@gmail.com'
+      AND email = 'mustafakoklu@gmail.com'
     )
   );
 
@@ -213,7 +213,7 @@ CREATE POLICY "Admin can delete affiliation applications" ON public.affiliation_
     EXISTS (
       SELECT 1 FROM public.users 
       WHERE id = auth.uid() 
-      AND email = 'kaptan3k@gmail.com'
+      AND email = 'mustafakoklu@gmail.com'
     )
   );
 

@@ -26,7 +26,7 @@ const AdminAffiliationPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Check if user is admin
-  const isAdmin = user?.email === 'kaptan3k@gmail.com';
+  const isAdmin = user?.email === 'mustafakoklu@gmail.com';
 
   useEffect(() => {
     if (!isAdmin) return;
