@@ -1234,7 +1234,6 @@ export interface AdvancedValidationAnalysis {
 export interface AdvancedValidationResponse {
   success: boolean;
   analysis: AdvancedValidationAnalysis;
-}enerated_at: string;
 }
 
 // Tool Recommendation System Types
