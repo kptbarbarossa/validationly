@@ -31,11 +31,12 @@ const AffiliationPage: React.FC = () => {
     setIsSubmitting(true);
     
     try {
-      // Send email with application details
-      const response = await fetch('/api/send-affiliation-email', {
+      // Save application to Supabase database
+      const response = await fetch('https://ozuwdljoxvszuiakcgay.supabase.co/functions/v1/send-affiliation-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96dXdkbGpveHZzenVpYWtjZ2F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0NzI1NjMsImV4cCI6MjA1MDA0ODU2M30.OP7bUa4NUlMT0-vKrKjvZnZvJmKLgO4VNRKcZYHFfJ0',
         },
         body: JSON.stringify({
           userEmail: user.email,

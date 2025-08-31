@@ -27,6 +27,7 @@ import ShopifyPainPointsPage from './pages/ShopifyPainPointsPage';
 
 import FAQPage from './pages/FAQPage';
 import AffiliationPage from './pages/AffiliationPage';
+import AdminAffiliationPage from './pages/AdminAffiliationPage';
 import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
 import XContentGeneratorGuide from './pages/blog/XContentGeneratorGuide';
@@ -120,6 +121,7 @@ const App: React.FC = () => {
 
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/affiliation" element={<AffiliationPage />} />
+                <Route path="/admin/affiliation" element={<AdminAffiliationPage />} />
                 <Route path="/blog" element={<BlogIndexPage />} />
                 <Route path="/blog/x-content-generator-guide" element={<XContentGeneratorGuide />} />
                 <Route path="/blog/login-to-see-price-guide" element={<LoginToSeePriceGuide />} />

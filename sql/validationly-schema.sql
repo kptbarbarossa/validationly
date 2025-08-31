@@ -42,6 +42,18 @@ CREATE TABLE public.validations (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Affiliation applications
+CREATE TABLE public.affiliation_applications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_email VARCHAR NOT NULL,
+  user_name VARCHAR NOT NULL,
+  site_link VARCHAR NOT NULL,
+  message TEXT,
+  status VARCHAR DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 -- User analytics and usage tracking
 CREATE TABLE public.analytics (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -125,12 +137,15 @@ CREATE INDEX idx_validations_is_public ON public.validations(is_public) WHERE is
 CREATE INDEX idx_analytics_user_id ON public.analytics(user_id);
 CREATE INDEX idx_analytics_event_type ON public.analytics(event_type);
 CREATE INDEX idx_analytics_created_at ON public.analytics(created_at DESC);
+CREATE INDEX idx_affiliation_applications_created_at ON public.affiliation_applications(created_at DESC);
+CREATE INDEX idx_affiliation_applications_status ON public.affiliation_applications(status);
 
 -- Row Level Security (RLS) Policies
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.validations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.analytics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feature_usage ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.affiliation_applications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.idea_collections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.collection_validations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workspaces ENABLE ROW LEVEL SECURITY;
@@ -170,6 +185,37 @@ CREATE POLICY "Users can view own feature usage" ON public.feature_usage
 
 CREATE POLICY "Users can insert own feature usage" ON public.feature_usage
   FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Affiliation applications policies (admin can view all, anyone can insert)
+CREATE POLICY "Anyone can submit affiliation applications" ON public.affiliation_applications
+  FOR INSERT WITH CHECK (true);
+
+CREATE POLICY "Admin can view all affiliation applications" ON public.affiliation_applications
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND email = 'kaptan3k@gmail.com'
+    )
+  );
+
+CREATE POLICY "Admin can update affiliation applications" ON public.affiliation_applications
+  FOR UPDATE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND email = 'kaptan3k@gmail.com'
+    )
+  );
+
+CREATE POLICY "Admin can delete affiliation applications" ON public.affiliation_applications
+  FOR DELETE USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() 
+      AND email = 'kaptan3k@gmail.com'
+    )
+  );
 
 -- Collections policies
 CREATE POLICY "Users can manage own collections" ON public.idea_collections
