@@ -54,8 +54,7 @@
     "typescript": "^5.5.2",
     "vite": "^5.3.1"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=8.0.0"
