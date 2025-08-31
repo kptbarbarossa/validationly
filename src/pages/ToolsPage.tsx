@@ -128,13 +128,8 @@ const ToolsPage: React.FC = () => {
                 keywords="startup tools, content generator, twitter generator, idea validation, AI tools, market analysis"
             />
 
-            <div className="relative text-white overflow-hidden">
-                {/* Decorative Background Shapes */}
-                <div className="pointer-events-none absolute -top-32 -left-32 h-96 w-96 rounded-full bg-purple-500/20 blur-3xl" />
-                <div className="pointer-events-none absolute top-20 -right-20 h-80 w-80 rounded-full bg-blue-400/15 blur-3xl" />
-                <div className="pointer-events-none absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-indigo-500/10 blur-3xl" />
-
-                <div className="relative container mx-auto px-6 py-16">
+            <div className="text-white">
+                <div className="container mx-auto px-6 py-16">
                     {/* Header */}
                     <div className="text-center mb-16">
                         <h1 className="text-4xl md:text-6xl font-bold mb-6">

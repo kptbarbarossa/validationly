@@ -270,7 +270,7 @@ const ResultsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen text-white">
         <div className="container mx-auto px-6 py-12">
           {/* Loading Header */}
           <div className="text-center mb-12">
@@ -351,7 +351,7 @@ const ResultsPage: React.FC = () => {
         keywords="startup validation, platform analysis, market research, AI insights, premium"
       />
 
-      <div className="min-h-screen bg-gray-900 text-white">
+      <div className="min-h-screen text-white">
         <div className="container mx-auto px-6 py-12">
           
         {/* Header */}

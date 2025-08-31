@@ -72,7 +72,7 @@ const AffiliationPage: React.FC = () => {
         keywords="affiliation, partnership, startup tools, entrepreneur tools, validation tools"
       />
 
-      <div className="min-h-screen bg-slate-950 text-slate-100">
+      <div className="min-h-screen text-slate-100">
         {/* Hero Section */}
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-slate-900 to-cyan-900/20"></div>
