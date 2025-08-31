@@ -7,7 +7,6 @@ const AffiliationPage: React.FC = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [siteLink, setSiteLink] = useState('');
   const [message, setMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleApplyClick = async () => {
     if (!user) {
@@ -24,44 +23,44 @@ const AffiliationPage: React.FC = () => {
     setShowContactModal(true);
   };
 
-  const handleSubmitApplication = async (e: React.FormEvent) => {
+  const handleSubmitApplication = (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !siteLink.trim()) return;
 
-    setIsSubmitting(true);
-    
-    try {
-      // Save application to Supabase database
-      const response = await fetch('https://ozuwdljoxvszuiakcgay.supabase.co/functions/v1/send-affiliation-email', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96dXdkbGpveHZzenVpYWtjZ2F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0NzI1NjMsImV4cCI6MjA1MDA0ODU2M30.OP7bUa4NUlMT0-vKrKjvZnZvJmKLgO4VNRKcZYHFfJ0',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im96dXdkbGpveHZzenVpYWtjZ2F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ0NzI1NjMsImV4cCI6MjA1MDA0ODU2M30.OP7bUa4NUlMT0-vKrKjvZnZvJmKLgO4VNRKcZYHFfJ0',
-        },
-        body: JSON.stringify({
-          userEmail: user.email,
-          userName: user.name || user.email,
-          siteLink: siteLink.trim(),
-          message: message.trim(),
-          timestamp: new Date().toISOString()
-        }),
-      });
+    // Create email content
+    const emailSubject = `Partnership Application - ${user.name || user.email}`;
+    const emailBody = `Hi,
 
-      if (response.ok) {
-        alert('Application submitted successfully! We will review your request and get back to you soon.');
-        setShowContactModal(false);
-        setSiteLink('');
-        setMessage('');
-      } else {
-        alert('Failed to submit application. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error submitting application:', error);
-      alert('Failed to submit application. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
+I would like to apply for the Validationly Partnership Program.
+
+User Details:
+- Name: ${user.name || 'N/A'}
+- Email: ${user.email}
+- Website/Tool: ${siteLink.trim()}
+
+Message:
+${message.trim() || 'No additional message provided.'}
+
+Best regards,
+${user.name || user.email}
+
+---
+Sent via Validationly Partnership Application Form
+Date: ${new Date().toLocaleDateString()}`;
+
+    // Create mailto link
+    const mailtoLink = `mailto:kaptan3k@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    
+    // Open email client
+    window.location.href = mailtoLink;
+    
+    // Close modal and reset form
+    setShowContactModal(false);
+    setSiteLink('');
+    setMessage('');
+    
+    // Show success message
+    alert('Your email client will open with the pre-filled application. Please send the email to complete your application.');
   };
 
   return (
@@ -274,10 +273,10 @@ const AffiliationPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting || !siteLink.trim()}
+                  disabled={!siteLink.trim()}
                   className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-white font-medium transition-all"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Application'}
+                  Send Email
                 </button>
               </div>
             </form>
