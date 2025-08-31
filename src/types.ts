@@ -1141,6 +1141,100 @@ export interface PremiumValidationResponse {
   analysis: PremiumAnalysisResult;
   social_posts: PremiumSocialPosts;
   generated_at: string;
+  processing_time_ms: number;
+}
+
+// Advanced Validation Analysis Types (Turkish System Integration)
+export interface AdvancedValidationAnalysis {
+  knowledgeCutoffNotice: string;
+  problemAnalysis: {
+    coreProblem: string;
+    jobToBeDone: string;
+    problemSeverity: string;
+    problemFrequency: string;
+    costOfInaction: string;
+  };
+  targetAudience: {
+    primaryArchetypes: Array<{
+      name: string;
+      demographics: string;
+      psychographics: string;
+      motivations: string;
+      painPoints: string;
+      wateringHoles: string[];
+    }>;
+    marketSizing: {
+      tam: string;
+      sam: string;
+      disclaimer: string;
+    };
+  };
+  demandAnalysis: {
+    searchAndSocialSignals: string;
+    proxyProducts: string;
+    willingnessToPay: string;
+    demandVerdict: 'Strong' | 'Moderate' | 'Niche' | 'Weak';
+    antiSignals: string[];
+  };
+  competitiveLandscape: {
+    directCompetitors: string[];
+    indirectCompetitors: string[];
+    nonMarketAlternatives: string;
+    swotAnalysis: Array<{
+      competitor: string;
+      strengths: string[];
+      weaknesses: string[];
+      opportunities: string[];
+      threats: string[];
+    }>;
+  };
+  differentiation: {
+    coreDifferentiator: string;
+    valueProposition: string;
+    defensibleMoat: string;
+  };
+  risks: {
+    marketRisk: string;
+    executionRisk: string;
+    adoptionRisk: string;
+    regulatoryRisk: string;
+  };
+  monetization: {
+    revenueStreams: string[];
+    pricingHypothesis: string;
+    pathToFirstRevenue: string;
+  };
+  mvpRecommendation: {
+    coreFeatures: string[];
+    userJourney: string;
+    validationMetrics: string[];
+  };
+  growthStrategy: {
+    earlyAdopterAcquisition: string;
+    scalableChannels: string[];
+    longTermVision: string;
+  };
+  validationScorecard: {
+    validationResult: 'Strong' | 'Moderate' | 'Weak';
+    validationScore: number;
+    demandResult: 'High' | 'Moderate' | 'Niche' | 'Low';
+    executiveSummary: string;
+    biggestRisk: string;
+    biggestOpportunity: string;
+  };
+  metadata: {
+    analysisId: string;
+    timestamp: string;
+    model: string;
+    version: string;
+    processingTime: number;
+  };
+}
+
+export interface AdvancedValidationResponse {
+  success: boolean;
+  analysis: AdvancedValidationAnalysis;
+}enerated_at: string;
 }
 
 // Tool Recommendation System Types
