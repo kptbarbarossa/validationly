@@ -168,22 +168,6 @@ const AffiliationPage: React.FC = () => {
             </div>
           </div>
         </div>
-
-        {/* CTA Section */}
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
-          <div className="bg-gradient-to-r from-indigo-900/50 to-cyan-900/50 backdrop-blur rounded-2xl p-12 border border-white/10">
-            <h2 className="text-3xl font-bold text-white mb-4">Ready to Partner?</h2>
-            <p className="text-slate-300 mb-8 text-lg">
-              Join our ecosystem and help thousands of entrepreneurs build better startups.
-            </p>
-            <button
-              onClick={handleApplyClick}
-              className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-full text-white font-medium transition-all transform hover:scale-105"
-            >
-              {!user ? 'Sign In to Apply' : 'Contact on X'}
-            </button>
-          </div>
-        </div>
       </div>
     </>
   );
