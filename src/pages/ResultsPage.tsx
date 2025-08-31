@@ -271,7 +271,7 @@ const ResultsPage: React.FC = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen text-white">
-        <div className="container mx-auto px-6 py-12">
+        <div className="container mx-auto px-6 py-8">
           {/* Loading Header */}
           <div className="text-center mb-12">
             <div className="text-6xl mb-6 animate-pulse">🔍</div>

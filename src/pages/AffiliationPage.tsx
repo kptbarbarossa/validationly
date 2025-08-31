@@ -54,7 +54,7 @@ Date: ${new Date().toLocaleDateString()}`;
         <div className="relative overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/20 via-slate-900 to-cyan-900/20"></div>
           
-          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div className="text-center">
               <div className="inline-flex items-center px-4 py-2 bg-indigo-500/10 border border-indigo-500/20 rounded-full text-indigo-400 text-sm font-medium mb-6">
                 🤝 Partnership Program
