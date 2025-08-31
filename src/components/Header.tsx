@@ -53,8 +53,14 @@ const Header: React.FC = () => {
                         </a>
                     </nav>
 
-                    {/* Mobile menu button */}
-                    <div className="md:hidden">
+                    {/* Mobile navigation */}
+                    <div className="md:hidden flex items-center gap-3">
+                        <button
+                            onClick={() => navigate('/affiliation')}
+                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors px-3 py-1 rounded-full hover:bg-gray-100 text-sm"
+                        >
+                            Affiliation
+                        </button>
                         <button
                             onClick={() => navigate('/')}
                             className="text-gray-600 hover:text-gray-900 p-2"

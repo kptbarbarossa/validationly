@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 // Direct API call - no service layer needed
 import type { UserInput } from '../types';
 // import LoadingSpinner from '../components/LoadingSpinner';
-import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
+// import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
 import PromptGallery from '../components/PromptGallery';
 // import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
@@ -380,7 +380,7 @@ const HomePage: React.FC = () => {
                             {userInput.errorMessage}
                         </div>
                     )}
-                    {isLoading && <EnhancedLoadingSpinner idea={userInput.idea} isLoading={isLoading} />}
+                    {/* Loading spinner removed as requested */}
                 </form>
 
                 {/* Simple Prompt Gallery */}
