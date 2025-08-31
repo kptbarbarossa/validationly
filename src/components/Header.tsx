@@ -36,6 +36,13 @@ const Header: React.FC = () => {
                             Apps
                         </button>
 
+                        <button
+                            onClick={() => navigate('/affiliation')}
+                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors px-4 py-2 rounded-full hover:bg-gray-100"
+                        >
+                            Affiliation
+                        </button>
+
                         <a
                             href="https://buymeacoffee.com/kptbarbarossa"
                             target="_blank"

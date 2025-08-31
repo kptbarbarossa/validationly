@@ -324,7 +324,7 @@ const HomePage: React.FC = () => {
 
                                 {/* Enhanced action bar: Submit only */}
                                 <div className="absolute bottom-3 right-3 flex items-center gap-2">
-                                    {/* Prompt optimizer button removed as requested */
+                                    {/* Prompt optimizer button removed as requested */}
                                     <button
                                         type="button"
                                         onClick={triggerValidation}
