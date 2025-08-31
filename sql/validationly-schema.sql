@@ -12,6 +12,7 @@ CREATE TABLE public.users (
   full_name VARCHAR,
   avatar_url VARCHAR,
   plan VARCHAR DEFAULT 'free' CHECK (plan IN ('free', 'pro', 'business')),
+  role VARCHAR DEFAULT 'user' CHECK (role IN ('user', 'admin', 'super_admin')),
   credits_remaining INTEGER DEFAULT 3,
   total_validations INTEGER DEFAULT 0,
   stripe_customer_id VARCHAR,
@@ -40,6 +41,24 @@ CREATE TABLE public.validations (
   processing_time INTEGER, -- milliseconds
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Admin permissions
+CREATE TABLE public.admin_permissions (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
+  permission VARCHAR NOT NULL CHECK (permission IN (
+    'manage_users',
+    'manage_affiliations', 
+    'view_analytics',
+    'manage_system',
+    'super_admin'
+  )),
+  granted_by UUID REFERENCES public.users(id),
+  granted_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  expires_at TIMESTAMP WITH TIME ZONE,
+  is_active BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Affiliation applications
@@ -146,6 +165,7 @@ ALTER TABLE public.validations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.analytics ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.feature_usage ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.affiliation_applications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_permissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.idea_collections ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.collection_validations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.workspaces ENABLE ROW LEVEL SECURITY;
@@ -274,6 +294,89 @@ CREATE TRIGGER update_idea_collections_updated_at BEFORE UPDATE ON public.idea_c
 
 CREATE TRIGGER update_workspaces_updated_at BEFORE UPDATE ON public.workspaces
   FOR EACH ROW EXECUTE FUNCTION public.update_updated_at_column();
+
+-- Admin permissions policies
+CREATE POLICY "Users can view their own permissions" ON public.admin_permissions
+  FOR SELECT USING (user_id = auth.uid());
+
+CREATE POLICY "Super admins can manage all permissions" ON public.admin_permissions
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() AND role = 'super_admin'
+    )
+  );
+
+CREATE POLICY "Admins can view permissions" ON public.admin_permissions
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
+    )
+  );
+
+-- Update existing users table policies for role-based access
+CREATE POLICY "Users can view their own data" ON public.users
+  FOR SELECT USING (id = auth.uid());
+
+CREATE POLICY "Users can update their own data" ON public.users
+  FOR UPDATE USING (id = auth.uid());
+
+CREATE POLICY "Admins can view all users" ON public.users
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() AND role IN ('admin', 'super_admin')
+    )
+  );
+
+CREATE POLICY "Super admins can manage users" ON public.users
+  FOR ALL USING (
+    EXISTS (
+      SELECT 1 FROM public.users 
+      WHERE id = auth.uid() AND role = 'super_admin'
+    )
+  );
+
+-- Admin functions
+CREATE OR REPLACE FUNCTION public.is_admin(user_id UUID DEFAULT auth.uid())
+RETURNS BOOLEAN AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.users 
+    WHERE id = user_id AND role IN ('admin', 'super_admin')
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE OR REPLACE FUNCTION public.has_permission(permission_name TEXT, user_id UUID DEFAULT auth.uid())
+RETURNS BOOLEAN AS $$
+BEGIN
+  -- Super admins have all permissions
+  IF EXISTS (SELECT 1 FROM public.users WHERE id = user_id AND role = 'super_admin') THEN
+    RETURN TRUE;
+  END IF;
+  
+  -- Check specific permission
+  RETURN EXISTS (
+    SELECT 1 FROM public.admin_permissions ap
+    JOIN public.users u ON u.id = ap.user_id
+    WHERE ap.user_id = user_id 
+      AND ap.permission = permission_name
+      AND ap.is_active = TRUE
+      AND (ap.expires_at IS NULL OR ap.expires_at > NOW())
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Set initial admin user
+INSERT INTO public.users (id, email, full_name, role) 
+VALUES (
+  (SELECT id FROM auth.users WHERE email = 'mustafakoklu@gmail.com' LIMIT 1),
+  'mustafakoklu@gmail.com',
+  'Mustafa Koklu',
+  'super_admin'
+) ON CONFLICT (email) DO UPDATE SET role = 'super_admin';
 
 -- Views for analytics
 CREATE VIEW public.user_stats AS

@@ -20,18 +20,15 @@ interface AffiliationApplication {
 }
 
 const AdminAffiliationPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [applications, setApplications] = useState<AffiliationApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Check if user is admin
-  const isAdmin = user?.email === 'mustafakoklu@gmail.com';
-
   useEffect(() => {
-    if (!isAdmin) return;
+    if (!isAdmin()) return;
     fetchApplications();
-  }, [isAdmin]);
+  }, [user, isAdmin]);
 
   const fetchApplications = async () => {
     try {
@@ -102,12 +99,15 @@ const AdminAffiliationPage: React.FC = () => {
     );
   }
 
-  if (!isAdmin) {
+  if (!user || !isAdmin()) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-4">Access Denied</h1>
           <p className="text-slate-400">You don't have permission to access this page.</p>
+          <p className="text-sm text-slate-500 mt-2">
+            Admin access required. If you believe this is an error, please contact support.
+          </p>
         </div>
       </div>
     );
