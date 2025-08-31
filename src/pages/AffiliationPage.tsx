@@ -237,7 +237,7 @@ const AffiliationPage: React.FC = () => {
             <form onSubmit={handleSubmitApplication}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Your Website/Tool Link *
+                  Your website/tool affiliation link *
                 </label>
                 <input
                   type="url"
