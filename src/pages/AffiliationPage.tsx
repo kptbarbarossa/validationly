@@ -4,9 +4,7 @@ import { SEOHead } from '../components/SEOHead';
 
 const AffiliationPage: React.FC = () => {
   const { user, signInWithGoogle } = useAuth();
-  const [showContactModal, setShowContactModal] = useState(false);
-  const [siteLink, setSiteLink] = useState('');
-  const [message, setMessage] = useState('');
+
 
   const handleApplyClick = async () => {
     if (!user) {
@@ -19,15 +17,7 @@ const AffiliationPage: React.FC = () => {
       return;
     }
     
-    // User is logged in, show contact modal
-    setShowContactModal(true);
-  };
-
-  const handleSubmitApplication = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!user || !siteLink.trim()) return;
-
-    // Create email content
+    // User is logged in, open mailto directly
     const emailSubject = `Partnership Application - ${user.name || user.email}`;
     const emailBody = `Hi,
 
@@ -36,31 +26,19 @@ I would like to apply for the Validationly Partnership Program.
 User Details:
 - Name: ${user.name || 'N/A'}
 - Email: ${user.email}
-- Website/Tool: ${siteLink.trim()}
 
-Message:
-${message.trim() || 'No additional message provided.'}
+Please let me know what additional information you need for the partnership application.
 
 Best regards,
 ${user.name || user.email}
 
 ---
-Sent via Validationly Partnership Application Form
+Sent via Validationly Partnership Application
 Date: ${new Date().toLocaleDateString()}`;
 
-    // Create mailto link
+    // Create mailto link and open email client
     const mailtoLink = `mailto:kaptan3k@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    
-    // Open email client
     window.location.href = mailtoLink;
-    
-    // Close modal and reset form
-    setShowContactModal(false);
-    setSiteLink('');
-    setMessage('');
-    
-    // Show success message
-    alert('Your email client will open with the pre-filled application. Please send the email to complete your application.');
   };
 
   return (
@@ -228,61 +206,6 @@ Date: ${new Date().toLocaleDateString()}`;
           </div>
         </div>
       </div>
-
-      {/* Contact Modal */}
-      {showContactModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-slate-800 rounded-2xl p-8 max-w-md w-full border border-white/10">
-            <h3 className="text-2xl font-bold text-white mb-6">Partnership Application</h3>
-            
-            <form onSubmit={handleSubmitApplication}>
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Your website/tool affiliation link *
-                </label>
-                <input
-                  type="url"
-                  value={siteLink}
-                  onChange={(e) => setSiteLink(e.target.value)}
-                  placeholder="https://yourtool.com"
-                  required
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-
-              <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Brief Message (Optional)
-                </label>
-                <textarea
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="Tell us about your tool and how it helps startups..."
-                  rows={4}
-                  className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                />
-              </div>
-
-              <div className="flex gap-4">
-                <button
-                  type="button"
-                  onClick={() => setShowContactModal(false)}
-                  className="flex-1 px-4 py-3 bg-slate-600 hover:bg-slate-500 rounded-full text-white font-medium transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!siteLink.trim()}
-                  className="flex-1 px-4 py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-full text-white font-medium transition-all"
-                >
-                  Send Email
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </>
   );
 };

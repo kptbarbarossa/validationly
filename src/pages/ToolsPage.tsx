@@ -129,7 +129,7 @@ const ToolsPage: React.FC = () => {
             />
 
             <div className="text-white">
-                <div className="container mx-auto px-6 py-16">
+                <div className="container mx-auto px-6 py-8">
                     {/* Header */}
                     <div className="text-center mb-16">
                         <h1 className="text-4xl md:text-6xl font-bold mb-6">
