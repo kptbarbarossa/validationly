@@ -17,28 +17,8 @@ const AffiliationPage: React.FC = () => {
       return;
     }
     
-    // User is logged in, open mailto directly
-    const emailSubject = `Partnership Application - ${user.name || user.email}`;
-    const emailBody = `Hi,
-
-I would like to apply for the Validationly Partnership Program.
-
-User Details:
-- Name: ${user.name || 'N/A'}
-- Email: ${user.email}
-
-Please let me know what additional information you need for the partnership application.
-
-Best regards,
-${user.name || user.email}
-
----
-Sent via Validationly Partnership Application
-Date: ${new Date().toLocaleDateString()}`;
-
-    // Create mailto link and open email client
-    const mailtoLink = `mailto:kaptan3k@gmail.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
-    window.location.href = mailtoLink;
+    // User is logged in, open X (Twitter) DM
+    window.open('https://x.com/kptbarbarossa', '_blank');
   };
 
   return (
@@ -94,7 +74,7 @@ Date: ${new Date().toLocaleDateString()}`;
                 onClick={handleApplyClick}
                 className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-full text-white font-medium transition-all transform hover:scale-105 text-lg"
               >
-                {!user ? 'Sign In to Apply' : 'Apply for Partnership'}
+                {!user ? 'Sign In to Apply' : 'Contact on X'}
               </button>
             </div>
           </div>
@@ -161,7 +141,7 @@ Date: ${new Date().toLocaleDateString()}`;
               </div>
               <h3 className="text-xl font-semibold text-white mb-4">1. Apply</h3>
               <p className="text-slate-300">
-                Click the apply button, sign in with Google, and share your website link with a brief message about your tool.
+                Click the apply button, sign in with Google, and you'll be directed to our X (Twitter) profile to send a DM with your partnership details.
               </p>
             </div>
 
@@ -200,7 +180,7 @@ Date: ${new Date().toLocaleDateString()}`;
               onClick={handleApplyClick}
               className="px-8 py-4 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-full text-white font-medium transition-all transform hover:scale-105"
             >
-              {!user ? 'Sign In to Apply' : 'Apply Now'}
+              {!user ? 'Sign In to Apply' : 'Contact on X'}
             </button>
           </div>
         </div>
