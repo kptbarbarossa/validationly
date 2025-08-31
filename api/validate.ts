@@ -5,6 +5,8 @@ import OpenAI from 'openai';
 import Groq from 'groq-sdk';
 import { YouTubeService } from '../lib/services/platforms/youtube.js';
 import { ValidationlyDB } from '../lib/supabase.js';
+import { Logger } from '../lib/logger.js';
+import { validateEnvironment, config } from '../lib/config.js';
 
 // Rate limiting for API protection
 const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
@@ -290,7 +292,7 @@ RETURN JSON:
 
     return JSON.parse(result?.text || result?.content || result?.choices?.[0]?.message?.content || '{}');
   } catch (error) {
-    console.log('Deep dive analysis failed:', error);
+    Logger.error('Deep dive analysis failed', error);
     return { error: 'Deep dive analysis failed' };
   }
 };
@@ -362,7 +364,7 @@ RETURN JSON:
 
     return JSON.parse(result?.text || result?.content || result?.choices?.[0]?.message?.content || '{}');
   } catch (error) {
-    console.log('Competitor analysis failed:', error);
+    Logger.error('Competitor analysis failed', error);
     return { error: 'Competitor analysis failed' };
   }
 };
@@ -426,7 +428,7 @@ RETURN JSON:
 
     return JSON.parse(result?.text || result?.content || result?.choices?.[0]?.message?.content || '{}');
   } catch (error) {
-    console.log('Market timing analysis failed:', error);
+    Logger.error('Market timing analysis failed', error);
     return { error: 'Market timing analysis failed' };
   }
 };
@@ -438,10 +440,10 @@ const performEnhancedAnalysis = async (
   userTier: 'pro' | 'business' | 'enterprise',
   gemini: any
 ): Promise<any> => {
-  console.log('🚀 Starting enhanced analysis for', userTier, 'user');
+  Logger.debug('Starting enhanced analysis', { userTier });
 
   const weakAreas = identifyWeakAreas(basicResult);
-  console.log('📊 Weak areas identified:', weakAreas);
+  Logger.debug('Weak areas identified', { weakAreas });
 
   const enhancedResult: any = {
     basicAnalysis: basicResult,
@@ -454,7 +456,7 @@ const performEnhancedAnalysis = async (
 
   // Step 1: Deep dive analysis (all tiers)
   if (weakAreas.length > 0) {
-    console.log('🔍 Performing deep dive analysis...');
+    Logger.debug('Performing deep dive analysis');
     enhancedResult.deepDiveAnalysis = await performDeepDiveAnalysis(
       idea, classification, basicResult, weakAreas, gemini
     );
@@ -464,7 +466,7 @@ const performEnhancedAnalysis = async (
 
   // Step 2: Competitor analysis (business+ tiers)
   if (userTier === 'business' || userTier === 'enterprise') {
-    console.log('🕵️ Performing competitor analysis...');
+    Logger.debug('Performing competitor analysis');
     enhancedResult.competitorAnalysis = await performCompetitorAnalysis(
       idea, classification, gemini
     );
@@ -474,7 +476,7 @@ const performEnhancedAnalysis = async (
 
   // Step 3: Market timing analysis (enterprise tier)
   if (userTier === 'enterprise') {
-    console.log('⏰ Performing market timing analysis...');
+    Logger.debug('Performing market timing analysis');
     enhancedResult.marketTimingAnalysis = await performMarketTimingAnalysis(
       idea, classification, gemini
     );
@@ -490,7 +492,7 @@ const performEnhancedAnalysis = async (
     ...(enhancedResult.marketTimingAnalysis ? ['Market timing optimized for maximum success probability'] : [])
   ];
 
-  console.log('✅ Enhanced analysis completed');
+  Logger.success('Enhanced analysis completed');
   return enhancedResult;
 };
 
@@ -604,11 +606,11 @@ async function getYouTubeData(keyword: string): Promise<any> {
   try {
     const apiKey = process.env.YOUTUBE_API_KEY;
     if (!apiKey) {
-      console.log('⚠️ YouTube API key not available');
+      Logger.warn('YouTube API key not available');
       return null;
     }
 
-    console.log('📺 Fetching YouTube data for:', keyword, 'with API key:', apiKey.substring(0, 10) + '...');
+    Logger.debug('Fetching YouTube data', { keyword });
     const youtubeService = new YouTubeService(apiKey);
 
     // Get both search results and trend analysis
@@ -631,7 +633,7 @@ async function getYouTubeData(keyword: string): Promise<any> {
 // Multi-platform data integration
 async function getMultiPlatformData(keyword: string): Promise<any> {
   try {
-    console.log('🌐 Fetching multi-platform data for:', keyword);
+    Logger.debug('Fetching multi-platform data', { keyword });
     
     // Fetch Hacker News data directly using our new API
     const hnResponse = await fetch(`${process.env.VERCEL_URL || 'http://localhost:3000'}/api/hackernews`, {
@@ -648,9 +650,9 @@ async function getMultiPlatformData(keyword: string): Promise<any> {
     let hnData = null;
     if (hnResponse.ok) {
       hnData = await hnResponse.json();
-      console.log('✅ Hacker News data fetched:', {
+      Logger.success('Hacker News data fetched', { 
         totalResults: hnData.totalResults,
-        itemsCount: hnData.items?.length || 0
+        itemsCount: hnData.items?.length || 0 
       });
     } else {
       console.log('⚠️ Hacker News API failed, using fallback');
@@ -1389,6 +1391,17 @@ function getAI() {
 
 async function validateHandler(req: any, res: any) {
   const startTime = Date.now();
+
+  // Validate environment variables at startup
+  try {
+    validateEnvironment();
+  } catch (error) {
+    Logger.error('Environment validation failed', error);
+    return res.status(500).json({
+      error: 'Server configuration error',
+      message: config.isDevelopment ? (error as Error).message : 'Internal server error'
+    });
+  }
 
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', 'https://validationly.com');
