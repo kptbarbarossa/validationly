@@ -299,9 +299,7 @@ const HomePage: React.FC = () => {
                 <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
                     <div className="mb-4">
                         <div className="relative group">
-                            {/* Rotating light effect around placeholder */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity animate-rotate-light"></div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 rounded-2xl blur opacity-15 animate-pulse-glow"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
                             <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
 
