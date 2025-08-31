@@ -13,30 +13,9 @@ import {
   formatErrorResponse,
   transformResponseForVersion 
 } from '../../lib/apiVersionManager.js';
+import { comprehensiveRateLimit } from '../../lib/rateLimiter.js';
 
-// Rate limiting for API protection
-const rateLimitMap = new Map<string, { count: number; resetTime: number }>();
-const RATE_LIMIT_WINDOW = 15 * 60 * 1000; // 15 minutes
-const RATE_LIMIT_MAX = 50; // Maximum 50 requests per window
-
-// Simple rate limiting function
-function checkRateLimit(ip: string): boolean {
-  const now = Date.now();
-  const userLimit = rateLimitMap.get(ip);
-  
-  if (!userLimit || now > userLimit.resetTime) {
-    // Reset or create new limit
-    rateLimitMap.set(ip, { count: 1, resetTime: now + RATE_LIMIT_WINDOW });
-    return true;
-  }
-  
-  if (userLimit.count >= RATE_LIMIT_MAX) {
-    return false; // Rate limit exceeded
-  }
-  
-  userLimit.count++;
-  return true;
-}
+// Legacy rate limiting - now handled by Redis system
 
 // Input validation and sanitization
 function validateInput(input: string): boolean {
@@ -1425,16 +1404,70 @@ async function validateHandler(req: any, res: any) {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+    const errorResponse = formatErrorResponse({
+      message: 'Method not allowed',
+      code: 'METHOD_NOT_ALLOWED'
+    }, apiVersion);
+    return res.status(405).json(errorResponse);
   }
 
-  // Rate limiting check
-  const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || 'unknown';
-  if (!checkRateLimit(clientIP)) {
-    return res.status(429).json({
-      message: 'Too many requests. Please try again later.',
-      retryAfter: Math.ceil(RATE_LIMIT_WINDOW / 1000)
+  // Enhanced Redis-based rate limiting
+  const clientIp = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress || 'unknown';
+  const ip = Array.isArray(clientIp) ? clientIp[0] : clientIp;
+  const userId = req.headers['x-user-id'] as string;
+  
+  try {
+    // Get user tier for rate limiting
+    let userTier: 'free' | 'pro' | 'premium' = 'free';
+    if (userId) {
+      // TODO: Fetch user tier from database
+      userTier = 'free';
+    }
+
+    const rateLimitResult = await comprehensiveRateLimit(
+      ip, 
+      userId, 
+      userTier, 
+      'validate'
+    );
+
+    // Add rate limit headers
+    Object.entries(rateLimitResult.headers).forEach(([key, value]) => {
+      res.setHeader(key, value);
     });
+
+    if (!rateLimitResult.allowed) {
+      Logger.security('Rate limit exceeded', { 
+        ip, 
+        userId, 
+        userTier,
+        limits: rateLimitResult.limits 
+      });
+
+      const errorResponse = formatErrorResponse({
+        message: 'Rate limit exceeded. Please try again later.',
+        code: 'RATE_LIMIT_EXCEEDED',
+        details: {
+          limits: rateLimitResult.limits.map(limit => ({
+            remaining: limit.remaining,
+            resetTime: new Date(limit.resetTime).toISOString(),
+            retryAfter: limit.retryAfter
+          }))
+        }
+      }, apiVersion);
+
+      return res.status(429).json(errorResponse);
+    }
+
+    Logger.debug('Rate limit check passed', { 
+      ip, 
+      userId, 
+      remaining: rateLimitResult.limits[0]?.remaining 
+    });
+
+  } catch (rateLimitError) {
+    Logger.error('Rate limiting system error', rateLimitError);
+    // Continue without rate limiting on system failure
   }
 
   try {

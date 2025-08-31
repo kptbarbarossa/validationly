@@ -14,6 +14,7 @@ import {
 } from '../lib/apiVersionManager.js';
 import { Logger } from '../lib/logger.js';
 import { config } from '../lib/config.js';
+import { comprehensiveRateLimit } from '../lib/rateLimiter.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   // CORS headers
@@ -37,6 +38,32 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     versionMiddleware(req, res);
     
     const requestedVersion = (req as any).apiVersion || DEFAULT_API_VERSION;
+
+    // Rate limiting for info endpoint
+    const clientIp = req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress || 'unknown';
+    const ip = Array.isArray(clientIp) ? clientIp[0] : clientIp;
+    const userId = req.headers['x-user-id'] as string;
+    
+    const rateLimitResult = await comprehensiveRateLimit(
+      ip, 
+      userId, 
+      userId ? 'free' : undefined, 
+      'info'
+    );
+
+    // Add rate limit headers
+    Object.entries(rateLimitResult.headers).forEach(([key, value]) => {
+      res.setHeader(key, value);
+    });
+
+    if (!rateLimitResult.allowed) {
+      Logger.security('Rate limit exceeded on info endpoint', { ip, userId });
+      return res.status(429).json({
+        error: 'Rate limit exceeded',
+        message: 'Too many requests to info endpoint. Please try again later.',
+        retryAfter: rateLimitResult.limits[0]?.retryAfter
+      });
+    }
 
     // Get API information
     const apiInfo = {
