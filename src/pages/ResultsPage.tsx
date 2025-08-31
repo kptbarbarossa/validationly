@@ -489,12 +489,14 @@ const ResultsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Key Analysis Sections */}
+                {/* 10-Step Framework Cards - Exact Match with Prompt */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {/* Problem Analysis */}
+                  
+                  {/* 1. Problem Analysis & Deconstruction */}
                   <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
                     <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
-                      🎯 Problem Analysis
+                      <span className="bg-blue-500/20 text-blue-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                      Problem Analysis & Deconstruction
                     </h3>
                     <div className="space-y-3 text-sm">
                       <div>
@@ -505,32 +507,63 @@ const ResultsPage: React.FC = () => {
                         <span className="text-purple-400 font-medium">Job-to-be-Done:</span>
                         <p className="text-gray-300 mt-1">{advancedAnalysis.problemAnalysis.jobToBeDone}</p>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Target Audience */}
-                  <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
-                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
-                      👥 Target Audience
-                    </h3>
-                    <div className="space-y-3 text-sm">
-                      {advancedAnalysis.targetAudience.primaryArchetypes.slice(0, 2).map((archetype, i) => (
-                        <div key={i}>
-                          <span className="text-green-400 font-medium">{archetype.name}:</span>
-                          <p className="text-gray-300 mt-1">{archetype.demographics}</p>
-                        </div>
-                      ))}
                       <div>
-                        <span className="text-yellow-400 font-medium">Market Size:</span>
-                        <p className="text-gray-300 mt-1">TAM: {advancedAnalysis.targetAudience.marketSizing.tam}</p>
+                        <span className="text-green-400 font-medium">Problem Severity:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.problemAnalysis.problemSeverity}</p>
                       </div>
                     </div>
                   </div>
 
-                  {/* Competitive Landscape */}
+                  {/* 2. Target Audience Segmentation & Sizing */}
                   <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
                     <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
-                      ⚔️ Competition
+                      <span className="bg-green-500/20 text-green-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                      Target Audience & Sizing
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      {advancedAnalysis.targetAudience.primaryArchetypes.slice(0, 1).map((archetype, i) => (
+                        <div key={i}>
+                          <span className="text-green-400 font-medium">{archetype.name}:</span>
+                          <p className="text-gray-300 mt-1">{archetype.demographics}</p>
+                          <p className="text-gray-400 mt-1 text-xs">{archetype.motivations}</p>
+                        </div>
+                      ))}
+                      <div>
+                        <span className="text-yellow-400 font-medium">TAM:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.targetAudience.marketSizing.tam}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 3. Demand Analysis & Signals */}
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
+                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
+                      <span className="bg-yellow-500/20 text-yellow-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">3</span>
+                      Demand Analysis & Signals
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <span className="text-yellow-400 font-medium">Demand Verdict:</span>
+                        <div className={`inline-block px-2 py-1 rounded-full text-xs font-medium border ml-2 ${advancedValidationService.getDemandResultColor(advancedAnalysis.demandAnalysis.demandVerdict)}`}>
+                          {advancedAnalysis.demandAnalysis.demandVerdict}
+                        </div>
+                      </div>
+                      <div>
+                        <span className="text-blue-400 font-medium">Willingness to Pay:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.demandAnalysis.willingnessToPay}</p>
+                      </div>
+                      <div>
+                        <span className="text-purple-400 font-medium">Proxy Products:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.demandAnalysis.proxyProducts}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 4. Competitive Landscape & Alternatives */}
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
+                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
+                      <span className="bg-red-500/20 text-red-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">4</span>
+                      Competitive Landscape
                     </h3>
                     <div className="space-y-3 text-sm">
                       <div>
@@ -544,13 +577,18 @@ const ResultsPage: React.FC = () => {
                           ))}
                         </ul>
                       </div>
+                      <div>
+                        <span className="text-orange-400 font-medium">Non-Market Alternatives:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.competitiveLandscape.nonMarketAlternatives}</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Differentiation */}
+                  {/* 5. Differentiation Strategy & UVP */}
                   <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
                     <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
-                      💎 Differentiation
+                      <span className="bg-purple-500/20 text-purple-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">5</span>
+                      Differentiation & UVP
                     </h3>
                     <div className="space-y-3 text-sm">
                       <div>
@@ -561,42 +599,103 @@ const ResultsPage: React.FC = () => {
                         <span className="text-blue-400 font-medium">Value Proposition:</span>
                         <p className="text-gray-300 mt-1">{advancedAnalysis.differentiation.valueProposition}</p>
                       </div>
+                      <div>
+                        <span className="text-green-400 font-medium">Defensible Moat:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.differentiation.defensibleMoat}</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* MVP Recommendation */}
+                  {/* 6. Foreseeable Risks & Obstacles */}
                   <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
                     <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
-                      🚀 MVP Strategy
+                      <span className="bg-orange-500/20 text-orange-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">6</span>
+                      Risks & Obstacles
                     </h3>
                     <div className="space-y-3 text-sm">
                       <div>
-                        <span className="text-green-400 font-medium">Core Features:</span>
+                        <span className="text-red-400 font-medium">Market Risk:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.risks.marketRisk}</p>
+                      </div>
+                      <div>
+                        <span className="text-orange-400 font-medium">Execution Risk:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.risks.executionRisk}</p>
+                      </div>
+                      <div>
+                        <span className="text-yellow-400 font-medium">Adoption Risk:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.risks.adoptionRisk}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 7. Monetization & Business Model */}
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
+                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
+                      <span className="bg-green-500/20 text-green-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">7</span>
+                      Monetization & Business Model
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <span className="text-green-400 font-medium">Revenue Streams:</span>
+                        <ul className="text-gray-300 mt-1 space-y-1">
+                          {advancedAnalysis.monetization.revenueStreams.slice(0, 3).map((stream, i) => (
+                            <li key={i} className="flex items-center space-x-2">
+                              <span className="text-green-400">•</span>
+                              <span>{stream}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
+                        <span className="text-yellow-400 font-medium">Pricing Hypothesis:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.monetization.pricingHypothesis}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 8. MVP Recommendation */}
+                  <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
+                    <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
+                      <span className="bg-blue-500/20 text-blue-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">8</span>
+                      MVP Recommendation
+                    </h3>
+                    <div className="space-y-3 text-sm">
+                      <div>
+                        <span className="text-blue-400 font-medium">Core Features:</span>
                         <ul className="text-gray-300 mt-1 space-y-1">
                           {advancedAnalysis.mvpRecommendation.coreFeatures.slice(0, 3).map((feature, i) => (
                             <li key={i} className="flex items-center space-x-2">
-                              <span className="text-green-400">•</span>
+                              <span className="text-blue-400">•</span>
                               <span>{feature}</span>
                             </li>
                           ))}
                         </ul>
                       </div>
+                      <div>
+                        <span className="text-green-400 font-medium">User Journey:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.mvpRecommendation.userJourney}</p>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Monetization */}
+                  {/* 9. Scaling & Growth Strategy */}
                   <div className="bg-gray-800/50 rounded-xl p-6 border border-white/10">
                     <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
-                      💰 Monetization
+                      <span className="bg-cyan-500/20 text-cyan-400 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">9</span>
+                      Growth Strategy
                     </h3>
                     <div className="space-y-3 text-sm">
                       <div>
-                        <span className="text-yellow-400 font-medium">Revenue Streams:</span>
+                        <span className="text-cyan-400 font-medium">Early Adopter Acquisition:</span>
+                        <p className="text-gray-300 mt-1">{advancedAnalysis.growthStrategy.earlyAdopterAcquisition}</p>
+                      </div>
+                      <div>
+                        <span className="text-blue-400 font-medium">Scalable Channels:</span>
                         <ul className="text-gray-300 mt-1 space-y-1">
-                          {advancedAnalysis.monetization.revenueStreams.slice(0, 3).map((stream, i) => (
+                          {advancedAnalysis.growthStrategy.scalableChannels.slice(0, 3).map((channel, i) => (
                             <li key={i} className="flex items-center space-x-2">
-                              <span className="text-yellow-400">•</span>
-                              <span>{stream}</span>
+                              <span className="text-blue-400">•</span>
+                              <span>{channel}</span>
                             </li>
                           ))}
                         </ul>
@@ -605,46 +704,118 @@ const ResultsPage: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Expandable Sections */}
-                <div className="mt-8">
-                  <details className="bg-gray-800/30 rounded-xl border border-white/10">
-                    <summary className="p-4 cursor-pointer text-white font-medium hover:bg-gray-700/30 rounded-xl transition-colors">
-                      📊 View Complete Analysis Framework (10 Sections)
+                {/* 10th Step - Overall Validation Scorecard (Already shown above) */}
+                <div className="mt-8 bg-gray-800/30 rounded-xl border border-white/10 p-6">
+                  <div className="flex items-center mb-4">
+                    <span className="bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">10</span>
+                    <h3 className="text-xl font-semibold text-white">Overall Validation Scorecard & Executive Summary</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div className="text-center">
+                      <div className={`inline-block px-4 py-2 rounded-full text-lg font-bold border ${advancedValidationService.getValidationScoreColor(advancedAnalysis.validationScorecard.validationScore)}`}>
+                        {advancedAnalysis.validationScorecard.validationScore}/100
+                      </div>
+                      <p className="text-sm text-gray-400 mt-2">Validation Score</p>
+                    </div>
+                    <div className="text-center">
+                      <div className={`inline-block px-4 py-2 rounded-full text-sm font-medium border ${advancedValidationService.getValidationResultColor(advancedAnalysis.validationScorecard.validationResult)}`}>
+                        {advancedAnalysis.validationScorecard.validationResult}
+                      </div>
+                      <p className="text-sm text-gray-400 mt-2">Validation Result</p>
+                    </div>
+                    <div className="text-center">
+                      <div className={`inline-block px-4 py-2 rounded-full text-sm font-medium border ${advancedValidationService.getDemandResultColor(advancedAnalysis.validationScorecard.demandResult)}`}>
+                        {advancedAnalysis.validationScorecard.demandResult} Demand
+                      </div>
+                      <p className="text-sm text-gray-400 mt-2">Demand Analysis Result</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
+                    <h4 className="text-white font-medium mb-2">📋 Concluding Justification</h4>
+                    <p className="text-gray-300 leading-relaxed">{advancedAnalysis.validationScorecard.executiveSummary}</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
+                      <h4 className="text-green-400 font-medium mb-2 flex items-center">
+                        <span className="mr-2">🎯</span>
+                        Biggest Opportunity
+                      </h4>
+                      <p className="text-gray-300 text-sm">{advancedAnalysis.validationScorecard.biggestOpportunity}</p>
+                    </div>
+                    <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
+                      <h4 className="text-red-400 font-medium mb-2 flex items-center">
+                        <span className="mr-2">⚠️</span>
+                        Biggest Risk
+                      </h4>
+                      <p className="text-gray-300 text-sm">{advancedAnalysis.validationScorecard.biggestRisk}</p>
+                    </div>
+                  </div>
+
+                  {/* Additional Framework Details */}
+                  <details className="mt-6">
+                    <summary className="cursor-pointer text-white font-medium hover:text-purple-300 transition-colors">
+                      📊 View Additional Framework Details
                     </summary>
-                    <div className="p-6 pt-0 space-y-6">
-                      {/* Demand Analysis */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-3">📈 Demand Analysis</h4>
-                        <div className="bg-gray-800/50 rounded-lg p-4 space-y-2 text-sm">
-                          <p><span className="text-blue-400 font-medium">Verdict:</span> {advancedAnalysis.demandAnalysis.demandVerdict}</p>
-                          <p><span className="text-green-400 font-medium">Willingness to Pay:</span> {advancedAnalysis.demandAnalysis.willingnessToPay}</p>
-                          <p><span className="text-yellow-400 font-medium">Proxy Products:</span> {advancedAnalysis.demandAnalysis.proxyProducts}</p>
-                        </div>
+                    <div className="mt-4 space-y-4">
+                      {/* Search & Social Signals */}
+                      <div className="bg-gray-800/50 rounded-lg p-4">
+                        <h5 className="text-blue-400 font-medium mb-2">🔍 Search & Social Signals (Pre-2024)</h5>
+                        <p className="text-gray-300 text-sm">{advancedAnalysis.demandAnalysis.searchAndSocialSignals}</p>
                       </div>
 
-                      {/* Risk Assessment */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-3">⚠️ Risk Assessment</h4>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="bg-gray-800/50 rounded-lg p-4 space-y-2 text-sm">
-                            <p><span className="text-red-400 font-medium">Market Risk:</span> {advancedAnalysis.risks.marketRisk}</p>
-                            <p><span className="text-orange-400 font-medium">Execution Risk:</span> {advancedAnalysis.risks.executionRisk}</p>
-                          </div>
-                          <div className="bg-gray-800/50 rounded-lg p-4 space-y-2 text-sm">
-                            <p><span className="text-yellow-400 font-medium">Adoption Risk:</span> {advancedAnalysis.risks.adoptionRisk}</p>
-                            <p><span className="text-purple-400 font-medium">Regulatory Risk:</span> {advancedAnalysis.risks.regulatoryRisk}</p>
-                          </div>
+                      {/* SWOT Analysis */}
+                      {advancedAnalysis.competitiveLandscape.swotAnalysis.length > 0 && (
+                        <div className="bg-gray-800/50 rounded-lg p-4">
+                          <h5 className="text-purple-400 font-medium mb-2">📊 SWOT Analysis</h5>
+                          {advancedAnalysis.competitiveLandscape.swotAnalysis.slice(0, 1).map((swot, i) => (
+                            <div key={i} className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <span className="text-green-400 font-medium">Strengths:</span>
+                                <ul className="text-gray-300 mt-1">
+                                  {swot.strengths.slice(0, 2).map((strength, j) => (
+                                    <li key={j} className="flex items-start space-x-2">
+                                      <span className="text-green-400 mt-1">•</span>
+                                      <span>{strength}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
+                                <span className="text-red-400 font-medium">Weaknesses:</span>
+                                <ul className="text-gray-300 mt-1">
+                                  {swot.weaknesses.slice(0, 2).map((weakness, j) => (
+                                    <li key={j} className="flex items-start space-x-2">
+                                      <span className="text-red-400 mt-1">•</span>
+                                      <span>{weakness}</span>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                          ))}
                         </div>
+                      )}
+
+                      {/* Validation Metrics */}
+                      <div className="bg-gray-800/50 rounded-lg p-4">
+                        <h5 className="text-cyan-400 font-medium mb-2">📈 Key Validation Metrics</h5>
+                        <ul className="text-gray-300 text-sm space-y-1">
+                          {advancedAnalysis.mvpRecommendation.validationMetrics.slice(0, 3).map((metric, i) => (
+                            <li key={i} className="flex items-center space-x-2">
+                              <span className="text-cyan-400">•</span>
+                              <span>{metric}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
 
-                      {/* Growth Strategy */}
-                      <div>
-                        <h4 className="text-lg font-semibold text-white mb-3">📈 Growth Strategy</h4>
-                        <div className="bg-gray-800/50 rounded-lg p-4 space-y-2 text-sm">
-                          <p><span className="text-green-400 font-medium">Early Adopter Acquisition:</span> {advancedAnalysis.growthStrategy.earlyAdopterAcquisition}</p>
-                          <p><span className="text-blue-400 font-medium">Scalable Channels:</span> {advancedAnalysis.growthStrategy.scalableChannels.join(', ')}</p>
-                          <p><span className="text-purple-400 font-medium">Long-term Vision:</span> {advancedAnalysis.growthStrategy.longTermVision}</p>
-                        </div>
+                      {/* Long-term Vision */}
+                      <div className="bg-gray-800/50 rounded-lg p-4">
+                        <h5 className="text-purple-400 font-medium mb-2">🔮 Long-Term Vision</h5>
+                        <p className="text-gray-300 text-sm">{advancedAnalysis.growthStrategy.longTermVision}</p>
                       </div>
                     </div>
                   </details>
