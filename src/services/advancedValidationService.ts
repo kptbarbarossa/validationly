@@ -12,7 +12,7 @@ export class AdvancedValidationService {
     try {
       console.log('🚀 Starting advanced validation analysis for:', idea.substring(0, 50) + '...');
       
-      const response = await fetch(`${this.baseUrl}/api/v1/advanced-validate`, {
+      const response = await fetch('/api/v1/advanced-validate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
