@@ -182,8 +182,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             access_type: 'offline',
             prompt: 'consent',
           },
-          // FedCM compatibility
-          skipBrowserRedirect: false,
+          skipBrowserRedirect: true, // Manually handle the redirect for FedCM
         },
       });
       

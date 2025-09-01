@@ -129,382 +129,373 @@ const ToolsPage: React.FC = () => {
             />
 
             <div className="text-white">
-                <div className="container mx-auto px-6 py-6">
+                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
                     {/* Header */}
-                    <div className="text-center mb-8">
-                        <h1 className="text-4xl md:text-6xl font-bold mb-6">
-                            <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
-                                Startup Tools
-                            </span>
+                    <div className="text-center mb-12">
+                        <h1 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
+                            Founder's Toolkit
                         </h1>
+                        <p className="mt-3 max-w-md mx-auto text-base text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
+                            A curated list of tools and resources to build, launch, and grow your startup.
+                        </p>
                     </div>
                     {/* Recommended Tools Section */}
-                    <div className="mb-16 text-center">
-                        <h2 className="text-2xl font-bold text-white mb-2 flex items-center justify-center gap-2">
-                            🛠️ Recommended Tools for Startups
-                        </h2>
-                        <p className="text-gray-400 max-w-2xl mx-auto mb-8">
-                            Curated tools and services to help you build, launch, and grow your startup efficiently
-                        </p>
-
-                        {/* Affiliate Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
-                            {/* Capacity.so Affiliate Card */}
-                            <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
-                                <div className="flex items-start space-x-3">
-                                    {/* Logo */}
-                                    <div className="flex-shrink-0">
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
-                                            <img
-                                                src="https://capacity.so/favicon.ico"
-                                                alt="Capacity Logo"
-                                                className="w-full h-full object-contain"
-                                                onError={(e) => {
-                                                    // Fallback to text logo if image fails
-                                                    const target = e.target as HTMLImageElement;
-                                                    target.style.display = 'none';
-                                                    const parent = target.parentElement;
-                                                    if (parent) {
-                                                        parent.className = "w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center";
-                                                        parent.innerHTML = '<span class="text-white font-bold text-sm">C</span>';
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1">
-                                        <div className="flex items-center space-x-2 mb-1">
-                                            <h3 className="text-base font-bold text-white">Capacity</h3>
-                                            <span className="bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full text-xs font-medium">
-                                                AI Assistant
-                                            </span>
-                                        </div>
-
-                                        <p className="text-gray-300 text-xs mb-3 leading-relaxed">
-                                            AI-powered knowledge management and team collaboration platform.
-                                            Perfect for startups to organize ideas and automate workflows.
-                                        </p>
-
-                                        {/* Key Features */}
-                                        <div className="grid grid-cols-2 gap-2 mb-3">
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>AI automation</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Team collaboration</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Knowledge base</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Workflow optimization</span>
-                                            </div>
-                                        </div>
-
-                                        {/* CTA */}
-                                        <a
-                                            href="https://capacity.so/?via=barbaros"
-                                            target="_blank"
-                                            rel="nofollow noopener"
-                                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
-                                        >
-                                            <span>🚀</span>
-                                            <span>Try Free</span>
-                                        </a>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
+                        {/* Capacity.so Affiliate Card */}
+                        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
+                            <div className="flex items-start space-x-3">
+                                {/* Logo */}
+                                <div className="flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
+                                        <img
+                                            src="https://capacity.so/favicon.ico"
+                                            alt="Capacity Logo"
+                                            className="w-full h-full object-contain"
+                                            onError={(e) => {
+                                                // Fallback to text logo if image fails
+                                                const target = e.target as HTMLImageElement;
+                                                target.style.display = 'none';
+                                                const parent = target.parentElement;
+                                                if (parent) {
+                                                    parent.className = "w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center";
+                                                    parent.innerHTML = '<span class="text-white font-bold text-sm">C</span>';
+                                                }
+                                            }}
+                                        />
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* StoryShort.ai Affiliate Card */}
-                            <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
-                                <div className="flex items-start space-x-3">
-                                    {/* Logo */}
-                                    <div className="flex-shrink-0">
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
-                                            <img
-                                                src="https://storyshort.ai/favicon.ico"
-                                                alt="StoryShort Logo"
-                                                className="w-full h-full object-contain"
-                                                onError={(e) => {
-                                                    // Fallback to text logo if image fails
-                                                    const target = e.target as HTMLImageElement;
-                                                    target.style.display = 'none';
-                                                    const parent = target.parentElement;
-                                                    if (parent) {
-                                                        parent.className = "w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center";
-                                                        parent.innerHTML = '<span class="text-white font-bold text-sm">S</span>';
-                                                    }
-                                                }}
-                                            />
+                                {/* Content */}
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                        <h3 className="text-base font-bold text-white">Capacity</h3>
+                                        <span className="bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full text-xs font-medium">
+                                            AI Assistant
+                                        </span>
+                                    </div>
+
+                                    <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                        AI-powered knowledge management and team collaboration platform.
+                                        Perfect for startups to organize ideas and automate workflows.
+                                    </p>
+
+                                    {/* Key Features */}
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>AI automation</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Team collaboration</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Knowledge base</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Workflow optimization</span>
                                         </div>
                                     </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1">
-                                        <div className="flex items-center space-x-2 mb-1">
-                                            <h3 className="text-base font-bold text-white">StoryShort</h3>
-                                            <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full text-xs font-medium">
-                                                AI Video Creator
-                                            </span>
-                                        </div>
-
-                                        <p className="text-gray-300 text-xs mb-3 leading-relaxed">
-                                            Transform your ideas into engaging short videos with AI.
-                                            Perfect for content marketing and social media.
-                                        </p>
-
-                                        {/* Key Features */}
-                                        <div className="grid grid-cols-2 gap-2 mb-3">
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>AI video generation</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Social media ready</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Multiple formats</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Quick creation</span>
-                                            </div>
-                                        </div>
-
-                                        {/* CTA */}
-                                        <a
-                                            href="https://storyshort.ai/?via=barbaros"
-                                            target="_blank"
-                                            rel="nofollow noopener"
-                                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
-                                        >
-                                            <span>🎬</span>
-                                            <span>Create Videos</span>
-                                        </a>
-                                    </div>
+                                    {/* CTA */}
+                                    <a
+                                        href="https://capacity.so/?via=barbaros"
+                                        target="_blank"
+                                        rel="nofollow noopener"
+                                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    >
+                                        <span>🚀</span>
+                                        <span>Try Free</span>
+                                    </a>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* Login to See Price Affiliate Card */}
-                            <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
-                                <div className="flex items-start space-x-3">
-                                    {/* Logo */}
-                                    <div className="flex-shrink-0">
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
-                                            <img
-                                                src="/logo-b2b.png"
-                                                alt="B2B Logo"
-                                                className="w-full h-full object-contain"
-                                                onError={(e) => {
-                                                    // Fallback to text logo if image fails
-                                                    const target = e.target as HTMLImageElement;
-                                                    target.style.display = 'none';
-                                                    const parent = target.parentElement;
-                                                    if (parent) {
-                                                        parent.className = "w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center";
-                                                        parent.innerHTML = '<span class="text-white font-bold text-xs">B2B</span>';
-                                                    }
-                                                }}
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Content */}
-                                    <div className="flex-1">
-                                        <div className="flex items-center space-x-2 mb-1">
-                                            <h3 className="text-base font-bold text-white">Login to See Price</h3>
-                                            <span className="bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full text-xs font-medium">
-                                                Shopify App
-                                            </span>
-                                        </div>
-
-                                        <p className="text-gray-300 text-xs mb-3 leading-relaxed">
-                                            Hide product prices from guests to drive account signups and grow your email list.
-                                            Perfect for B2B stores, wholesale, and exclusive pricing strategies.
-                                        </p>
-
-                                        {/* Key Features */}
-                                        <div className="grid grid-cols-2 gap-2 mb-3">
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Easy installation</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>B2B & wholesale ready</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Mobile optimized</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Zero maintenance</span>
-                                            </div>
-                                        </div>
-
-                                        {/* CTA */}
-                                        <a
-                                            href="https://apps.shopify.com/shhhh-pricing"
-                                            target="_blank"
-                                            rel="nofollow noopener"
-                                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
-                                        >
-                                            <span>🛍️</span>
-                                            <span>View on Shopify App Store</span>
-                                        </a>
+                        {/* StoryShort.ai Affiliate Card */}
+                        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
+                            <div className="flex items-start space-x-3">
+                                {/* Logo */}
+                                <div className="flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
+                                        <img
+                                            src="https://storyshort.ai/favicon.ico"
+                                            alt="StoryShort Logo"
+                                            className="w-full h-full object-contain"
+                                            onError={(e) => {
+                                                // Fallback to text logo if image fails
+                                                const target = e.target as HTMLImageElement;
+                                                target.style.display = 'none';
+                                                const parent = target.parentElement;
+                                                if (parent) {
+                                                    parent.className = "w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-lg flex items-center justify-center";
+                                                    parent.innerHTML = '<span class="text-white font-bold text-sm">S</span>';
+                                                }
+                                            }}
+                                        />
                                     </div>
                                 </div>
-                            </div>
 
-                            {/* NextUpKit Affiliate Card */}
-                            <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
-                                <div className="flex items-start space-x-3">
-                                    {/* Logo */}
-                                    <div className="flex-shrink-0">
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
-                                            <img
-                                                src="https://www.nextupkit.com/favicon.ico"
-                                                alt="NextUpKit Logo"
-                                                className="w-full h-full object-contain"
-                                                onError={(e) => {
-                                                    // Fallback to text logo if image fails
-                                                    const target = e.target as HTMLImageElement;
-                                                    target.style.display = 'none';
-                                                    const parent = target.parentElement;
-                                                    if (parent) {
-                                                        parent.className = "w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center";
-                                                        parent.innerHTML = '<span class="text-white font-bold text-xs">N</span>';
-                                                    }
-                                                }}
-                                            />
+                                {/* Content */}
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                        <h3 className="text-base font-bold text-white">StoryShort</h3>
+                                        <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full text-xs font-medium">
+                                            AI Video Creator
+                                        </span>
+                                    </div>
+
+                                    <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                        Transform your ideas into engaging short videos with AI.
+                                        Perfect for content marketing and social media.
+                                    </p>
+
+                                    {/* Key Features */}
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>AI video generation</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Social media ready</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Multiple formats</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Quick creation</span>
                                         </div>
                                     </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1">
-                                        <div className="flex items-center space-x-2 mb-1">
-                                            <h3 className="text-base font-bold text-white">NextUpKit</h3>
-                                            <span className="bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full text-xs font-medium">
-                                                Startup Toolkit
-                                            </span>
-                                        </div>
-
-                                        <p className="text-gray-300 text-xs mb-3 leading-relaxed">
-                                            Complete startup toolkit with templates, resources, and tools to launch your next project faster.
-                                            Perfect for founders, developers, and entrepreneurs.
-                                        </p>
-
-                                        {/* Key Features */}
-                                        <div className="grid grid-cols-2 gap-2 mb-3">
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Ready-to-use templates</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Launch resources</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Time-saving tools</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Proven frameworks</span>
-                                            </div>
-                                        </div>
-
-                                        {/* CTA */}
-                                        <a
-                                            href="https://nextupkit.lemonsqueezy.com?aff=rYX8Vm"
-                                            target="_blank"
-                                            rel="nofollow noopener"
-                                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
-                                        >
-                                            <span>🚀</span>
-                                            <span>Get NextUpKit</span>
-                                        </a>
-                                    </div>
+                                    {/* CTA */}
+                                    <a
+                                        href="https://storyshort.ai/?via=barbaros"
+                                        target="_blank"
+                                        rel="nofollow noopener"
+                                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    >
+                                        <span>🎬</span>
+                                        <span>Create Videos</span>
+                                    </a>
                                 </div>
                             </div>
+                        </div>
 
-                            {/* TapRefer Affiliate Card */}
-                            <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
-                                <div className="flex items-start space-x-3">
-                                    {/* Logo */}
-                                    <div className="flex-shrink-0">
-                                        <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
-                                            <img
-                                                src="https://taprefer.com/favicon.ico"
-                                                alt="TapRefer Logo"
-                                                className="w-full h-full object-contain"
-                                                onError={(e) => {
-                                                    // Fallback to text logo if image fails
-                                                    const target = e.target as HTMLImageElement;
-                                                    target.style.display = 'none';
-                                                    const parent = target.parentElement;
-                                                    if (parent) {
-                                                        parent.className = "w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center";
-                                                        parent.innerHTML = '<span class="text-white font-bold text-xs">T</span>';
-                                                    }
-                                                }}
-                                            />
+                        {/* Login to See Price Affiliate Card */}
+                        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
+                            <div className="flex items-start space-x-3">
+                                {/* Logo */}
+                                <div className="flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
+                                        <img
+                                            src="/logo-b2b.png"
+                                            alt="B2B Logo"
+                                            className="w-full h-full object-contain"
+                                            onError={(e) => {
+                                                // Fallback to text logo if image fails
+                                                const target = e.target as HTMLImageElement;
+                                                target.style.display = 'none';
+                                                const parent = target.parentElement;
+                                                if (parent) {
+                                                    parent.className = "w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center";
+                                                    parent.innerHTML = '<span class="text-white font-bold text-xs">B2B</span>';
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                        <h3 className="text-base font-bold text-white">Login to See Price</h3>
+                                        <span className="bg-indigo-500/20 text-indigo-400 px-2 py-0.5 rounded-full text-xs font-medium">
+                                            Shopify App
+                                        </span>
+                                    </div>
+
+                                    <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                        Hide product prices from guests to drive account signups and grow your email list.
+                                        Perfect for B2B stores, wholesale, and exclusive pricing strategies.
+                                    </p>
+
+                                    {/* Key Features */}
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Easy installation</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>B2B & wholesale ready</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Mobile optimized</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Zero maintenance</span>
                                         </div>
                                     </div>
 
-                                    {/* Content */}
-                                    <div className="flex-1">
-                                        <div className="flex items-center space-x-2 mb-1">
-                                            <h3 className="text-base font-bold text-white">TapRefer</h3>
-                                            <span className="bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full text-xs font-medium">
-                                                Referral Platform
-                                            </span>
-                                        </div>
+                                    {/* CTA */}
+                                    <a
+                                        href="https://apps.shopify.com/shhhh-pricing"
+                                        target="_blank"
+                                        rel="nofollow noopener"
+                                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    >
+                                        <span>🛍️</span>
+                                        <span>View on Shopify App Store</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
-                                        <p className="text-gray-300 text-xs mb-3 leading-relaxed">
-                                            Build a powerful referral program to grow your business. Track referrals, reward customers, and boost sales with automated referral marketing.
-                                        </p>
-
-                                        {/* Key Features */}
-                                        <div className="grid grid-cols-2 gap-2 mb-3">
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Automated tracking</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Custom rewards</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Analytics dashboard</span>
-                                            </div>
-                                            <div className="flex items-center space-x-1 text-xs text-gray-400">
-                                                <span className="text-green-400">✓</span>
-                                                <span>Easy integration</span>
-                                            </div>
-                                        </div>
-
-                                        {/* CTA */}
-                                        <a
-                                            href="https://taprefer.com?aff=rYX8Vm"
-                                            target="_blank"
-                                            rel="nofollow noopener"
-                                            className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
-                                        >
-                                            <span>🎯</span>
-                                            <span>Start Referral Program</span>
-                                        </a>
+                        {/* NextUpKit Affiliate Card */}
+                        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
+                            <div className="flex items-start space-x-3">
+                                {/* Logo */}
+                                <div className="flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
+                                        <img
+                                            src="https://www.nextupkit.com/favicon.ico"
+                                            alt="NextUpKit Logo"
+                                            className="w-full h-full object-contain"
+                                            onError={(e) => {
+                                                // Fallback to text logo if image fails
+                                                const target = e.target as HTMLImageElement;
+                                                target.style.display = 'none';
+                                                const parent = target.parentElement;
+                                                if (parent) {
+                                                    parent.className = "w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-lg flex items-center justify-center";
+                                                    parent.innerHTML = '<span class="text-white font-bold text-xs">N</span>';
+                                                }
+                                            }}
+                                        />
                                     </div>
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                        <h3 className="text-base font-bold text-white">NextUpKit</h3>
+                                        <span className="bg-orange-500/20 text-orange-400 px-2 py-0.5 rounded-full text-xs font-medium">
+                                            Startup Toolkit
+                                        </span>
+                                    </div>
+
+                                    <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                        Complete startup toolkit with templates, resources, and tools to launch your next project faster.
+                                        Perfect for founders, developers, and entrepreneurs.
+                                    </p>
+
+                                    {/* Key Features */}
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Ready-to-use templates</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Launch resources</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Time-saving tools</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Proven frameworks</span>
+                                        </div>
+                                    </div>
+
+                                    {/* CTA */}
+                                    <a
+                                        href="https://nextupkit.lemonsqueezy.com?aff=rYX8Vm"
+                                        target="_blank"
+                                        rel="nofollow noopener"
+                                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    >
+                                        <span>🚀</span>
+                                        <span>Get NextUpKit</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* TapRefer Affiliate Card */}
+                        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
+                            <div className="flex items-start space-x-3">
+                                {/* Logo */}
+                                <div className="flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
+                                        <img
+                                            src="https://taprefer.com/favicon.ico"
+                                            alt="TapRefer Logo"
+                                            className="w-full h-full object-contain"
+                                            onError={(e) => {
+                                                // Fallback to text logo if image fails
+                                                const target = e.target as HTMLImageElement;
+                                                target.style.display = 'none';
+                                                const parent = target.parentElement;
+                                                if (parent) {
+                                                    parent.className = "w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center";
+                                                    parent.innerHTML = '<span class="text-white font-bold text-xs">T</span>';
+                                                }
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Content */}
+                                <div className="flex-1">
+                                    <div className="flex items-center space-x-2 mb-1">
+                                        <h3 className="text-base font-bold text-white">TapRefer</h3>
+                                        <span className="bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full text-xs font-medium">
+                                            Referral Platform
+                                        </span>
+                                    </div>
+
+                                    <p className="text-gray-300 text-xs mb-3 leading-relaxed">
+                                        Build a powerful referral program to grow your business. Track referrals, reward customers, and boost sales with automated referral marketing.
+                                    </p>
+
+                                    {/* Key Features */}
+                                    <div className="grid grid-cols-2 gap-2 mb-3">
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Automated tracking</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Custom rewards</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Analytics dashboard</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-xs text-gray-400">
+                                            <span className="text-green-400">✓</span>
+                                            <span>Easy integration</span>
+                                        </div>
+                                    </div>
+
+                                    {/* CTA */}
+                                    <a
+                                        href="https://taprefer.com?aff=rYX8Vm"
+                                        target="_blank"
+                                        rel="nofollow noopener"
+                                        className="inline-flex items-center space-x-1 px-3 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-xs font-medium"
+                                    >
+                                        <span>🎯</span>
+                                        <span>Start Referral Program</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
