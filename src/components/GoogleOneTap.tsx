@@ -45,7 +45,7 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
       }
 
       try {
-        // Initialize Google One Tap
+        // Initialize Google One Tap with FedCM support
         window.google.accounts.id.initialize({
           client_id: clientId,
           callback: async (response: any) => {
@@ -69,13 +69,26 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
           auto_select: false, // Don't auto-select if user has multiple accounts
           cancel_on_tap_outside: true, // Cancel if user clicks outside
           prompt_parent_id: oneTapRef.current?.id || 'google-one-tap',
+          // FedCM compatibility settings
+          use_fedcm_for_prompt: true,
+          context: 'signin',
+          itp_support: true,
         });
 
-        // Show the One Tap prompt
+        // Show the One Tap prompt with better error handling
         window.google.accounts.id.prompt((notification: any) => {
-          if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-            // One Tap is not displayed or skipped - this is normal
-            console.log('Google One Tap not displayed:', notification.getNotDisplayedReason());
+          if (notification.isNotDisplayed()) {
+            const reason = notification.getNotDisplayedReason();
+            console.log('Google One Tap not displayed:', reason);
+            
+            // Handle specific FedCM-related reasons
+            if (reason === 'fedcm_opted_out' || reason === 'fedcm_disabled') {
+              console.log('FedCM is disabled or opted out - this is expected behavior');
+            }
+          } else if (notification.isSkippedMoment()) {
+            console.log('Google One Tap skipped:', notification.getSkippedReason());
+          } else if (notification.isDismissedMoment()) {
+            console.log('Google One Tap dismissed:', notification.getDismissedReason());
           }
         });
 

@@ -219,17 +219,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithGoogle = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/`,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent',
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+          // FedCM compatibility
+          skipBrowserRedirect: false,
         },
-      },
-    });
-    return { error };
+      });
+      
+      if (error) {
+        console.error('Google OAuth error:', error);
+        return { error };
+      }
+      
+      return { error: null };
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      return { error };
+    }
   };
 
   const isAdmin = (): boolean => {
