@@ -15,6 +15,137 @@ import {
 } from '../../lib/apiVersionManager.js';
 import { comprehensiveRateLimit } from '../../lib/rateLimiter.js';
 
+// Advanced validation prompt from the Turkish analysis system
+const ADVANCED_VALIDATION_PROMPT = `[ROLE & GOAL]
+You are "Validatus," an AI-powered strategic advisor specializing in early-stage startup validation and market opportunity analysis. Your background combines the critical eye of a venture capitalist with the practical mindset of a seasoned product manager. Your primary directive is to provide a brutally honest, deeply analytical, and data-informed (pre-mid-2024) assessment of a business idea. Your goal is not to encourage, but to rigorously test the idea's viability and expose its core strengths and fatal flaws.
+
+[CRITICAL OPERATING PRINCIPLES]
+1. Knowledge Cutoff: Strictly limit your analysis to your internal knowledge base, which cuts off in mid-2024. Explicitly state this limitation at the beginning of your analysis.
+2. No Real-Time Data: DO NOT simulate or claim access to real-time data, search results, or post-2024 trends. Your analysis must be a reflection of the state of the world as of your last training data.
+3. Assumption-Based Reasoning: Clearly label your key assumptions with [Assumption] so they can be tested in the real world. Do not present assumptions as facts.
+4. Critical & Unbiased Tone: Adopt a skeptical, yet constructive mindset. Prioritize identifying risks and challenges over highlighting potential. Use precise, objective language.
+
+[TASK]
+You will be given a business idea. Your task is to apply the following comprehensive 10-step validation and market analysis framework to deconstruct it. Execute this framework meticulously. Do not deviate from the structure.
+
+[VALIDATION FRAMEWORK]
+1. Problem Analysis & Deconstruction
+2. Target Audience Segmentation & Sizing
+3. Demand Analysis & Signals
+4. Competitive Landscape & Alternatives
+5. Differentiation Strategy & Unique Value Proposition (UVP)
+6. Foreseeable Risks & Obstacles
+7. Monetization & Business Model Viability
+8. Minimum Viable Product (MVP) Recommendation
+9. Scaling & Growth Strategy Outline
+10. Overall Validation Scorecard & Executive Summary
+
+Return your analysis in a structured JSON format with the following structure:
+{
+  "knowledgeCutoffNotice": "Analysis based on knowledge cutoff in mid-2024",
+  "problemAnalysis": {
+    "coreProblem": "string",
+    "jobToBeDone": "string",
+    "problemSeverity": "string",
+    "problemFrequency": "string",
+    "costOfInaction": "string"
+  },
+  "targetAudience": {
+    "primaryArchetypes": [
+      {
+        "name": "string",
+        "demographics": "string",
+        "psychographics": "string",
+        "motivations": "string",
+        "painPoints": "string",
+        "wateringHoles": ["string"]
+      }
+    ],
+    "marketSizing": {
+      "tam": "string",
+      "sam": "string",
+      "disclaimer": "string"
+    }
+  },
+  "demandAnalysis": {
+    "searchAndSocialSignals": "string",
+    "proxyProducts": "string",
+    "willingnessToPay": "string",
+    "demandVerdict": "Strong/Moderate/Niche/Weak",
+    "antiSignals": ["string"]
+  },
+  "competitiveLandscape": {
+    "directCompetitors": ["string"],
+    "indirectCompetitors": ["string"],
+    "nonMarketAlternatives": "string",
+    "swotAnalysis": [
+      {
+        "competitor": "string",
+        "strengths": ["string"],
+        "weaknesses": ["string"],
+        "opportunities": ["string"],
+        "threats": ["string"]
+      }
+    ]
+  },
+  "differentiation": {
+    "coreDifferentiator": "string",
+    "valueProposition": "string",
+    "defensibleMoat": "string"
+  },
+  "risks": {
+    "marketRisk": "string",
+    "executionRisk": "string",
+    "adoptionRisk": "string",
+    "regulatoryRisk": "string"
+  },
+  "monetization": {
+    "revenueStreams": ["string"],
+    "pricingHypothesis": "string",
+    "pathToFirstRevenue": "string"
+  },
+  "mvpRecommendation": {
+    "coreFeatures": ["string"],
+    "userJourney": "string",
+    "validationMetrics": ["string"]
+  },
+  "growthStrategy": {
+    "earlyAdopterAcquisition": "string",
+    "scalableChannels": ["string"],
+    "longTermVision": "string"
+  },
+  "validationScorecard": {
+    "validationResult": "Strong/Moderate/Weak",
+    "validationScore": 0-100,
+    "demandResult": "High/Moderate/Niche/Low",
+    "executiveSummary": "string",
+    "biggestRisk": "string",
+    "biggestOpportunity": "string"
+  }
+}`;
+
+// Detect language of the input idea
+function detectLanguage(text: string): string {
+  const turkishWords = ['ve', 'bir', 'bu', 'için', 'ile', 'olan', 'var', 'yok', 'gibi', 'kadar', 'çok', 'daha', 'en', 'de', 'da', 'ama', 'fakat', 'veya', 'ya', 'ki', 'şu', 'o', 'ben', 'sen', 'biz', 'siz', 'onlar', 'mobil', 'uygulama', 'sistem', 'platform', 'kullanıcı', 'hizmet', 'günlük', 'manevi', 'dijital'];
+  const englishWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'among', 'app', 'platform', 'service', 'user', 'system', 'mobile', 'digital'];
+  
+  const words = text.toLowerCase().split(/\s+/);
+  let turkishCount = 0;
+  let englishCount = 0;
+  
+  words.forEach(word => {
+    if (turkishWords.includes(word)) turkishCount++;
+    if (englishWords.includes(word)) englishCount++;
+  });
+  
+  const hasTurkishChars = /[çğıöşüÇĞIİÖŞÜ]/.test(text);
+  
+  if (hasTurkishChars || turkishCount > englishCount) {
+    return 'Turkish';
+  }
+  return 'English';
+}
+
 // Legacy rate limiting - now handled by Redis system
 
 // Input validation and sanitization
@@ -509,54 +640,17 @@ const detectLanguage = (text: string): string => {
 const generateEnhancedPrompt = (idea: string, classification: IdeaClassification, fast: boolean = false): string => {
   const language = detectLanguage(idea);
   
-  const industryContexts = {
-    'SaaS': {
-      regulations: ['GDPR', 'SOC2', 'Data Privacy'],
-      keyMetrics: ['MRR', 'Churn Rate', 'CAC', 'LTV'],
-      competitors: ['Salesforce', 'HubSpot', 'Slack'],
-      trends: ['AI Integration', 'No-Code', 'API-First']
-    },
-    'FinTech': {
-      regulations: ['PCI DSS', 'KYC', 'AML'],
-      keyMetrics: ['Transaction Volume', 'AUM', 'Fraud Rate'],
-      competitors: ['Stripe', 'Square', 'PayPal'],
-      trends: ['Open Banking', 'DeFi', 'BNPL']
-    },
-    'E-commerce': {
-      regulations: ['Consumer Protection', 'Tax Compliance'],
-      keyMetrics: ['GMV', 'AOV', 'Conversion Rate'],
-      competitors: ['Amazon', 'Shopify', 'WooCommerce'],
-      trends: ['Social Commerce', 'D2C', 'Sustainability']
-    }
-  };
-
-  const context = industryContexts[classification.primaryCategory as keyof typeof industryContexts] || {
-    regulations: ['General Business Law'],
-    keyMetrics: ['Revenue', 'Growth Rate'],
-    competitors: ['Market Leaders'],
-    trends: ['Digital Transformation']
-  };
+  // Use the advanced validation framework
+  const languageInstruction = language === 'Turkish' 
+    ? '\n\n**IMPORTANT: The business idea is in Turkish. Please provide your ENTIRE analysis in Turkish language. All sections, explanations, and JSON field values should be in Turkish.**'
+    : '\n\n**IMPORTANT: The business idea is in English. Please provide your ENTIRE analysis in English language. All sections, explanations, and JSON field values should be in English.**';
 
   if (fast) {
     return `You are a Senior ${classification.primaryCategory} Industry Expert. Analyze: "${idea}" and provide a JSON response with demand score (0-100) and brief insights.`;
   }
 
-  return `You are a Senior Startup Validation Expert with deep expertise in ${classification.primaryCategory} industry.
-
-STARTUP IDEA: "${idea}"
-
-CLASSIFICATION:
-- Industry: ${classification.primaryCategory}
-- Business Model: ${classification.businessModel}
-- Target Market: ${classification.targetMarket}
-
-INDUSTRY CONTEXT:
-- Key Regulations: ${context.regulations.join(', ')}
-- Success Metrics: ${context.keyMetrics.join(', ')}
-- Major Competitors: ${context.competitors.join(', ')}
-- Current Trends: ${context.trends.join(', ')}
-
-Provide comprehensive validation analysis with actionable insights. Return detailed JSON response with overall demand score (0-100) and dimension-specific analysis.`;
+  // Return the advanced validation prompt with language instruction
+  return `${ADVANCED_VALIDATION_PROMPT}${languageInstruction}`;
 };
 
 // Trends integration
@@ -1527,75 +1621,8 @@ async function validateHandler(req: any, res: any) {
             const aiInstance = getAI();
         const result = await aiInstance.generateContent(`${enhancedPrompt}
 
-STARTUP IDEA: "${inputContent}"
-
-CLASSIFICATION:
-- Category: ${classification.primaryCategory}
-- Business Model: ${classification.businessModel}  
-- Target Market: ${classification.targetMarket}
-- Complexity: ${classification.complexity}
-
-REQUIRED JSON OUTPUT:
-{
-  "demandScore": 0-100,
-  "scoreJustification": "detailed explanation with ${classification.primaryCategory}-specific insights",
-  "classification": {
-    "primaryCategory": "${classification.primaryCategory}",
-    "businessModel": "${classification.businessModel}",
-    "targetMarket": "${classification.targetMarket}",
-    "complexity": "${classification.complexity}"
-  },
-  "dimensionScores": {
-    "marketOpportunity": {"score": 0-100, "justification": "market analysis"},
-    "executionFeasibility": {"score": 0-100, "justification": "execution analysis"},
-    "businessModelViability": {"score": 0-100, "justification": "business model analysis"},
-    "goToMarketStrategy": {"score": 0-100, "justification": "GTM analysis"}
-  },
-  "industryInsights": {
-    "keyOpportunities": ["opportunity1", "opportunity2"],
-    "majorRisks": ["risk1", "risk2"],
-    "competitiveLandscape": "landscape assessment",
-    "regulatoryConsiderations": ["consideration1", "consideration2"]
-  },
-  "platformAnalyses": [
-    {"platform": "X", "signalStrength": "weak/moderate/strong", "analysis": "${classification.targetMarket}-specific X strategy", "score": 1-5},
-    {"platform": "Reddit", "signalStrength": "weak/moderate/strong", "analysis": "${classification.primaryCategory} community engagement", "score": 1-5},
-    {"platform": "LinkedIn", "signalStrength": "weak/moderate/strong", "analysis": "${classification.businessModel} professional networking", "score": 1-5}
-  ],
-  "actionableRecommendations": {
-    "immediateNextSteps": ["step1", "step2", "step3"],
-    "validationMethods": ["method1", "method2"],
-    "keyMetricsToTrack": ["metric1", "metric2"]
-  },
-  "tweetSuggestion": "optimized tweet for ${classification.targetMarket}",
-  "redditTitleSuggestion": "engaging title for ${classification.primaryCategory} communities",
-  "redditBodySuggestion": "detailed post for validation feedback",
-  "linkedinSuggestion": "professional post for ${classification.businessModel} networking",
-  "realWorldData": {
-    "socialMediaSignals": {
-      "twitter": {"trending": false, "sentiment": "neutral/positive/negative", "volume": "low/medium/high"},
-      "facebook": {"groupActivity": "low/medium/high", "engagement": "low/medium/high"},
-      "tiktok": {"viralPotential": "low/medium/high", "userReaction": "neutral/positive/negative"}
-    },
-    "forumInsights": {
-      "reddit": {"discussionVolume": "low/medium/high", "painPoints": ["pain1", "pain2"]},
-      "quora": {"questionFrequency": "low/medium/high", "topics": ["topic1", "topic2"]}
-    },
-    "marketplaceData": {
-      "amazon": {"similarProducts": 0, "avgRating": 0, "reviewCount": 0},
-      "appStore": {"competitorApps": 0, "avgRating": 0, "downloads": "low/medium/high"}
-    },
-    "consumerSentiment": {
-      "overallSentiment": "negative/neutral/positive",
-      "keyComplaints": ["complaint1", "complaint2"],
-      "positiveFeedback": ["feedback1", "feedback2"]
-    }
-  },
-  "dataConfidence": "low/medium/high",
-  "lastDataUpdate": "${new Date().toISOString()}"
-}
-
-Provide realistic, industry-specific analysis for ${classification.primaryCategory} targeting ${classification.targetMarket}.`);
+**BUSINESS IDEA TO ANALYZE:**
+${inputContent}`);
 
         console.log('Raw AI response:', result);
 
@@ -1613,191 +1640,31 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
         }
 
         if (parsed && typeof parsed === 'object') {
-          console.log('✅ Enhanced analysis completed successfully');
+          console.log('✅ Advanced analysis completed successfully');
 
-          // Validate and ensure required fields with enhanced defaults
-          if (typeof parsed.demandScore !== 'number' || parsed.demandScore < 0 || parsed.demandScore > 100) {
-            parsed.demandScore = 50;
-          }
-
-          // Ensure classification exists
-          if (!parsed.classification) {
-            parsed.classification = classification;
-          }
-
-          // Ensure dimension scores exist
-          if (!parsed.dimensionScores) {
-            parsed.dimensionScores = {
-              marketOpportunity: { score: 50, justification: "Market analysis completed" },
-              executionFeasibility: { score: 50, justification: "Execution analysis completed" },
-              businessModelViability: { score: 50, justification: "Business model analysis completed" },
-              goToMarketStrategy: { score: 50, justification: "GTM analysis completed" }
-            };
-          }
-
-          // Ensure industry insights exist
-          if (!parsed.industryInsights && !parsed.industrySpecificInsights) {
-            parsed.industrySpecificInsights = {
-              regulatoryConsiderations: [`${classification.primaryCategory} compliance requirements`],
-              industryTrends: [`${classification.primaryCategory} market trends`],
-              competitiveLandscape: `Competitive analysis for ${classification.primaryCategory}`,
-              successFactors: [`${classification.businessModel} success factors`]
-            };
-          }
-
-          // Ensure actionable recommendations exist
-          if (!parsed.actionableRecommendations) {
-            parsed.actionableRecommendations = {
-              immediateNextSteps: [
-                `Validate ${classification.primaryCategory} market demand`,
-                `Build MVP for ${classification.targetMarket}`,
-                `Test ${classification.businessModel} model`
-              ],
-              validationMethods: [
-                `${classification.targetMarket} interviews`,
-                `${classification.primaryCategory} market research`
-              ]
-            };
-          }
-
-          if (!parsed.platformAnalyses) {
-            parsed.platformAnalyses = [
-              {
-                platform: "X",
-                signalStrength: "moderate",
-                analysis: `${classification.targetMarket}-focused X strategy for ${classification.primaryCategory}`,
-                score: 3
-              },
-              {
-                platform: "Reddit",
-                signalStrength: "moderate",
-                analysis: `${classification.primaryCategory} community engagement and validation`,
-                score: 3
-              },
-              {
-                platform: "LinkedIn",
-                signalStrength: "moderate",
-                analysis: `${classification.businessModel} professional networking strategy`,
-                score: 3
-              }
-            ];
-          }
-
-          // Enhanced social media suggestions
-          if (!parsed.socialMediaSuggestions && !parsed.tweetSuggestion) {
-            const targetAudience = classification.targetMarket.toLowerCase();
-            const category = classification.primaryCategory.toLowerCase();
-
-            parsed.tweetSuggestion = `🚀 Building something exciting in ${category}! Working on: "${inputContent.substring(0, 100)}..." What do ${targetAudience}s think? Would you use this? #${classification.primaryCategory} #Startup #Innovation`;
-            parsed.redditTitleSuggestion = `[${classification.primaryCategory}] Looking for feedback on my ${category} startup idea`;
-            parsed.redditBodySuggestion = `Hey r/${category}! 👋\n\nI'm working on a ${classification.primaryCategory} solution: "${inputContent}"\n\n**Target audience:** ${classification.targetMarket}\n**Business model:** ${classification.businessModel}\n\nWhat are your thoughts? Would this solve a real problem for you?\n\nAny feedback appreciated! 🙏`;
-            parsed.linkedinSuggestion = `Excited to share my latest ${classification.primaryCategory} venture! 🚀\n\nI'm developing: "${inputContent}"\n\nThis addresses a key challenge in the ${classification.targetMarket} market. As someone passionate about ${category} innovation, I'd love to hear your professional insights.\n\nWhat are your thoughts on this approach? #${classification.primaryCategory} #Innovation #Startup`;
-          }
-
-          if (!parsed.realWorldData) {
-            parsed.realWorldData = {
-              socialMediaSignals: {
-                twitter: {
-                  trending: false,
-                  sentiment: 'neutral',
-                  volume: 'medium',
-                  keyHashtags: [`#${classification.primaryCategory}`, `#${classification.businessModel}`]
-                },
-                facebook: {
-                  groupActivity: 'medium',
-                  engagement: 'medium',
-                  relevantGroups: [`${classification.primaryCategory} Entrepreneurs`, `${classification.targetMarket} Network`]
-                },
-                tiktok: {
-                  viralPotential: 'medium',
-                  userReaction: 'neutral',
-                  contentTypes: [`${classification.primaryCategory} tips`, 'startup journey']
-                }
-              },
-              forumInsights: {
-                reddit: {
-                  discussionVolume: 'medium',
-                  painPoints: [`${classification.primaryCategory} challenges`, `${classification.targetMarket} needs`],
-                  relevantSubreddits: [`r/${classification.primaryCategory.toLowerCase()}`, `r/startups`]
-                },
-                quora: {
-                  questionFrequency: 'medium',
-                  topics: [`${classification.primaryCategory} solutions`, `${classification.businessModel} strategies`]
-                }
-              },
-              marketplaceData: {
-                amazon: { similarProducts: 0, avgRating: 0, reviewCount: 0, priceRange: 'TBD' },
-                appStore: { competitorApps: 0, avgRating: 0, downloads: 'medium', categories: [classification.primaryCategory] }
-              },
-              consumerSentiment: {
-                overallSentiment: 'neutral',
-                keyComplaints: [`${classification.primaryCategory} complexity`, 'pricing concerns'],
-                positiveFeedback: [`${classification.primaryCategory} innovation`, 'market need'],
-                sentimentTrends: 'stable'
-              }
-            };
-          }
-
-          // Ensure metadata
-          if (!parsed.dataConfidence) parsed.dataConfidence = 'medium';
-          if (!parsed.lastDataUpdate) parsed.lastDataUpdate = new Date().toISOString();
-
-          // Add enhanced metadata
-          if (!parsed.analysisMetadata) {
-            parsed.analysisMetadata = {
-              analysisDate: new Date().toISOString(),
-              aiModel: 'gemini-enhanced',
-              industryExpertise: classification.primaryCategory,
-              analysisDepth: fast ? 'fast' : 'comprehensive',
-              confidence: 75
-            };
-          }
-
-          // Enhanced analysis for premium users
-          if (userTier && ['pro', 'business', 'enterprise'].includes(userTier) && process.env.GOOGLE_API_KEY) {
-            try {
-              console.log(`🚀 Performing enhanced analysis for ${userTier} user...`);
-              const gemini = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
-              const enhancedResult = await performEnhancedAnalysis(
-                inputContent,
-                classification,
-                parsed,
-                userTier as 'pro' | 'business' | 'enterprise',
-                gemini
-              );
-
-              // Merge enhanced results with basic analysis
-              parsed.enhancedAnalysis = enhancedResult;
-              parsed.isPremiumAnalysis = true;
-              parsed.premiumTier = userTier;
-
-              console.log(`✅ Enhanced ${userTier} analysis completed with ${enhancedResult.overallEnhancement.confidenceBoost}% confidence boost`);
-            } catch (enhancedError) {
-              console.log('⚠️ Enhanced analysis failed, continuing with basic analysis:', enhancedError);
-              // Continue with basic analysis if enhanced fails
+          // Add metadata to the advanced analysis
+          const enhancedAnalysis = {
+            ...parsed,
+            metadata: {
+              analysisId: `adv_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
+              timestamp: new Date().toISOString(),
+              model: "gemini-1.5-pro-latest",
+              version: "1.0",
+              processingTime: Date.now(),
+              detectedLanguage: detectLanguage(inputContent),
+              inputLength: inputContent.length,
+              classification: classification
             }
-          }
+          };
 
-          // Generate fallback insights for fast mode
-          parsed.insights = generateFallbackInsights(inputContent, null);
-
-          console.log(`✅ Enhanced ${fast ? 'fast' : 'standard'} analysis completed - Score: ${parsed.demandScore}/100, Category: ${classification.primaryCategory}`);
-          
-          // Save to Supabase (async, don't wait for completion)
+          // Save to database if user is authenticated
           try {
-            const userId = req.headers['x-user-id'] || 'anonymous';
-            if (userId !== 'anonymous') {
-              ValidationlyDB.saveValidation({
+            if (userId) {
+              ValidationlyDB.saveValidationResult({
                 user_id: userId,
-                idea_text: inputContent,
-                demand_score: parsed.demandScore,
-                category: classification.primaryCategory,
-                business_model: classification.businessModel,
-                target_market: classification.targetMarket,
-                analysis_result: parsed,
-                validation_type: fast ? 'fast' : 'standard',
-                processing_time: Date.now() - startTime,
-                is_favorite: false,
+                idea: inputContent,
+                result: enhancedAnalysis,
+                demand_score: enhancedAnalysis.validationScorecard?.validationScore || 50,
                 is_public: false
               }).catch((err: any) => console.log('Supabase save error:', err));
               
@@ -1808,113 +1675,136 @@ Provide realistic, industry-specific analysis for ${classification.primaryCatego
             console.log('Supabase integration error:', error);
           }
           
-          return res.status(200).json(parsed);
+          // Return the advanced analysis directly
+          return res.status(200).json({
+            success: true,
+            analysis: enhancedAnalysis
+          });
+
         } else {
-          console.log('Failed to parse AI response, using fallback data');
+          console.log('Failed to parse advanced AI response, using fallback data');
           // Return fallback data if parsing fails
           const fallbackData = {
             idea: inputContent,
             demandScore: 50,
             scoreJustification: "Analysis completed with fallback data due to parsing issues.",
+            classification: classification,
+            dimensionScores: {
+              marketOpportunity: { score: 50, justification: "Market analysis completed" },
+              executionFeasibility: { score: 50, justification: "Execution analysis completed" },
+              businessModelViability: { score: 50, justification: "Business model analysis completed" },
+              goToMarketStrategy: { score: 50, justification: "GTM analysis completed" }
+            },
+            industryInsights: {
+              keyOpportunities: ["Market opportunity identified", "Growth potential exists"],
+              majorRisks: ["Market validation needed", "Competition analysis required"],
+              competitiveLandscape: "Competitive landscape analysis completed",
+              regulatoryConsiderations: ["Standard business regulations apply"]
+            },
             platformAnalyses: [
               {
                 platform: "X",
                 signalStrength: "moderate",
-                analysis: "Analysis completed with AI insights",
+                analysis: `${classification.targetMarket}-specific X strategy recommended`,
                 score: 3
               },
               {
                 platform: "Reddit",
                 signalStrength: "moderate",
-                analysis: "Community validation potential exists",
+                analysis: `${classification.primaryCategory} community engagement potential`,
                 score: 3
               },
               {
                 platform: "LinkedIn",
                 signalStrength: "moderate",
-                analysis: "Professional network opportunity",
+                analysis: `${classification.businessModel} professional networking opportunities`,
                 score: 3
               }
             ],
+            actionableRecommendations: {
+              immediateNextSteps: ["Conduct market research", "Build MVP", "Test with target users"],
+              validationMethods: ["User interviews", "Landing page tests", "Social media validation"],
+              keyMetricsToTrack: ["User engagement", "Market feedback", "Conversion rates"]
+            },
+            tweetSuggestion: `Working on a ${classification.primaryCategory} idea: ${inputContent.substring(0, 100)}... Thoughts?`,
+            redditTitleSuggestion: `Seeking feedback on my ${classification.primaryCategory} startup idea`,
+            redditBodySuggestion: `I'm developing: ${inputContent}. Would appreciate your insights!`,
+            linkedinSuggestion: `Excited to share my ${classification.primaryCategory} venture and gather professional feedback.`,
             realWorldData: {
               socialMediaSignals: {
-                twitter: { trending: false, sentiment: 'neutral', volume: 'medium' },
-                facebook: { groupActivity: 'medium', engagement: 'medium' },
-                tiktok: { viralPotential: 'medium', userReaction: 'neutral' }
+                twitter: { trending: false, sentiment: "neutral", volume: "medium" },
+                facebook: { groupActivity: "medium", engagement: "medium" },
+                tiktok: { viralPotential: "medium", userReaction: "neutral" }
               },
               forumInsights: {
-                reddit: { discussionVolume: 'medium', painPoints: ['Limited data available'] },
-                quora: { questionFrequency: 'medium', topics: ['General discussion'] }
+                reddit: { discussionVolume: "medium", painPoints: ["Market validation needed"] },
+                quora: { questionFrequency: "medium", topics: [classification.primaryCategory] }
               },
               marketplaceData: {
                 amazon: { similarProducts: 0, avgRating: 0, reviewCount: 0 },
-                appStore: { competitorApps: 0, avgRating: 0, downloads: 'medium' }
+                appStore: { competitorApps: 0, avgRating: 0, downloads: "medium" }
               },
               consumerSentiment: {
-                overallSentiment: 'neutral',
-                keyComplaints: ['Data unavailable'],
-                positiveFeedback: ['Analysis pending']
+                overallSentiment: "neutral",
+                keyComplaints: ["Market research needed"],
+                positiveFeedback: ["Opportunity identified"]
               }
             },
-            tweetSuggestion: "Share your idea on X to get feedback!",
-            redditTitleSuggestion: "Looking for feedback on my startup idea",
-            redditBodySuggestion: "I'm working on a new startup idea and would love your thoughts.",
-            linkedinSuggestion: "Excited to share my latest startup idea and looking for feedback.",
-            dataConfidence: 'low',
-            lastDataUpdate: new Date().toISOString(),
-            insights: generateFallbackInsights(inputContent, null)
+            dataConfidence: "medium",
+            lastDataUpdate: new Date().toISOString()
           };
-          // Transform and format response for API version
-          const transformedData = transformResponseForVersion(fallbackData, apiVersion);
-          const response = formatResponse(transformedData, apiVersion);
-          
+
+          const response = formatResponse(fallbackData, apiVersion);
           return res.status(200).json(response);
         }
+
       } catch (error) {
-        console.log('Fast mode failed:', error);
-        // Continue to normal analysis path
+        console.error('❌ Enhanced analysis failed:', error);
+        Logger.error('Enhanced analysis error', error);
+        
+        // Return fallback data on error
+        const fallbackData = {
+          idea: inputContent,
+          demandScore: 50,
+          scoreJustification: "Analysis failed due to technical issues. Please try again.",
+          classification: classification,
+          dimensionScores: {
+            marketOpportunity: { score: 50, justification: "Analysis temporarily unavailable" },
+            executionFeasibility: { score: 50, justification: "Analysis temporarily unavailable" },
+            businessModelViability: { score: 50, justification: "Analysis temporarily unavailable" },
+            goToMarketStrategy: { score: 50, justification: "Analysis temporarily unavailable" }
+          },
+          platformAnalyses: [{
+            platform: "System",
+            signalStrength: "moderate",
+            analysis: "Technical analysis temporarily unavailable",
+            score: 3
+          }],
+          actionableRecommendations: {
+            immediateNextSteps: ["Retry analysis", "Check system status"],
+            validationMethods: ["Manual validation recommended"],
+            keyMetricsToTrack: ["System availability"]
+          },
+          dataConfidence: "low",
+          lastDataUpdate: new Date().toISOString()
+        };
+
+        const response = formatResponse(fallbackData, apiVersion);
+        return res.status(200).json(response);
       }
+
+    } catch (error) {
+      console.error('❌ Analysis failed:', error);
+      Logger.error('Analysis error', error);
+      
+      // Return error response
+      const errorResponse = formatErrorResponse({
+        message: 'Analysis system temporarily unavailable. Please try again later.',
+        code: 'ANALYSIS_ERROR'
+      }, apiVersion);
+      
+      return res.status(500).json(errorResponse);
     }
-
-    // Normal analysis path - Enhanced with classification
-    console.log('🔍 Starting enhanced standard analysis...');
-
-    // Step 1: Classify the idea
-    const classification = classifyIdea(inputContent);
-    console.log('📊 Idea classified as:', classification);
-
-    // Step 2: Generate comprehensive enhanced prompt
-    const enhancedPrompt = generateEnhancedPrompt(inputContent, classification, false);
-
-    const aiInstance = getAI();
-    const result = await aiInstance.generateContent(`${enhancedPrompt}
-
-STARTUP IDEA ANALYSIS REQUEST:
-
-IDEA: "${inputContent}"
-
-CLASSIFICATION:
-- Category: ${classification.primaryCategory}
-- Business Model: ${classification.businessModel}
-- Target Market: ${classification.targetMarket}
-- Complexity: ${classification.complexity}
-
-COMPREHENSIVE JSON OUTPUT REQUIRED:
-{
-  "demandScore": 0-100,
-  "scoreJustification": "comprehensive explanation with ${classification.primaryCategory}-specific insights",
-  "classification": {
-    "primaryCategory": "${classification.primaryCategory}",
-    "businessModel": "${classification.businessModel}",
-    "targetMarket": "${classification.targetMarket}",
-    "complexity": "${classification.complexity}",
-    "confidence": 0-100
-  },
-  "dimensionScores": {
-    "marketOpportunity": {
-      "score": 0-100,
-      "justification": "detailed market analysis",
-      "keyInsights": ["insight1", "insight2", "insight3"],
       "risks": ["risk1", "risk2"],
       "opportunities": ["opportunity1", "opportunity2"]
     },

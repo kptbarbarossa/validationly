@@ -12,7 +12,7 @@ export class AdvancedValidationService {
     try {
       console.log('🚀 Starting advanced validation analysis for:', idea.substring(0, 50) + '...');
       
-      const response = await fetch('/api/v1/advanced-validate', {
+      const response = await fetch('/api/v1/validate', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,14 +25,20 @@ export class AdvancedValidationService {
         throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
       }
 
-      const data: AdvancedValidationResponse = await response.json();
+      const data = await response.json();
       
-      if (!data.success || !data.analysis) {
-        throw new Error('Invalid response format from advanced validation API');
+      // Handle both old and new response formats
+      if (data.success && data.analysis) {
+        // New advanced format
+        console.log('✅ Advanced validation analysis completed successfully');
+        return data.analysis;
+      } else if (data.validationScorecard) {
+        // Direct advanced analysis format
+        console.log('✅ Advanced validation analysis completed successfully');
+        return data;
+      } else {
+        throw new Error('Invalid response format from validation API');
       }
-
-      console.log('✅ Advanced validation analysis completed successfully');
-      return data.analysis;
 
     } catch (error) {
       console.error('❌ Advanced validation analysis failed:', error);
