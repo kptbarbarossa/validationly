@@ -13,7 +13,8 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     detectSessionInUrl: true,
     storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    storageKey: 'validationly-auth-token'
+    storageKey: 'validationly-auth-token',
+    flowType: 'pkce'
   }
 });
 

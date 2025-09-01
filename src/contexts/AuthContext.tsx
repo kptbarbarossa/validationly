@@ -128,18 +128,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return;
         }
 
+        // First try to get session from Supabase
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('Error getting session:', error);
-          // Don't fail completely, just log the error
         }
 
         if (mounted) {
-          setSession(session);
-          const userInfo = await extractUserInfo(session?.user ?? null);
-          setUser(userInfo);
-          saveAuthState(userInfo);
+          if (session?.user) {
+            // We have a valid session
+            setSession(session);
+            const userInfo = await extractUserInfo(session.user);
+            setUser(userInfo);
+            saveAuthState(userInfo);
+          } else {
+            // No session, but check if we have cached user data
+            const cachedUser = loadAuthState();
+            if (cachedUser) {
+              setUser(cachedUser);
+              // Try to refresh the session
+              const { data: { session: refreshedSession } } = await supabase.auth.refreshSession();
+              if (refreshedSession) {
+                setSession(refreshedSession);
+              }
+            }
+          }
           setLoading(false);
         }
       } catch (error) {
@@ -158,18 +172,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
       
-              if (mounted) {
-          try {
-            setSession(session);
-            const userInfo = await extractUserInfo(session?.user ?? null);
-            setUser(userInfo);
-            saveAuthState(userInfo);
-          } catch (error) {
-            console.error('Error processing auth state change:', error);
-          } finally {
-            setLoading(false);
-          }
+      if (mounted) {
+        try {
+          setSession(session);
+          const userInfo = await extractUserInfo(session?.user ?? null);
+          setUser(userInfo);
+          saveAuthState(userInfo);
+        } catch (error) {
+          console.error('Error processing auth state change:', error);
+        } finally {
+          setLoading(false);
         }
+      }
     });
 
     return () => {
