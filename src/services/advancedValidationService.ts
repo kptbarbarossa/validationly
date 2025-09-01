@@ -4,9 +4,8 @@ export class AdvancedValidationService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.NODE_ENV === 'production' 
-      ? 'https://validationly.vercel.app'
-      : 'http://localhost:3000';
+    // Use relative URL to avoid CSP issues
+    this.baseUrl = '';
   }
 
   async analyzeIdea(idea: string): Promise<AdvancedValidationAnalysis> {
