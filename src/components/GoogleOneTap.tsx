@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { supabase } from '../../lib/supabase'; // Direct import for simplicity
 
 declare global {
   interface Window {
@@ -8,29 +8,23 @@ declare global {
 }
 
 const GoogleOneTap: React.FC = () => {
-  const { signInWithGoogle } = useAuth();
   const [isReady, setIsReady] = useState(false);
   const promptedRef = useRef(false);
 
-  const handleGoogleSignIn = useCallback(async () => {
-    if (!isReady || promptedRef.current) return;
-    promptedRef.current = true;
+  const signInWithIdToken = useCallback(async (token: string) => {
+    const { error } = await supabase.auth.signInWithIdToken({
+      provider: 'google',
+      token: token,
+    });
 
-    try {
-      const { error } = await signInWithGoogle();
-      if (error) {
-        console.error('FedCM Sign-In Error:', error.message);
-        // Handle specific errors like "declined" or "closed" if needed
-        if (error.message.includes('declined') || error.message.includes('closed')) {
-          // User intentionally closed the prompt, maybe show a button to try again
-        }
-      }
-    } catch (e: any) {
-      console.error('Unexpected FedCM Error:', e.message);
+    if (error) {
+      console.error('Error signing in with ID token:', error.message);
     }
-  }, [isReady, signInWithGoogle]);
+  }, []);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
     script.async = true;
@@ -39,32 +33,47 @@ const GoogleOneTap: React.FC = () => {
       if (window.google) {
         window.google.accounts.id.initialize({
           client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-          callback: async (response: any) => {
-            // This callback handles the credential response
-            // We are using FedCM, so this might not be the primary flow
-            console.log('Google One Tap callback received:', response);
+          callback: (response: any) => {
+            if (response.credential) {
+              signInWithIdToken(response.credential);
+            }
           },
           use_fedcm_for_prompt: true,
         });
         setIsReady(true);
+      } else {
+        console.error("Google GSI script loaded but window.google is not available.");
       }
+    };
+    script.onerror = () => {
+      console.error("Failed to load Google GSI script.");
     };
     document.body.appendChild(script);
 
     return () => {
       document.body.removeChild(script);
+      if (window.google) {
+        window.google.accounts.id.cancel();
+      }
     };
-  }, []);
+  }, [signInWithIdToken]);
 
   useEffect(() => {
-    if (isReady) {
-      handleGoogleSignIn();
+    if (isReady && !promptedRef.current) {
+      promptedRef.current = true;
+      window.google.accounts.id.prompt((notification: any) => {
+        if (notification.isNotDisplayed()) {
+          console.log("Google One Tap prompt was not displayed:", notification.getNotDisplayedReason());
+        } else if (notification.isSkippedMoment()) {
+          console.log("Google One Tap prompt was skipped:", notification.getSkippedReason());
+        } else if (notification.isDismissedMoment()) {
+            console.log("Google One Tap prompt was dismissed:", notification.getDismissedReason());
+        }
+      });
     }
-  }, [isReady, handleGoogleSignIn]);
+  }, [isReady]);
 
-  // This component does not render anything itself
-  // It triggers the Google One Tap prompt programmatically
-  return null;
+  return null; // This component does not render UI
 };
 
 export default GoogleOneTap;
