@@ -339,4 +339,122 @@ export class ValidationlyDB {
     }
     return true;
   }
+
+  // Additional functions for new features
+  static async deleteValidation(validationId: string): Promise<boolean> {
+    const { error } = await supabase
+      .from('validations')
+      .delete()
+      .eq('id', validationId);
+    
+    if (error) {
+      console.error('Error deleting validation:', error);
+      return false;
+    }
+    return true;
+  }
+
+  static async saveValidationResult(validation: {
+    user_id: string;
+    idea: string;
+    demand_score: number;
+    score_justification: string;
+    category?: string;
+    platform_data?: any;
+    insights?: any;
+  }): Promise<string | null> {
+    const { data, error } = await supabase
+      .from('validations')
+      .insert([{
+        user_id: validation.user_id,
+        idea_text: validation.idea,
+        demand_score: validation.demand_score,
+        score_justification: validation.score_justification,
+        category: validation.category,
+        platform_data: validation.platform_data,
+        insights: validation.insights,
+        is_favorite: false,
+        is_public: false
+      }])
+      .select('id')
+      .single();
+    
+    if (error) {
+      console.error('Error saving validation result:', error);
+      return null;
+    }
+    return data.id;
+  }
+
+  static async searchValidations(
+    userId: string,
+    searchTerm: string,
+    filters?: {
+      categories?: string[];
+      scoreRange?: [number, number];
+      dateRange?: { start: string; end: string };
+      favoritesOnly?: boolean;
+    }
+  ): Promise<Validation[]> {
+    let query = supabase
+      .from('validations')
+      .select('*')
+      .eq('user_id', userId);
+
+    // Search term
+    if (searchTerm) {
+      query = query.or(`idea_text.ilike.%${searchTerm}%,category.ilike.%${searchTerm}%`);
+    }
+
+    // Filters
+    if (filters) {
+      if (filters.categories && filters.categories.length > 0) {
+        query = query.in('category', filters.categories);
+      }
+      
+      if (filters.scoreRange) {
+        query = query
+          .gte('demand_score', filters.scoreRange[0])
+          .lte('demand_score', filters.scoreRange[1]);
+      }
+      
+      if (filters.dateRange?.start) {
+        query = query.gte('created_at', filters.dateRange.start);
+      }
+      
+      if (filters.dateRange?.end) {
+        query = query.lte('created_at', filters.dateRange.end);
+      }
+      
+      if (filters.favoritesOnly) {
+        query = query.eq('is_favorite', true);
+      }
+    }
+
+    const { data, error } = await query
+      .order('created_at', { ascending: false })
+      .limit(100);
+    
+    if (error) {
+      console.error('Error searching validations:', error);
+      return [];
+    }
+    return data || [];
+  }
+
+  static async getValidationCategories(userId: string): Promise<string[]> {
+    const { data, error } = await supabase
+      .from('validations')
+      .select('category')
+      .eq('user_id', userId)
+      .not('category', 'is', null);
+    
+    if (error) {
+      console.error('Error fetching categories:', error);
+      return [];
+    }
+    
+    const categories = [...new Set(data.map(v => v.category).filter(Boolean))];
+    return categories.sort();
+  }
 }

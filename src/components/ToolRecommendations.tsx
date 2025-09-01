@@ -300,6 +300,78 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </div>
         </div>
 
+        {/* NextUpKit Affiliate Card */}
+        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
+          <div className="flex items-start space-x-4">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+                <img 
+                  src="https://www.nextupkit.com/favicon.ico" 
+                  alt="NextUpKit Logo"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    // Fallback to text logo if image fails
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.className = "w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center";
+                      parent.innerHTML = '<span class="text-white font-bold text-lg">N</span>';
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <h3 className="text-lg font-bold text-white">NextUpKit</h3>
+                <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full text-xs font-medium">
+                  Startup Toolkit
+                </span>
+              </div>
+              
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                Complete startup toolkit with templates, resources, and tools to launch your next project faster. 
+                Perfect for founders, developers, and entrepreneurs.
+              </p>
+              
+              {/* Key Features */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Ready-to-use templates</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Launch resources</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Time-saving tools</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Proven frameworks</span>
+                </div>
+              </div>
+              
+              {/* CTA */}
+              <a
+                href="https://nextupkit.lemonsqueezy.com?aff=rYX8Vm"
+                target="_blank"
+                rel="nofollow noopener"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+              >
+                <span>🚀</span>
+                <span>Get NextUpKit</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
 
       </div>
     );

@@ -7,6 +7,7 @@ import { useAuth } from '../contexts/AuthContext';
 import type { UserInput } from '../types';
 import { ValidationProgress } from '../components/LoadingStates';
 import PromptGallery from '../components/PromptGallery';
+import IdeaHistory from '../components/IdeaHistory';
 // import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import { SEOHead } from '../components/SEOHead';
@@ -403,6 +404,19 @@ const HomePage: React.FC = () => {
                         textareaRef.current?.focus();
                     }}
                 />
+
+                {/* Idea History for logged in users */}
+                {user && (
+                    <div className="mt-12 px-4 sm:px-0">
+                        <IdeaHistory
+                            onSelectIdea={(idea) => {
+                                const validation = validateInput(idea);
+                                setUserInput(validation);
+                                textareaRef.current?.focus();
+                            }}
+                        />
+                    </div>
+                )}
 
                 {/* Recommended Tools Section */}
                 <div className="mt-16 mb-8 text-center">

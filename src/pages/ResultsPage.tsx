@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
+import ExportShare from '../components/ExportShare';
 
 import { PLATFORMS } from '../constants';
 import { 
@@ -1685,6 +1686,31 @@ const ResultsPage: React.FC = () => {
                 </div>
               </div>
             </div>
+          )}
+
+          {/* Export & Share Section */}
+          {result && (
+            <ExportShare
+              validation={{
+                idea: idea,
+                demandScore: result.demandScore,
+                scoreJustification: result.scoreJustification,
+                classification: result.classification,
+                insights: result.insights || {
+                  keyInsights: [],
+                  opportunities: [],
+                  painPoints: [],
+                  trendingTopics: []
+                },
+                socialMediaSuggestions: socialPosts || {
+                  tweetSuggestion: '',
+                  linkedinSuggestion: '',
+                  redditTitleSuggestion: '',
+                  redditBodySuggestion: ''
+                }
+              }}
+              className="mb-8"
+            />
           )}
 
           {/* Try Another Idea */}
