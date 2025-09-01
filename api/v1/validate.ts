@@ -116,7 +116,7 @@ Return your analysis in a structured JSON format with the following structure:
   },
   "validationScorecard": {
     "validationResult": "Strong/Moderate/Weak",
-    "validationScore": 0-100,
+    "validationScore": "0-100 number",
     "demandResult": "High/Moderate/Niche/Low",
     "executiveSummary": "string",
     "biggestRisk": "string",

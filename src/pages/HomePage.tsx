@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 // Direct API call - no service layer needed
 import type { UserInput } from '../types';
-// import LoadingSpinner from '../components/LoadingSpinner';
-// import EnhancedLoadingSpinner from '../components/EnhancedLoadingSpinner';
+import { ValidationProgress } from '../components/LoadingStates';
 import PromptGallery from '../components/PromptGallery';
 // import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
@@ -274,7 +273,7 @@ const HomePage: React.FC = () => {
                     <div className="relative z-10 py-8">
                         {/* Logo removed by request */}
 
-                        <h1 className="text-4xl sm:text-5xl font-bold mb-4 animate-slide-up delay-100">
+                        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-4 animate-slide-up delay-100 px-4 sm:px-0">
                             <span className="bg-gradient-to-r from-slate-100 to-slate-300 bg-clip-text text-transparent">
                                 Validate your idea
                             </span>
@@ -282,26 +281,39 @@ const HomePage: React.FC = () => {
                             <span className="bg-gradient-to-r from-indigo-600 to-cyan-500 bg-clip-text text-transparent">before you build it</span>
                         </h1>
 
-                        <p className="text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200">
+                        <p className="text-lg sm:text-xl text-slate-300 mb-6 max-w-2xl mx-auto animate-slide-up delay-200 px-4 sm:px-0">
                             Get instant insights from 7+ platforms and find the exact tools to build smarter.
                         </p>
 
-                        {/* Platform List as Text */}
-                        <p className="text-lg text-slate-400 mb-8 animate-slide-up delay-300">
-                            Reddit • Hacker News • Product Hunt • GitHub • Stack Overflow • Google News • YouTube
-                        </p>
+                        {/* Platform List as Text - Mobile Responsive */}
+                        <div className="text-sm sm:text-base lg:text-lg text-slate-400 mb-8 animate-slide-up delay-300 px-4 sm:px-0">
+                            <div className="hidden sm:block">
+                                Reddit • Hacker News • Product Hunt • GitHub • Stack Overflow • Google News • YouTube
+                            </div>
+                            <div className="sm:hidden text-center">
+                                <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
+                                    <span>Reddit</span>
+                                    <span>Hacker News</span>
+                                    <span>Product Hunt</span>
+                                    <span>GitHub</span>
+                                    <span>Stack Overflow</span>
+                                    <span>Google News</span>
+                                    <span className="col-span-2">YouTube</span>
+                                </div>
+                            </div>
+                        </div>
 
 
 
                     </div>
                 </div>
 
-                <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto">
+                <form onSubmit={handleSubmit} className="w-full max-w-2xl mx-auto px-4 sm:px-0">
                     <div className="mb-4">
                         <div className="relative group">
                             <div className="absolute inset-0 bg-gradient-to-r from-indigo-500 to-cyan-500 rounded-2xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
 
-                            <div className="relative rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
+                            <div className="relative rounded-2xl sm:rounded-3xl glass glass-border hover:border-white/15 hover:shadow-xl transition-all">
 
                                 <textarea
                                     ref={textareaRef}
@@ -309,14 +321,14 @@ const HomePage: React.FC = () => {
                                     onChange={handleInputChange}
                                     onKeyDown={handleKeyDown}
                                     placeholder={'Describe your startup idea...'}
-                                    className="glass-scroll w-full p-6 pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-lg min-h-[120px] placeholder-slate-400 text-slate-100"
+                                    className="glass-scroll w-full p-4 sm:p-6 pr-12 sm:pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-base sm:text-lg min-h-[100px] sm:min-h-[120px] placeholder-slate-400 text-slate-100"
                                     rows={4}
                                     disabled={isLoading}
                                     aria-describedby={userInput.errorMessage ? "error-message" : undefined}
                                 />
 
                                 {/* Character counter */}
-                                <div className="absolute bottom-3 left-6 text-sm text-slate-400">
+                                <div className="absolute bottom-3 left-4 sm:left-6 text-xs sm:text-sm text-slate-400">
                                     {userInput.idea.length}/1000
                                 </div>
 
@@ -403,7 +415,7 @@ const HomePage: React.FC = () => {
                 </div>
 
                 {/* Affiliate Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-16">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto mb-16 px-4 sm:px-0">
                     {/* Capacity.so Affiliate Card */}
                     <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
                         <div className="flex items-start space-x-3">
