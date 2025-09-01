@@ -25,39 +25,45 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
   const oneTapRef = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     // Check if Google Client ID is configured
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
     
     if (!clientId || clientId === 'YOUR_GOOGLE_CLIENT_ID') {
-      setError('Google Client ID is not configured. Please set VITE_GOOGLE_CLIENT_ID in your environment variables.');
+      console.log('Google Client ID not configured, skipping One Tap');
       setIsLoading(false);
       return;
     }
 
+    let retryCount = 0;
+    const maxRetries = 10;
+
     // Wait for Google Identity Services to load
     const initializeGoogleOneTap = () => {
       if (!window.google?.accounts?.id) {
-        // Retry after a short delay if Google script hasn't loaded yet
-        setTimeout(initializeGoogleOneTap, 100);
+        retryCount++;
+        if (retryCount < maxRetries) {
+          // Retry after a short delay if Google script hasn't loaded yet
+          setTimeout(initializeGoogleOneTap, 200);
+        } else {
+          console.log('Google Identity Services failed to load after retries');
+          setIsLoading(false);
+        }
         return;
       }
 
       try {
-        // Initialize Google One Tap with FedCM support
+        // Initialize Google One Tap with modern FedCM settings
         window.google.accounts.id.initialize({
           client_id: clientId,
           callback: async (response: any) => {
             if (response.credential) {
               try {
-                // Handle the credential - you can either:
-                // 1. Use it directly with Supabase
-                // 2. Pass it to your existing signInWithGoogle function
                 if (onSignIn) {
                   onSignIn(response.credential);
                 } else {
-                  // Default behavior - trigger Google sign in
                   await signInWithGoogle();
                 }
               } catch (signInError) {
@@ -66,36 +72,49 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
               }
             }
           },
-          auto_select: false, // Don't auto-select if user has multiple accounts
-          cancel_on_tap_outside: true, // Cancel if user clicks outside
+          auto_select: false,
+          cancel_on_tap_outside: true,
           prompt_parent_id: oneTapRef.current?.id || 'google-one-tap',
-          // FedCM compatibility settings
+          // Modern FedCM settings
           use_fedcm_for_prompt: true,
           context: 'signin',
           itp_support: true,
+          // Additional settings to reduce warnings
+          prompt_parent_id: 'google-one-tap',
+          state_cookie_domain: window.location.hostname,
         });
 
-        // Show the One Tap prompt with better error handling
+        // Show the One Tap prompt with silent error handling
         window.google.accounts.id.prompt((notification: any) => {
           if (notification.isNotDisplayed()) {
             const reason = notification.getNotDisplayedReason();
-            console.log('Google One Tap not displayed:', reason);
+            // Only log in development
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Google One Tap not displayed:', reason);
+            }
             
-            // Handle specific FedCM-related reasons
-            if (reason === 'fedcm_opted_out' || reason === 'fedcm_disabled') {
-              console.log('FedCM is disabled or opted out - this is expected behavior');
+            // Handle FedCM-related reasons silently
+            if (reason === 'fedcm_opted_out' || reason === 'fedcm_disabled' || reason === 'browser_not_supported') {
+              // These are expected behaviors, don't show errors
+              return;
             }
           } else if (notification.isSkippedMoment()) {
-            console.log('Google One Tap skipped:', notification.getSkippedReason());
+            const reason = notification.getSkippedReason();
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Google One Tap skipped:', reason);
+            }
           } else if (notification.isDismissedMoment()) {
-            console.log('Google One Tap dismissed:', notification.getDismissedReason());
+            const reason = notification.getDismissedReason();
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Google One Tap dismissed:', reason);
+            }
           }
         });
 
+        setIsInitialized(true);
         setIsLoading(false);
       } catch (error) {
         console.error('Error initializing Google One Tap:', error);
-        setError('Failed to initialize Google One Tap. Please refresh the page and try again.');
         setIsLoading(false);
       }
     };
@@ -105,11 +124,20 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
 
     // Cleanup function
     return () => {
-      if (window.google?.accounts?.id) {
-        window.google.accounts.id.cancel();
+      if (window.google?.accounts?.id && isInitialized) {
+        try {
+          window.google.accounts.id.cancel();
+        } catch (error) {
+          // Ignore cleanup errors
+        }
       }
     };
-  }, [signInWithGoogle, onSignIn]);
+  }, [signInWithGoogle, onSignIn, isInitialized]);
+
+  // Don't render anything if not configured or loading
+  if (!import.meta.env.VITE_GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
+    return null;
+  }
 
   if (error) {
     return (

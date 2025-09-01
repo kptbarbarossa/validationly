@@ -98,47 +98,46 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
             Curated tools and services to help you build and grow your startup
           </p>
         </div>
-        {/* Login to See Price Block - Ana İçerik */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
-          <div className="flex items-start space-x-3">
+        {/* Login to See Price Block - Premium Design */}
+        <div className="bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl max-w-md mx-auto hover:border-white/30 transition-all duration-300 group">
+          <div className="flex items-start space-x-4">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-xs">B2B</span>
+              <div className="w-14 h-14 bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-indigo-500/25 transition-all duration-300">
+                <span className="text-white font-bold text-sm">B2B</span>
               </div>
             </div>
 
             {/* Content */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-bold text-white">Login to See Price - Price Hider</h3>
-                <span className="bg-indigo-500/20 text-indigo-400 px-2 py-1 rounded-full text-xs font-medium">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2 mb-3">
+                <h3 className="text-xl font-bold text-white truncate">Login to See Price</h3>
+                <span className="bg-indigo-500/20 text-indigo-300 px-3 py-1 rounded-full text-xs font-semibold border border-indigo-500/30">
                   Shopify App
                 </span>
               </div>
 
-              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                Hide product prices from guests to drive account signups and grow your email list.
-                Perfect for B2B stores, wholesale, and exclusive pricing strategies.
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed line-clamp-3">
+                Hide product prices from guests to drive account signups and grow your email list. Perfect for B2B stores and wholesale strategies.
               </p>
 
               {/* Key Features */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="grid grid-cols-2 gap-2 mb-5">
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Easy installation</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Easy installation</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>B2B & wholesale ready</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">B2B ready</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Mobile optimized</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Mobile optimized</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Zero maintenance</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Zero maintenance</span>
                 </div>
               </div>
 
@@ -147,21 +146,21 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                 href="https://apps.shopify.com/shhhh-pricing"
                 target="_blank"
                 rel="nofollow noopener"
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                className="inline-flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white rounded-xl hover:shadow-lg hover:shadow-indigo-500/25 transition-all transform hover:scale-105 text-sm font-semibold w-full justify-center"
               >
                 <span>🛍️</span>
-                <span>View on Shopify App Store</span>
+                <span>View on Shopify</span>
               </a>
             </div>
           </div>
         </div>
 
-        {/* Capacity.so Affiliate Card */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
+        {/* Capacity.so Affiliate Card - Premium Design */}
+        <div className="bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl max-w-md mx-auto hover:border-white/30 transition-all duration-300 group">
           <div className="flex items-start space-x-4">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300">
                 <img 
                   src="https://capacity.so/favicon.ico" 
                   alt="Capacity Logo"
@@ -172,7 +171,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                     target.style.display = 'none';
                     const parent = target.parentElement;
                     if (parent) {
-                      parent.className = "w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center";
+                      parent.className = "w-14 h-14 bg-gradient-to-br from-purple-500 via-pink-600 to-rose-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-purple-500/25 transition-all duration-300";
                       parent.innerHTML = '<span class="text-white font-bold text-lg">C</span>';
                     }
                   }}
@@ -181,36 +180,35 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
             </div>
 
             {/* Content */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-bold text-white">Capacity</h3>
-                <span className="bg-purple-500/20 text-purple-400 px-2 py-1 rounded-full text-xs font-medium">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2 mb-3">
+                <h3 className="text-xl font-bold text-white truncate">Capacity</h3>
+                <span className="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-xs font-semibold border border-purple-500/30">
                   AI Assistant
                 </span>
               </div>
 
-              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                AI-powered knowledge management and team collaboration platform.
-                Perfect for startups to organize ideas, automate workflows, and scale efficiently.
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed line-clamp-3">
+                AI-powered knowledge management and team collaboration platform. Perfect for startups to organize ideas and automate workflows.
               </p>
 
               {/* Key Features */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="grid grid-cols-2 gap-2 mb-5">
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>AI-powered automation</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">AI automation</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Team collaboration</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Team collaboration</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Knowledge management</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Knowledge base</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Workflow optimization</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Workflow optimization</span>
                 </div>
               </div>
 
@@ -219,7 +217,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                 href="https://capacity.so/?via=barbaros"
                 target="_blank"
                 rel="nofollow noopener"
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                className="inline-flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-purple-600 via-pink-600 to-rose-600 text-white rounded-xl hover:shadow-lg hover:shadow-purple-500/25 transition-all transform hover:scale-105 text-sm font-semibold w-full justify-center"
               >
                 <span>🚀</span>
                 <span>Try Capacity Free</span>
@@ -228,12 +226,12 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </div>
         </div>
 
-        {/* StoryShort.ai Affiliate Card */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
+        {/* StoryShort.ai Affiliate Card - Premium Design */}
+        <div className="bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl max-w-md mx-auto hover:border-white/30 transition-all duration-300 group">
           <div className="flex items-start space-x-4">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300">
                 <img 
                   src="https://storyshort.ai/favicon.ico" 
                   alt="StoryShort Logo"
@@ -244,7 +242,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                     target.style.display = 'none';
                     const parent = target.parentElement;
                     if (parent) {
-                      parent.className = "w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center";
+                      parent.className = "w-14 h-14 bg-gradient-to-br from-blue-500 via-cyan-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-blue-500/25 transition-all duration-300";
                       parent.innerHTML = '<span class="text-white font-bold text-lg">S</span>';
                     }
                   }}
@@ -253,36 +251,35 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
             </div>
             
             {/* Content */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-bold text-white">StoryShort</h3>
-                <span className="bg-blue-500/20 text-blue-400 px-2 py-1 rounded-full text-xs font-medium">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2 mb-3">
+                <h3 className="text-xl font-bold text-white truncate">StoryShort</h3>
+                <span className="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs font-semibold border border-blue-500/30">
                   AI Video Creator
                 </span>
               </div>
               
-              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                Transform your ideas into engaging short videos with AI. 
-                Perfect for content marketing, social media, and startup storytelling.
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed line-clamp-3">
+                Transform your ideas into engaging short videos with AI. Perfect for content marketing, social media, and startup storytelling.
               </p>
               
               {/* Key Features */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="grid grid-cols-2 gap-2 mb-5">
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>AI video generation</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">AI video generation</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Social media ready</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Social media ready</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Multiple formats</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Multiple formats</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Quick creation</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Quick creation</span>
                 </div>
               </div>
               
@@ -291,7 +288,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                 href="https://storyshort.ai/?via=barbaros"
                 target="_blank"
                 rel="nofollow noopener"
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                className="inline-flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 text-white rounded-xl hover:shadow-lg hover:shadow-blue-500/25 transition-all transform hover:scale-105 text-sm font-semibold w-full justify-center"
               >
                 <span>🎬</span>
                 <span>Create Videos with AI</span>
@@ -300,12 +297,12 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </div>
         </div>
 
-        {/* NextUpKit Affiliate Card */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
+        {/* NextUpKit Affiliate Card - Premium Design */}
+        <div className="bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl max-w-md mx-auto hover:border-white/30 transition-all duration-300 group">
           <div className="flex items-start space-x-4">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg group-hover:shadow-orange-500/25 transition-all duration-300">
                 <img 
                   src="https://www.nextupkit.com/favicon.ico" 
                   alt="NextUpKit Logo"
@@ -316,7 +313,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                     target.style.display = 'none';
                     const parent = target.parentElement;
                     if (parent) {
-                      parent.className = "w-12 h-12 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex items-center justify-center";
+                      parent.className = "w-14 h-14 bg-gradient-to-br from-orange-500 via-red-600 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-orange-500/25 transition-all duration-300";
                       parent.innerHTML = '<span class="text-white font-bold text-lg">N</span>';
                     }
                   }}
@@ -325,36 +322,35 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
             </div>
             
             {/* Content */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-bold text-white">NextUpKit</h3>
-                <span className="bg-orange-500/20 text-orange-400 px-2 py-1 rounded-full text-xs font-medium">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2 mb-3">
+                <h3 className="text-xl font-bold text-white truncate">NextUpKit</h3>
+                <span className="bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full text-xs font-semibold border border-orange-500/30">
                   Startup Toolkit
                 </span>
               </div>
               
-              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                Complete startup toolkit with templates, resources, and tools to launch your next project faster. 
-                Perfect for founders, developers, and entrepreneurs.
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed line-clamp-3">
+                Complete startup toolkit with templates, resources, and tools to launch your next project faster. Perfect for founders and developers.
               </p>
               
               {/* Key Features */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="grid grid-cols-2 gap-2 mb-5">
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Ready-to-use templates</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Ready templates</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Launch resources</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Launch resources</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Time-saving tools</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Time-saving tools</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Proven frameworks</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Proven frameworks</span>
                 </div>
               </div>
               
@@ -363,7 +359,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                 href="https://nextupkit.lemonsqueezy.com?aff=rYX8Vm"
                 target="_blank"
                 rel="nofollow noopener"
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-red-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                className="inline-flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-orange-600 via-red-600 to-amber-600 text-white rounded-xl hover:shadow-lg hover:shadow-orange-500/25 transition-all transform hover:scale-105 text-sm font-semibold w-full justify-center"
               >
                 <span>🚀</span>
                 <span>Get NextUpKit</span>
@@ -372,12 +368,12 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </div>
         </div>
 
-        {/* TapRefer Affiliate Card */}
-        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
+        {/* TapRefer Affiliate Card - Premium Design */}
+        <div className="bg-gradient-to-br from-gray-900/80 via-gray-800/60 to-gray-900/80 backdrop-blur-xl rounded-3xl p-6 border border-white/20 shadow-2xl max-w-md mx-auto hover:border-white/30 transition-all duration-300 group">
           <div className="flex items-start space-x-4">
             {/* Logo */}
             <div className="flex-shrink-0">
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+              <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center p-2 shadow-lg group-hover:shadow-green-500/25 transition-all duration-300">
                 <img 
                   src="https://taprefer.com/favicon.ico" 
                   alt="TapRefer Logo"
@@ -388,7 +384,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                     target.style.display = 'none';
                     const parent = target.parentElement;
                     if (parent) {
-                      parent.className = "w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center";
+                      parent.className = "w-14 h-14 bg-gradient-to-br from-green-500 via-emerald-600 to-teal-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-green-500/25 transition-all duration-300";
                       parent.innerHTML = '<span class="text-white font-bold text-lg">T</span>';
                     }
                   }}
@@ -397,35 +393,35 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
             </div>
             
             {/* Content */}
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-bold text-white">TapRefer</h3>
-                <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs font-medium">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center space-x-2 mb-3">
+                <h3 className="text-xl font-bold text-white truncate">TapRefer</h3>
+                <span className="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-xs font-semibold border border-green-500/30">
                   Referral Platform
                 </span>
               </div>
               
-              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
-                Build a powerful referral program to grow your business. Track referrals, reward customers, and boost sales with automated referral marketing.
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed line-clamp-3">
+                Build a powerful referral program to grow your business. Track referrals, reward customers, and boost sales with automated marketing.
               </p>
               
               {/* Key Features */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
+              <div className="grid grid-cols-2 gap-2 mb-5">
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Automated tracking</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Automated tracking</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Custom rewards</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Custom rewards</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Analytics dashboard</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Analytics dashboard</span>
                 </div>
                 <div className="flex items-center space-x-2 text-xs text-gray-400">
-                  <span className="text-green-400">✓</span>
-                  <span>Easy integration</span>
+                  <span className="text-green-400 text-sm">✓</span>
+                  <span className="truncate">Easy integration</span>
                 </div>
               </div>
               
@@ -434,7 +430,7 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
                 href="https://taprefer.com?aff=rYX8Vm"
                 target="_blank"
                 rel="nofollow noopener"
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+                className="inline-flex items-center space-x-2 px-5 py-3 bg-gradient-to-r from-green-600 via-emerald-600 to-teal-600 text-white rounded-xl hover:shadow-lg hover:shadow-green-500/25 transition-all transform hover:scale-105 text-sm font-semibold w-full justify-center"
               >
                 <span>🎯</span>
                 <span>Start Referral Program</span>
