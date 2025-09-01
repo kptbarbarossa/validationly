@@ -613,30 +613,6 @@ const performEnhancedAnalysis = async (
 };
 
 // Enhanced prompt generator
-// Detect language of the input idea
-const detectLanguage = (text: string): string => {
-  // Simple language detection based on common words
-  const turkishWords = ['ve', 'bir', 'bu', 'için', 'ile', 'olan', 'var', 'yok', 'gibi', 'kadar', 'çok', 'daha', 'en', 'de', 'da', 'ama', 'fakat', 'veya', 'ya', 'ki', 'şu', 'o', 'ben', 'sen', 'biz', 'siz', 'onlar'];
-  const englishWords = ['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'among'];
-  
-  const words = text.toLowerCase().split(/\s+/);
-  let turkishCount = 0;
-  let englishCount = 0;
-  
-  words.forEach(word => {
-    if (turkishWords.includes(word)) turkishCount++;
-    if (englishWords.includes(word)) englishCount++;
-  });
-  
-  // Also check for Turkish characters
-  const hasTurkishChars = /[çğıöşüÇĞIİÖŞÜ]/.test(text);
-  
-  if (hasTurkishChars || turkishCount > englishCount) {
-    return 'Turkish';
-  }
-  return 'English';
-};
-
 const generateEnhancedPrompt = (idea: string, classification: IdeaClassification, fast: boolean = false): string => {
   const language = detectLanguage(idea);
   
