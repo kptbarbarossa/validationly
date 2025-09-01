@@ -372,6 +372,77 @@ export const ToolRecommendations: React.FC<ToolRecommendationsProps> = ({
           </div>
         </div>
 
+        {/* TapRefer Affiliate Card */}
+        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10 max-w-lg mx-auto">
+          <div className="flex items-start space-x-4">
+            {/* Logo */}
+            <div className="flex-shrink-0">
+              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-2">
+                <img 
+                  src="https://taprefer.com/favicon.ico" 
+                  alt="TapRefer Logo"
+                  className="w-full h-full object-contain"
+                  onError={(e) => {
+                    // Fallback to text logo if image fails
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const parent = target.parentElement;
+                    if (parent) {
+                      parent.className = "w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center";
+                      parent.innerHTML = '<span class="text-white font-bold text-lg">T</span>';
+                    }
+                  }}
+                />
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="flex-1">
+              <div className="flex items-center space-x-2 mb-2">
+                <h3 className="text-lg font-bold text-white">TapRefer</h3>
+                <span className="bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs font-medium">
+                  Referral Platform
+                </span>
+              </div>
+              
+              <p className="text-gray-300 text-sm mb-4 leading-relaxed">
+                Build a powerful referral program to grow your business. Track referrals, reward customers, and boost sales with automated referral marketing.
+              </p>
+              
+              {/* Key Features */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Automated tracking</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Custom rewards</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Analytics dashboard</span>
+                </div>
+                <div className="flex items-center space-x-2 text-xs text-gray-400">
+                  <span className="text-green-400">✓</span>
+                  <span>Easy integration</span>
+                </div>
+              </div>
+              
+              {/* CTA */}
+              <a
+                href="https://taprefer.com?aff=rYX8Vm"
+                target="_blank"
+                rel="nofollow noopener"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all transform hover:scale-105 text-sm font-medium"
+              >
+                <span>🎯</span>
+                <span>Start Referral Program</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
 
       </div>
     );
