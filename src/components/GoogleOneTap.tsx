@@ -79,8 +79,6 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
           use_fedcm_for_prompt: true,
           context: 'signin',
           itp_support: true,
-          // Additional settings to reduce warnings
-          prompt_parent_id: 'google-one-tap',
           state_cookie_domain: window.location.hostname,
         });
 
@@ -134,10 +132,8 @@ const GoogleOneTap: React.FC<GoogleOneTapProps> = ({ onSignIn }) => {
     };
   }, [signInWithGoogle, onSignIn, isInitialized]);
 
-  // Don't render anything if not configured or loading
-  if (!import.meta.env.VITE_GOOGLE_CLIENT_ID || import.meta.env.VITE_GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
-    return null;
-  }
+  // Temporarily disable Google One Tap due to FedCM issues
+  return null;
 
   if (error) {
     return (

@@ -144,8 +144,7 @@ const HomePage: React.FC = () => {
                     ...(user && { 'x-user-id': user.id })
                 },
                 body: JSON.stringify({
-                    content: ideaPayload,
-                    analysisType: 'comprehensive'
+                    idea: ideaPayload
                 })
             });
 
