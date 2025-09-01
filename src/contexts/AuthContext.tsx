@@ -77,27 +77,69 @@ const extractUserInfo = async (user: User | null): Promise<AuthUser | null> => {
   };
 };
 
+// Helper function to save auth state to localStorage
+const saveAuthState = (user: AuthUser | null) => {
+  if (typeof window !== 'undefined') {
+    try {
+      if (user) {
+        localStorage.setItem('validationly-user', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('validationly-user');
+      }
+    } catch (error) {
+      console.error('Error saving auth state to localStorage:', error);
+    }
+  }
+};
+
+// Helper function to load auth state from localStorage
+const loadAuthState = (): AuthUser | null => {
+  if (typeof window !== 'undefined') {
+    try {
+      const savedUser = localStorage.getItem('validationly-user');
+      return savedUser ? JSON.parse(savedUser) : null;
+    } catch (error) {
+      console.error('Error loading auth state from localStorage:', error);
+      return null;
+    }
+  }
+  return null;
+};
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(() => loadAuthState());
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Save user state to localStorage whenever it changes
+  useEffect(() => {
+    saveAuthState(user);
+  }, [user]);
 
   useEffect(() => {
     let mounted = true;
 
-    // Get initial session
+    // Get initial session with better error handling
     const initializeAuth = async () => {
       try {
+        // Check if we're in browser environment
+        if (typeof window === 'undefined') {
+          setLoading(false);
+          return;
+        }
+
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('Error getting session:', error);
+          // Don't fail completely, just log the error
         }
 
         if (mounted) {
           setSession(session);
           const userInfo = await extractUserInfo(session?.user ?? null);
           setUser(userInfo);
+          saveAuthState(userInfo);
           setLoading(false);
         }
       } catch (error) {
@@ -110,18 +152,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     initializeAuth();
 
-    // Listen for auth changes
+    // Listen for auth changes with better error handling
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event, session?.user?.email);
       
-      if (mounted) {
-        setSession(session);
-        const userInfo = await extractUserInfo(session?.user ?? null);
-        setUser(userInfo);
-        setLoading(false);
-      }
+              if (mounted) {
+          try {
+            setSession(session);
+            const userInfo = await extractUserInfo(session?.user ?? null);
+            setUser(userInfo);
+            saveAuthState(userInfo);
+          } catch (error) {
+            console.error('Error processing auth state change:', error);
+          } finally {
+            setLoading(false);
+          }
+        }
     });
 
     return () => {
@@ -153,6 +201,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    saveAuthState(null);
   };
 
   const signInWithGoogle = async () => {
@@ -195,6 +244,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return false;
     }
   };
+
+  // Debug helper to check auth state
+  const debugAuthState = () => {
+    console.log('Current Auth State:', {
+      user,
+      session: session ? 'Active' : 'None',
+      loading,
+      localStorage: typeof window !== 'undefined' ? localStorage.getItem('validationly-user') : 'N/A'
+    });
+  };
+
+  // Expose debug function in development
+  if (process.env.NODE_ENV === 'development') {
+    (window as any).debugAuth = debugAuthState;
+  }
 
   const value = {
     user,
