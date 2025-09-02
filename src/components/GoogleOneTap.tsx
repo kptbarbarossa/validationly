@@ -71,6 +71,7 @@ const GoogleOneTap: React.FC = () => {
     if (!window.google?.accounts?.id) return;
 
     try {
+      // Google'ın resmi FedCM dokümantasyonuna göre yapılandırma
       window.google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: (response: any) => {
@@ -78,15 +79,17 @@ const GoogleOneTap: React.FC = () => {
             signInWithIdToken(response.credential);
           }
         },
-        // FedCM uyumlu ayarlar - uyarıları önler
-        use_fedcm_for_prompt: true,
+        // FedCM geçiş dönemi ayarları
+        use_fedcm: true, // FedCM API'lerini kullan
         auto_select: false,
         cancel_on_tap_outside: true,
         prompt_parent_id: 'google-one-tap-container',
         // FedCM için gerekli ayarlar
-        fedcm_mode: 'enabled',
         state_cookie_domain: window.location.hostname,
         ux_mode: 'popup',
+        // Geçiş dönemi için ek ayarlar
+        context: 'signin',
+        itp_support: true,
       });
       setIsReady(true);
     } catch (error) {
@@ -98,38 +101,66 @@ const GoogleOneTap: React.FC = () => {
     if (isReady && !promptedRef.current && scriptLoadedRef.current) {
       promptedRef.current = true;
       
-      // Delay the prompt to ensure everything is ready
+      // FedCM için optimize edilmiş bekleme süresi
       setTimeout(() => {
         if (window.google?.accounts?.id) {
           try {
-            // FedCM uyumlu prompt çağrısı - uyarıları önler
+            // FedCM uyumlu prompt çağrısı
             window.google.accounts.id.prompt((notification: any) => {
               if (notification.isNotDisplayed()) {
                 const reason = notification.getNotDisplayedReason();
                 console.log("Google One Tap prompt was not displayed:", reason);
-                // FedCM uyumlu hata yönetimi
-                if (reason === 'opt_out_or_no_session' || 
-                    reason === 'suppressed_by_user' || 
-                    reason === 'fedcm_disabled') {
-                  return;
+                
+                // FedCM geçiş dönemi hata yönetimi
+                switch (reason) {
+                  case 'opt_out_or_no_session':
+                  case 'suppressed_by_user':
+                  case 'fedcm_disabled':
+                  case 'browser_not_supported':
+                    // Bu durumlar normal, tekrar deneme
+                    break;
+                  default:
+                    console.warn("Unexpected not displayed reason:", reason);
                 }
               } else if (notification.isSkippedMoment()) {
                 const reason = notification.getSkippedReason();
                 console.log("Google One Tap prompt was skipped:", reason);
-                // FedCM uyumlu skip durumları
-                if (reason === 'fedcm_disabled' || reason === 'unknown_reason') {
-                  return;
+                
+                // FedCM geçiş dönemi skip durumları
+                switch (reason) {
+                  case 'auto_cancel':
+                  case 'user_cancel':
+                  case 'tap_outside':
+                  case 'fedcm_disabled':
+                  case 'unknown_reason':
+                    // Bu durumlar normal, tekrar deneme
+                    break;
+                  default:
+                    console.warn("Unexpected skip reason:", reason);
                 }
               } else if (notification.isDismissedMoment()) {
                 const reason = notification.getDismissedReason();
                 console.log("Google One Tap prompt was dismissed:", reason);
+                
+                // FedCM geçiş dönemi dismiss durumları
+                switch (reason) {
+                  case 'credential_returned':
+                    // Başarılı giriş
+                    break;
+                  case 'cancel_called':
+                  case 'tap_outside':
+                    // Kullanıcı iptal etti
+                    break;
+                  default:
+                    console.warn("Unexpected dismiss reason:", reason);
+                }
               }
             });
           } catch (error) {
             console.error('Error prompting Google One Tap:', error);
           }
         }
-      }, 2000); // FedCM için daha uzun bekleme süresi
+      }, 1500); // FedCM için optimize edilmiş bekleme süresi
     }
   }, [isReady]);
 
