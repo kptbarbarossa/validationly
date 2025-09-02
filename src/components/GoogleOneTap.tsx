@@ -62,7 +62,7 @@ const GoogleOneTap: React.FC = () => {
     script.src = 'https://accounts.google.com/gsi/client';
     script.async = true;
     script.defer = true;
-    script.setAttribute('data-fedcm-explicit-call', 'true');
+    // FedCM geçiş döneminde uyarıları önlemek için data-fedcm-explicit-call kaldırıldı
     
     script.onload = () => {
       scriptLoadedRef.current = true;
@@ -94,22 +94,22 @@ const GoogleOneTap: React.FC = () => {
     if (!window.google?.accounts?.id) return;
 
     try {
-      // Ağustos 2025 sonrası FedCM zorunlu - modern GIS kullan
+      // FedCM geçiş döneminde uyarıları önlemek için eski sistemi kullan
+      // Ağustos 2025'te FedCM zorunlu hale geldiğinde use_fedcm: true yapılacak
       window.google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
         callback: handleCredentialResponse,
-        // FedCM zorunlu ayarlar (Ağustos 2025 sonrası)
+        // FedCM geçiş dönemi - uyarıları önlemek için devre dışı
         auto_select: false,
         cancel_on_tap_outside: true,
         prompt_parent_id: 'google-one-tap-container',
-        // Modern GIS ayarları
+        // Temel ayarlar
         state_cookie_domain: window.location.hostname,
         ux_mode: 'popup',
         context: 'signin',
         itp_support: true,
-        // FedCM zorunlu ayarlar
-        use_fedcm: true,
-        fedcm_mode: 'enabled',
+        // FedCM geçiş dönemi - uyarıları önlemek için devre dışı
+        use_fedcm: false, // FedCM API'lerini kullanma, eski sistemi kullan
         // Gelişmiş güvenlik ayarları
         nonce: generateNonce(),
         // Performans optimizasyonları
@@ -137,17 +137,17 @@ const GoogleOneTap: React.FC = () => {
     if (isReady && !promptedRef.current && scriptLoadedRef.current && !user) {
       promptedRef.current = true;
       
-      // FedCM için optimize edilmiş bekleme süresi
+      // Eski sistem için optimize edilmiş bekleme süresi
       setTimeout(() => {
         if (window.google?.accounts?.id) {
           try {
-            // Modern GIS prompt çağrısı
+            // Eski sistem prompt çağrısı - FedCM uyarıları olmayacak
             window.google.accounts.id.prompt((notification: GooglePromptNotification) => {
               if (notification.isNotDisplayed()) {
                 const reason = notification.getNotDisplayedReason();
                 console.log("Google One Tap prompt was not displayed:", reason);
                 
-                // FedCM zorunlu hata yönetimi
+                // Eski sistem hata yönetimi
                 switch (reason) {
                   case 'opt_out_or_no_session':
                   case 'suppressed_by_user':
@@ -162,7 +162,7 @@ const GoogleOneTap: React.FC = () => {
                 const reason = notification.getSkippedReason();
                 console.log("Google One Tap prompt was skipped:", reason);
                 
-                // FedCM zorunlu skip durumları
+                // Eski sistem skip durumları
                 switch (reason) {
                   case 'auto_cancel':
                   case 'user_cancel':
@@ -178,7 +178,7 @@ const GoogleOneTap: React.FC = () => {
                 const reason = notification.getDismissedReason();
                 console.log("Google One Tap prompt was dismissed:", reason);
                 
-                // FedCM zorunlu dismiss durumları
+                // Eski sistem dismiss durumları
                 switch (reason) {
                   case 'credential_returned':
                     // Başarılı giriş
@@ -197,7 +197,7 @@ const GoogleOneTap: React.FC = () => {
             console.error('Error prompting Google One Tap:', error);
           }
         }
-      }, 1000); // FedCM için optimize edilmiş bekleme süresi
+      }, 1000); // Eski sistem için optimize edilmiş bekleme süresi
     }
   }, [isReady, user]);
 
