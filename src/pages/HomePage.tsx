@@ -12,7 +12,6 @@ import IdeaHistory from '../components/IdeaHistory';
 import { useAnalytics } from '../components/Analytics';
 import { SEOHead } from '../components/SEOHead';
 // import RelatedStartups from '../components/RelatedStartups';
-import GoogleOneTap from '../components/GoogleOneTap';
 import AffiliateCardsSection from '../components/AffiliateCardsSection';
 import DOMPurify from 'dompurify';
 
@@ -253,9 +252,6 @@ const HomePage: React.FC = () => {
                 keywords="startup validation, idea validation, market research, AI analysis, startup tools, entrepreneur, indie hacker, business validation, market demand"
             />
 
-            {/* Google One Tap Sign-In - appears automatically */}
-            {!user && <GoogleOneTap />}
-
             <div className="text-center max-w-4xl mx-auto text-slate-100">
                 {/* Enhanced Hero Section - Reduced spacing */}
                 <div className="relative mb-0" >
@@ -413,7 +409,6 @@ const HomePage: React.FC = () => {
                     className="mt-16 mb-8"
                     maxCards={6}
                 />
-
 
 
 

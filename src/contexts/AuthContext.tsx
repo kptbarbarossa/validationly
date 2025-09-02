@@ -11,7 +11,6 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName?: string) => Promise<{ error?: any }>;
   signOut: () => Promise<void>;
   signInWithGoogle: () => Promise<{ error?: any }>;
-  signInWithGoogleOneTap: (credential: string) => Promise<{ error?: any }>;
   isAdmin: () => boolean;
   isSuperAdmin: () => boolean;
   hasPermission: (permission: string) => Promise<boolean>;
@@ -140,11 +139,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      // Google Identity Services ile çıkış
-      if (window.google?.accounts?.id) {
-        window.google.accounts.id.disableAutoSelect();
-      }
-      
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);
@@ -153,30 +147,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Google Identity Services ile giriş (One Tap)
-  const signInWithGoogleOneTap = async (credential: string) => {
-    try {
-      console.log('Signing in with Google One Tap credential');
-      
-      const { error } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
-        token: credential,
-      });
-      
-      if (error) {
-        console.error('Google One Tap sign-in error:', error);
-        return { error };
-      }
-      
-      console.log('Successfully signed in with Google One Tap');
-      return { error: null };
-    } catch (error) {
-      console.error('Google One Tap sign-in error:', error);
-      return { error };
-    }
-  };
-
-  // Eski Google OAuth ile giriş (Button için)
+  // Google OAuth ile giriş
   const signInWithGoogle = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
@@ -235,7 +206,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       session, 
       loading, 
       signInWithGoogle, 
-      signInWithGoogleOneTap,
       signOut, 
       signIn, 
       signUp,
