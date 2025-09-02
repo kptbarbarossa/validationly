@@ -86,18 +86,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const newUrl = window.location.pathname;
           window.history.replaceState({}, document.title, newUrl);
           
-          // Supabase'in otomatik session handling'ini bekle
-          // exchangeCodeForSession yerine getSession kullan
-          const { data: { session }, error } = await supabase.auth.getSession();
-          if (error) {
-            console.error('Error getting session after OAuth:', error);
-          }
-          
-          if (mounted) {
-            const userInfo = await extractUserInfo(session?.user ?? null);
-            setSession(session);
-            setUser(userInfo);
-            setLoading(false);
+          // Code'u session'a çevir
+          try {
+            const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code);
+            if (error) {
+              console.error('Error exchanging code for session:', error);
+            }
+            
+            if (mounted) {
+              const userInfo = await extractUserInfo(session?.user ?? null);
+              setSession(session);
+              setUser(userInfo);
+              setLoading(false);
+            }
+          } catch (exchangeError) {
+            console.error('Error in exchangeCodeForSession:', exchangeError);
+            // Fallback: normal session kontrolü
+            const { data: { session }, error } = await supabase.auth.getSession();
+            if (error) {
+              console.error('Error getting session after OAuth:', error);
+            }
+            
+            if (mounted) {
+              const userInfo = await extractUserInfo(session?.user ?? null);
+              setSession(session);
+              setUser(userInfo);
+              setLoading(false);
+            }
           }
         } else {
           // Normal session kontrolü
