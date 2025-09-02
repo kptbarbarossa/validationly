@@ -167,30 +167,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { error };
   };
 
-  const signInWithGooglePopup = async () => {
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setAuthState({ user: null, session: null });
+  };
+
+  const signInWithGoogle = async () => {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: `${window.location.origin}/`,
-          // Using standard popup flow for maximum compatibility
-          skipBrowserRedirect: false, 
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+          skipBrowserRedirect: true, // Manually handle the redirect for FedCM
         },
       });
+      
       if (error) {
-        console.error('Google OAuth Popup Error:', error.message);
+        console.error('Google OAuth error:', error);
         return { error };
       }
+      
       return { error: null };
-    } catch (e: any) {
-      console.error('Unexpected error during Google sign-in popup:', e.message);
-      return { error: { message: 'An unexpected error occurred.' } as any };
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      return { error };
     }
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setAuthState({ user: null, session: null });
   };
 
   const isAdmin = (): boolean => {
@@ -239,7 +244,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <AuthContext.Provider value={{ 
       ...authState, 
       loading, 
-      signInWithGoogle: signInWithGooglePopup, // Rename for clarity
+      signInWithGoogle, 
       signOut, 
       signIn, 
       signUp,
