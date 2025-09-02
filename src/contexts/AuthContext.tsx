@@ -88,13 +88,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           
           // Code'u session'a çevir
           try {
+            console.log('Attempting to exchange code for session...');
             const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code);
             if (error) {
               console.error('Error exchanging code for session:', error);
+            } else {
+              console.log('Successfully exchanged code for session:', session);
             }
             
             if (mounted) {
               const userInfo = await extractUserInfo(session?.user ?? null);
+              console.log('Extracted user info:', userInfo);
               setSession(session);
               setUser(userInfo);
               setLoading(false);
@@ -102,13 +106,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           } catch (exchangeError) {
             console.error('Error in exchangeCodeForSession:', exchangeError);
             // Fallback: normal session kontrolü
+            console.log('Trying fallback getSession...');
             const { data: { session }, error } = await supabase.auth.getSession();
             if (error) {
               console.error('Error getting session after OAuth:', error);
+            } else {
+              console.log('Fallback session:', session);
             }
             
             if (mounted) {
               const userInfo = await extractUserInfo(session?.user ?? null);
+              console.log('Fallback user info:', userInfo);
               setSession(session);
               setUser(userInfo);
               setLoading(false);
@@ -138,10 +146,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     getInitialSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
+        console.log('Auth state changed:', event, session);
         if (mounted) {
           try {
             const userInfo = await extractUserInfo(session?.user ?? null);
+            console.log('Auth state change - user info:', userInfo);
             setSession(session);
             setUser(userInfo);
             setLoading(false);
