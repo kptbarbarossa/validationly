@@ -141,42 +141,12 @@ const ToolsPage: React.FC = () => {
                         </p>
                     </div>
                     {/* Recommended Tools Section */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
-                        {/* Capacity.so Affiliate Card */}
-                        <div className="bg-gray-800/50 backdrop-blur rounded-2xl p-4 border border-white/10">
-                            <div className="flex items-start space-x-3">
-                                {/* Logo */}
-                                <div className="flex-shrink-0">
-                                    <div className="w-10 h-10 rounded-lg flex items-center justify-center p-2">
-                                        <img
-                                            src="https://capacity.so/favicon.ico"
-                                            alt="Capacity Logo"
-                                            className="w-full h-full object-contain"
-                                            onError={(e) => {
-                                                // Fallback to text logo if image fails
-                                                const target = e.target as HTMLImageElement;
-                                                target.style.display = 'none';
-                                                const parent = target.parentElement;
-                                                if (parent) {
-                                                    parent.className = "w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg flex items-center justify-center";
-                                                    parent.innerHTML = '<span class="text-white font-bold text-sm">C</span>';
-                                                }
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-
-                                {/* Content */}
-                                <div className="flex-1">
-                                    <div className="flex items-center space-x-2 mb-1">
-                                        <h3 className="text-base font-bold text-white">Capacity</h3>
-                                        <span className="bg-purple-500/20 text-purple-400 px-2 py-0.5 rounded-full text-xs font-medium">
-                                            AI Assistant
-                                        </span>
-                                    </div>
-
-                                    <p className="text-gray-300 text-xs mb-3 leading-relaxed">
-                                        AI-powered knowledge management and team collaboration platform.
+                    <AffiliateCardsSection 
+                        className="mt-20"
+                        title="🛠️ Recommended Tools for Growth"
+                        subtitle="Essential tools and services to accelerate your startup growth and success"
+                        maxCards={6}
+                    />
                                         Perfect for startups to organize ideas and automate workflows.
                                     </p>
 

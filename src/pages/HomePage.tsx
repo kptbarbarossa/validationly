@@ -411,7 +411,7 @@ const HomePage: React.FC = () => {
                 {/* Recommended Tools Section */}
                 <AffiliateCardsSection 
                     className="mt-16 mb-8"
-                    maxCards={4}
+                    maxCards={6}
                 />
 
 

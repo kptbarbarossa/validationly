@@ -78,11 +78,16 @@ const GoogleOneTap: React.FC = () => {
             signInWithIdToken(response.credential);
           }
         },
-        // Remove FedCM to avoid warnings
+        // FedCM uyarısını önlemek için modern ayarlar
+        use_fedcm_for_prompt: true,
         auto_select: false,
         cancel_on_tap_outside: true,
-        // Add better error handling
         prompt_parent_id: 'google-one-tap-container',
+        // FedCM için gerekli ayarlar
+        fedcm_mode: 'enabled',
+        // Daha iyi hata yönetimi
+        state_cookie_domain: window.location.hostname,
+        ux_mode: 'popup',
       });
       setIsReady(true);
     } catch (error) {
@@ -98,17 +103,24 @@ const GoogleOneTap: React.FC = () => {
       setTimeout(() => {
         if (window.google?.accounts?.id) {
           try {
+            // FedCM uyumlu prompt çağrısı
             window.google.accounts.id.prompt((notification: any) => {
               if (notification.isNotDisplayed()) {
                 const reason = notification.getNotDisplayedReason();
                 console.log("Google One Tap prompt was not displayed:", reason);
-                // Don't retry for certain reasons
-                if (reason === 'opt_out_or_no_session' || reason === 'suppressed_by_user') {
+                // FedCM ile ilgili durumları kontrol et
+                if (reason === 'opt_out_or_no_session' || 
+                    reason === 'suppressed_by_user' || 
+                    reason === 'fedcm_disabled') {
                   return;
                 }
               } else if (notification.isSkippedMoment()) {
                 const reason = notification.getSkippedReason();
                 console.log("Google One Tap prompt was skipped:", reason);
+                // FedCM ile ilgili skip durumları
+                if (reason === 'fedcm_disabled' || reason === 'unknown_reason') {
+                  return;
+                }
               } else if (notification.isDismissedMoment()) {
                 const reason = notification.getDismissedReason();
                 console.log("Google One Tap prompt was dismissed:", reason);
@@ -118,7 +130,7 @@ const GoogleOneTap: React.FC = () => {
             console.error('Error prompting Google One Tap:', error);
           }
         }
-      }, 1500); // Increased delay for better stability
+      }, 2000); // FedCM için daha uzun bekleme süresi
     }
   }, [isReady]);
 
