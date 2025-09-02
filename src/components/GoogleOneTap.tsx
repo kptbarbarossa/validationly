@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { supabase } from '../../lib/supabase';
+import { useAuth } from '../contexts/AuthContext';
 
 declare global {
   interface Window {
@@ -7,54 +7,76 @@ declare global {
   }
 }
 
+interface GoogleCredentialResponse {
+  credential: string;
+  select_by: string;
+}
+
+interface GooglePromptNotification {
+  isNotDisplayed(): boolean;
+  getNotDisplayedReason(): string;
+  isSkippedMoment(): boolean;
+  getSkippedReason(): string;
+  isDismissedMoment(): boolean;
+  getDismissedReason(): string;
+}
+
 const GoogleOneTap: React.FC = () => {
+  const { signInWithGoogleOneTap, user } = useAuth();
   const [isReady, setIsReady] = useState(false);
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const promptedRef = useRef(false);
   const scriptLoadedRef = useRef(false);
 
-  const signInWithIdToken = useCallback(async (token: string) => {
+  // Google Identity Services ile giriş işlemi
+  const handleCredentialResponse = useCallback(async (response: GoogleCredentialResponse) => {
     try {
-      const { error } = await supabase.auth.signInWithIdToken({
-        provider: 'google',
-        token: token,
-      });
+      console.log('Google One Tap credential received:', response.select_by);
+      
+      const { error } = await signInWithGoogleOneTap(response.credential);
 
       if (error) {
-        console.error('Error signing in with ID token:', error.message);
+        console.error('Error signing in with Google One Tap:', error);
       } else {
         console.log('Successfully signed in with Google One Tap');
+        setIsSignedIn(true);
       }
     } catch (error) {
-      console.error('Error in signInWithIdToken:', error);
+      console.error('Error in handleCredentialResponse:', error);
     }
-  }, []);
+  }, [signInWithGoogleOneTap]);
 
+  // Google Identity Services script yükleme
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Check if Google script is already loaded
+    // Script zaten yüklenmiş mi kontrol et
     if (window.google?.accounts?.id) {
       scriptLoadedRef.current = true;
-      initializeGoogleOneTap();
+      initializeGoogleIdentityServices();
       return;
     }
 
-    // Load Google GSI script
+    // Google Identity Services script'ini yükle
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
     script.async = true;
     script.defer = true;
+    script.setAttribute('data-fedcm-explicit-call', 'true');
+    
     script.onload = () => {
       scriptLoadedRef.current = true;
       if (window.google?.accounts?.id) {
-        initializeGoogleOneTap();
+        initializeGoogleIdentityServices();
       } else {
-        console.error("Google GSI script loaded but window.google.accounts.id is not available.");
+        console.error("Google Identity Services script loaded but window.google.accounts.id is not available.");
       }
     };
+    
     script.onerror = () => {
-      console.error("Failed to load Google GSI script.");
+      console.error("Failed to load Google Identity Services script.");
     };
+    
     document.head.appendChild(script);
 
     return () => {
@@ -67,56 +89,70 @@ const GoogleOneTap: React.FC = () => {
     };
   }, []);
 
-  const initializeGoogleOneTap = () => {
+  // Google Identity Services başlatma
+  const initializeGoogleIdentityServices = () => {
     if (!window.google?.accounts?.id) return;
 
     try {
-      // Google'ın resmi FedCM dokümantasyonuna göre yapılandırma
+      // Ağustos 2025 sonrası FedCM zorunlu - modern GIS kullan
       window.google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        callback: (response: any) => {
-          if (response.credential) {
-            signInWithIdToken(response.credential);
-          }
-        },
-        // FedCM geçiş dönemi ayarları
-        use_fedcm: true, // FedCM API'lerini kullan
+        callback: handleCredentialResponse,
+        // FedCM zorunlu ayarlar (Ağustos 2025 sonrası)
         auto_select: false,
         cancel_on_tap_outside: true,
         prompt_parent_id: 'google-one-tap-container',
-        // FedCM için gerekli ayarlar
+        // Modern GIS ayarları
         state_cookie_domain: window.location.hostname,
         ux_mode: 'popup',
-        // Geçiş dönemi için ek ayarlar
         context: 'signin',
         itp_support: true,
+        // FedCM zorunlu ayarlar
+        use_fedcm: true,
+        fedcm_mode: 'enabled',
+        // Gelişmiş güvenlik ayarları
+        nonce: generateNonce(),
+        // Performans optimizasyonları
+        prompt_delay: 1000,
+        prompt_timeout: 5000,
       });
+      
       setIsReady(true);
+      console.log('Google Identity Services initialized successfully');
     } catch (error) {
-      console.error('Error initializing Google One Tap:', error);
+      console.error('Error initializing Google Identity Services:', error);
     }
   };
 
+  // Güvenlik için nonce oluştur
+  const generateNonce = (): string => {
+    const array = new Uint8Array(16);
+    crypto.getRandomValues(array);
+    return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+  };
+
+  // Google One Tap prompt'u göster
   useEffect(() => {
-    if (isReady && !promptedRef.current && scriptLoadedRef.current) {
+    // Kullanıcı giriş yapmamışsa ve sistem hazırsa prompt göster
+    if (isReady && !promptedRef.current && scriptLoadedRef.current && !user) {
       promptedRef.current = true;
       
       // FedCM için optimize edilmiş bekleme süresi
       setTimeout(() => {
         if (window.google?.accounts?.id) {
           try {
-            // FedCM uyumlu prompt çağrısı
-            window.google.accounts.id.prompt((notification: any) => {
+            // Modern GIS prompt çağrısı
+            window.google.accounts.id.prompt((notification: GooglePromptNotification) => {
               if (notification.isNotDisplayed()) {
                 const reason = notification.getNotDisplayedReason();
                 console.log("Google One Tap prompt was not displayed:", reason);
                 
-                // FedCM geçiş dönemi hata yönetimi
+                // FedCM zorunlu hata yönetimi
                 switch (reason) {
                   case 'opt_out_or_no_session':
                   case 'suppressed_by_user':
-                  case 'fedcm_disabled':
                   case 'browser_not_supported':
+                  case 'invalid_client':
                     // Bu durumlar normal, tekrar deneme
                     break;
                   default:
@@ -126,13 +162,13 @@ const GoogleOneTap: React.FC = () => {
                 const reason = notification.getSkippedReason();
                 console.log("Google One Tap prompt was skipped:", reason);
                 
-                // FedCM geçiş dönemi skip durumları
+                // FedCM zorunlu skip durumları
                 switch (reason) {
                   case 'auto_cancel':
                   case 'user_cancel':
                   case 'tap_outside':
-                  case 'fedcm_disabled':
                   case 'unknown_reason':
+                  case 'credential_returned':
                     // Bu durumlar normal, tekrar deneme
                     break;
                   default:
@@ -142,13 +178,14 @@ const GoogleOneTap: React.FC = () => {
                 const reason = notification.getDismissedReason();
                 console.log("Google One Tap prompt was dismissed:", reason);
                 
-                // FedCM geçiş dönemi dismiss durumları
+                // FedCM zorunlu dismiss durumları
                 switch (reason) {
                   case 'credential_returned':
                     // Başarılı giriş
                     break;
                   case 'cancel_called':
                   case 'tap_outside':
+                  case 'user_cancel':
                     // Kullanıcı iptal etti
                     break;
                   default:
@@ -160,9 +197,9 @@ const GoogleOneTap: React.FC = () => {
             console.error('Error prompting Google One Tap:', error);
           }
         }
-      }, 1500); // FedCM için optimize edilmiş bekleme süresi
+      }, 1000); // FedCM için optimize edilmiş bekleme süresi
     }
-  }, [isReady]);
+  }, [isReady, user]);
 
   return (
     <div id="google-one-tap-container" className="fixed top-4 right-4 z-50"></div>
