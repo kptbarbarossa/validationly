@@ -77,7 +77,7 @@ export const affiliateCards: AffiliateCardProps[] = [
     id: 'taprefer',
     name: 'TapRefer',
     description: 'Build a powerful referral program to grow your business. Track referrals, reward customers, and boost sales with automated referral marketing.',
-    logo: 'https://taprefer.com/favicon.ico',
+    logo: 'https://taprefer.com/wp-content/uploads/2024/01/taprefer-logo.png',
     logoFallback: 'T',
     category: 'Referral Platform',
     categoryColor: 'bg-green-500/20 text-green-400',

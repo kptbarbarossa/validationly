@@ -129,18 +129,6 @@ const ToolsPage: React.FC = () => {
                 keywords="startup tools, content generator, twitter generator, idea validation, AI tools, market analysis"
             />
 
-            <div className="text-white">
-                <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Header */}
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl font-extrabold text-white sm:text-5xl md:text-6xl">
-                            Founder's Toolkit
-                        </h1>
-                        <p className="mt-3 max-w-md mx-auto text-base text-gray-400 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl">
-                            A curated list of tools and resources to build, launch, and grow your startup.
-                        </p>
-                    </div>
-
                     {/* Recommended Tools Section */}
                     <AffiliateCardsSection 
                         className="mt-20"

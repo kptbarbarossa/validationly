@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import ExportShare from '../components/ExportShare';
-import AffiliateCardsSection from '../components/AffiliateCardsSection';
 
 import { PLATFORMS } from '../constants';
 import { 
@@ -1723,14 +1722,6 @@ const ResultsPage: React.FC = () => {
               🚀 Analyze Another Idea
             </button>
           </div>
-
-          {/* Recommended Tools Section */}
-          <AffiliateCardsSection 
-            className="mt-16"
-            title="🛠️ Tools to Build Your Idea"
-            subtitle="Essential tools and services to help you bring your validated idea to life"
-            maxCards={6}
-          />
         </div>
       </div>
     </>
