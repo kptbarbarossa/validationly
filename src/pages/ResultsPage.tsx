@@ -327,20 +327,20 @@ const ResultsPage: React.FC = () => {
                 {/* Main Scores Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                   <div className="text-center">
-                    <div className={`inline-block px-6 py-3 rounded-full text-2xl font-bold border ${getScoreColor(result.validationScorecard.overallScore)}`}>
-                      {result.validationScorecard.overallScore}/100
+                    <div className={`inline-block px-6 py-3 rounded-full text-2xl font-bold border ${getScoreColor(result.validationScorecard?.overallScore || 0)}`}>
+                      {result.validationScorecard?.overallScore || 0}/100
                     </div>
                     <p className="text-sm text-gray-400 mt-2">Overall Score</p>
                   </div>
                   <div className="text-center">
-                    <div className={`inline-block px-4 py-2 rounded-full text-lg font-medium border ${getVerdictColor(result.validationScorecard.finalVerdict)}`}>
-                      {result.validationScorecard.finalVerdict}
+                    <div className={`inline-block px-4 py-2 rounded-full text-lg font-medium border ${getVerdictColor(result.validationScorecard?.finalVerdict || '')}`}>
+                      {result.validationScorecard?.finalVerdict || 'Pending'}
                     </div>
                     <p className="text-sm text-gray-400 mt-2">Final Verdict</p>
                   </div>
                   <div className="text-center">
-                    <div className={`inline-block px-4 py-2 rounded-full text-lg font-medium border ${getConfidenceColor(result.validationScorecard.confidenceLevel)}`}>
-                      {result.validationScorecard.confidenceLevel} Confidence
+                    <div className={`inline-block px-4 py-2 rounded-full text-lg font-medium border ${getConfidenceColor(result.validationScorecard?.confidenceLevel || '')}`}>
+                      {result.validationScorecard?.confidenceLevel || 'Pending'} Confidence
                     </div>
                     <p className="text-sm text-gray-400 mt-2">Confidence Level</p>
                   </div>
