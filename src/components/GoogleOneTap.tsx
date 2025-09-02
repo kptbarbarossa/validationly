@@ -78,14 +78,12 @@ const GoogleOneTap: React.FC = () => {
             signInWithIdToken(response.credential);
           }
         },
-        // FedCM uyarısını önlemek için modern ayarlar
-        use_fedcm_for_prompt: true,
+        // FedCM'i geçici olarak devre dışı bırak - sorunları önler
+        use_fedcm_for_prompt: false,
         auto_select: false,
         cancel_on_tap_outside: true,
         prompt_parent_id: 'google-one-tap-container',
-        // FedCM için gerekli ayarlar
-        fedcm_mode: 'enabled',
-        // Daha iyi hata yönetimi
+        // FedCM ayarlarını kaldır
         state_cookie_domain: window.location.hostname,
         ux_mode: 'popup',
       });
@@ -103,22 +101,20 @@ const GoogleOneTap: React.FC = () => {
       setTimeout(() => {
         if (window.google?.accounts?.id) {
           try {
-            // FedCM uyumlu prompt çağrısı
             window.google.accounts.id.prompt((notification: any) => {
               if (notification.isNotDisplayed()) {
                 const reason = notification.getNotDisplayedReason();
                 console.log("Google One Tap prompt was not displayed:", reason);
-                // FedCM ile ilgili durumları kontrol et
+                // Basitleştirilmiş hata yönetimi
                 if (reason === 'opt_out_or_no_session' || 
-                    reason === 'suppressed_by_user' || 
-                    reason === 'fedcm_disabled') {
+                    reason === 'suppressed_by_user') {
                   return;
                 }
               } else if (notification.isSkippedMoment()) {
                 const reason = notification.getSkippedReason();
                 console.log("Google One Tap prompt was skipped:", reason);
-                // FedCM ile ilgili skip durumları
-                if (reason === 'fedcm_disabled' || reason === 'unknown_reason') {
+                // Basitleştirilmiş skip durumları
+                if (reason === 'unknown_reason') {
                   return;
                 }
               } else if (notification.isDismissedMoment()) {
@@ -130,7 +126,7 @@ const GoogleOneTap: React.FC = () => {
             console.error('Error prompting Google One Tap:', error);
           }
         }
-      }, 2000); // FedCM için daha uzun bekleme süresi
+      }, 1500); // Daha kısa bekleme süresi
     }
   }, [isReady]);
 
