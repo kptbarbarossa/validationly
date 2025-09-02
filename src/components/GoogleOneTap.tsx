@@ -10,6 +10,7 @@ declare global {
 const GoogleOneTap: React.FC = () => {
   const [isReady, setIsReady] = useState(false);
   const promptedRef = useRef(false);
+  const scriptLoadedRef = useRef(false);
 
   const signInWithIdToken = useCallback(async (token: string) => {
     try {
@@ -33,15 +34,18 @@ const GoogleOneTap: React.FC = () => {
 
     // Check if Google script is already loaded
     if (window.google?.accounts?.id) {
+      scriptLoadedRef.current = true;
       initializeGoogleOneTap();
       return;
     }
 
+    // Load Google GSI script
     const script = document.createElement('script');
     script.src = 'https://accounts.google.com/gsi/client';
     script.async = true;
     script.defer = true;
     script.onload = () => {
+      scriptLoadedRef.current = true;
       if (window.google?.accounts?.id) {
         initializeGoogleOneTap();
       } else {
@@ -66,42 +70,61 @@ const GoogleOneTap: React.FC = () => {
   const initializeGoogleOneTap = () => {
     if (!window.google?.accounts?.id) return;
 
-    window.google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: (response: any) => {
-        if (response.credential) {
-          signInWithIdToken(response.credential);
-        }
-      },
-      use_fedcm_for_prompt: true,
-      auto_select: false,
-      cancel_on_tap_outside: true,
-    });
-    setIsReady(true);
+    try {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: (response: any) => {
+          if (response.credential) {
+            signInWithIdToken(response.credential);
+          }
+        },
+        // Remove FedCM to avoid warnings
+        auto_select: false,
+        cancel_on_tap_outside: true,
+        // Add better error handling
+        prompt_parent_id: 'google-one-tap-container',
+      });
+      setIsReady(true);
+    } catch (error) {
+      console.error('Error initializing Google One Tap:', error);
+    }
   };
 
   useEffect(() => {
-    if (isReady && !promptedRef.current) {
+    if (isReady && !promptedRef.current && scriptLoadedRef.current) {
       promptedRef.current = true;
       
       // Delay the prompt to ensure everything is ready
       setTimeout(() => {
         if (window.google?.accounts?.id) {
-          window.google.accounts.id.prompt((notification: any) => {
-            if (notification.isNotDisplayed()) {
-              console.log("Google One Tap prompt was not displayed:", notification.getNotDisplayedReason());
-            } else if (notification.isSkippedMoment()) {
-              console.log("Google One Tap prompt was skipped:", notification.getSkippedReason());
-            } else if (notification.isDismissedMoment()) {
-              console.log("Google One Tap prompt was dismissed:", notification.getDismissedReason());
-            }
-          });
+          try {
+            window.google.accounts.id.prompt((notification: any) => {
+              if (notification.isNotDisplayed()) {
+                const reason = notification.getNotDisplayedReason();
+                console.log("Google One Tap prompt was not displayed:", reason);
+                // Don't retry for certain reasons
+                if (reason === 'opt_out_or_no_session' || reason === 'suppressed_by_user') {
+                  return;
+                }
+              } else if (notification.isSkippedMoment()) {
+                const reason = notification.getSkippedReason();
+                console.log("Google One Tap prompt was skipped:", reason);
+              } else if (notification.isDismissedMoment()) {
+                const reason = notification.getDismissedReason();
+                console.log("Google One Tap prompt was dismissed:", reason);
+              }
+            });
+          } catch (error) {
+            console.error('Error prompting Google One Tap:', error);
+          }
         }
-      }, 1000);
+      }, 1500); // Increased delay for better stability
     }
   }, [isReady]);
 
-  return null; // This component does not render UI
+  return (
+    <div id="google-one-tap-container" className="fixed top-4 right-4 z-50"></div>
+  );
 };
 
 export default GoogleOneTap;
