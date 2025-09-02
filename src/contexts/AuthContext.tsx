@@ -28,41 +28,62 @@ export const useAuth = () => {
 
 // Helper function to extract user info from Supabase user
 const extractUserInfo = async (user: User | null): Promise<AuthUser | null> => {
-  if (!user) return null;
-
-  const userMetadata = user.user_metadata || {};
-  const appMetadata = user.app_metadata || {};
-
-  // Get user role from database
-  let role: 'user' | 'admin' | 'super_admin' = 'user';
-  try {
-    const { data: userData } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
-    
-    if (userData?.role) {
-      role = userData.role;
-    }
-  } catch (error) {
-    console.error('Error fetching user role:', error);
+  console.log('🔍 extractUserInfo called with user:', user);
+  
+  if (!user) {
+    console.log('❌ extractUserInfo: user is null');
+    return null;
   }
 
-  const isAdmin = role === 'admin' || role === 'super_admin';
-  const isSuperAdmin = role === 'super_admin';
+  try {
+    const userMetadata = user.user_metadata || {};
+    const appMetadata = user.app_metadata || {};
 
-  return {
-    id: user.id,
-    email: user.email || '',
-    displayName: userMetadata.full_name || userMetadata.name || user.user_metadata?.user_name || '',
-    photoURL: userMetadata.avatar_url || userMetadata.picture || user.user_metadata?.avatar_url || '',
-    fullName: userMetadata.full_name || userMetadata.name || '',
-    avatarUrl: userMetadata.avatar_url || userMetadata.picture || '',
-    role,
-    isAdmin,
-    isSuperAdmin,
-  };
+    console.log('📋 extractUserInfo: userMetadata:', userMetadata);
+    console.log('📋 extractUserInfo: appMetadata:', appMetadata);
+
+    // Get user role from database
+    let role: 'user' | 'admin' | 'super_admin' = 'user';
+    try {
+      const { data: userData, error } = await supabase
+        .from('users')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      
+      if (error) {
+        console.log('⚠️ extractUserInfo: Error fetching user role:', error);
+      } else {
+        console.log('✅ extractUserInfo: User role from DB:', userData?.role);
+        if (userData?.role) {
+          role = userData.role;
+        }
+      }
+    } catch (error) {
+      console.log('⚠️ extractUserInfo: Exception fetching user role:', error);
+    }
+
+    const isAdmin = role === 'admin' || role === 'super_admin';
+    const isSuperAdmin = role === 'super_admin';
+
+    const userInfo = {
+      id: user.id,
+      email: user.email || '',
+      displayName: userMetadata.full_name || userMetadata.name || user.user_metadata?.user_name || '',
+      photoURL: userMetadata.avatar_url || userMetadata.picture || user.user_metadata?.avatar_url || '',
+      fullName: userMetadata.full_name || userMetadata.name || '',
+      avatarUrl: userMetadata.avatar_url || userMetadata.picture || '',
+      role,
+      isAdmin,
+      isSuperAdmin,
+    };
+
+    console.log('✅ extractUserInfo: Returning userInfo:', userInfo);
+    return userInfo;
+  } catch (error) {
+    console.error('❌ extractUserInfo: Unexpected error:', error);
+    return null;
+  }
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
