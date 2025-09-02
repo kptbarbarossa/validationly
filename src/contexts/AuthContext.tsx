@@ -1,35 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
-import type { AuthUser } from '../../types/types';
-
-const AUTH_STORAGE_KEY = 'validationly-auth-state';
-
-interface AuthState {
-  user: AuthUser | null;
-  session: Session | null;
-}
-
-const saveAuthState = (state: AuthState) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state));
-  }
-};
-
-const loadAuthState = (): AuthState => {
-  if (typeof window !== 'undefined') {
-    const storedState = localStorage.getItem(AUTH_STORAGE_KEY);
-    if (storedState) {
-      try {
-        return JSON.parse(storedState);
-      } catch (e) {
-        console.error("Failed to parse auth state from localStorage", e);
-        return { user: null, session: null };
-      }
-    }
-  }
-  return { user: null, session: null };
-};
+import type { AuthUser } from '../types';
 
 interface AuthContextType {
   user: AuthUser | null;
@@ -58,7 +30,6 @@ export const useAuth = () => {
 const extractUserInfo = async (user: User | null): Promise<AuthUser | null> => {
   if (!user) return null;
 
-  // Extract Google profile info from user metadata
   const userMetadata = user.user_metadata || {};
   const appMetadata = user.app_metadata || {};
 
@@ -84,10 +55,10 @@ const extractUserInfo = async (user: User | null): Promise<AuthUser | null> => {
   return {
     id: user.id,
     email: user.email || '',
-    displayName: userMetadata.full_name || userMetadata.name || user.user_metadata?.user_name,
-    photoURL: userMetadata.avatar_url || userMetadata.picture || user.user_metadata?.avatar_url,
-    fullName: userMetadata.full_name || userMetadata.name,
-    avatarUrl: userMetadata.avatar_url || userMetadata.picture,
+    displayName: userMetadata.full_name || userMetadata.name || user.user_metadata?.user_name || '',
+    photoURL: userMetadata.avatar_url || userMetadata.picture || user.user_metadata?.avatar_url || '',
+    fullName: userMetadata.full_name || userMetadata.name || '',
+    avatarUrl: userMetadata.avatar_url || userMetadata.picture || '',
     role,
     isAdmin,
     isSuperAdmin,
@@ -95,12 +66,9 @@ const extractUserInfo = async (user: User | null): Promise<AuthUser | null> => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [authState, setAuthState] = useState<AuthState>(() => loadAuthState());
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    saveAuthState(authState);
-  }, [authState]);
 
   useEffect(() => {
     let mounted = true;
@@ -112,8 +80,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           console.error('Error getting initial session:', error);
         }
         if (mounted) {
-          const user = await extractUserInfo(session?.user ?? null);
-          setAuthState({ session, user });
+          const userInfo = await extractUserInfo(session?.user ?? null);
+          setSession(session);
+          setUser(userInfo);
           setLoading(false);
         }
       } catch (error) {
@@ -130,8 +99,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       async (_event, session) => {
         if (mounted) {
           try {
-            const user = await extractUserInfo(session?.user ?? null);
-            setAuthState({ session, user });
+            const userInfo = await extractUserInfo(session?.user ?? null);
+            setSession(session);
+            setUser(userInfo);
             setLoading(false);
           } catch (error) {
             console.error('Error updating auth state:', error);
@@ -169,7 +139,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    setAuthState({ user: null, session: null });
+    setUser(null);
+    setSession(null);
   };
 
   const signInWithGoogle = async () => {
@@ -182,7 +153,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             access_type: 'offline',
             prompt: 'consent',
           },
-          skipBrowserRedirect: true, // Manually handle the redirect for FedCM
         },
       });
       
@@ -199,23 +169,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const isAdmin = (): boolean => {
-    return authState.user?.isAdmin || false;
+    return user?.isAdmin || false;
   };
 
   const isSuperAdmin = (): boolean => {
-    return authState.user?.isSuperAdmin || false;
+    return user?.isSuperAdmin || false;
   };
 
   const hasPermission = async (permission: string): Promise<boolean> => {
-    if (!authState.user) return false;
+    if (!user) return false;
     
     // Super admins have all permissions
-    if (authState.user.isSuperAdmin) return true;
+    if (user.isSuperAdmin) return true;
     
     try {
       const { data } = await supabase.rpc('has_permission', {
         permission_name: permission,
-        user_id: authState.user.id
+        user_id: user.id
       });
       
       return !!data;
@@ -225,24 +195,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  // Debug helper to check auth state
-  const debugAuthState = () => {
-    console.log('Current Auth State:', {
-      user: authState.user,
-      session: authState.session ? 'Active' : 'None',
-      loading,
-      localStorage: typeof window !== 'undefined' ? localStorage.getItem(AUTH_STORAGE_KEY) : 'N/A'
-    });
-  };
-
-  // Expose debug function in development
-  if (process.env.NODE_ENV === 'development') {
-    (window as any).debugAuth = debugAuthState;
-  }
-
   return (
     <AuthContext.Provider value={{ 
-      ...authState, 
+      user, 
+      session, 
       loading, 
       signInWithGoogle, 
       signOut, 

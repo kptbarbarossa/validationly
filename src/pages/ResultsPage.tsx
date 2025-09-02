@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import ExportShare from '../components/ExportShare';
+import AffiliateCardsSection from '../components/AffiliateCardsSection';
 
 import { PLATFORMS } from '../constants';
 import { 
@@ -1714,7 +1715,7 @@ const ResultsPage: React.FC = () => {
           )}
 
           {/* Try Another Idea */}
-          <div className="text-center">
+          <div className="text-center mb-16">
             <button
               onClick={() => navigate('/')}
               className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 rounded-2xl text-white font-semibold text-lg transition-all transform hover:scale-105"
@@ -1722,6 +1723,14 @@ const ResultsPage: React.FC = () => {
               🚀 Analyze Another Idea
             </button>
           </div>
+
+          {/* Recommended Tools Section */}
+          <AffiliateCardsSection 
+            className="mt-16"
+            title="🛠️ Tools to Build Your Idea"
+            subtitle="Essential tools and services to help you bring your validated idea to life"
+            maxCards={6}
+          />
         </div>
       </div>
     </>

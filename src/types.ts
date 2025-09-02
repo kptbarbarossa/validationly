@@ -1384,10 +1384,13 @@ export const PLAN_CONFIGS: Record<UserPlan, PlanLimits> = {
 export interface AuthUser {
   id: string;
   email: string;
-  displayName?: string;
-  photoURL?: string;
-  fullName?: string;
-  avatarUrl?: string;
+  displayName: string;
+  photoURL: string;
+  fullName: string;
+  avatarUrl: string;
+  role: 'user' | 'admin' | 'super_admin';
+  isAdmin: boolean;
+  isSuperAdmin: boolean;
   plan?: UserPlan;
   subscription_status?: 'active' | 'canceled' | 'expired';
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
+import AffiliateCardsSection from '../components/AffiliateCardsSection';
 
 const ToolsPage: React.FC = () => {
     const navigate = useNavigate();
@@ -560,6 +561,13 @@ const ToolsPage: React.FC = () => {
                             ))}
                         </div>
                     </div>
+
+                    {/* Recommended Tools Section */}
+                    <AffiliateCardsSection 
+                        className="mt-20"
+                        title="🛠️ Recommended Tools for Growth"
+                        subtitle="Essential tools and services to accelerate your startup growth and success"
+                    />
                 </div>
             </div>
         </>
