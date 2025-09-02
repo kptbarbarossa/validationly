@@ -80,15 +80,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const code = urlParams.get('code');
         
         if (code) {
-          // Google OAuth callback'i geldi, session'ı handle et
-          const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code);
-          if (error) {
-            console.error('Error exchanging code for session:', error);
-          }
+          console.log('Google OAuth callback detected, code:', code);
           
-          // URL'den code parametresini temizle
+          // URL'den code parametresini hemen temizle
           const newUrl = window.location.pathname;
           window.history.replaceState({}, document.title, newUrl);
+          
+          // Supabase'in otomatik session handling'ini bekle
+          // exchangeCodeForSession yerine getSession kullan
+          const { data: { session }, error } = await supabase.auth.getSession();
+          if (error) {
+            console.error('Error getting session after OAuth:', error);
+          }
           
           if (mounted) {
             const userInfo = await extractUserInfo(session?.user ?? null);
