@@ -141,14 +141,6 @@ const ToolsPage: React.FC = () => {
                         </p>
                     </div>
 
-                    {/* Recommended Tools Section */}
-                    <AffiliateCardsSection 
-                        className="mt-20 mb-8"
-                        title="🛠️ Recommended Tools for Founders"
-                        subtitle="Essential tools and services to help you build, launch, and grow your startup"
-                        maxCards={6}
-                    />
-
                     {/* Tools Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                         {tools.map((tool) => (
