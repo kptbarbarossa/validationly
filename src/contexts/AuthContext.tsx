@@ -42,26 +42,9 @@ const extractUserInfo = async (user: User | null): Promise<AuthUser | null> => {
     console.log('📋 extractUserInfo: userMetadata:', userMetadata);
     console.log('📋 extractUserInfo: appMetadata:', appMetadata);
 
-    // Get user role from database
+    // Skip database role check for now - use default role
     let role: 'user' | 'admin' | 'super_admin' = 'user';
-    try {
-      const { data: userData, error } = await supabase
-        .from('users')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-      
-      if (error) {
-        console.log('⚠️ extractUserInfo: Error fetching user role:', error);
-      } else {
-        console.log('✅ extractUserInfo: User role from DB:', userData?.role);
-        if (userData?.role) {
-          role = userData.role;
-        }
-      }
-    } catch (error) {
-      console.log('⚠️ extractUserInfo: Exception fetching user role:', error);
-    }
+    console.log('✅ extractUserInfo: Using default role:', role);
 
     const isAdmin = role === 'admin' || role === 'super_admin';
     const isSuperAdmin = role === 'super_admin';
