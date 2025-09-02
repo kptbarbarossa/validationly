@@ -75,15 +75,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const getInitialSession = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error('Error getting initial session:', error);
-        }
-        if (mounted) {
-          const userInfo = await extractUserInfo(session?.user ?? null);
-          setSession(session);
-          setUser(userInfo);
-          setLoading(false);
+        // URL'de code parametresi var mı kontrol et (Google OAuth callback)
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+          // Google OAuth callback'i geldi, session'ı handle et
+          const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) {
+            console.error('Error exchanging code for session:', error);
+          }
+          
+          // URL'den code parametresini temizle
+          const newUrl = window.location.pathname;
+          window.history.replaceState({}, document.title, newUrl);
+          
+          if (mounted) {
+            const userInfo = await extractUserInfo(session?.user ?? null);
+            setSession(session);
+            setUser(userInfo);
+            setLoading(false);
+          }
+        } else {
+          // Normal session kontrolü
+          const { data: { session }, error } = await supabase.auth.getSession();
+          if (error) {
+            console.error('Error getting initial session:', error);
+          }
+          if (mounted) {
+            const userInfo = await extractUserInfo(session?.user ?? null);
+            setSession(session);
+            setUser(userInfo);
+            setLoading(false);
+          }
         }
       } catch (error) {
         console.error('Error in getInitialSession:', error);
