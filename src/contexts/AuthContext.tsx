@@ -252,6 +252,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  console.log('AuthContext rendering with user:', user);
+  
   return (
     <AuthContext.Provider value={{ 
       user, 
