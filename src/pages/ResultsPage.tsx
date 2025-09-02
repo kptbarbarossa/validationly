@@ -150,6 +150,8 @@ const ResultsPage: React.FC = () => {
   };
 
   const getVerdictColor = (verdict: string) => {
+    if (!verdict) return 'text-gray-400 bg-gray-500/20 border-gray-500/30';
+    
     switch (verdict.toLowerCase()) {
       case 'proceed': return 'text-green-400 bg-green-500/20 border-green-500/30';
       case 'pivot': return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30';
@@ -160,6 +162,8 @@ const ResultsPage: React.FC = () => {
   };
 
   const getConfidenceColor = (confidence: string) => {
+    if (!confidence) return 'text-gray-400 bg-gray-500/20 border-gray-500/30';
+    
     switch (confidence.toLowerCase()) {
       case 'high': return 'text-green-400 bg-green-500/20 border-green-500/30';
       case 'medium': return 'text-yellow-400 bg-yellow-500/20 border-yellow-500/30';
