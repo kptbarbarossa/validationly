@@ -98,10 +98,10 @@ const ToolsPage: React.FC = () => {
         {
             id: 'pain-extractor',
             title: 'ICP Pain Extractor',
-            description: 'Extract persona-specific pain patterns and generate actionable copy hooks for your ideal customer profile.',
+            description: 'Extract pain points and insights from your target audience using AI-powered analysis of social media and community discussions.',
             icon: '🔍',
             route: '/pain-extractor',
-            features: ['8-category pain taxonomy', 'Persona-based scoring', 'Copy hook generation', 'MVP feature suggestions', 'Social post drafts']
+            features: ['Audience analysis', 'Pain point extraction', 'Insight generation', 'Target validation']
         },
         {
             id: 'youtube-hook-synth',
@@ -129,11 +129,23 @@ const ToolsPage: React.FC = () => {
                 keywords="startup tools, content generator, twitter generator, idea validation, AI tools, market analysis"
             />
 
+            <div className="min-h-screen text-white">
+                <div className="container mx-auto px-6 py-12">
+                    {/* Header */}
+                    <div className="text-center mb-16">
+                        <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+                            AI-Powered Tools
+                        </h1>
+                        <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+                            Access powerful tools for startup validation, content generation, and market analysis
+                        </p>
+                    </div>
+
                     {/* Recommended Tools Section */}
                     <AffiliateCardsSection 
-                        className="mt-20"
-                        title="🛠️ Recommended Tools for Growth"
-                        subtitle="Essential tools and services to accelerate your startup growth and success"
+                        className="mt-20 mb-8"
+                        title="🛠️ Recommended Tools for Founders"
+                        subtitle="Essential tools and services to help you build, launch, and grow your startup"
                         maxCards={6}
                     />
 
