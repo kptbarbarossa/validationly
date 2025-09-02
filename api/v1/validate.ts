@@ -1,9 +1,9 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from '@google/generative-ai';
-import { ValidationlyDB } from '../../lib/supabase';
-import { Logger } from '../../lib/logger';
-import { validateEnvironment, config } from '../../lib/config';
-import { comprehensiveRateLimit } from '../../lib/rateLimiter';
+import { ValidationlyDB } from '../../lib/supabase.js';
+import { Logger } from '../../lib/logger.js';
+import { validateEnvironment, config } from '../../lib/config.js';
+import { comprehensiveRateLimit } from '../../lib/rateLimiter.js';
 
 // --- TYPE DEFINITIONS (Tip Güvenliği ve Okunabilirlik İçin) ---
 
@@ -114,10 +114,26 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     // 1. Ortam ve Rate Limit Kontrolü
     validateEnvironment();
-    await comprehensiveRateLimit(req, res);
 
     // 2. İstek (Request) Doğrulama ve Veri Çekme
     const { idea, platform, analysisType, userId } = parseAndValidateRequest(req);
+
+    // 3. Rate Limit Kontrolü
+    const rateLimitResult = await comprehensiveRateLimit(
+      req.headers['x-forwarded-for'] as string || req.socket.remoteAddress || 'unknown',
+      userId !== 'anonymous' ? userId : undefined
+    );
+    
+    if (!rateLimitResult.allowed) {
+      return res.status(429).json({
+        success: false,
+        error: 'Rate limit exceeded',
+        details: 'Too many requests. Please try again later.',
+        retryAfter: rateLimitResult.headers['Retry-After']
+      });
+    }
+
+    // 4. Dinamik Prompt Oluşturma
 
     // 3. Dinamik Prompt Oluşturma
     const prompt = PROMPT_FACTORY.getValidationPrompt(idea, platform, analysisType);
@@ -141,7 +157,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       result,
       metadata: {
         processingTime: Date.now() - startTime,
-        model: config.google.model,
+        model: 'gemini-1.5-flash',
         timestamp: new Date().toISOString(),
         userId: userId !== 'anonymous' ? userId : undefined
       }
@@ -206,9 +222,9 @@ function parseAndValidateRequest(req: VercelRequest) {
  */
 async function generateAnalysis(prompt: string): Promise<string> {
   try {
-    const genAI = new GoogleGenerativeAI(config.google.apiKey);
+    const genAI = new GoogleGenerativeAI(config.GOOGLE_API_KEY);
     const model = genAI.getGenerativeModel({ 
-        model: config.google.model,
+        model: 'gemini-1.5-flash',
         // JSON çıktısını zorlamak için response_mime_type'ı ayarlıyoruz.
         generationConfig: {
             responseMimeType: "application/json",
@@ -287,12 +303,9 @@ async function saveResultToDB(result: ValidationResult, userId: string, startTim
       user_id: userId,
       idea_text: result.idea,
       demand_score: result.validationScorecard.demandScore || 0,
-      overall_score: result.validationScorecard.overallScore || 0,
-      verdict: result.validationScorecard.finalVerdict || 'Unknown',
       analysis_result: result, // Tüm sonucu JSON olarak sakla
       validation_type: 'standard', // veya 'quick' vs.
       processing_time: Date.now() - startTime,
-      platform: result.platformSpecificStrategy.platform,
       is_favorite: false,
       is_public: false
     });
