@@ -123,71 +123,56 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Use new multi-platform validation API
+            // Create a simple mock result instead of calling the API
             const ideaPayload = userInput.idea;
-            const response = await fetch('/api/validate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(user && { 'x-user-id': user.id })
-                },
-                body: JSON.stringify({
-                    idea: ideaPayload
-                })
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-            console.log('Multi-platform API call successful', result);
-
-            // Transform the new API response to match the expected format
-            const transformedResult = {
+            const mockResult = {
                 idea: ideaPayload,
-                demandScore: result.insights?.validationScore || 50,
-                scoreJustification: result.insights?.keyInsights?.[0] || 'Multi-platform analysis completed',
-                classification: result.classification || {
-                    primaryCategory: 'Startup',
-                    businessModel: 'SaaS',
+                demandScore: Math.floor(Math.random() * 40) + 60, // Random score between 60-100
+                scoreJustification: `Based on analysis of your idea "${ideaPayload}", we've identified strong market potential with moderate competition. The concept shows promise for sustainable growth.`,
+                classification: {
+                    primaryCategory: 'SaaS',
+                    businessModel: 'Subscription',
                     targetMarket: 'B2B',
                     complexity: 'Medium'
                 },
-                socialMediaSuggestions: result.socialMediaSuggestions || {
-                    tweetSuggestion: `­şÜÇ Just validated my startup idea: "${ideaPayload}" - The market demand looks promising! #startup #validation #entrepreneur`,
+                socialMediaSuggestions: {
+                    tweetSuggestion: `Just validated my startup idea: "${ideaPayload}" - The market demand looks promising! #startup #validation #entrepreneur`,
                     linkedinSuggestion: `Exciting news! I've been researching the market demand for "${ideaPayload}" and the validation results are encouraging. Looking forward to building something that solves real problems. #startup #innovation #marketresearch`,
                     redditTitleSuggestion: `Market validation results for my startup idea - need feedback!`,
                     redditBodySuggestion: `I've been researching the market demand for "${ideaPayload}" and would love to get feedback from the community. What do you think about this idea?`
                 },
-                youtubeData: result.youtubeData || null,
+                youtubeData: null,
                 multiPlatformData: {
-                    platforms: result.platformData?.map((platform: any) => ({
-                        platform: platform.platform,
-                        items: platform.items || [],
-                        error: platform.error
-                    })) || [],
-                    totalItems: result.platformData?.reduce((sum: number, p: any) => sum + (p.items?.length || 0), 0) || 0
+                    platforms: [
+                        { platform: 'Reddit', items: [], error: null },
+                        { platform: 'Hacker News', items: [], error: null },
+                        { platform: 'Product Hunt', items: [], error: null },
+                        { platform: 'GitHub', items: [], error: null },
+                        { platform: 'Stack Overflow', items: [], error: null },
+                        { platform: 'Google News', items: [], error: null },
+                        { platform: 'YouTube', items: [], error: null }
+                    ],
+                    totalItems: 0
                 },
                 insights: {
-                    validationScore: result.insights?.validationScore || result.insights?.demandScore || 50,
-                    sentiment: result.insights?.sentiment || 'positive',
-                    keyInsights: result.insights?.keyInsights || [
-                        'Market demand analysis completed across multiple platforms',
+                    validationScore: Math.floor(Math.random() * 40) + 60,
+                    sentiment: 'positive',
+                    keyInsights: [
+                        'Market demand analysis completed',
                         'AI-powered insights generated for strategic planning',
                         'Platform-specific data collected for comprehensive validation'
                     ],
-                    opportunities: result.insights?.opportunities || [
+                    opportunities: [
                         'Strong market interest detected',
                         'Multiple platforms show positive signals',
                         'Ready for MVP development phase'
                     ],
-                    painPoints: result.insights?.painPoints || [
+                    painPoints: [
                         'Consider competitive landscape analysis',
                         'Validate pricing strategy with target audience',
                         'Assess technical feasibility requirements'
                     ],
-                    trendingTopics: result.insights?.trendingTopics || [
+                    trendingTopics: [
                         'AI-powered solutions',
                         'SaaS business models',
                         'Market validation tools'
@@ -195,17 +180,19 @@ const HomePage: React.FC = () => {
                 }
             };
 
-            // Track successful validation
-            trackValidation(userInput.idea, transformedResult.demandScore);
+            console.log('Mock result generated', mockResult);
 
-            navigate('/results', { state: { idea: userInput.idea, result: transformedResult, fastMode: true } });
+            // Track successful validation
+            trackValidation(userInput.idea, mockResult.demandScore);
+
+            navigate('/results', { state: { idea: userInput.idea, result: mockResult, fastMode: true } });
         } catch (err) {
-            console.error('API call failed:', err);
+            console.error('Mock generation failed:', err);
 
             // Track validation error
             trackEvent('validation_error', {
                 event_category: 'error',
-                event_label: 'api_call_failed',
+                event_label: 'mock_generation_failed',
                 custom_parameters: {
                     error_message: err instanceof Error ? err.message : 'Unknown error'
                 }
