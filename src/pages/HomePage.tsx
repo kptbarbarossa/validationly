@@ -123,76 +123,45 @@ const HomePage: React.FC = () => {
         console.log('Starting API call...');
 
         try {
-            // Create a simple mock result instead of calling the API
+            // Use real API endpoint
             const ideaPayload = userInput.idea;
-            const mockResult = {
-                idea: ideaPayload,
-                demandScore: Math.floor(Math.random() * 40) + 60, // Random score between 60-100
-                scoreJustification: `Based on analysis of your idea "${ideaPayload}", we've identified strong market potential with moderate competition. The concept shows promise for sustainable growth.`,
-                classification: {
-                    primaryCategory: 'SaaS',
-                    businessModel: 'Subscription',
-                    targetMarket: 'B2B',
-                    complexity: 'Medium'
+            const response = await fetch('/api/v1/validate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(user && { 'x-user-id': user.id })
                 },
-                socialMediaSuggestions: {
-                    tweetSuggestion: `Just validated my startup idea: "${ideaPayload}" - The market demand looks promising! #startup #validation #entrepreneur`,
-                    linkedinSuggestion: `Exciting news! I've been researching the market demand for "${ideaPayload}" and the validation results are encouraging. Looking forward to building something that solves real problems. #startup #innovation #marketresearch`,
-                    redditTitleSuggestion: `Market validation results for my startup idea - need feedback!`,
-                    redditBodySuggestion: `I've been researching the market demand for "${ideaPayload}" and would love to get feedback from the community. What do you think about this idea?`
-                },
-                youtubeData: null,
-                multiPlatformData: {
-                    platforms: [
-                        { platform: 'Reddit', items: [], error: null },
-                        { platform: 'Hacker News', items: [], error: null },
-                        { platform: 'Product Hunt', items: [], error: null },
-                        { platform: 'GitHub', items: [], error: null },
-                        { platform: 'Stack Overflow', items: [], error: null },
-                        { platform: 'Google News', items: [], error: null },
-                        { platform: 'YouTube', items: [], error: null }
-                    ],
-                    totalItems: 0
-                },
-                insights: {
-                    validationScore: Math.floor(Math.random() * 40) + 60,
-                    sentiment: 'positive',
-                    keyInsights: [
-                        'Market demand analysis completed',
-                        'AI-powered insights generated for strategic planning',
-                        'Platform-specific data collected for comprehensive validation'
-                    ],
-                    opportunities: [
-                        'Strong market interest detected',
-                        'Multiple platforms show positive signals',
-                        'Ready for MVP development phase'
-                    ],
-                    painPoints: [
-                        'Consider competitive landscape analysis',
-                        'Validate pricing strategy with target audience',
-                        'Assess technical feasibility requirements'
-                    ],
-                    trendingTopics: [
-                        'AI-powered solutions',
-                        'SaaS business models',
-                        'Market validation tools'
-                    ]
-                }
-            };
+                body: JSON.stringify({
+                    idea: ideaPayload
+                })
+            });
 
-            console.log('Mock result generated', mockResult);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('API call successful', data);
+
+            if (!data.success) {
+                throw new Error(data.error || 'API returned an error');
+            }
+
+            const result = data.result;
+
+            console.log('API result received', result);
 
             // Track successful validation
-            trackValidation(userInput.idea, mockResult.demandScore);
+            trackValidation(userInput.idea, result.demandScore);
 
-            navigate('/results', { state: { idea: userInput.idea, result: mockResult, fastMode: true } });
+            navigate('/results', { state: { idea: userInput.idea, result: result, fastMode: true } });
         } catch (err) {
-            console.error('Mock generation failed:', err);
+            console.error('API call failed:', err);
 
             // Track validation error
             trackEvent('validation_error', {
                 event_category: 'error',
-                event_label: 'mock_generation_failed',
+                event_label: 'api_call_failed',
                 custom_parameters: {
                     error_message: err instanceof Error ? err.message : 'Unknown error'
                 }
