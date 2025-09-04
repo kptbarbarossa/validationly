@@ -1,32 +1,22 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-// import { PLATFORM_COUNT } from '../constants/platforms';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-// Direct API call - no service layer needed
 import type { UserInput } from '../types';
-import { ValidationProgress } from '../components/LoadingStates';
 import PromptGallery from '../components/PromptGallery';
-// import Logo from '../components/Logo';
 import { useAnalytics } from '../components/Analytics';
 import { SEOHead } from '../components/SEOHead';
-// import RelatedStartups from '../components/RelatedStartups';
 import DOMPurify from 'dompurify';
-
-// Sample categories removed
-
 
 const HomePage: React.FC = () => {
     const [userInput, setUserInput] = useState<UserInput>({
         idea: '',
         isValid: false,
-        errorMessage: '' as unknown as string // exactOptionalPropertyTypes workaround
+        errorMessage: '' as unknown as string
     });
-    const [isLoading, setIsLoading] = useState(false); // analysis submit loading
-
-    const [isOptimizing, setIsOptimizing] = useState(false); // optimize-only loading
-    const [selectedTier, setSelectedTier] = useState<'free' | 'pro' | 'business' | 'enterprise'>('free');
-    // const [enhancedPrompt] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isOptimizing, setIsOptimizing] = useState(false);
+    
     const navigate = useNavigate();
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const { trackEvent, trackValidation } = useAnalytics();
@@ -37,10 +27,7 @@ const HomePage: React.FC = () => {
     }, []);
 
     const validateInput = (idea: string): UserInput => {
-        // Ensure idea is a string and handle null/undefined cases
         const safeIdea = idea || '';
-
-        // Sanitize input to prevent XSS
         const sanitizedIdea = DOMPurify.sanitize(safeIdea, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
         const trimmedIdea = sanitizedIdea.trim();
 
@@ -56,7 +43,6 @@ const HomePage: React.FC = () => {
             return { idea: safeIdea, isValid: false, errorMessage: 'Idea must be less than 1000 characters.' };
         }
 
-        // Check for dangerous content
         const dangerousPatterns = [
             /<script/i,
             /javascript:/i,
@@ -139,7 +125,6 @@ const HomePage: React.FC = () => {
         } catch (error) {
             console.error('❌ Error in validation:', error);
             trackEvent('validation_error', { error: error instanceof Error ? error.message : 'Unknown error' });
-            // Handle error appropriately
         } finally {
             setIsLoading(false);
         }
@@ -248,17 +233,6 @@ const HomePage: React.FC = () => {
                                                 }`}
                                             aria-label="Optimize idea description"
                                         >
-                                            {/* Rotating light effect around optimize button */}
-                                            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-purple-500 rounded-full opacity-75 blur animate-rotate-light"></div>
-                                            <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-500 via-purple-500 to-pink-500 rounded-full opacity-50 blur animate-pulse-glow"></div>
-                                            
-                                            {/* Animated background gradient */}
-                                            <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-gradient-x rounded-full"></div>
-
-                                            {/* Ripple effect on click */}
-                                            <div className="absolute inset-0 rounded-full bg-white/20 scale-0 animate-ping opacity-0 group-active:scale-100 group-active:opacity-100 transition-all duration-200"></div>
-
-                                            {/* Icon container */}
                                             <div className="relative z-10 flex items-center justify-center">
                                                 {isOptimizing ? (
                                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -278,9 +252,6 @@ const HomePage: React.FC = () => {
                                                     </svg>
                                                 )}
                                             </div>
-
-                                            {/* Glow effect */}
-                                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 blur-md opacity-50 -z-10 group-hover:opacity-75 transition-opacity duration-300"></div>
                                         </button>
 
                                         {/* Submit Button */}
@@ -294,17 +265,6 @@ const HomePage: React.FC = () => {
                                                 }`}
                                             aria-label="Submit idea for validation"
                                         >
-                                            {/* Rotating light effect around submit button */}
-                                            <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500 rounded-full opacity-75 blur animate-rotate-light"></div>
-                                            <div className="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-500 rounded-full opacity-50 blur animate-pulse-glow"></div>
-                                            
-                                            {/* Animated background gradient */}
-                                            <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 via-purple-600 to-cyan-600 opacity-0 hover:opacity-100 transition-opacity duration-300 animate-gradient-x rounded-full"></div>
-
-                                            {/* Ripple effect on click */}
-                                            <div className="absolute inset-0 rounded-full bg-white/20 scale-0 animate-ping opacity-0 group-active:scale-100 group-active:opacity-100 transition-all duration-200"></div>
-
-                                            {/* Icon container */}
                                             <div className="relative z-10 flex items-center justify-center">
                                                 {isLoading ? (
                                                     <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
@@ -324,37 +284,28 @@ const HomePage: React.FC = () => {
                                                     </svg>
                                                 )}
                                             </div>
-
-                                            {/* Glow effect */}
-                                            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-indigo-600 to-cyan-600 blur-md opacity-50 -z-10 group-hover:opacity-75 transition-opacity duration-300"></div>
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        {userInput.errorMessage && (
+                            <div id="error-message" className="text-red-400 text-sm mt-2 text-left">
+                                {userInput.errorMessage}
+                            </div>
+                        )}
+                    </form>
 
-
-                    </div>
-
-                    {userInput.errorMessage && (
-                        <div id="error-message" className="text-red-400 text-sm mt-2 text-left">
-                            {userInput.errorMessage}
-                        </div>
-                    )}
-                    {/* Loading spinner removed as requested */}
-                </form>
-
-                {/* Simple Prompt Gallery */}
-                <PromptGallery
-                    onUse={(text) => {
-                        const validation = validateInput(text);
-                        setUserInput(validation);
-                        textareaRef.current?.focus();
-                    }}
-                />
-
-                {/* RelatedStartups section removed by request */}
+                    {/* Simple Prompt Gallery */}
+                    <PromptGallery
+                        onUse={(text) => {
+                            const validation = validateInput(text);
+                            setUserInput(validation);
+                            textareaRef.current?.focus();
+                        }}
+                    />
+                </div>
             </div>
         </>
     );
