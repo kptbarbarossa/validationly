@@ -134,10 +134,10 @@ const ToolsPage: React.FC = () => {
                     {/* Header */}
                     <div className="text-center mb-16">
                         <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-                            AI-Powered Tools
+                            Recommended Tools
                         </h1>
                         <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-                            Access powerful tools for startup validation, content generation, and market analysis
+                            Essential tools and services to help you build, launch, and grow your startup
                         </p>
                     </div>
 
@@ -197,11 +197,11 @@ const ToolsPage: React.FC = () => {
                                 { icon: '🧠', title: 'Market Signal Intelligence', desc: 'AI-powered trend detection and analysis' },
                                 { icon: '⚡', title: 'Early Signal Detection', desc: 'Spot opportunities before competition' },
                                 { icon: '🎯', title: 'Optimal Timing Analysis', desc: 'Perfect your market entry timing' }
-                            ].map((item, index) => (
+                            ].map((feature, index) => (
                                 <div key={index} className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
-                                    <div className="text-3xl mb-3">{item.icon}</div>
-                                    <h3 className="font-semibold text-white mb-2">{item.title}</h3>
-                                    <p className="text-sm text-slate-400">{item.desc}</p>
+                                    <div className="text-3xl mb-4">{feature.icon}</div>
+                                    <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                                    <p className="text-slate-400 text-sm">{feature.desc}</p>
                                 </div>
                             ))}
                         </div>
