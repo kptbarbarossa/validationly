@@ -130,10 +130,10 @@ const ToolsPage: React.FC = () => {
             />
 
             <div className="min-h-screen text-white">
-                <div className="container mx-auto px-6 py-6">
+                <div className="container mx-auto px-6 py-5">
                     {/* Recommended Tools Section */}
                     <AffiliateCardsSection 
-                        className="mt-8 mb-8"
+                        className="mt-7 mb-8"
                         title="🛠️ Recommended Tools for Founders"
                         subtitle="Essential tools and services to help you build, launch, and grow your startup"
                         maxCards={7}
