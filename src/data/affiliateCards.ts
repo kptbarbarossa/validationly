@@ -108,6 +108,24 @@ export const affiliateCards: AffiliateCardProps[] = [
       to: 'to-blue-600'
     },
     fallbackBgColor: 'bg-gradient-to-br from-cyan-500 to-blue-600'
+  },
+  {
+    id: 'studyevolve',
+    name: 'Study Evolve',
+    description: 'AI-powered learning platform that creates personalized study materials, interactive experiences, and career roadmaps. Learn 3x faster with AI voice instructor and smart tools.',
+    logo: 'https://studyevolve.lemonsqueezy.com/favicon.ico',
+    logoFallback: 'SE',
+    category: 'AI Learning Platform',
+    categoryColor: 'bg-emerald-500/20 text-emerald-400',
+    features: ['AI voice instructor', 'Smart study materials', 'Career roadmaps', 'Universal format support'],
+    ctaText: 'Start Learning Free',
+    ctaIcon: '🎓',
+    ctaLink: 'https://studyevolve.lemonsqueezy.com?aff=rYX8Vm',
+    gradientColors: {
+      from: 'from-emerald-600',
+      to: 'to-teal-600'
+    },
+    fallbackBgColor: 'bg-gradient-to-br from-emerald-500 to-teal-600'
   }
 ];
 
