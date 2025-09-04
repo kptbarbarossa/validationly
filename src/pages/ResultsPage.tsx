@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
 import ExportShare from '../components/ExportShare';
+import AffiliateCardsSection from '../components/AffiliateCardsSection';
 
 // API'den gelen veri yapısına göre type definitions
 interface ProblemAnalysis {
@@ -530,6 +531,14 @@ const ResultsPage: React.FC = () => {
               }
             }}
             className="mb-8"
+          />
+
+          {/* Recommended Tools Section */}
+          <AffiliateCardsSection 
+            className="mb-12"
+            title="🛠️ Recommended Tools for Your Startup"
+            subtitle="Essential tools and services to help you build, launch, and grow your validated idea"
+            maxCards={7}
           />
 
           {/* Try Another Idea */}
