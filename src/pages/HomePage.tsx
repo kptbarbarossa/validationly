@@ -273,7 +273,7 @@ const HomePage: React.FC = () => {
                         {/* Platform List as Text - Mobile Responsive */}
                         <div className="text-sm sm:text-base lg:text-lg text-slate-400 mb-8 animate-slide-up delay-300 px-4 sm:px-0">
                             <div className="hidden sm:block">
-                                Reddit ÔÇó Hacker News ÔÇó Product Hunt ÔÇó GitHub ÔÇó Stack Overflow ÔÇó Google News ÔÇó YouTube
+                                Reddit • Hacker News • Product Hunt • GitHub • Stack Overflow • Google News • YouTube
                             </div>
                             <div className="sm:hidden text-center">
                                 <div className="grid grid-cols-2 gap-2 max-w-xs mx-auto">
