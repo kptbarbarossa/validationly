@@ -116,40 +116,43 @@ const ToolsPage: React.FC = () => {
                     />
 
                     {/* Tools Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 max-w-7xl mx-auto">
                         {tools.map((tool) => (
                             <div
                                 key={tool.id}
-                                className="group bg-white/5 backdrop-blur rounded-3xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer"
+                                className="group bg-white/5 backdrop-blur rounded-2xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300 hover:scale-105 cursor-pointer"
                                 onClick={() => navigate(tool.route)}
                             >
-                                <div className="flex items-start gap-4">
-                                    <div className="text-3xl group-hover:scale-110 transition-transform duration-300">
+                                <div className="text-center">
+                                    <div className="text-2xl mb-3 group-hover:scale-110 transition-transform duration-300">
                                         {tool.icon}
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-xl font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-cyan-400 transition-all duration-300">
-                                            {tool.title}
-                                        </h3>
-                                        <p className="text-slate-300 mb-4 leading-relaxed text-sm">
-                                            {tool.description}
-                                        </p>
+                                    <h3 className="text-lg font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-indigo-400 group-hover:to-cyan-400 transition-all duration-300">
+                                        {tool.title}
+                                    </h3>
+                                    <p className="text-slate-300 mb-3 leading-relaxed text-xs">
+                                        {tool.description}
+                                    </p>
 
-                                        {/* Features */}
-                                        <div className="grid grid-cols-2 gap-1 mb-4">
-                                            {tool.features.map((feature, index) => (
-                                                <div key={index} className="flex items-center gap-2 text-xs text-slate-400">
-                                                    <div className="w-1 h-1 rounded-full bg-indigo-400" />
-                                                    {feature}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                        {/* CTA Button */}
-                                        <button className="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-full text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25 text-sm">
-                                            Use Tool →
-                                        </button>
+                                    {/* Features */}
+                                    <div className="space-y-1 mb-3">
+                                        {tool.features.slice(0, 3).map((feature, index) => (
+                                            <div key={index} className="flex items-center gap-2 text-xs text-slate-400">
+                                                <div className="w-1 h-1 rounded-full bg-indigo-400" />
+                                                <span className="truncate">{feature}</span>
+                                            </div>
+                                        ))}
+                                        {tool.features.length > 3 && (
+                                            <div className="text-xs text-slate-500">
+                                                +{tool.features.length - 3} more
+                                            </div>
+                                        )}
                                     </div>
+
+                                    {/* CTA Button */}
+                                    <button className="w-full px-3 py-2 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-700 hover:to-cyan-700 rounded-lg text-white font-medium transition-all duration-300 group-hover:shadow-lg group-hover:shadow-indigo-500/25 text-xs">
+                                        Use Tool →
+                                    </button>
                                 </div>
                             </div>
                         ))}
