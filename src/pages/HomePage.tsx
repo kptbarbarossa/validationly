@@ -261,8 +261,8 @@ const HomePage: React.FC = () => {
                                     value={userInput.idea}
                                     onChange={handleInputChange}
                                     onKeyDown={handleKeyDown}
-                                    placeholder={'Describe your startup idea...'}
-                                    className="glass-scroll w-full p-4 sm:p-6 pr-12 sm:pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-base sm:text-lg min-h-[100px] sm:min-h-[120px] placeholder-slate-400 text-slate-100"
+                                    placeholder={isLoading ? 'Analysis in progress...' : 'Describe your startup idea...'}
+                                    className={`glass-scroll w-full p-4 sm:p-6 pr-12 sm:pr-16 bg-transparent border-none focus:ring-0 focus:outline-none resize-none text-base sm:text-lg min-h-[100px] sm:min-h-[120px] placeholder-slate-400 text-slate-100 ${isLoading ? 'opacity-60' : ''}`}
                                     rows={4}
                                     disabled={isLoading}
                                     aria-describedby={userInput.errorMessage ? "error-message" : undefined}
@@ -335,6 +335,37 @@ const HomePage: React.FC = () => {
                     )}
                     {/* Loading spinner removed as requested */}
                 </form>
+
+                {/* Analysis Status Indicator */}
+                {isLoading && (
+                    <div className="w-full max-w-2xl mx-auto px-4 sm:px-0 mb-8">
+                        <div className="bg-white/5 backdrop-blur rounded-2xl p-6 border border-white/10">
+                            <div className="flex items-center justify-center gap-4">
+                                <div className="w-8 h-8 border-3 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin"></div>
+                                <div className="text-center">
+                                    <h3 className="text-lg font-semibold text-white mb-1">Analyzing Your Idea</h3>
+                                    <p className="text-sm text-slate-300">Scanning 7+ platforms for market signals...</p>
+                                </div>
+                            </div>
+                            
+                            {/* Progress Steps */}
+                            <div className="mt-6 space-y-2">
+                                <div className="flex items-center gap-3 text-sm text-slate-300">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span>Processing your idea...</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-slate-400">
+                                    <div className="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></div>
+                                    <span>Scanning Reddit, Hacker News, Product Hunt...</span>
+                                </div>
+                                <div className="flex items-center gap-3 text-sm text-slate-400">
+                                    <div className="w-2 h-2 bg-cyan-500 rounded-full animate-pulse"></div>
+                                    <span>Generating AI insights and recommendations...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Simple Prompt Gallery */}
                 <PromptGallery
