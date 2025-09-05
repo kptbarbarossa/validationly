@@ -20,24 +20,24 @@ const PrivacyPolicy: React.FC = () => {
 
         <div className="relative z-10 container mx-auto px-4 py-16">
           <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="text-center mb-12">
+          {/* Header */}
+          <div className="text-center mb-12">
               <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Privacy Policy
-              </h1>
+              Privacy Policy
+            </h1>
               <p className="text-xl text-slate-300 max-w-2xl mx-auto">
                 Your privacy is important to us. Here's how we handle your data.
               </p>
               <p className="text-sm text-slate-400 mt-4">
-                Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-              </p>
-            </div>
+              Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </p>
+          </div>
 
-            {/* Content */}
+          {/* Content */}
             <div className="bg-slate-900/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-8 md:p-12">
               <div className="prose prose-invert max-w-none">
-                
-                {/* Introduction */}
+            
+            {/* Introduction */}
                 <section className="mb-8">
                   <h2 className="text-2xl font-bold text-white mb-4">Introduction</h2>
                   <p className="text-slate-300 leading-relaxed mb-4">
@@ -45,8 +45,8 @@ const PrivacyPolicy: React.FC = () => {
                   </p>
                   <p className="text-slate-300 leading-relaxed">
                     <strong className="text-white">Key Point:</strong> We collect minimal data and prioritize your privacy. We do not sell, rent, or share your personal information with third parties.
-                  </p>
-                </section>
+              </p>
+            </section>
 
                 {/* Data We Collect */}
                 <section className="mb-8">
@@ -61,7 +61,7 @@ const PrivacyPolicy: React.FC = () => {
                     <li><strong className="text-white">Startup Ideas:</strong> The business ideas you submit for validation (processed anonymously)</li>
                     <li><strong className="text-white">Usage Analytics:</strong> Anonymous usage statistics to improve our service (only if you consent)</li>
                     <li><strong className="text-white">Authentication Data:</strong> Email address and name (only if you choose to sign up)</li>
-                  </ul>
+              </ul>
 
                   <h3 className="text-xl font-semibold text-white mb-3">What We DON'T Collect</h3>
                   <ul className="list-disc list-inside text-slate-300 space-y-2">
@@ -71,8 +71,8 @@ const PrivacyPolicy: React.FC = () => {
                     <li>Browsing history</li>
                     <li>Social media profiles</li>
                     <li>Financial information</li>
-                  </ul>
-                </section>
+              </ul>
+            </section>
 
                 {/* How We Use Data */}
                 <section className="mb-8">
@@ -96,10 +96,10 @@ const PrivacyPolicy: React.FC = () => {
                         <li>Improve AI accuracy</li>
                         <li>Fix bugs and technical issues</li>
                         <li>Enhance user experience</li>
-                      </ul>
+              </ul>
                     </div>
                   </div>
-                </section>
+            </section>
 
                 {/* Data Storage */}
                 <section className="mb-8">
@@ -112,7 +112,7 @@ const PrivacyPolicy: React.FC = () => {
                       <li>We use industry-standard security practices</li>
                       <li>Regular security audits and updates</li>
                       <li>Limited access to data (only essential personnel)</li>
-                    </ul>
+              </ul>
                   </div>
 
                   <h3 className="text-xl font-semibold text-white mb-3">Data Retention</h3>
@@ -120,8 +120,8 @@ const PrivacyPolicy: React.FC = () => {
                     <li><strong className="text-white">Validation Results:</strong> Stored for 1 year (if you're signed up) or deleted immediately (if anonymous)</li>
                     <li><strong className="text-white">Analytics Data:</strong> Anonymized and stored for 2 years maximum</li>
                     <li><strong className="text-white">Account Data:</strong> Retained until you delete your account</li>
-                  </ul>
-                </section>
+              </ul>
+            </section>
 
                 {/* Third Parties */}
                 <section className="mb-8">
@@ -140,9 +140,9 @@ const PrivacyPolicy: React.FC = () => {
                     </div>
                     
                     <div className="bg-slate-800/50 rounded-lg p-4">
-                      <h3 className="text-lg font-semibold text-white mb-2">Supabase (Authentication)</h3>
+                      <h3 className="text-lg font-semibold text-white mb-2">LocalStorage (Browser Storage)</h3>
                       <p className="text-slate-300 text-sm">
-                        Used only for user authentication if you choose to sign up. Your startup ideas are processed separately.
+                        We use browser localStorage to remember your cookie preferences and validation history. This data is stored locally on your device and not transmitted to our servers.
                       </p>
                     </div>
                     
@@ -153,9 +153,9 @@ const PrivacyPolicy: React.FC = () => {
                       </p>
                     </div>
                   </div>
-                </section>
+            </section>
 
-                {/* Your Rights */}
+            {/* Your Rights */}
                 <section className="mb-8">
                   <h2 className="text-2xl font-bold text-white mb-4">Your Rights</h2>
                   
@@ -166,16 +166,16 @@ const PrivacyPolicy: React.FC = () => {
                         <p className="text-slate-300 text-sm">
                           Request a copy of your data or export your validation history.
                         </p>
-                      </div>
-                      
+                </div>
+                
                       <div className="bg-red-900/20 border border-red-700/50 rounded-lg p-4">
                         <h3 className="text-lg font-semibold text-red-400 mb-2">Right to Delete</h3>
                         <p className="text-slate-300 text-sm">
                           Request deletion of your account and all associated data.
                         </p>
-                      </div>
-                    </div>
-                    
+                </div>
+              </div>
+              
                     <div className="space-y-4">
                       <div className="bg-yellow-900/20 border border-yellow-700/50 rounded-lg p-4">
                         <h3 className="text-lg font-semibold text-yellow-400 mb-2">Opt-Out</h3>
@@ -190,6 +190,37 @@ const PrivacyPolicy: React.FC = () => {
                           Request correction of any inaccurate personal data.
                         </p>
                       </div>
+                    </div>
+                  </div>
+            </section>
+
+                {/* Legal Basis */}
+                <section className="mb-8">
+                  <h2 className="text-2xl font-bold text-white mb-4">Legal Basis for Processing</h2>
+                  <p className="text-slate-300 leading-relaxed mb-4">
+                    Under GDPR, we process your data based on the following legal grounds:
+                  </p>
+                  
+                  <div className="space-y-4">
+                    <div className="bg-slate-800/50 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-2">Consent (Art. 6(1)(a) GDPR)</h3>
+                      <p className="text-slate-300 text-sm">
+                        Analytics cookies and optional features are processed based on your explicit consent.
+                      </p>
+                    </div>
+                    
+                    <div className="bg-slate-800/50 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-2">Legitimate Interest (Art. 6(1)(f) GDPR)</h3>
+                      <p className="text-slate-300 text-sm">
+                        Service provision, improvement, and security are based on our legitimate interest in providing quality service.
+                      </p>
+                    </div>
+                    
+                    <div className="bg-slate-800/50 rounded-lg p-4">
+                      <h3 className="text-lg font-semibold text-white mb-2">Contract Performance (Art. 6(1)(b) GDPR)</h3>
+                      <p className="text-slate-300 text-sm">
+                        User account management and service delivery are necessary for contract performance.
+                      </p>
                     </div>
                   </div>
                 </section>
@@ -209,15 +240,15 @@ const PrivacyPolicy: React.FC = () => {
                       <p><strong className="text-white">Data Protection Officer:</strong> Available upon request</p>
                     </div>
                   </div>
-                </section>
+            </section>
 
                 {/* Changes */}
                 <section className="mb-8">
                   <h2 className="text-2xl font-bold text-white mb-4">Changes to This Policy</h2>
                   <p className="text-slate-300 leading-relaxed">
                     We may update this Privacy Policy from time to time. We will notify you of any significant changes by posting the new Privacy Policy on this page and updating the "Last updated" date.
-                  </p>
-                </section>
+              </p>
+            </section>
 
               </div>
             </div>

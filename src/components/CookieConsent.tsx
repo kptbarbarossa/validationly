@@ -49,8 +49,12 @@ const CookieConsent: React.FC<CookieConsentProps> = ({ onAccept }) => {
               Cookie Preferences
             </h3>
             <p className="text-slate-300 text-sm leading-relaxed mb-4">
-              We use minimal cookies to improve your experience. We only collect essential data for our service to function properly. 
+              We use minimal cookies and localStorage to improve your experience. We only collect essential data for our service to function properly. 
               <strong className="text-white"> No personal data is stored or shared.</strong>
+              <br />
+              <span className="text-xs text-gray-400">
+                LocalStorage is used to remember your preferences and validation history locally on your device.
+              </span>
             </p>
             
             {/* Cookie Details */}

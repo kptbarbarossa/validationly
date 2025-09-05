@@ -49,8 +49,8 @@ export const useAnalytics = () => {
       event_label: 'idea_submitted',
       value: score,
       custom_parameters: {
-        idea_length: idea.length,
-        demand_score: score
+        idea_length_range: idea.length < 50 ? 'short' : idea.length < 100 ? 'medium' : 'long',
+        score_range: score < 30 ? 'low' : score < 70 ? 'medium' : 'high'
       }
     });
   };
