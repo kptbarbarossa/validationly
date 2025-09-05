@@ -16,22 +16,6 @@ const ToolsPage: React.FC = () => {
             features: ['1,247+ validated opportunities', 'Evidence from real users', 'Market size estimates', 'Suggested solutions']
         },
         {
-            id: 'trend-hunter',
-            title: 'Trend Hunter',
-            description: 'Discover viral trends and generate profitable startup ideas from social media momentum.',
-            icon: '🎯',
-            route: '/trend-hunter',
-            features: ['Viral trend analysis', 'Startup idea generation', 'Market gap detection', 'Timing optimization']
-        },
-        {
-            id: 'trend-to-startup',
-            title: 'Trend → Startup Generator',
-            description: 'Transform viral trends into detailed startup opportunities with market analysis and competition assessment.',
-            icon: '🚀',
-            route: '/trend-to-startup',
-            features: ['Detailed startup ideas', 'Market size analysis', 'Competition assessment', 'Revenue models']
-        },
-        {
             id: 'x-generator',
             title: 'X Content Generator',
             description: 'Generate engaging Twitter/X posts for your startup idea with AI-powered content creation.',
@@ -46,14 +30,6 @@ const ToolsPage: React.FC = () => {
             icon: '📄',
             route: '/job-tailor',
             features: ['CV optimization', 'Job matching', 'Multiple tones', 'Instant results']
-        },
-        {
-            id: 'market-academy',
-            title: 'Market Signal Academy',
-            description: 'Master trend analysis and market intelligence through comprehensive courses and real case studies.',
-            icon: '🎓',
-            route: '/market-signal-academy',
-            features: ['Expert training', 'Real case studies', 'Practical tools', 'Market intelligence']
         },
         {
             id: 'social-validation',
