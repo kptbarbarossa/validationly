@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SEOHead } from '../components/SEOHead';
-import ExportShare from '../components/ExportShare';
 import AffiliateCardsSection from '../components/AffiliateCardsSection';
 
 // API'den gelen veri yapısına göre type definitions
@@ -194,7 +193,7 @@ const ResultsPage: React.FC = () => {
 
       <div className="min-h-screen text-white">
         <div className="container mx-auto px-6 py-12">
-          {/* Header */}
+        {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold mb-4">Strategic Analysis Results</h1>
             <p className="text-xl text-gray-400 mb-6">"{idea}"</p>
@@ -220,8 +219,8 @@ const ResultsPage: React.FC = () => {
                   {tab.label}
                 </button>
               ))}
+              </div>
             </div>
-          </div>
 
           {/* Tab Content */}
           {activeTab === 'overview' && (
@@ -231,7 +230,7 @@ const ResultsPage: React.FC = () => {
                 <div className="text-center mb-8">
                   <h2 className="text-3xl font-bold text-white mb-4">Validation Scorecard</h2>
                   <p className="text-purple-300">Comprehensive assessment across all validation criteria</p>
-                </div>
+            </div>
 
                 {/* Main Scores Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -262,26 +261,26 @@ const ResultsPage: React.FC = () => {
                       {result.validationScorecard?.demandScore || 0}
                     </div>
                     <p className="text-sm text-gray-400">Demand Score</p>
-                  </div>
+                    </div>
                   <div className="text-center p-4 bg-gray-800/50 rounded-xl">
                     <div className={`text-2xl font-bold ${getScoreColor(result.validationScorecard?.competitionScore || 0)}`}>
                       {result.validationScorecard?.competitionScore || 0}
-                    </div>
-                    <p className="text-sm text-gray-400">Competition Score</p>
                   </div>
+                    <p className="text-sm text-gray-400">Competition Score</p>
+                </div>
                   <div className="text-center p-4 bg-gray-800/50 rounded-xl">
                     <div className={`text-2xl font-bold ${getScoreColor(result.validationScorecard?.executionScore || 0)}`}>
                       {result.validationScorecard?.executionScore || 0}
-                    </div>
+                      </div>
                     <p className="text-sm text-gray-400">Execution Score</p>
-                  </div>
+                      </div>
                   <div className="text-center p-4 bg-gray-800/50 rounded-xl">
                     <div className={`text-2xl font-bold ${getScoreColor(result.validationScorecard?.monetizationScore || 0)}`}>
                       {result.validationScorecard?.monetizationScore || 0}
-                    </div>
+                      </div>
                     <p className="text-sm text-gray-400">Monetization Score</p>
+                    </div>
                   </div>
-                </div>
 
                 {/* Key Recommendations */}
                 <div className="bg-gray-800/50 rounded-xl p-6">
@@ -291,17 +290,17 @@ const ResultsPage: React.FC = () => {
                       <div key={i} className="flex items-start space-x-3">
                         <span className="text-blue-400 mt-1">•</span>
                         <span className="text-gray-300">{rec}</span>
+                        </div>
+                      ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
-                </div>
-              </div>
 
               {/* Problem Analysis */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Problem Analysis</h2>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                  <div>
+                      <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">🎯 Core Problem</h3>
                     <p className="text-gray-300 leading-relaxed mb-4">
                       {result.problemAnalysis?.coreProblem || 'Problem analysis not available'}
@@ -310,21 +309,21 @@ const ResultsPage: React.FC = () => {
                       <div className="flex justify-between">
                         <span className="text-gray-400">Severity:</span>
                         <span className="text-white">{result.problemAnalysis?.problemSeverity || 'Unknown'}</span>
-                      </div>
+                        </div>
                       <div className="flex justify-between">
                         <span className="text-gray-400">Frequency:</span>
                         <span className="text-white">{result.problemAnalysis?.problemFrequency || 'Unknown'}</span>
                       </div>
-                    </div>
-                  </div>
-                  <div>
+                      </div>
+                      </div>
+                      <div>
                     <h3 className="text-lg font-semibold text-blue-400 mb-3">💼 Job to be Done</h3>
                     <p className="text-gray-300 leading-relaxed">
                       {result.problemAnalysis?.jobToBeDone || 'Job analysis not available'}
                     </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
 
               {/* Target Audience */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
@@ -334,24 +333,24 @@ const ResultsPage: React.FC = () => {
                     <div key={i} className="bg-gray-700/50 rounded-xl p-6">
                       <h3 className="text-lg font-semibold text-green-400 mb-3">{archetype.name}</h3>
                       <div className="space-y-3">
-                        <div>
+                      <div>
                           <span className="text-gray-400 text-sm">Demographics:</span>
                           <p className="text-gray-300 text-sm">{archetype.demographics}</p>
-                        </div>
-                        <div>
+                      </div>
+                      <div>
                           <span className="text-gray-400 text-sm">Motivations:</span>
                           <ul className="text-gray-300 text-sm">
                             {archetype.motivations?.map((motivation, j) => (
                               <li key={j}>• {motivation}</li>
                             ))}
                           </ul>
-                        </div>
+                      </div>
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-            </div>
+                      </div>
+                      </div>
+                    </div>
           )}
 
           {activeTab === 'analysis' && (
@@ -360,53 +359,53 @@ const ResultsPage: React.FC = () => {
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Competitive Landscape</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                      <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Direct Competitors</h3>
                     <ul className="space-y-2">
                       {result.competitiveLandscape?.directCompetitors?.map((competitor, i) => (
                         <li key={i} className="text-gray-300">• {competitor}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
+                          ))}
+                        </ul>
+                      </div>
+                      <div>
                     <h3 className="text-lg font-semibold text-yellow-400 mb-3">Indirect Competitors</h3>
                     <ul className="space-y-2">
                       {result.competitiveLandscape?.indirectCompetitors?.map((competitor, i) => (
                         <li key={i} className="text-gray-300">• {competitor}</li>
-                      ))}
-                    </ul>
+                          ))}
+                        </ul>
+                    </div>
                   </div>
                 </div>
-              </div>
 
               {/* Risk Analysis */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Risk Analysis</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+                              <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Market Risk</h3>
                     <p className="text-gray-300">{result.risks?.marketRisk || 'Not available'}</p>
-                  </div>
-                  <div>
+                              </div>
+                              <div>
                     <h3 className="text-lg font-semibold text-orange-400 mb-3">Execution Risk</h3>
                     <p className="text-gray-300">{result.risks?.executionRisk || 'Not available'}</p>
-                  </div>
-                  <div>
+                              </div>
+              <div>
                     <h3 className="text-lg font-semibold text-yellow-400 mb-3">Adoption Risk</h3>
                     <p className="text-gray-300">{result.risks?.adoptionRisk || 'Not available'}</p>
-                  </div>
-                  <div>
+                      </div>
+                      <div>
                     <h3 className="text-lg font-semibold text-purple-400 mb-3">Regulatory Risk</h3>
                     <p className="text-gray-300">{result.risks?.regulatoryRisk || 'Not available'}</p>
-                  </div>
-                </div>
               </div>
+              </div>
+                </div>
 
               {/* Mental Sandbox */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Mental Sandbox</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
+              <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Pre-Mortem Analysis</h3>
                     <p className="text-gray-300 mb-4">{result.mentalSandbox?.preMortem?.scenario || 'Not available'}</p>
                     <ul className="space-y-2">
@@ -414,8 +413,8 @@ const ResultsPage: React.FC = () => {
                         <li key={i} className="text-gray-300 text-sm">• {point}</li>
                       ))}
                     </ul>
-                  </div>
-                  <div>
+            </div>
+                <div>
                     <h3 className="text-lg font-semibold text-green-400 mb-3">Pre-Celebration Analysis</h3>
                     <p className="text-gray-300 mb-4">{result.mentalSandbox?.preCelebration?.scenario || 'Not available'}</p>
                     <ul className="space-y-2">
@@ -423,9 +422,9 @@ const ResultsPage: React.FC = () => {
                         <li key={i} className="text-gray-300 text-sm">• {factor}</li>
                       ))}
                     </ul>
-                  </div>
-                </div>
               </div>
+            </div>
+          </div>
 
               {/* Red Team Challenge */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
@@ -438,11 +437,11 @@ const ResultsPage: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Counter Argument</h3>
                     <p className="text-gray-300">{result.redTeamChallenge?.counterArgument || 'Not available'}</p>
+                        </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
+                        </div>
+                      )}
 
           {activeTab === 'strategy' && (
             <div className="space-y-8">
@@ -450,30 +449,30 @@ const ResultsPage: React.FC = () => {
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Platform Strategy</h2>
                 <div className="space-y-6">
-                  <div>
+                      <div>
                     <h3 className="text-lg font-semibold text-blue-400 mb-3">Launch Strategy</h3>
                     <p className="text-gray-300">{result.platformSpecificStrategy?.launchStrategy || 'Not available'}</p>
-                  </div>
-                  <div>
+                      </div>
+                      <div>
                     <h3 className="text-lg font-semibold text-green-400 mb-3">Messaging Focus</h3>
                     <p className="text-gray-300">{result.platformSpecificStrategy?.messagingFocus || 'Not available'}</p>
-                  </div>
-                  <div>
+                      </div>
+                      <div>
                     <h3 className="text-lg font-semibold text-purple-400 mb-3">KPI Suggestions</h3>
                     <ul className="space-y-2">
                       {result.platformSpecificStrategy?.kpiSuggestions?.map((kpi, i) => (
                         <li key={i} className="text-gray-300">• {kpi}</li>
                       ))}
                     </ul>
-                  </div>
+                        </div>
                   <div>
                     <h3 className="text-lg font-semibold text-yellow-400 mb-3">Community Engagement Plan</h3>
                     <p className="text-gray-300">{result.platformSpecificStrategy?.communityEngagementPlan || 'Not available'}</p>
                   </div>
                 </div>
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
           {activeTab === 'social' && (
             <div className="space-y-8">
@@ -485,53 +484,30 @@ const ResultsPage: React.FC = () => {
                     <h3 className="text-lg font-semibold text-blue-600 mb-3">🐦 Twitter/X Post</h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.tweetSuggestion || 'Tweet suggestion not available'}
-                    </p>
-                  </div>
+                </p>
+              </div>
                   <div className="bg-gray-700/50 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-blue-600 mb-3">💼 LinkedIn Post</h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.linkedinSuggestion || 'LinkedIn suggestion not available'}
                     </p>
-                  </div>
+                        </div>
                   <div className="bg-gray-700/50 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-orange-600 mb-3">📝 Reddit Title</h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.redditTitleSuggestion || 'Reddit title not available'}
                     </p>
-                  </div>
+                        </div>
                   <div className="bg-gray-700/50 rounded-xl p-6">
                     <h3 className="text-lg font-semibold text-orange-600 mb-3">📝 Reddit Body</h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.redditBodySuggestion || 'Reddit body not available'}
                     </p>
-                  </div>
-                </div>
+                        </div>
+                        </div>
               </div>
             </div>
           )}
-
-          {/* Export & Share Section */}
-          <ExportShare
-            validation={{
-              idea: result.idea,
-              demandScore: result.validationScorecard?.overallScore || 0,
-              scoreJustification: (result.validationScorecard?.keyRecommendations || []).join(' '),
-              classification: result.validationScorecard?.finalVerdict || 'Pending',
-              insights: {
-                keyInsights: result.validationScorecard?.keyRecommendations || [],
-                opportunities: [result.differentiation?.coreDifferentiator || ''],
-                painPoints: [result.problemAnalysis?.coreProblem || ''],
-                trendingTopics: result.platformSpecificStrategy?.kpiSuggestions || []
-              },
-              socialMediaSuggestions: {
-                tweetSuggestion: result.socialMediaSuggestions?.tweetSuggestion || '',
-                linkedinSuggestion: result.socialMediaSuggestions?.linkedinSuggestion || '',
-                redditTitleSuggestion: result.socialMediaSuggestions?.redditTitleSuggestion || '',
-                redditBodySuggestion: result.socialMediaSuggestions?.redditBodySuggestion || ''
-              }
-            }}
-            className="mb-8"
-          />
 
           {/* Recommended Tools Section */}
           <AffiliateCardsSection 
