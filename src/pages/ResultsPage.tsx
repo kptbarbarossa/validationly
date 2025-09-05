@@ -109,8 +109,8 @@ interface ValidationResult {
 const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'overview' | 'analysis' | 'strategy' | 'social'>('overview');
-  const [isLoading, setIsLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'analysis' | 'strategy' | 'social' | 'tools'>('overview');
+  const [copiedText, setCopiedText] = useState<string | null>(null);
 
   const result = location.state?.result as ValidationResult;
   const idea = location.state?.idea || result?.idea || 'Unknown Idea';
@@ -151,19 +151,36 @@ const ResultsPage: React.FC = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen text-white">
-        <div className="container mx-auto px-6 py-12">
-          <div className="text-center mb-12">
-            <div className="text-6xl mb-6 animate-pulse">🔍</div>
-            <h1 className="text-4xl font-bold mb-4">AI-Powered Strategic Analysis</h1>
-            <p className="text-xl text-gray-400">Analyzing your idea with our comprehensive validation framework...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const copyToClipboard = async (text: string, type: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedText(type);
+      setTimeout(() => setCopiedText(null), 2000);
+      } catch (err) {
+      console.error('Failed to copy text: ', err);
+    }
+  };
+
+  const shareToSocial = (platform: 'twitter' | 'linkedin' | 'reddit', text: string) => {
+    let url = '';
+    const encodedText = encodeURIComponent(text);
+    
+    switch (platform) {
+      case 'twitter':
+        url = `https://twitter.com/intent/tweet?text=${encodedText}`;
+        break;
+      case 'linkedin':
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedText}`;
+        break;
+      case 'reddit':
+        url = `https://reddit.com/submit?text=${encodedText}`;
+        break;
+    }
+    
+    if (url) {
+      window.open(url, '_blank', 'width=600,height=400');
+    }
+  };
 
   if (!result) {
     return (
@@ -349,9 +366,9 @@ const ResultsPage: React.FC = () => {
                       </div>
                     </div>
                   ))}
+                  </div>
                       </div>
                       </div>
-                    </div>
           )}
 
           {activeTab === 'analysis' && (
@@ -375,57 +392,57 @@ const ResultsPage: React.FC = () => {
                         <li key={i} className="text-gray-300">• {competitor}</li>
                           ))}
                         </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
 
               {/* Risk Analysis */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Risk Analysis</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                              <div>
+                      <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Market Risk</h3>
                     <p className="text-gray-300">{result.risks?.marketRisk || 'Not available'}</p>
-                              </div>
-                              <div>
+                      </div>
+                      <div>
                     <h3 className="text-lg font-semibold text-orange-400 mb-3">Execution Risk</h3>
                     <p className="text-gray-300">{result.risks?.executionRisk || 'Not available'}</p>
-                              </div>
-              <div>
+                      </div>
+                      <div>
                     <h3 className="text-lg font-semibold text-yellow-400 mb-3">Adoption Risk</h3>
                     <p className="text-gray-300">{result.risks?.adoptionRisk || 'Not available'}</p>
                       </div>
                       <div>
                     <h3 className="text-lg font-semibold text-purple-400 mb-3">Regulatory Risk</h3>
                     <p className="text-gray-300">{result.risks?.regulatoryRisk || 'Not available'}</p>
-              </div>
-              </div>
+                    </div>
+                  </div>
                 </div>
 
               {/* Mental Sandbox */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Mental Sandbox</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
+                              <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Pre-Mortem Analysis</h3>
                     <p className="text-gray-300 mb-4">{result.mentalSandbox?.preMortem?.scenario || 'Not available'}</p>
                     <ul className="space-y-2">
                       {result.mentalSandbox?.preMortem?.keyFailurePoints?.map((point, i) => (
                         <li key={i} className="text-gray-300 text-sm">• {point}</li>
-                      ))}
-                    </ul>
-            </div>
-                <div>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div>
                     <h3 className="text-lg font-semibold text-green-400 mb-3">Pre-Celebration Analysis</h3>
                     <p className="text-gray-300 mb-4">{result.mentalSandbox?.preCelebration?.scenario || 'Not available'}</p>
                     <ul className="space-y-2">
                       {result.mentalSandbox?.preCelebration?.keySuccessFactors?.map((factor, i) => (
                         <li key={i} className="text-gray-300 text-sm">• {factor}</li>
-                      ))}
-                    </ul>
-              </div>
-            </div>
-          </div>
+                                  ))}
+                                </ul>
+                              </div>
+                            </div>
+                        </div>
 
               {/* Red Team Challenge */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
@@ -434,14 +451,14 @@ const ResultsPage: React.FC = () => {
                   <div>
                     <h3 className="text-lg font-semibold text-blue-400 mb-3">Strongest Positive Assumption</h3>
                     <p className="text-gray-300">{result.redTeamChallenge?.strongestPositiveAssumption || 'Not available'}</p>
-                  </div>
+                      </div>
                   <div>
                     <h3 className="text-lg font-semibold text-red-400 mb-3">Counter Argument</h3>
                     <p className="text-gray-300">{result.redTeamChallenge?.counterArgument || 'Not available'}</p>
-                        </div>
-                  </div>
+                      </div>
+                    </div>
                 </div>
-                        </div>
+              </div>
                       )}
 
           {activeTab === 'strategy' && (
@@ -450,29 +467,29 @@ const ResultsPage: React.FC = () => {
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Platform Strategy</h2>
                 <div className="space-y-6">
-                      <div>
+              <div>
                     <h3 className="text-lg font-semibold text-blue-400 mb-3">Launch Strategy</h3>
                     <p className="text-gray-300">{result.platformSpecificStrategy?.launchStrategy || 'Not available'}</p>
                       </div>
                       <div>
                     <h3 className="text-lg font-semibold text-green-400 mb-3">Messaging Focus</h3>
                     <p className="text-gray-300">{result.platformSpecificStrategy?.messagingFocus || 'Not available'}</p>
-                      </div>
-                      <div>
+              </div>
+              <div>
                     <h3 className="text-lg font-semibold text-purple-400 mb-3">KPI Suggestions</h3>
                     <ul className="space-y-2">
                       {result.platformSpecificStrategy?.kpiSuggestions?.map((kpi, i) => (
                         <li key={i} className="text-gray-300">• {kpi}</li>
                       ))}
                     </ul>
-                        </div>
-                  <div>
+            </div>
+                <div>
                     <h3 className="text-lg font-semibold text-yellow-400 mb-3">Community Engagement Plan</h3>
                     <p className="text-gray-300">{result.platformSpecificStrategy?.communityEngagementPlan || 'Not available'}</p>
                   </div>
                 </div>
-                </div>
               </div>
+            </div>
             )}
 
           {activeTab === 'social' && (
@@ -481,31 +498,102 @@ const ResultsPage: React.FC = () => {
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
                 <h2 className="text-2xl font-bold text-white mb-6">Social Media Strategy</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Twitter/X Post */}
                   <div className="bg-gray-700/50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-blue-600 mb-3">🐦 Twitter/X Post</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-blue-600">🐦 Twitter/X Post</h3>
+                      <div className="flex gap-2">
+              <button
+                          onClick={() => copyToClipboard(result.socialMediaSuggestions?.tweetSuggestion || '', 'twitter')}
+                          className="px-3 py-1 bg-gray-600 hover:bg-gray-500 rounded-lg text-xs transition-colors"
+              >
+                          {copiedText === 'twitter' ? '✅' : '📋'}
+              </button>
+              <button
+                          onClick={() => shareToSocial('twitter', result.socialMediaSuggestions?.tweetSuggestion || '')}
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs transition-colors"
+              >
+                          🐦
+              </button>
+            </div>
+          </div>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.tweetSuggestion || 'Tweet suggestion not available'}
-                </p>
-              </div>
+                        </p>
+                      </div>
+
+                  {/* LinkedIn Post */}
                   <div className="bg-gray-700/50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-blue-600 mb-3">💼 LinkedIn Post</h3>
+                      <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-blue-600">💼 LinkedIn Post</h3>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => copyToClipboard(result.socialMediaSuggestions?.linkedinSuggestion || '', 'linkedin')}
+                          className="px-3 py-1 bg-gray-600 hover:bg-gray-500 rounded-lg text-xs transition-colors"
+                        >
+                          {copiedText === 'linkedin' ? '✅' : '📋'}
+                        </button>
+                        <button
+                          onClick={() => shareToSocial('linkedin', result.socialMediaSuggestions?.linkedinSuggestion || '')}
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-500 rounded-lg text-xs transition-colors"
+                        >
+                          💼
+                        </button>
+                    </div>
+                  </div>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.linkedinSuggestion || 'LinkedIn suggestion not available'}
                     </p>
-                        </div>
+                      </div>
+
+                  {/* Reddit Title */}
                   <div className="bg-gray-700/50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-orange-600 mb-3">📝 Reddit Title</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-orange-600">📝 Reddit Title</h3>
+                      <div className="flex gap-2">
+                    <button
+                          onClick={() => copyToClipboard(result.socialMediaSuggestions?.redditTitleSuggestion || '', 'reddit-title')}
+                          className="px-3 py-1 bg-gray-600 hover:bg-gray-500 rounded-lg text-xs transition-colors"
+                        >
+                          {copiedText === 'reddit-title' ? '✅' : '📋'}
+                    </button>
+                        <button
+                          onClick={() => shareToSocial('reddit', result.socialMediaSuggestions?.redditTitleSuggestion || '')}
+                          className="px-3 py-1 bg-orange-600 hover:bg-orange-500 rounded-lg text-xs transition-colors"
+                        >
+                          📝
+                        </button>
+              </div>
+            </div>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.redditTitleSuggestion || 'Reddit title not available'}
                     </p>
-                        </div>
+                      </div>
+
+                  {/* Reddit Body */}
                   <div className="bg-gray-700/50 rounded-xl p-6">
-                    <h3 className="text-lg font-semibold text-orange-600 mb-3">📝 Reddit Body</h3>
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="text-lg font-semibold text-orange-600">📝 Reddit Body</h3>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => copyToClipboard(result.socialMediaSuggestions?.redditBodySuggestion || '', 'reddit-body')}
+                          className="px-3 py-1 bg-gray-600 hover:bg-gray-500 rounded-lg text-xs transition-colors"
+                        >
+                          {copiedText === 'reddit-body' ? '✅' : '📋'}
+                        </button>
+                        <button
+                          onClick={() => shareToSocial('reddit', result.socialMediaSuggestions?.redditBodySuggestion || '')}
+                          className="px-3 py-1 bg-orange-600 hover:bg-orange-500 rounded-lg text-xs transition-colors"
+                        >
+                          📝
+                        </button>
+                </div>
+              </div>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.redditBodySuggestion || 'Reddit body not available'}
                     </p>
-                        </div>
-                        </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
