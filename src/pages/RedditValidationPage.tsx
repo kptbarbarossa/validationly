@@ -1,15 +1,15 @@
 import React from 'react';
-import RedditPainAnalyzer from '@/components/RedditPainAnalyzer';
-import RedditIdeaCards from '@/components/RedditIdeaCards';
-import SEOHead from '@/components/SEOHead';
+import RedditValidationAnalyzer from '../components/RedditValidationAnalyzer';
+import RedditValidationCards from '../components/RedditValidationCards';
+import SEOHead from '../components/SEOHead';
 
-const RedditPainMiningPage: React.FC = () => {
+const RedditValidationPage: React.FC = () => {
   return (
     <>
       <SEOHead
-        title="Reddit Pain Mining | Validationly"
-        description="Discover pain points and validate startup ideas using real Reddit discussions. Analyze user frustrations and find market opportunities."
-        canonicalUrl="https://validationly.com/reddit-pain-mining"
+        title="Reddit Validation | Validationly"
+        description="Discover validate startup ideas using real Reddit discussions. Analyze find market opportunities."
+        canonicalUrl="https://validationly.com/reddit-validation"
       />
       
       <div className="min-h-screen bg-gradient-to-br from-indigo-950 via-slate-950 to-cyan-950">
@@ -24,7 +24,7 @@ const RedditPainMiningPage: React.FC = () => {
           <div className="container mx-auto px-6 py-12">
             {/* Main Analyzer */}
             <div className="mb-16">
-              <RedditPainAnalyzer />
+              <RedditValidationAnalyzer />
             </div>
 
             {/* Divider */}
@@ -32,17 +32,17 @@ const RedditPainMiningPage: React.FC = () => {
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
               <div className="px-6">
                 <h2 className="text-2xl font-bold text-white text-center">
-                  🔍 Browse Reddit Insights
+                  🔍 Browse Reddit Validation
                 </h2>
                 <p className="text-gray-400 text-center mt-2">
-                  Explore pain points and ideas discovered from Reddit discussions
+                  Explore validation insights discovered from Reddit discussions
                 </p>
               </div>
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent"></div>
             </div>
 
             {/* Ideas Grid */}
-            <RedditIdeaCards />
+            <RedditValidationCards />
           </div>
         </div>
       </div>
@@ -50,4 +50,4 @@ const RedditPainMiningPage: React.FC = () => {
   );
 };
 
-export default RedditPainMiningPage;
+export default RedditValidationPage;

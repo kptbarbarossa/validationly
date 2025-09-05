@@ -1,17 +1,17 @@
 'use client';
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Badge } from "./ui/badge";
 import { Loader2, Search, TrendingUp, Users, MessageSquare, AlertCircle } from 'lucide-react';
 
-interface PainAnalysisResult {
+interface ValidationAnalysisResult {
   run_id: string;
   score: number;
   breakdown: {
-    reddit_pain: {
+    reddit_validation: {
       score: number;
       strength: number;
       freshness: number;
@@ -42,7 +42,7 @@ export default function RedditPainAnalyzer() {
   const [keywords, setKeywords] = useState('');
   const [targetSegments, setTargetSegments] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<PainAnalysisResult | null>(null);
+  const [result, setResult] = useState<ValidationAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const analyzePain = async () => {
@@ -56,7 +56,7 @@ export default function RedditPainAnalyzer() {
     setResult(null);
 
     try {
-      const response = await fetch('/api/reddit/pain', {
+      const response = await fetch('/api/reddit/validation', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -101,10 +101,10 @@ export default function RedditPainAnalyzer() {
       {/* Header */}
       <div className="text-center">
         <h1 className="text-4xl font-bold text-white mb-4">
-          🔍 Reddit Pain Mining
+          🔍 Reddit Validation
         </h1>
         <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-          Discover pain points and validate your startup ideas using real Reddit discussions
+          Discover validate your startup ideas using real Reddit discussions
         </p>
       </div>
 
@@ -164,7 +164,7 @@ export default function RedditPainAnalyzer() {
             ) : (
               <>
                 <Search className="h-4 w-4 mr-2" />
-                Analyze Pain Points
+                Validate Your Idea
               </>
             )}
           </Button>
@@ -186,7 +186,7 @@ export default function RedditPainAnalyzer() {
             <CardHeader>
               <CardTitle className="text-white flex items-center gap-2">
                 <TrendingUp className="h-5 w-5" />
-                Pain Analysis Score
+                Validation Score
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -195,7 +195,7 @@ export default function RedditPainAnalyzer() {
                   {Math.round(result.score * 100)}
                 </div>
                 <p className="text-gray-400 mt-2">
-                  Based on Reddit pain point analysis
+                  Based on Reddit validation analysis
                 </p>
               </div>
             </CardContent>
@@ -206,7 +206,7 @@ export default function RedditPainAnalyzer() {
             <Card className="bg-gray-800/50 border-gray-700">
               <CardContent className="p-4 text-center">
                 <div className="text-2xl font-bold text-blue-400">
-                  {Math.round(result.breakdown.reddit_pain.strength * 100)}
+                  {Math.round(result.breakdown.reddit_validation.strength * 100)}
                 </div>
                 <div className="text-sm text-gray-400">Strength</div>
               </CardContent>
@@ -214,7 +214,7 @@ export default function RedditPainAnalyzer() {
             <Card className="bg-gray-800/50 border-gray-700">
               <CardContent className="p-4 text-center">
                 <div className="text-2xl font-bold text-green-400">
-                  {Math.round(result.breakdown.reddit_pain.freshness * 100)}
+                  {Math.round(result.breakdown.reddit_validation.freshness * 100)}
                 </div>
                 <div className="text-sm text-gray-400">Freshness</div>
               </CardContent>
@@ -222,20 +222,20 @@ export default function RedditPainAnalyzer() {
             <Card className="bg-gray-800/50 border-gray-700">
               <CardContent className="p-4 text-center">
                 <div className="text-2xl font-bold text-purple-400">
-                  {Math.round(result.breakdown.reddit_pain.confidence * 100)}
+                  {Math.round(result.breakdown.reddit_validation.confidence * 100)}
                 </div>
                 <div className="text-sm text-gray-400">Confidence</div>
               </CardContent>
             </Card>
           </div>
 
-          {/* Top Pain Points */}
+          {/* Top Validation Insights */}
           {result.insights.reddit.top_pains.length > 0 && (
             <Card className="bg-gray-800/50 border-gray-700">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  Top Pain Points Found
+                  Key Validation Insights
                 </CardTitle>
               </CardHeader>
               <CardContent>

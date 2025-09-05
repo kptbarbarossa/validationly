@@ -222,7 +222,7 @@ const ResultsPage: React.FC = () => {
                 { id: 'analysis', label: 'Deep Analysis', icon: '🔍' },
                 { id: 'strategy', label: 'Strategy', icon: '🎯' },
                 { id: 'social', label: 'Social Media', icon: '📱' },
-                { id: 'reddit', label: 'Reddit Mining', icon: '🔍' },
+                { id: 'reddit', label: 'Reddit Validation', icon: '🔍' },
                 { id: 'tools', label: 'Tools', icon: '🛠️' }
               ].map((tab) => (
                 <button
@@ -601,20 +601,20 @@ const ResultsPage: React.FC = () => {
 
           {activeTab === 'reddit' && (
             <div className="space-y-8">
-              {/* Reddit Pain Mining Analysis */}
+              {/* Reddit Validation Analysis */}
               <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
-                <h2 className="text-2xl font-bold text-white mb-6">🔍 Reddit Pain Mining Analysis</h2>
+                <h2 className="text-2xl font-bold text-white mb-6">🔍 Reddit Validation Analysis</h2>
                 
                 {result.redditPainMining ? (
                   <div className="space-y-6">
                     {/* Overall Score */}
                     <div className="bg-gradient-to-br from-orange-900/30 to-red-900/30 backdrop-blur rounded-2xl p-6 border border-orange-500/20">
                       <div className="text-center">
-                        <h3 className="text-xl font-semibold text-white mb-4">Pain Mining Score</h3>
+                        <h3 className="text-xl font-semibold text-white mb-4">validation Score</h3>
                         <div className="inline-block px-6 py-3 rounded-full text-3xl font-bold border bg-orange-500/20 border-orange-500/30 text-orange-400">
                           {Math.round((result.redditPainMining.strength + result.redditPainMining.freshness + result.redditPainMining.confidence) / 3 * 100)}
                   </div>
-                        <p className="text-gray-400 mt-2">Based on Reddit pain point analysis</p>
+                        <p className="text-gray-400 mt-2">Based on Reddit validation analysis</p>
                   </div>
                 </div>
 
@@ -640,10 +640,10 @@ const ResultsPage: React.FC = () => {
                 </div>
               </div>
 
-                    {/* Top Pain Points */}
+                    {/* Top validation insights */}
                     {result.redditPainMining.topPainPoints && result.redditPainMining.topPainPoints.length > 0 && (
                       <div className="bg-gray-700/50 rounded-xl p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4">Top Pain Points Found</h3>
+                        <h3 className="text-lg font-semibold text-white mb-4">Top validation insights Found</h3>
                         <div className="space-y-3">
                           {result.redditPainMining.topPainPoints.slice(0, 5).map((pain: any, i: number) => (
                             <div key={i} className="p-3 bg-gray-600/50 rounded-lg">
@@ -711,7 +711,7 @@ const ResultsPage: React.FC = () => {
                     <div className="text-6xl mb-4">🔍</div>
                     <h3 className="text-xl font-semibold text-gray-300 mb-2">No Reddit Data Available</h3>
                     <p className="text-gray-400">
-                      Reddit pain mining data will appear here once available. This feature analyzes real Reddit discussions to identify pain points related to your idea.
+                      Reddit Validation data will appear here once available. This feature analyzes real Reddit discussions to identify validation insights related to your idea.
                     </p>
             </div>
                   )}

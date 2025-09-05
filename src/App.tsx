@@ -42,7 +42,7 @@ const UseCasesIndexPage = React.lazy(() => import('./pages/UseCasesIndexPage'));
 const PrivacyPolicy = React.lazy(() => import('./pages/PrivacyPolicy'));
 const TermsOfService = React.lazy(() => import('./pages/TermsOfService'));
 const ProfilePage = React.lazy(() => import('./pages/ProfilePage'));
-const RedditPainMiningPage = React.lazy(() => import('./pages/RedditPainMiningPage'));
+const RedditValidationPage = React.lazy(() => import('./pages/RedditValidationPage'));
 
 // Loading component
 const PageLoader = () => (
@@ -150,7 +150,7 @@ const App: React.FC = () => {
                   <Route path="/market-signal-academy" element={<MarketSignalAcademyPage />} />
                   <Route path="/social-validation" element={<SocialValidationPage />} />
                   <Route path="/tools" element={<ToolsPage />} />
-                  <Route path="/reddit-pain-mining" element={<RedditPainMiningPage />} />
+                  <Route path="/reddit-validation" element={<RedditValidationPage />} />
                   <Route path="/analysis" element={<AnalysisPage />} />
                   <Route path="/job-tailor" element={<JobTailorPage />} />
                   <Route path="/shopify-pain-points" element={<ShopifyPainPointsPage />} />

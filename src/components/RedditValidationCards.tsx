@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Loader2, Search, TrendingUp, Users, MessageSquare } from 'lucide-react';
 
 interface PainPoint {
@@ -21,7 +21,7 @@ interface Idea {
   icp: string;
 }
 
-interface RedditIdea {
+interface RedditValidation {
   id: string;
   document_id: string;
   title: string;
@@ -40,8 +40,8 @@ interface IdeaCardsProps {
   cluster?: string;
 }
 
-export default function RedditIdeaCards({ q = "", cluster = "" }: IdeaCardsProps) {
-  const [items, setItems] = useState<RedditIdea[]>([]);
+export default function RedditValidationCards({ q = "", cluster = "" }: IdeaCardsProps) {
+  const [items, setItems] = useState<RedditValidation[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState(q);
 
@@ -53,7 +53,7 @@ export default function RedditIdeaCards({ q = "", cluster = "" }: IdeaCardsProps
         if (searchQuery) params.append('q', searchQuery);
         if (cluster) params.append('cluster', cluster);
         
-        const url = `/api/reddit/ideas${params.toString() ? `?${params.toString()}` : ''}`;
+        const url = `/api/reddit/insights${params.toString() ? `?${params.toString()}` : ''}`;
         const response = await fetch(url);
         const data = await response.json();
         
@@ -80,7 +80,7 @@ export default function RedditIdeaCards({ q = "", cluster = "" }: IdeaCardsProps
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
-        <span className="ml-2 text-gray-400">Loading Reddit insights...</span>
+        <span className="ml-2 text-gray-400">Loading Reddit validation...</span>
       </div>
     );
   }
@@ -89,7 +89,7 @@ export default function RedditIdeaCards({ q = "", cluster = "" }: IdeaCardsProps
     return (
       <div className="text-center py-12">
         <div className="text-6xl mb-4">🔍</div>
-        <h3 className="text-xl font-semibold text-gray-300 mb-2">No Reddit insights found</h3>
+        <h3 className="text-xl font-semibold text-gray-300 mb-2">No Reddit validation found</h3>
         <p className="text-gray-400">
           {searchQuery ? 'Try adjusting your search terms' : 'Reddit pain mining data will appear here once available'}
         </p>
@@ -106,7 +106,7 @@ export default function RedditIdeaCards({ q = "", cluster = "" }: IdeaCardsProps
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search Reddit insights..."
+            placeholder="Search Reddit validation..."
             className="pl-10 bg-gray-800/50 border-gray-700 text-white placeholder-gray-400"
           />
         </div>
@@ -160,10 +160,10 @@ export default function RedditIdeaCards({ q = "", cluster = "" }: IdeaCardsProps
                 </div>
               </div>
 
-              {/* Pain Points */}
+              {/* Validation Insights */}
               {item.pain_points && item.pain_points.length > 0 && (
                 <div>
-                  <div className="text-xs mb-2 font-medium text-gray-400">Pain Points</div>
+                  <div className="text-xs mb-2 font-medium text-gray-400">Validation Insights</div>
                   <ul className="list-disc pl-5 text-sm space-y-1">
                     {item.pain_points.slice(0, 3).map((pain: PainPoint, i: number) => (
                       <li key={i} className="text-gray-300 line-clamp-1">

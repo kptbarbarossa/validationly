@@ -19,8 +19,8 @@ function sanitizeRedditContent(text: string): string {
   return text.length > 5000 ? text.substring(0, 5000) + '...' : text;
 }
 
-// Reddit Pain Mining Provider - Reddit API Compliant
-export async function runRedditPain(
+// Reddit Validation Provider - Reddit API Compliant
+export async function runRedditValidation(
   runId: string, 
   idea: string, 
   keywords: string[] = [], 
@@ -28,7 +28,7 @@ export async function runRedditPain(
 ) {
   try {
     // 1) Fetch data (last 90 days, keyword matching)
-    const { data: rows, error } = await supabase.rpc('reddit_pain_fetch', {
+    const { data: rows, error } = await supabase.rpc('reddit_validation_fetch', {
       p_keywords: keywords.length ? keywords : null,
       p_segments: targetSegments.length ? targetSegments : null
     });
@@ -89,7 +89,7 @@ export async function runRedditPain(
     // 3) Write to signals table
     const { error: insertError } = await supabase.from('signals').insert({
       run_id: runId,
-      provider: 'reddit_pain',
+      provider: 'reddit_validation',
       payload,
       strength,
       freshness,
@@ -102,7 +102,7 @@ export async function runRedditPain(
     }
 
     return { 
-      provider: 'reddit_pain', 
+      provider: 'reddit_validation', 
       strength, 
       freshness, 
       confidence, 
@@ -113,7 +113,7 @@ export async function runRedditPain(
     console.error('Reddit Pain provider error:', error);
     // Return fallback values
     return {
-      provider: 'reddit_pain',
+      provider: 'reddit_validation',
       strength: 0.5,
       freshness: 0.5,
       confidence: 0.5,
@@ -128,7 +128,7 @@ export async function runRedditPain(
   }
 }
 
-// POST /api/reddit/pain - Analyze pain points for an idea
+// POST /api/reddit/validation - Analyze validation insights for an idea
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -159,8 +159,8 @@ export async function POST(req: NextRequest) {
       }, { status: 500 });
     }
 
-    // Run Reddit Pain analysis
-    const result = await runRedditPain(runId, idea, keywords, target_segments);
+    // Run Reddit Validation analysis
+    const result = await runRedditValidation(runId, idea, keywords, target_segments);
 
     // Calculate final score
     const redditScore = 0.5 * result.strength + 0.3 * result.freshness + 0.2 * result.confidence;
@@ -173,7 +173,7 @@ export async function POST(req: NextRequest) {
       run_id: runId,
       score: redditScore,
       breakdown: {
-        reddit_pain: { 
+        reddit_validation: { 
           score: redditScore, 
           strength: result.strength,
           freshness: result.freshness,
@@ -187,7 +187,7 @@ export async function POST(req: NextRequest) {
       run_id: runId,
       score: redditScore,
       breakdown: {
-        reddit_pain: {
+        reddit_validation: {
           score: redditScore,
           strength: result.strength,
           freshness: result.freshness,
@@ -200,7 +200,7 @@ export async function POST(req: NextRequest) {
     });
 
   } catch (error: any) {
-    console.error('Error in pain analysis:', error);
+    console.error('Error in Validation analysis:', error);
     return NextResponse.json({ 
       ok: false, 
       error: error.message 
