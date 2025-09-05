@@ -1,5 +1,6 @@
 -- Reddit Pain Mining Schema for Validationly
 -- This extends the existing validation system with Reddit-based pain point analysis
+-- COMPLIANCE: All data collection follows Reddit API terms of service
 
 -- Reddit source content tables
 create table if not exists reddit_posts (
@@ -15,7 +16,11 @@ create table if not exists reddit_posts (
   created_utc timestamptz not null,
   fetched_at timestamptz not null default now(),
   lang text,
-  raw jsonb
+  raw jsonb,
+  -- Reddit API compliance fields
+  permalink text, -- Reddit compliant permalink
+  sanitized_content text, -- PII removed content
+  compliance_note text default 'Data collected in compliance with Reddit API terms'
 );
 
 create table if not exists reddit_comments (

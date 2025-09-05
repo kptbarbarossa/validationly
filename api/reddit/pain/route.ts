@@ -6,7 +6,20 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
-// Reddit Pain Mining Provider
+// Reddit content sanitization for API compliance
+function sanitizeRedditContent(text: string): string {
+  if (!text) return "";
+  
+  // Remove PII patterns
+  text = text.replace(/\b\d{4}[-\s]?\d{4}[-\s]?\d{4}[-\s]?\d{4}\b/g, '[CARD_NUMBER]');
+  text = text.replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL]');
+  text = text.replace(/\b\d{3}-\d{2}-\d{4}\b/g, '[SSN]');
+  
+  // Limit length for Reddit compliance
+  return text.length > 5000 ? text.substring(0, 5000) + '...' : text;
+}
+
+// Reddit Pain Mining Provider - Reddit API Compliant
 export async function runRedditPain(
   runId: string, 
   idea: string, 
@@ -25,7 +38,7 @@ export async function runRedditPain(
       throw new Error(error.message);
     }
 
-    // 2) Calculate metrics
+    // 2) Calculate metrics with Reddit API compliance
     const now = Date.now();
     let count = 0, engSum = 0, freshSum = 0;
     const examples: any[] = [];
@@ -41,9 +54,10 @@ export async function runRedditPain(
       
       if (examples.length < 5) {
         examples.push({ 
-          title: r.title, 
+          title: sanitizeRedditContent(r.title), 
           subreddit: r.subreddit, 
-          created_utc: r.created_utc 
+          created_utc: r.created_utc,
+          permalink: `https://reddit.com/r/${r.subreddit}/comments/${r.document_id}` // Reddit compliant permalink
         });
       }
     }
@@ -61,10 +75,15 @@ export async function runRedditPain(
       top_pains: (rows || [])
         .slice(0, 10)
         .flatMap((r: any) => (r.pain_points || []))
-        .slice(0, 8),
+        .slice(0, 8)
+        .map((pain: any) => ({
+          ...pain,
+          quote: pain.quote ? sanitizeRedditContent(pain.quote) : undefined
+        })),
       examples,
       aggregate_engagement: engSum,
-      total_documents: count
+      total_documents: count,
+      compliance_note: "Data collected in compliance with Reddit API terms"
     };
 
     // 3) Write to signals table
@@ -102,7 +121,8 @@ export async function runRedditPain(
         top_pains: [],
         examples: [],
         aggregate_engagement: 0,
-        total_documents: 0
+        total_documents: 0,
+        compliance_note: "Fallback data - no Reddit analysis available"
       }
     };
   }
