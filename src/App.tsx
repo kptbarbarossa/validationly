@@ -28,7 +28,6 @@ const SignalDigestPage = React.lazy(() => import('./pages/SignalDigestPage'));
 const PainExtractorPage = React.lazy(() => import('./pages/PainExtractorPage'));
 const YouTubeHookSynthPage = React.lazy(() => import('./pages/YouTubeHookSynthPage'));
 const YouTubeAnalysisPage = React.lazy(() => import('./pages/YouTubeAnalysisPage').then(module => ({ default: module.YouTubeAnalysisPage })));
-const AppsPage = React.lazy(() => import('./pages/AppsPage'));
 const ShopifyPainPointsPage = React.lazy(() => import('./pages/ShopifyPainPointsPage'));
 const FAQPage = React.lazy(() => import('./pages/FAQPage'));
 const AffiliationPage = React.lazy(() => import('./pages/AffiliationPage'));
@@ -150,7 +149,6 @@ const App: React.FC = () => {
                   <Route path="/market-signal-academy" element={<MarketSignalAcademyPage />} />
                   <Route path="/social-validation" element={<SocialValidationPage />} />
                   <Route path="/tools" element={<ToolsPage />} />
-                  <Route path="/apps" element={<AppsPage />} />
                   <Route path="/analysis" element={<AnalysisPage />} />
                   <Route path="/job-tailor" element={<JobTailorPage />} />
                   <Route path="/shopify-pain-points" element={<ShopifyPainPointsPage />} />

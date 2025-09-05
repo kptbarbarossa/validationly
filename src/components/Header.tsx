@@ -30,10 +30,10 @@ const Header: React.FC = () => {
                         </button>
 
                         <button
-                            onClick={() => navigate('/apps')}
+                            onClick={() => navigate('/blog')}
                             className="text-gray-600 hover:text-gray-900 font-medium transition-colors px-4 py-2 rounded-full hover:bg-gray-100"
                         >
-                            Apps
+                            Blog
                         </button>
 
                         <button

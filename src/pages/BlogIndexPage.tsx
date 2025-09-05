@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import SEOHead from '../components/SEOHead';
+import ShhhhPricingBlock from '../components/ShhhhPricingBlock';
 
 const posts = [
   { slug: 'login-to-see-price-guide', title: 'Login to See Price: Hide Prices App for Shopify', desc: 'Boost customer registrations by hiding prices from guests. Perfect for B2B, wholesale, and membership stores.', date: '2025-01-27' },
@@ -43,6 +44,12 @@ const BlogIndexPage: React.FC = () => {
         inLanguage: 'en'
       }) }} />
       <h1 className="text-3xl font-bold mb-6">Blog</h1>
+      
+      {/* Login to See Price App Card */}
+      <div className="mb-12">
+        <ShhhhPricingBlock />
+      </div>
+      
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {posts.map(p => (
           <Link to={`/blog/${p.slug}`} key={p.slug} className="block bg-white/5 border border-white/10 rounded-xl p-5 hover:border-white/20">
