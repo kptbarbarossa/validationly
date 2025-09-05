@@ -1,5 +1,5 @@
--- Reddit Pain Mining Schema for Validationly
--- This extends the existing validation system with Reddit-based pain point analysis
+-- Reddit Validation Schema for Validationly
+-- This extends the existing validation system with Reddit-based validation analysis
 -- COMPLIANCE: All data collection follows Reddit API terms of service
 
 -- Reddit source content tables
