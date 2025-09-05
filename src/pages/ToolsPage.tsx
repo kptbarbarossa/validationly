@@ -136,7 +136,7 @@ const ToolsPage: React.FC = () => {
                         className="mt-7 mb-8"
                         title="🛠️ Recommended Tools for Founders"
                         subtitle="Essential tools and services to help you build, launch, and grow your startup"
-                        maxCards={7}
+                        maxCards={8}
                     />
 
                     {/* Tools Grid */}

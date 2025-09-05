@@ -538,7 +538,7 @@ const ResultsPage: React.FC = () => {
             className="mb-12"
             title="🛠️ Recommended Tools for Your Startup"
             subtitle="Essential tools and services to help you build, launch, and grow your validated idea"
-            maxCards={7}
+            maxCards={8}
           />
 
           {/* Try Another Idea */}

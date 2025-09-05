@@ -126,6 +126,24 @@ export const affiliateCards: AffiliateCardProps[] = [
       to: 'to-teal-600'
     },
     fallbackBgColor: 'bg-gradient-to-br from-emerald-500 to-teal-600'
+  },
+  {
+    id: 'vibe-n8n',
+    name: 'Vibe n8n',
+    description: 'AI-powered workflow assistant for n8n. Generate complete automations instantly with plain English descriptions. Transform your workflow creation with AI.',
+    logo: 'https://vibe-n8n.com/favicon.ico',
+    logoFallback: 'V',
+    category: 'AI Workflow Automation',
+    categoryColor: 'bg-violet-500/20 text-violet-400',
+    features: ['AI workflow generation', 'Instant import to n8n', 'Smart enhancement', 'Universal compatibility'],
+    ctaText: 'Install Extension',
+    ctaIcon: '⚡',
+    ctaLink: 'https://vibe-n8n.com',
+    gradientColors: {
+      from: 'from-violet-600',
+      to: 'to-purple-600'
+    },
+    fallbackBgColor: 'bg-gradient-to-br from-violet-500 to-purple-600'
   }
 ];
 
