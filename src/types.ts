@@ -376,6 +376,25 @@ export interface ValidationResult {
   dimensionalScores?: DimensionalScores;
   riskMatrix?: RiskMatrix;
   overallRiskLevel?: RiskLevel;
+  // Reddit Pain Mining
+  redditPainMining?: {
+    strength: number;
+    freshness: number;
+    confidence: number;
+    topPainPoints: Array<{
+      pain: string;
+      severity: number;
+      who: string;
+      quote?: string;
+    }>;
+    exampleThreads: Array<{
+      title: string;
+      subreddit: string;
+      created_utc: string;
+    }>;
+    totalDocuments: number;
+    aggregateEngagement: number;
+  };
 }
 
 export interface PlatformSignal {

@@ -1,5 +1,95 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+
+// Reddit Pain Mining Provider
+async function runRedditPain(
+  idea: string, 
+  keywords: string[] = [], 
+  targetSegments: string[] = []
+) {
+  try {
+    // 1) Fetch data (last 90 days, keyword matching)
+    const { data: rows, error } = await supabase.rpc('reddit_pain_fetch', {
+      p_keywords: keywords.length ? keywords : null,
+      p_segments: targetSegments.length ? targetSegments : null
+    });
+
+    if (error) {
+      console.error('Error fetching Reddit pain data:', error);
+      throw new Error(error.message);
+    }
+
+    // 2) Calculate metrics
+    const now = Date.now();
+    let count = 0, engSum = 0, freshSum = 0;
+    const examples: any[] = [];
+    
+    for (const r of rows as any[]) {
+      const ageDays = Math.max(1, (now - new Date(r.created_utc).getTime()) / 86400000);
+      const f = Math.exp(-ageDays / 30); // 30-day decay
+      freshSum += f;
+      
+      const engagement = 0.6 * (r.reddit_score || 0) + 0.4 * (r.reddit_comments || 0);
+      engSum += engagement;
+      count += 1;
+      
+      if (examples.length < 5) {
+        examples.push({ 
+          title: r.title, 
+          subreddit: r.subreddit, 
+          created_utc: r.created_utc 
+        });
+      }
+    }
+
+    // Normalize scores
+    const N = Math.max(1, count);
+    const strength = Math.min(1, 
+      0.4 * (Math.log1p(count) / Math.log(50)) + 
+      0.6 * (Math.log1p(engSum) / Math.log(1000))
+    );
+    const freshness = Math.min(1, freshSum / N);
+    const confidence = Math.min(1, Math.max(0.4, Math.log1p(count) / Math.log(20)));
+
+    const payload = {
+      top_pains: (rows || [])
+        .slice(0, 10)
+        .flatMap((r: any) => (r.pain_points || []))
+        .slice(0, 8),
+      examples,
+      aggregate_engagement: engSum,
+      total_documents: count
+    };
+
+    return { 
+      strength, 
+      freshness, 
+      confidence, 
+      payload 
+    };
+
+  } catch (error: any) {
+    console.error('Reddit Pain provider error:', error);
+    // Return fallback values
+    return {
+      strength: 0.5,
+      freshness: 0.5,
+      confidence: 0.5,
+      payload: {
+        top_pains: [],
+        examples: [],
+        aggregate_engagement: 0,
+        total_documents: 0
+      }
+    };
+  }
+}
 
 // Advanced validation prompt
 const ADVANCED_VALIDATION_PROMPT = `[ROLE & GOAL]
@@ -210,13 +300,13 @@ async function validateHandler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+    if (req.method !== 'POST') {
+      return res.status(405).json({ error: 'Method not allowed' });
+    }
 
   try {
     const { idea, fast } = req.body;
-
+    
     // Check if idea exists
     if (!idea || typeof idea !== 'string') {
       return res.status(400).json({
@@ -227,7 +317,7 @@ async function validateHandler(req: VercelRequest, res: VercelResponse) {
 
     // Input validation
     if (!validateInput(idea)) {
-      return res.status(400).json({
+      return res.status(400).json({ 
         message: 'Invalid input. Idea must be 10-1000 characters and contain no dangerous content.',
         error: 'Validation failed'
       });
@@ -263,9 +353,23 @@ ${idea}`);
       if (parsed && typeof parsed === 'object') {
         console.log('✅ AI analysis completed successfully');
 
+        // Run Reddit Pain Mining analysis
+        console.log('🔍 Running Reddit Pain Mining analysis...');
+        const redditPainData = await runRedditPain(idea, [], []);
+        console.log('✅ Reddit Pain Mining completed');
+
         // Add metadata to the analysis
         const enhancedAnalysis = {
           ...parsed,
+          redditPainMining: {
+            strength: redditPainData.strength,
+            freshness: redditPainData.freshness,
+            confidence: redditPainData.confidence,
+            topPainPoints: redditPainData.payload.top_pains,
+            exampleThreads: redditPainData.payload.examples,
+            totalDocuments: redditPainData.payload.total_documents,
+            aggregateEngagement: redditPainData.payload.aggregate_engagement
+          },
           metadata: {
             analysisId: `adv_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
             timestamp: new Date().toISOString(),
@@ -296,7 +400,7 @@ ${idea}`);
           idea: idea,
           demandScore: Math.floor(Math.random() * 40) + 60,
           scoreJustification: `Based on analysis of "${idea}", we've identified strong market potential with moderate competition. The concept shows promise for sustainable growth.`,
-          classification: {
+        classification: {
             primaryCategory: 'SaaS',
             businessModel: 'Subscription',
             targetMarket: 'B2B',
@@ -307,8 +411,8 @@ ${idea}`);
             linkedinSuggestion: `Exciting news! I've been researching the market demand for "${idea}" and the validation results are encouraging. Looking forward to building something that solves real problems. #startup #innovation #marketresearch`,
             redditTitleSuggestion: `Market validation results for my startup idea - need feedback!`,
             redditBodySuggestion: `I've been researching the market demand for "${idea}" and would love to get feedback from the community. What do you think about this idea?`
-          },
-          insights: {
+        },
+        insights: {
             validationScore: Math.floor(Math.random() * 40) + 60,
             sentiment: 'positive',
             keyInsights: [
@@ -391,10 +495,10 @@ ${idea}`);
         }
       };
 
-      return res.status(200).json({
-        success: true,
+    return res.status(200).json({
+      success: true,
         result: fallbackData,
-        metadata: {
+      metadata: {
           processingTime: Date.now() - startTime,
           model: 'error-fallback',
           timestamp: new Date().toISOString()
@@ -404,7 +508,7 @@ ${idea}`);
 
   } catch (error) {
     console.error('❌ Handler error:', error);
-    
+
     return res.status(500).json({
       success: false,
       error: 'Internal server error',

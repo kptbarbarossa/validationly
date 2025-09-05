@@ -109,7 +109,7 @@ interface ValidationResult {
 const ResultsPage: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'overview' | 'analysis' | 'strategy' | 'social' | 'tools'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'analysis' | 'strategy' | 'social' | 'reddit' | 'tools'>('overview');
   const [copiedText, setCopiedText] = useState<string | null>(null);
 
   const result = location.state?.result as ValidationResult;
@@ -222,6 +222,7 @@ const ResultsPage: React.FC = () => {
                 { id: 'analysis', label: 'Deep Analysis', icon: '🔍' },
                 { id: 'strategy', label: 'Strategy', icon: '🎯' },
                 { id: 'social', label: 'Social Media', icon: '📱' },
+                { id: 'reddit', label: 'Reddit Mining', icon: '🔍' },
                 { id: 'tools', label: 'Tools', icon: '🛠️' }
               ].map((tab) => (
                 <button
@@ -539,16 +540,16 @@ const ResultsPage: React.FC = () => {
                         >
                           💼
                         </button>
-                    </div>
-                  </div>
+                      </div>
+                        </div>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.linkedinSuggestion || 'LinkedIn suggestion not available'}
                     </p>
-                      </div>
+                  </div>
 
                   {/* Reddit Title */}
                   <div className="bg-gray-700/50 rounded-xl p-6">
-                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center justify-between mb-3">
                       <h3 className="text-lg font-semibold text-orange-600">📝 Reddit Title</h3>
                       <div className="flex gap-2">
                     <button
@@ -563,8 +564,8 @@ const ResultsPage: React.FC = () => {
                         >
                           📝
                         </button>
-              </div>
-            </div>
+                      </div>
+                        </div>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.redditTitleSuggestion || 'Reddit title not available'}
                     </p>
@@ -587,16 +588,136 @@ const ResultsPage: React.FC = () => {
                         >
                           📝
                         </button>
-                </div>
-              </div>
+                  </div>
+                        </div>
                     <p className="text-gray-300 text-sm leading-relaxed">
                       {result.socialMediaSuggestions?.redditBodySuggestion || 'Reddit body not available'}
                     </p>
+                      </div>
+                    </div>
+                      </div>
+                    </div>
+                  )}
+
+          {activeTab === 'reddit' && (
+            <div className="space-y-8">
+              {/* Reddit Pain Mining Analysis */}
+              <div className="bg-gray-800/50 rounded-3xl p-8 border border-white/10">
+                <h2 className="text-2xl font-bold text-white mb-6">🔍 Reddit Pain Mining Analysis</h2>
+                
+                {result.redditPainMining ? (
+                  <div className="space-y-6">
+                    {/* Overall Score */}
+                    <div className="bg-gradient-to-br from-orange-900/30 to-red-900/30 backdrop-blur rounded-2xl p-6 border border-orange-500/20">
+                      <div className="text-center">
+                        <h3 className="text-xl font-semibold text-white mb-4">Pain Mining Score</h3>
+                        <div className="inline-block px-6 py-3 rounded-full text-3xl font-bold border bg-orange-500/20 border-orange-500/30 text-orange-400">
+                          {Math.round((result.redditPainMining.strength + result.redditPainMining.freshness + result.redditPainMining.confidence) / 3 * 100)}
+                  </div>
+                        <p className="text-gray-400 mt-2">Based on Reddit pain point analysis</p>
                   </div>
                 </div>
+
+                    {/* Breakdown */}
+                    <div className="grid md:grid-cols-3 gap-4">
+                      <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                        <div className="text-2xl font-bold text-blue-400">
+                          {Math.round(result.redditPainMining.strength * 100)}
+                    </div>
+                        <div className="text-sm text-gray-400">Strength</div>
+                  </div>
+                      <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                        <div className="text-2xl font-bold text-green-400">
+                          {Math.round(result.redditPainMining.freshness * 100)}
+                  </div>
+                        <div className="text-sm text-gray-400">Freshness</div>
+                </div>
+                      <div className="bg-gray-700/50 rounded-xl p-4 text-center">
+                        <div className="text-2xl font-bold text-purple-400">
+                          {Math.round(result.redditPainMining.confidence * 100)}
+                  </div>
+                        <div className="text-sm text-gray-400">Confidence</div>
+                </div>
               </div>
+
+                    {/* Top Pain Points */}
+                    {result.redditPainMining.topPainPoints && result.redditPainMining.topPainPoints.length > 0 && (
+                      <div className="bg-gray-700/50 rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-white mb-4">Top Pain Points Found</h3>
+                        <div className="space-y-3">
+                          {result.redditPainMining.topPainPoints.slice(0, 5).map((pain: any, i: number) => (
+                            <div key={i} className="p-3 bg-gray-600/50 rounded-lg">
+                              <div className="flex items-start justify-between mb-2">
+                                <h4 className="font-medium text-white">{pain.pain}</h4>
+                                <span className="px-2 py-1 bg-orange-600/20 text-orange-400 text-xs rounded-full">
+                                  Severity: {pain.severity}/5
+                            </span>
+                          </div>
+                              <p className="text-sm text-gray-400 mb-1">
+                                <strong>Who:</strong> {pain.who}
+                              </p>
+                              {pain.quote && (
+                                <blockquote className="text-sm text-gray-300 italic border-l-2 border-gray-500 pl-3">
+                                  "{pain.quote}"
+                                </blockquote>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                    {/* Example Threads */}
+                    {result.redditPainMining.exampleThreads && result.redditPainMining.exampleThreads.length > 0 && (
+                      <div className="bg-gray-700/50 rounded-xl p-6">
+                        <h3 className="text-lg font-semibold text-white mb-4">Example Reddit Threads</h3>
+                          <div className="space-y-2">
+                          {result.redditPainMining.exampleThreads.map((example: any, i: number) => (
+                            <div key={i} className="p-3 bg-gray-600/50 rounded-lg">
+                              <h4 className="font-medium text-white mb-1">{example.title}</h4>
+                              <div className="flex items-center gap-2 text-sm text-gray-400">
+                                <span className="px-2 py-1 bg-blue-600/20 text-blue-400 text-xs rounded-full">
+                                  r/{example.subreddit}
+                                    </span>
+                                <span>{new Date(example.created_utc).toLocaleDateString()}</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                    )}
+
+                    {/* Stats */}
+                    <div className="bg-gray-700/50 rounded-xl p-6">
+                      <h3 className="text-lg font-semibold text-white mb-4">Analysis Statistics</h3>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-blue-400">
+                            {result.redditPainMining.totalDocuments}
+                    </div>
+                          <div className="text-sm text-gray-400">Documents Analyzed</div>
+                    </div>
+                        <div className="text-center">
+                          <div className="text-2xl font-bold text-green-400">
+                            {Math.round(result.redditPainMining.aggregateEngagement)}
+                  </div>
+                          <div className="text-sm text-gray-400">Total Engagement</div>
+                </div>
+              </div>
+          </div>
+              </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">🔍</div>
+                    <h3 className="text-xl font-semibold text-gray-300 mb-2">No Reddit Data Available</h3>
+                    <p className="text-gray-400">
+                      Reddit pain mining data will appear here once available. This feature analyzes real Reddit discussions to identify pain points related to your idea.
+                    </p>
             </div>
-          )}
+                  )}
+                </div>
+              </div>
+                  )}
 
           {activeTab === 'tools' && (
             <div className="space-y-8">

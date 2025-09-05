@@ -30,6 +30,13 @@ const Header: React.FC = () => {
                         </button>
 
                         <button
+                            onClick={() => navigate('/reddit-pain-mining')}
+                            className="text-gray-600 hover:text-gray-900 font-medium transition-colors px-4 py-2 rounded-full hover:bg-gray-100"
+                        >
+                            Reddit Mining
+                        </button>
+
+                        <button
                             onClick={() => navigate('/blog')}
                             className="text-gray-600 hover:text-gray-900 font-medium transition-colors px-4 py-2 rounded-full hover:bg-gray-100"
                         >
