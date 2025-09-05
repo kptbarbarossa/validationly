@@ -83,18 +83,28 @@
   }
   </script>
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-80LXQSRZ2P"></script>
+  <!-- Google Analytics - Consent Mode -->
   <script>
+    // Initialize consent mode
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+    
+    // Set default consent state
+    gtag('consent', 'default', {
+      'analytics_storage': 'denied',
+      'ad_storage': 'denied',
+      'ad_user_data': 'denied',
+      'ad_personalization': 'denied'
+    });
+    
     gtag('js', new Date());
     gtag('config', 'G-80LXQSRZ2P', {
       page_title: document.title,
       page_location: window.location.href,
-      send_page_view: true
+      send_page_view: false // Don't send page view until consent is granted
     });
   </script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-80LXQSRZ2P"></script>
   
   <!-- Google Identity Services for One Tap Sign-In with FedCM support -->
   <script src="https://accounts.google.com/gsi/client" async defer data-fedcm-explicit-call="true"></script>

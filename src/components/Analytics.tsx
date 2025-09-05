@@ -19,7 +19,8 @@ const Analytics: React.FC = () => {
       window.gtag('config', GA_MEASUREMENT_ID, {
         page_path: location.pathname + location.search,
         page_title: document.title,
-        page_location: window.location.href
+        page_location: window.location.href,
+        send_page_view: true // Now we can send page views since user consented
       });
     }
   }, [location, GA_MEASUREMENT_ID]);

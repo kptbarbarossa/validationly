@@ -1,9 +1,10 @@
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import PremiumNavBar from './components/PremiumNavBar';
 import Analytics from './components/Analytics';
+import CookieConsent from './components/CookieConsent';
 
 // Critical pages - loaded immediately
 import HomePage from './pages/HomePage';
@@ -94,6 +95,28 @@ class ErrorBoundary extends React.Component<
 }
 
 const App: React.FC = () => {
+  const [analyticsEnabled, setAnalyticsEnabled] = useState(false);
+
+  useEffect(() => {
+    // Check existing cookie consent
+    const consent = localStorage.getItem('cookie-consent');
+    if (consent) {
+      const parsedConsent = JSON.parse(consent);
+      setAnalyticsEnabled(parsedConsent.analytics);
+    }
+  }, []);
+
+  const handleCookieConsent = (analytics: boolean) => {
+    setAnalyticsEnabled(analytics);
+    
+    // Load Google Analytics only if user consented
+    if (analytics && window.gtag) {
+      window.gtag('consent', 'update', {
+        analytics_storage: 'granted'
+      });
+    }
+  };
+
   return (
     <ErrorBoundary>
       <AuthProvider>
@@ -102,7 +125,8 @@ const App: React.FC = () => {
           <div className="pointer-events-none absolute -top-40 -left-40 w-[40rem] h-[40rem] bg-indigo-500/20 rounded-full blur-3xl animate-aurora"></div>
           <div className="pointer-events-none absolute -bottom-40 -right-40 w-[40rem] h-[40rem] bg-cyan-500/20 rounded-full blur-3xl animate-aurora-slow"></div>
           <BrowserRouter>
-            <Analytics />
+            {/* Analytics - Only load if user consented */}
+            {analyticsEnabled && <Analytics />}
             <PremiumNavBar />
             
             <main className="container mx-auto px-0 pt-24 sm:pt-24">
@@ -144,7 +168,7 @@ const App: React.FC = () => {
                   <Route path="/use-cases/saas-idea-validation" element={<UseCaseSaaSPage />} />
                   <Route path="/use-cases/ecommerce-product-validation" element={<UseCaseEcommercePage />} />
                   <Route path="/privacy" element={<PrivacyPolicy />} />
-                  <Route path="/terms-of-service" element={<TermsOfService />} />
+                  <Route path="/terms" element={<TermsOfService />} />
                   <Route path="*" element={<div className="min-h-[60vh] flex items-center justify-center text-slate-300">Page not found</div>} />
                 </Routes>
               </Suspense>
@@ -155,9 +179,12 @@ const App: React.FC = () => {
               <div className="flex justify-center space-x-6">
                 <a href="/faq" className="underline hover:text-slate-300 transition-colors">FAQ</a>
                 <a href="/privacy" className="underline hover:text-slate-300 transition-colors">Privacy Policy</a>
-                <a href="/terms-of-service" className="underline hover:text-slate-300 transition-colors">Terms of Service</a>
+                <a href="/terms" className="underline hover:text-slate-300 transition-colors">Terms of Service</a>
               </div>
             </footer>
+
+            {/* Cookie Consent */}
+            <CookieConsent onAccept={handleCookieConsent} />
           </BrowserRouter>
         </div>
       </AuthProvider>
