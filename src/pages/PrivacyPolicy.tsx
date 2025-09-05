@@ -235,7 +235,7 @@ const PrivacyPolicy: React.FC = () => {
                     </p>
                     
                     <div className="space-y-2 text-slate-300">
-                      <p><strong className="text-white">Email:</strong> privacy@validationly.com</p>
+                      <p><strong className="text-white">Email:</strong> kaptan3k@gmail.com</p>
                       <p><strong className="text-white">Response Time:</strong> Within 30 days</p>
                       <p><strong className="text-white">Data Protection Officer:</strong> Available upon request</p>
                     </div>

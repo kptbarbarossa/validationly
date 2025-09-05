@@ -208,7 +208,7 @@ const TermsOfService: React.FC = () => {
                     </p>
                     
                     <div className="space-y-2 text-slate-300">
-                      <p><strong className="text-white">Email:</strong> legal@validationly.com</p>
+                      <p><strong className="text-white">Email:</strong> kaptan3k@gmail.com</p>
                       <p><strong className="text-white">Response Time:</strong> Within 7 business days</p>
                     </div>
                   </div>
