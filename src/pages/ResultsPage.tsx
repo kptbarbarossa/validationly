@@ -204,7 +204,8 @@ const ResultsPage: React.FC = () => {
                 { id: 'overview', label: 'Overview', icon: '📊' },
                 { id: 'analysis', label: 'Deep Analysis', icon: '🔍' },
                 { id: 'strategy', label: 'Strategy', icon: '🎯' },
-                { id: 'social', label: 'Social Media', icon: '📱' }
+                { id: 'social', label: 'Social Media', icon: '📱' },
+                { id: 'tools', label: 'Tools', icon: '🛠️' }
               ].map((tab) => (
                 <button
                   key={tab.id}
@@ -509,13 +510,17 @@ const ResultsPage: React.FC = () => {
             </div>
           )}
 
-          {/* Recommended Tools Section */}
-          <AffiliateCardsSection 
-            className="mb-12"
-            title="🛠️ Recommended Tools for Your Startup"
-            subtitle="Essential tools and services to help you build, launch, and grow your validated idea"
-            maxCards={8}
-          />
+          {activeTab === 'tools' && (
+            <div className="space-y-8">
+              {/* Recommended Tools Section */}
+              <AffiliateCardsSection 
+                className="mb-12"
+                title="🛠️ Recommended Tools for Your Startup"
+                subtitle="Essential tools and services to help you build, launch, and grow your validated idea"
+                maxCards={8}
+              />
+            </div>
+          )}
 
           {/* Try Another Idea */}
           <div className="text-center mb-16">
